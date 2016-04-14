@@ -1,13 +1,12 @@
 {
   "version": "1.0.0-*",
-  "description": "ConfigServer.Core Class Library",
+  "description": "ConfigServer.Client Class Library",
   "authors": [ "Boo" ],
   "tags": [ "" ],
   "projectUrl": "",
   "licenseUrl": "",
     "frameworks": {
         "net451": { },
-        "dnx451": { },
         "dotnet5.4": {
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-beta-23516",
@@ -16,15 +15,9 @@
                 "System.Runtime": "4.0.21-beta-23516",
                 "System.Threading": "4.0.11-beta-23516"
             }
-        },
-        "dnxcore50": {
-            "dependencies": {
-                "Microsoft.CSharp": "4.0.1-beta-23516",
-                "System.Collections": "4.0.11-beta-23516",
-                "System.Linq": "4.0.1-beta-23516",
-                "System.Runtime": "4.0.21-beta-23516",
-                "System.Threading": "4.0.11-beta-23516"
-            }
         }
+    },
+    "dependencies": {
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
     }
 }

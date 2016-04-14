@@ -1,6 +1,6 @@
 {
   "version": "1.0.0-*",
-  "description": "ConfigServer.Core Class Library",
+  "description": "ConfigServer.InMemoryProvider Class Library",
   "authors": [ "Boo" ],
   "tags": [ "" ],
   "projectUrl": "",
@@ -26,5 +26,9 @@
                 "System.Threading": "4.0.11-beta-23516"
             }
         }
+    },
+    "dependencies": {
+        "ConfigServer.Core": "1.0.0-*",
+        "ConfigServer.Infrastructure": "1.0.0-*"
     }
 }

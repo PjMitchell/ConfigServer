@@ -1,0 +1,24 @@
+﻿using ConfigServer.Core;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ConfigServer.Infrastructure
+{
+    public class ConfigServerBuilder
+    {
+        public ConfigServerBuilder(IServiceCollection serviceCollection, ConfigurationCollection configurationCollection)
+        {
+            ServiceCollection = serviceCollection;
+            ConfigurationCollection = configurationCollection;
+            ServiceCollection.AddInstance(configurationCollection);
+        }
+
+        public IServiceCollection ServiceCollection { get; }
+
+        public ConfigurationCollection ConfigurationCollection { get; }
+
+    }
+}
