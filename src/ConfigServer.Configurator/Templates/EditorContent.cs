@@ -1,6 +1,5 @@
 ﻿using ConfigServer.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,7 +15,7 @@ namespace ConfigServer.Configurator.Templates
                 .Where(prop => prop.CanWrite)
                 .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType, prop.Name));
             return $@"
-            <h3>Edit {config.ApplicationIdentity} - {config.Name}</h3>
+            <h3>Edit {config.ConfigSetId} - {config.Name}</h3>
             <form method=""post"">
             { string.Join<string>("<br>", editFields)}
             <input type=""submit"" value=""Submit"">

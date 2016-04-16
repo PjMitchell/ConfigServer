@@ -12,7 +12,7 @@ namespace ConfigServer.Core
         public LocalConfigServer(IConfigProvider configProvider, string applicationId)
         {
             this.configProvider = configProvider;
-            this.applicationId = new ConfigurationIdentity { ApplicationIdentity = applicationId };
+            this.applicationId = new ConfigurationIdentity { ConfigSetId = applicationId };
         }
 
         public TConfig BuildConfig<TConfig>() where TConfig : class, new()
@@ -22,7 +22,7 @@ namespace ConfigServer.Core
 
         public object BuildConfig(Type type)
         {
-            return configProvider.Get(type, applicationId);
+            return configProvider.Get(type, applicationId).GetConfiguration();
         }
     }
 }

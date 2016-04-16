@@ -4,26 +4,29 @@ namespace ConfigServer.Core
 {
     public sealed class ConfigurationRegistration
     {
-        public ConfigurationRegistration(Type type) :this(type, type.Name) { }
+        private readonly Func<Config> initializer;
 
-        public ConfigurationRegistration(Type type, string configurationName)
+        public static ConfigurationRegistration Build<TConfig>() where TConfig : class, new()
+        {
+            Func<Config> initializer = () => new Config<TConfig>();
+            return new ConfigurationRegistration(typeof(TConfig), initializer);
+        }
+
+        private ConfigurationRegistration(Type type, Func<Config> initializer) :this(type, type.Name, initializer) { }
+
+        private ConfigurationRegistration(Type type, string configurationName, Func<Config> initializer)
         {
             ConfigurationName = configurationName;
             ConfigType = type;
+            this.initializer = initializer;
         }
-
 
         public string ConfigurationName { get; }
         public Type ConfigType { get; }
-        public override bool Equals(object obj)
-        {
-            var reg = obj as ConfigurationRegistration;
-            return reg.ConfigurationName.Equals(ConfigurationName);
-        }
 
-        public override int GetHashCode()
+        public Config InitializeConfig()
         {
-            return ConfigurationName.GetHashCode();
+            return initializer.Invoke();
         }
     }
 }

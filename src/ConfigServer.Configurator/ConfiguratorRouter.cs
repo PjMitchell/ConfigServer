@@ -26,12 +26,17 @@ namespace ConfigServer.Configurator
             if (!context.Request.Path.StartsWithSegments(routePath, out remaining))
                 return false;
             
-            var applicationIds = configRepository.GetApplicationIds();
+            var applicationIds = configRepository.GetConfigSetIds();
 
             if (string.IsNullOrWhiteSpace(remaining))
             {
                 await pageBuilder.WriteContent("Index", IndexContent.GetContent(routePath, applicationIds));
                 return true;
+            }
+
+            if(remaining == "/Create")
+            {
+                return await HandleCreateConfigSet(context, routePath);
             }
                 
             var appIdQueryResult = ContainsElement(applicationIds, remaining);
@@ -48,10 +53,10 @@ namespace ConfigServer.Configurator
             if(!configQueryResult.HasResult)
             {
                 await pageBuilder.WriteContent(configQueryResult.QueryResult.ConfigurationName, IndexContent.GetContent(routePath, appIdQueryResult.QueryResult, configs));
-                return true; //todo return false?
+                return true;
             }
 
-            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.ConfigType, new ConfigurationIdentity { ApplicationIdentity = appIdQueryResult.QueryResult });
+            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.ConfigType, new ConfigurationIdentity { ConfigSetId = appIdQueryResult.QueryResult });
 
             if (context.Request.Method.Equals("GET"))
             {
@@ -64,6 +69,25 @@ namespace ConfigServer.Configurator
                 var configResult = ConfigFormBinder.BindForm(currentConfig, context.Request.Form);
                 await configRepository.SaveChangesAsync(configResult);
                 pageBuilder.Redirect(routePath + "/" + appIdQueryResult.QueryResult);
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> HandleCreateConfigSet(HttpContext context, PathString routePath)
+        {
+            if (context.Request.Method.Equals("GET"))
+            {
+                await pageBuilder.WriteContent("Create ConfigSet", CreateConfigSetContent.GetContent());
+                return true;
+            }
+
+            if (context.Request.Method.Equals("POST"))
+            {
+                var configSetId = CreateConfigSetFormBinder.BindForm(context.Request.Form);
+                await configRepository.CreateConfigSetAsync(configSetId);
+                pageBuilder.Redirect(routePath);
                 return true;
             }
 
@@ -94,9 +118,9 @@ namespace ConfigServer.Configurator
 
             }
 
-            public static PathQueryResult<T> Success<T>(T queryResult, PathString remainingPath)
+            public static PathQueryResult<TResult> Success<TResult>(TResult queryResult, PathString remainingPath)
             {
-                return new PathQueryResult<T>
+                return new PathQueryResult<TResult>
                 {
                     HasResult = true,
                     QueryResult = queryResult,
@@ -104,9 +128,9 @@ namespace ConfigServer.Configurator
                 };
             }
 
-            public static PathQueryResult<T> Failed<T>()
+            public static PathQueryResult<TResult> Failed<TResult>()
             {
-                return new PathQueryResult<T>();
+                return new PathQueryResult<TResult>();
             }
 
             public bool HasResult { get; private set; }

@@ -8,7 +8,7 @@ namespace ConfigServer.InMemoryProvider
     {
         public static ConfigServerBuilder UseInMemoryProvider(this ConfigServerBuilder builder)
         {
-            var repo = new InMemoryRepository();
+            var repo = new InMemoryRepository(builder.ConfigurationCollection);
             builder.ServiceCollection.Add(ServiceDescriptor.Instance<IConfigRepository>(repo));
             builder.ServiceCollection.Add(ServiceDescriptor.Instance<IConfigProvider>(repo));
             return builder;

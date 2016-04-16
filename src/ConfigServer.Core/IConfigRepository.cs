@@ -9,8 +9,11 @@ namespace ConfigServer.Core
     {
         void SaveChanges(Config config);
         Task SaveChangesAsync(Config config);
-        IEnumerable<string> GetApplicationIds();
-        Task<IEnumerable<string>> GetApplicationIdsAsync();
+        IEnumerable<string> GetConfigSetIds();
+        Task<IEnumerable<string>> GetConfigSetIdsAsync();
+        void CreateConfigSet(string configSetId);
+        Task CreateConfigSetAsync(string configSetId);
+
     }
 
     public interface IConfigProvider

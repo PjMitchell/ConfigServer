@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc.ViewFeatures;
 using ConfigServer.Configurator.Templates;
 using ConfigServer.Core;
-using Microsoft.AspNet.Routing;
 
 namespace ConfigServer.Configurator
 {

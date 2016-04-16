@@ -3,38 +3,49 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ConfigServer.InMemoryProvider
 {
     public class InMemoryRepository : IConfigRepository
     {
-        private readonly Dictionary<Type, Dictionary<string, Config>> innerStore;
+        private readonly Dictionary<string, Dictionary<Type, Config>> innerStore;
+        private ConfigurationCollection configurationCollection;
 
-        public InMemoryRepository()
+        public InMemoryRepository(ConfigurationCollection configurationCollection)
         {
-            innerStore = new Dictionary<Type, Dictionary<string, Config>>();
+            this.configurationCollection = configurationCollection;
+            innerStore = new Dictionary<string, Dictionary<Type, Config>>();
         }
 
         public Config Get(Type type, ConfigurationIdentity id)
         {
-            return innerStore[type][id.ApplicationIdentity];
+            var innerDic = innerStore[id.ConfigSetId];
+            Config config;
+            if(!innerDic.TryGetValue(type, out config))
+            {
+                config = configurationCollection.Get(type).InitializeConfig();
+                config.ConfigSetId = id.ConfigSetId;
+            }
+                
+            return config;
         }
 
         public Config<TConfig> Get<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
-            return (Config<TConfig>)innerStore[typeof(TConfig)][id.ApplicationIdentity];
+            return (Config<TConfig>)Get(typeof(TConfig),id);
         }
 
 
-        public IEnumerable<string> GetApplicationIds()
+        public IEnumerable<string> GetConfigSetIds()
         {
-            return innerStore.SelectMany(s=> s.Value.Keys).Distinct().ToList();
+            return innerStore.Keys.ToList();
         }
 
-        public Task<IEnumerable<string>> GetApplicationIdsAsync()
+        public Task<IEnumerable<string>> GetConfigSetIdsAsync()
         {
             var tcs = new TaskCompletionSource<IEnumerable<string>>();
-            tcs.SetResult(GetApplicationIds());
+            tcs.SetResult(GetConfigSetIds());
             return tcs.Task;
         }
 
@@ -54,16 +65,29 @@ namespace ConfigServer.InMemoryProvider
 
         public void SaveChanges(Config config)
         {
-            if (!innerStore.ContainsKey(config.ConfigType))
-                innerStore.Add(config.ConfigType, new Dictionary<string, Config>());
-
-            innerStore[config.ConfigType][config.ApplicationIdentity] = config;
+            if (!innerStore.ContainsKey(config.ConfigSetId))
+                innerStore.Add(config.ConfigSetId, new Dictionary<Type, Config>());
+            
+            innerStore[config.ConfigSetId][config.ConfigType] = config;
         }
 
         public Task SaveChangesAsync(Config config)
         {
             var tcs = new TaskCompletionSource<bool>();
             SaveChanges(config);
+            tcs.SetResult(true);
+            return tcs.Task;
+        }
+
+        public void CreateConfigSet(string configSetId)
+        {
+            innerStore.Add(configSetId, new Dictionary<Type, Config>());
+        }
+
+        public Task CreateConfigSetAsync(string configSetId)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            CreateConfigSet(configSetId);
             tcs.SetResult(true);
             return tcs.Task;
         }
