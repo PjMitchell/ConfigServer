@@ -14,8 +14,13 @@ namespace ConfigServer.Configurator
             var configItem = existingConfig.GetConfiguration();
             foreach(var prop in existingConfig.ConfigType.GetProperties().Where(prop => prop.CanWrite))
             {
-                var val = Convert.ChangeType(collection[prop.Name].Single(), prop.PropertyType);
-                prop.SetValue(configItem, val);
+                var value = collection[prop.Name].Single();
+                object parsedValue;
+                if (typeof(Enum).IsAssignableFrom(prop.PropertyType))
+                    parsedValue = Enum.Parse(prop.PropertyType, value);
+                else
+                    parsedValue = Convert.ChangeType(value, prop.PropertyType);
+                prop.SetValue(configItem, parsedValue);
             }
             return existingConfig;
         }

@@ -12,11 +12,13 @@ namespace ConfigServer.Sample.mvc.Models
         public DateTime StartDate { get; set; }
         public decimal Decimal { get; set; }
         public bool IsLlamaFarmer { get; set; }
+        public Choice Choice { get; set;}
     }
 }
 
 public enum Choice
 {
     OptionOne =0,
-    OptionTwo =1
+    OptionTwo =1,
+    OptionThree =3
 }

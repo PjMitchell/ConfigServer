@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
@@ -39,6 +40,8 @@ namespace ConfigServer.Configurator.Templates
                 return GetInputElementForBool(value, name);
             if (type == typeof(DateTime))
                 return GetInputElementForDateTime(value, name);
+            if (typeof(Enum).IsAssignableFrom(type))
+                return GetInputElementForEnum(value, name);
             return "Could not create Editor for property";
         }
 
@@ -69,6 +72,21 @@ namespace ConfigServer.Configurator.Templates
             var t = b ? check : string.Empty;
             var f = !b ? check : string.Empty;
             return $"<input type=\"radio\" name=\"{name}\" value=\"true\" {t}>True<br><input type=\"radio\" name=\"{name}\" value=\"false\" {f}> False";
+        }
+
+        private static string GetInputElementForEnum(object value, string name)
+        {
+            var enumValue = (Enum)value;
+            const string check = "checked";
+            //var t = b ? check : string.Empty;
+            //var f = !b ? check : string.Empty;
+            var stringBuilder = new StringBuilder();
+            foreach(var option in Enum.GetNames(value.GetType()))
+            {
+                var isChecked = option == enumValue.ToString() ? check :string.Empty;
+                stringBuilder.Append($"<input type=\"radio\" name=\"{name}\" value=\"{option}\" {isChecked}> {option}");
+            }
+            return stringBuilder.ToString();
         }
 
         private static bool IsIntergerType(Type type)
