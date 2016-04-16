@@ -28,7 +28,7 @@ namespace ConfigServer.Core.Tests
                 .WithConfig<SimpleConfig>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChanges(new Config<SimpleConfig> { ApplicationIdentity = applicationId, Configuration = config });
+            configRepo.SaveChanges(new Config<SimpleConfig> { ConfigSetId = applicationId, Configuration = config });
             var configFromServer = serviceProvider.GetService<SimpleConfig>();
             Assert.Equal(config.IntProperty, configFromServer.IntProperty);
 

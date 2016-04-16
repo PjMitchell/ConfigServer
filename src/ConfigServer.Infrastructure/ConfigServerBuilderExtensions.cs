@@ -17,7 +17,7 @@ namespace ConfigServer.Infrastructure
         public static ConfigServerBuilder WithConfig<TConfig>(this ConfigServerBuilder source) where TConfig : class, new()
         {
             source.ServiceCollection.Add(ServiceDescriptor.Transient(r => r.GetService<IConfigServer>().BuildConfig<TConfig>()));
-            source.ConfigurationCollection.AddRegistration(new ConfigurationRegistration(typeof(TConfig)));
+            source.ConfigurationCollection.AddRegistration(ConfigurationRegistration.Build<TConfig>());
             return source;
         }
 

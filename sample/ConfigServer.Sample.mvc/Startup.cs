@@ -17,7 +17,7 @@ namespace ConfigServer.Sample.mvc
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup()
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
@@ -48,7 +48,7 @@ namespace ConfigServer.Sample.mvc
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChanges(new Config<SampleConfig> { ApplicationIdentity = applicationId, Configuration = config });
+            configRepo.SaveChanges(new Config<SampleConfig> { ConfigSetId = applicationId, Configuration = config });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

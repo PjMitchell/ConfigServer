@@ -10,7 +10,7 @@ namespace ConfigServer.Core
         }
 
         public string Name { get; }
-        public string ApplicationIdentity { get; set; }
+        public string ConfigSetId { get; set; }
         public abstract object GetConfiguration();
         public abstract void SetConfiguration(object value);
         public abstract Type ConfigType { get; }
@@ -19,8 +19,10 @@ namespace ConfigServer.Core
 
     public class Config<TConfig> : Config where TConfig : class, new()
     {
-        public Config() : base(typeof(TConfig).Name) {}
-        public Config(string name) : base(name) { }
+        public Config() : base(typeof(TConfig).Name)
+        {
+            Configuration = new TConfig();
+        }
 
         public override Type ConfigType => typeof(TConfig);
         
@@ -29,5 +31,6 @@ namespace ConfigServer.Core
         public override object GetConfiguration() => Configuration;
 
         public override void SetConfiguration(object value) => Configuration = (TConfig)value;
+
     }
 }

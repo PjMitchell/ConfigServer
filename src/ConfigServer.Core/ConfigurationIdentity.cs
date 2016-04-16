@@ -2,6 +2,6 @@
 {
     public class ConfigurationIdentity
     {
-        public string ApplicationIdentity { get; set; }
+        public string ConfigSetId { get; set; }
     }
 }
