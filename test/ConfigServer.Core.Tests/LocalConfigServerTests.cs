@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests
         {
             var configurationCollection = new ConfigurationCollection();
             configurationCollection.AddRegistration(ConfigurationRegistration.Build<SimpleConfig>());
-            repository = new InMemoryRepository(configurationCollection);
+            repository = new InMemoryRepository();
             
         }
 

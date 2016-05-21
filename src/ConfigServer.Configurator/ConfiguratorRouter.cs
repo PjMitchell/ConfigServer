@@ -11,9 +11,9 @@ namespace ConfigServer.Configurator
     public class ConfiguratorRouter
     {
         private readonly IConfigRepository configRepository;
-        private readonly ConfigurationCollection configCollection;
+        private readonly ConfigurationSetCollection configCollection;
         private readonly PageBuilder pageBuilder;
-        public ConfiguratorRouter(IConfigRepository configRepository, ConfigurationCollection configCollection, PageBuilder pageBuilder)
+        public ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetCollection configCollection, PageBuilder pageBuilder)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;
@@ -42,25 +42,30 @@ namespace ConfigServer.Configurator
             var appIdQueryResult = ContainsElement(applicationIds, remaining);
             if (!appIdQueryResult.HasResult)
                 return false;
-            var configs = configCollection.ToList();
+            var appId = appIdQueryResult.QueryResult;
+            var configs = configCollection;
             if(string.IsNullOrEmpty(appIdQueryResult.RemainingPath))
             {
-                await pageBuilder.WriteContent("Index", IndexContent.GetContent(routePath, appIdQueryResult.QueryResult, configs));
-                return true;
+                await pageBuilder.WriteContent("Index", IndexContent.GetContent(routePath, appId, configs));
+                return true; //Lists ConfigSet
             }
             
-            var configQueryResult = ContainsElement(configs,s=> s.ConfigurationName, appIdQueryResult.RemainingPath);
-            if(!configQueryResult.HasResult)
+            var configSetQueryResult = ContainsElement(configs,s=> s.ConfigSetType.Name, appIdQueryResult.RemainingPath);
+            if (!configSetQueryResult.HasResult)
+                return false;
+            var configSetDefinition = configSetQueryResult.QueryResult;
+            var configQueryResult = ContainsElement(configSetQueryResult.QueryResult.Configs, s => s.Type.Name, configSetQueryResult.RemainingPath);
+            if (!configQueryResult.HasResult)
             {
-                await pageBuilder.WriteContent(configQueryResult.QueryResult.ConfigurationName, IndexContent.GetContent(routePath, appIdQueryResult.QueryResult, configs));
-                return true;
+                await pageBuilder.WriteContent(configSetQueryResult.QueryResult.ConfigSetType.Name, IndexContent.GetContent(routePath, appId, configSetDefinition));
+                return true; //Lists ConfigSet Configs
             }
 
-            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.ConfigType, new ConfigurationIdentity { ConfigSetId = appIdQueryResult.QueryResult });
+            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.Type, new ConfigurationIdentity { ConfigSetId = appIdQueryResult.QueryResult });
 
             if (context.Request.Method.Equals("GET"))
             {
-                await pageBuilder.WriteContent(configQueryResult.QueryResult.ConfigurationName, EditorContent.GetContent(currentConfig));
+                await pageBuilder.WriteContent(configQueryResult.QueryResult.Type.Name, EditorContent.GetContent(currentConfig, configQueryResult.QueryResult));
                 return true; 
             }
 

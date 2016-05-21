@@ -14,7 +14,8 @@
                 "System.Collections": "4.0.11-beta-23516",
                 "System.Linq": "4.0.1-beta-23516",
                 "System.Runtime": "4.0.21-beta-23516",
-                "System.Threading": "4.0.11-beta-23516"
+                "System.Threading": "4.0.11-beta-23516",
+                "System.Reflection.Extensions": "4.0.0"
             }
         },
         "dnxcore50": {
@@ -23,7 +24,8 @@
                 "System.Collections": "4.0.11-beta-23516",
                 "System.Linq": "4.0.1-beta-23516",
                 "System.Runtime": "4.0.21-beta-23516",
-                "System.Threading": "4.0.11-beta-23516"
+                "System.Threading": "4.0.11-beta-23516",
+                "System.Reflection.Extensions": "4.0.0"
             }
         }
     }

@@ -8,12 +8,12 @@ namespace ConfigServer.Configurator.Templates
 {
     public static class EditorContent
     {
-        public static string GetContent(Config config)
+        public static string GetContent(Config config, ConfigurationModelDefinition modelDefinition)
         {
             var configItem = config.GetConfiguration();
             var editFields = config.ConfigType.GetProperties()
                 .Where(prop => prop.CanWrite)
-                .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType, prop.Name));
+                .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType,modelDefinition.GetPropertyDefinition(prop.Name)));
             return $@"
             <h3>Edit {config.ConfigSetId} - {config.Name}</h3>
             <form method=""post"">
@@ -22,9 +22,12 @@ namespace ConfigServer.Configurator.Templates
             </form>";
         }
 
-        private static string GetEditField(object value,Type type, string name)
+        private static string GetEditField(object value,Type type, ConfigurationPropertyDefinition definition)
         {
-            return  $"{name}:<br>{GetInputElement(value, type, name)}<br>";
+            var description = string.IsNullOrWhiteSpace(definition.PropertyDescription) 
+                ? string.Empty 
+                : $"<br>{definition.PropertyDescription}";
+            return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition.ConfigurationPropertyName)}<br>";
         }
 
         private static string GetInputElement(object value, Type type, string name)

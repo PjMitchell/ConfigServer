@@ -20,7 +20,7 @@ namespace ConfigServer.Configurator
         }
         public async Task Setup(HttpContext context, Func<Task> next)
         {
-            var router = new ConfiguratorRouter((IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)),(ConfigurationCollection)serviceProvider.GetService(typeof(ConfigurationCollection)), new PageBuilder(context));
+            var router = new ConfiguratorRouter((IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)),(ConfigurationSetCollection)serviceProvider.GetService(typeof(ConfigurationSetCollection)), new PageBuilder(context));
             var result = await router.HandleRequest(context, path);
             if (!result)
                 await next.Invoke();
