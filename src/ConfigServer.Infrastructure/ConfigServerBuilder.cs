@@ -9,16 +9,16 @@ namespace ConfigServer.Infrastructure
 {
     public class ConfigServerBuilder
     {
-        public ConfigServerBuilder(IServiceCollection serviceCollection, ConfigurationCollection configurationCollection)
+        public ConfigServerBuilder(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection;
-            ConfigurationCollection = configurationCollection;
-            ServiceCollection.AddInstance(configurationCollection);
+            ConfigurationSetCollection = new ConfigurationSetCollection();
+            ServiceCollection.AddInstance(ConfigurationSetCollection);
         }
 
         public IServiceCollection ServiceCollection { get; }
 
-        public ConfigurationCollection ConfigurationCollection { get; }
+        public ConfigurationSetCollection ConfigurationSetCollection { get; }
 
     }
 }

@@ -35,6 +35,7 @@ namespace ConfigServer.Sample.mvc
             // Add framework services.
             services.AddMvc();
             services.UseConfigServer()
+                .UseConfigSet<SampleConfigSet>()
                 .UseInMemoryProvider()
                 .UseLocalConfigServer(applicationId)
                 .WithConfig<SampleConfig>();

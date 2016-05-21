@@ -31,7 +31,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.SaveChanges(config);
             var result = inMemoryProvider.Get<SimpleConfig>(configId);
             Assert.Equal(testValue, result.Configuration.IntProperty);
@@ -50,7 +50,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             await inMemoryProvider.SaveChangesAsync(config);
             var result = await inMemoryProvider.GetAsync<SimpleConfig>(configId);
             Assert.Equal(testValue, result.Configuration.IntProperty);
@@ -69,7 +69,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.SaveChanges(config);
             var result = (Config<SimpleConfig>)inMemoryProvider.Get(typeof(SimpleConfig),configId);
             Assert.Equal(testValue, result.Configuration.IntProperty);
@@ -88,7 +88,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.SaveChanges(config);
             var result = inMemoryProvider.GetConfigSetIds().ToList();
             Assert.Equal(1, result.Count);
@@ -108,7 +108,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.SaveChanges(config);
             var result =(await inMemoryProvider.GetConfigSetIdsAsync()).ToList();
             Assert.Equal(1, result.Count);
@@ -120,7 +120,7 @@ namespace ConfigServer.Core.Tests
         {
             var configSet = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.CreateConfigSet(configSet);
             var result = inMemoryProvider.GetConfigSetIds().ToList();
             Assert.Equal(1, result.Count);
@@ -132,7 +132,7 @@ namespace ConfigServer.Core.Tests
         {
             var configSet = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
 
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             await inMemoryProvider.CreateConfigSetAsync(configSet);
             var result = inMemoryProvider.GetConfigSetIds().ToList();
             Assert.Equal(1, result.Count);
@@ -153,7 +153,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.CreateConfigSet(configSet);
             var result = await inMemoryProvider.GetAsync<SimpleConfig>(configId);
             Assert.NotNull(result);
@@ -175,7 +175,7 @@ namespace ConfigServer.Core.Tests
                 ConfigSetId = configId.ConfigSetId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-            var inMemoryProvider = new InMemoryRepository(configurationCollection);
+            var inMemoryProvider = new InMemoryRepository();
             inMemoryProvider.CreateConfigSet(configSet);
             var result = inMemoryProvider.Get<SimpleConfig>(configId);
             Assert.NotNull(result);

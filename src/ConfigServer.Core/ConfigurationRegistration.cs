@@ -12,16 +12,15 @@ namespace ConfigServer.Core
             return new ConfigurationRegistration(typeof(TConfig), initializer);
         }
 
-        private ConfigurationRegistration(Type type, Func<Config> initializer) :this(type, type.Name, initializer) { }
-
-        private ConfigurationRegistration(Type type, string configurationName, Func<Config> initializer)
+        private ConfigurationRegistration(Type type, Func<Config> initializer)
         {
-            ConfigurationName = configurationName;
+            ConfigurationName = type.Name;
             ConfigType = type;
             this.initializer = initializer;
         }
 
         public string ConfigurationName { get; }
+        public ConfigurationModelDefinition ModelDefinition { get; }
         public Type ConfigType { get; }
 
         public Config InitializeConfig()

@@ -10,11 +10,10 @@ namespace ConfigServer.InMemoryProvider
     public class InMemoryRepository : IConfigRepository
     {
         private readonly Dictionary<string, Dictionary<Type, Config>> innerStore;
-        private ConfigurationCollection configurationCollection;
+        
 
-        public InMemoryRepository(ConfigurationCollection configurationCollection)
+        public InMemoryRepository()
         {
-            this.configurationCollection = configurationCollection;
             innerStore = new Dictionary<string, Dictionary<Type, Config>>();
         }
 
@@ -24,7 +23,7 @@ namespace ConfigServer.InMemoryProvider
             Config config;
             if(!innerDic.TryGetValue(type, out config))
             {
-                config = configurationCollection.Get(type).InitializeConfig();
+                config = CreateInstance(type);
                 config.ConfigSetId = id.ConfigSetId;
             }
                 
@@ -90,6 +89,14 @@ namespace ConfigServer.InMemoryProvider
             CreateConfigSet(configSetId);
             tcs.SetResult(true);
             return tcs.Task;
+        }
+
+        private Config CreateInstance(Type type)
+        {
+            var config = typeof(Config<>);
+            Type[] typeArgs = { type };
+            var configType = config.MakeGenericType(typeArgs);
+            return (Config)Activator.CreateInstance(configType);
         }
     }
 }
