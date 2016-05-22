@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNet.Http;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ConfigServer.Configurator
 {

@@ -1,10 +1,11 @@
 ﻿using ConfigServer.Configurator.Templates;
-using Microsoft.AspNet.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConfigServer.Core;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Configurator
 {

@@ -13,7 +13,7 @@ namespace ConfigServer.Infrastructure
         {
             ServiceCollection = serviceCollection;
             ConfigurationCollection = configurationCollection;
-            ServiceCollection.AddInstance(configurationCollection);
+            ServiceCollection.AddSingleton(configurationCollection);
         }
 
         public IServiceCollection ServiceCollection { get; }
