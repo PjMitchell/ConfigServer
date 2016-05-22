@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,10 +17,11 @@ namespace ConfigServer.Sample.mvc
 {
     public class Startup
     {
-        public Startup()
+        public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -67,8 +68,7 @@ namespace ConfigServer.Sample.mvc
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-            app.UseIISPlatformHandler();
+            
 
             app.UseStaticFiles();
             app.UseConfigServerConfigurator();
@@ -80,7 +80,5 @@ namespace ConfigServer.Sample.mvc
             });
         }
 
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

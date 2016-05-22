@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNet.Http;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ConfigServer.Core;
 
 namespace ConfigServer.Configurator.Templates
