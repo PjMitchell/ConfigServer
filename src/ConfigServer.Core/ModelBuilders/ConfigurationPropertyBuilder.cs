@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ConfigServer.Core
 {
@@ -30,6 +27,7 @@ namespace ConfigServer.Core
     public class ConfigurationIntergerPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationIntergerPropertyBuilder>
     {
         public ConfigurationIntergerPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
+
         public ConfigurationIntergerPropertyBuilder WithMaxValue(long value)
         {
             definition.ValidationRules.Max = value;
@@ -38,7 +36,7 @@ namespace ConfigServer.Core
 
         public ConfigurationIntergerPropertyBuilder WithMinValue(long value)
         {
-            definition.ValidationRules.Max = value;
+            definition.ValidationRules.Min = value;
             return this;
         }        
     }
@@ -47,12 +45,35 @@ namespace ConfigServer.Core
     {
         public ConfigurationFloatPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
 
+        public ConfigurationFloatPropertyBuilder WithMaxValue(double value)
+        {
+            definition.ValidationRules.Max = value;
+            return this;
+        }
+
+        public ConfigurationFloatPropertyBuilder WithMinValue(double value)
+        {
+            definition.ValidationRules.Min = value;
+            return this;
+        }
+
     }
 
     public class ConfigurationStringPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationStringPropertyBuilder>
     {
         public ConfigurationStringPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
 
+        public ConfigurationStringPropertyBuilder WithMaxLength(int value)
+        {
+            definition.ValidationRules.MaxLength = value;
+            return this;
+        }
+
+        public ConfigurationStringPropertyBuilder WithPattern(string value)
+        {
+            definition.ValidationRules.Pattern = value;
+            return this;
+        }
     }
 
     public class ConfigurationBoolPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationBoolPropertyBuilder>
@@ -71,6 +92,17 @@ namespace ConfigServer.Core
     {
         public ConfigurationDateTimePropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
 
+        public ConfigurationDateTimePropertyBuilder WithMaxValue(DateTime value)
+        {
+            definition.ValidationRules.Max = value;
+            return this;
+        }
+
+        public ConfigurationDateTimePropertyBuilder WithMinValue(DateTime value)
+        {
+            definition.ValidationRules.Min = value;
+            return this;
+        }
     }
 
     public class ConfigurationModelPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationModelPropertyBuilder>
