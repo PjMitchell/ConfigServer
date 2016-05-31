@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using System;
 using System.Text;
 
 namespace ConfigServer.Configurator.Templates
@@ -14,10 +15,15 @@ namespace ConfigServer.Configurator.Templates
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.Min != null)
-                builder.Append($"min=\"{definition.ValidationRules.Min}\" ");
+                builder.Append($"min=\"{GetDateString(definition.ValidationRules.Min)}\" ");
             if (definition.ValidationRules.Max != null)
-                builder.Append($"max=\"{definition.ValidationRules.Max}\" ");
+                builder.Append($"max=\"{GetDateString(definition.ValidationRules.Max)}\" ");
             return builder.ToString();
+        }
+
+        private static string GetDateString(object value)
+        {
+            return ((DateTime)value).ToString("yyyy-MM-dd");
         }
     }
 }
