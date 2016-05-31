@@ -27,44 +27,24 @@ namespace ConfigServer.Configurator.Templates
             var description = string.IsNullOrWhiteSpace(definition.PropertyDescription) 
                 ? string.Empty 
                 : $"<br>{definition.PropertyDescription}";
-            return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition.ConfigurationPropertyName)}<br>";
+            return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition)}<br>";
         }
 
-        private static string GetInputElement(object value, Type type, string name)
+        private static string GetInputElement(object value, Type type, ConfigurationPropertyDefinition definition)
         {
             if(IsIntergerType(type))
-                return GetInputElementForInterger(value, name);
+                return IntergerInputTemplate.Build(value, definition);
             if(IsFloatType(type))
-                return GetInputElementForFloat(value, name);
+                return FloatInputTemplate.Build(value, definition);
             if (type == typeof(string))
-                return GetInputElementForString(value, name);
+                return StringInputTemplate.Build(value, definition);
             if (type == typeof(bool))
-                return GetInputElementForBool(value, name);
+                return GetInputElementForBool(value, definition.ConfigurationPropertyName);
             if (type == typeof(DateTime))
-                return GetInputElementForDateTime(value, name);
+                return DateTimeInputTemplate.Build(value, definition);
             if (typeof(Enum).IsAssignableFrom(type))
-                return GetInputElementForEnum(value, name);
+                return GetInputElementForEnum(value, definition.ConfigurationPropertyName);
             return "Could not create Editor for property";
-        }
-
-        private static string GetInputElementForInterger(object value, string name)
-        {
-            return $"<input type=\"number\" name=\"{name}\" value=\"{value}\">";
-        }
-
-        private static string GetInputElementForFloat(object value, string name)
-        {
-            return $"<input type=\"number\" name=\"{name}\" value=\"{value}\" step=\"0.00001\">";
-        }
-
-        private static string GetInputElementForString(object value, string name)
-        {
-            return $"<input type=\"text\" name=\"{name}\" value=\"{value}\">";
-        }
-
-        private static string GetInputElementForDateTime(object value, string name)
-        {
-            return $"<input type=\"datetime\" name=\"{name}\" value=\"{value}\">";
         }
 
         private static string GetInputElementForBool(object value, string name)

@@ -28,17 +28,4 @@ namespace ConfigServer.Core
         }
     }
 
-    public class ConfigurationPropertyDefinition
-    {
-        public ConfigurationPropertyDefinition(string propertyName)
-        {
-            ConfigurationPropertyName = propertyName;
-            PropertyDisplayName = propertyName;
-        }
-
-        public string ConfigurationPropertyName { get; }
-        public string PropertyDisplayName { get; set; }
-        public string PropertyDescription { get; set; }
-
-    }
 }
