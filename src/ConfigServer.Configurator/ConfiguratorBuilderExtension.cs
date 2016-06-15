@@ -7,8 +7,7 @@ namespace ConfigServer.Configurator
     {
         public static IApplicationBuilder UseConfigServerConfigurator(this IApplicationBuilder app, string path)
         {
-            var configurator = new ConfigServerConfigurator(path, app.ApplicationServices);
-            app.Use(configurator.Setup);
+            app.Use((context, next) => ConfigServerConfigurator.Setup(path, context, next));
             return app;
         }
 

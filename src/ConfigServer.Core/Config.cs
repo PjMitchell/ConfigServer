@@ -24,6 +24,11 @@ namespace ConfigServer.Core
             Configuration = new TConfig();
         }
 
+        public Config(TConfig config) : base(typeof(TConfig).Name)
+        {
+            Configuration = config;
+        }
+
         public override Type ConfigType => typeof(TConfig);
         
         public TConfig Configuration { get; set; }

@@ -12,6 +12,8 @@ using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Configurator;
+using ConfigServer.Core.Hosting;
+
 
 namespace ConfigServer.Sample.mvc
 {
@@ -38,7 +40,7 @@ namespace ConfigServer.Sample.mvc
             services.UseConfigServer()
                 .UseConfigSet<SampleConfigSet>()
                 .UseInMemoryProvider()
-                .UseLocalConfigServer(applicationId)
+                .UseLocalConfigServerClient(applicationId)
                 .WithConfig<SampleConfig>();
             var config = new SampleConfig
             {
@@ -71,6 +73,7 @@ namespace ConfigServer.Sample.mvc
             
 
             app.UseStaticFiles();
+            app.Map("/Config", configSrv => configSrv.UseConfigServer());
             app.UseConfigServerConfigurator();
             app.UseMvc(routes =>
             {

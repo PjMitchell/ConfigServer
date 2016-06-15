@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ConfigServer.Core;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
+using ConfigServer.Core.Hosting;
 
 namespace ConfigServer.Configurator
 {
@@ -51,11 +52,11 @@ namespace ConfigServer.Configurator
                 return true; //Lists ConfigSet
             }
             
-            var configSetQueryResult = ContainsElement(configs,s=> s.ConfigSetType.Name, appIdQueryResult.RemainingPath);
+            var configSetQueryResult = configs.TryMatchPath(s=> s.ConfigSetType.Name, appIdQueryResult.RemainingPath);
             if (!configSetQueryResult.HasResult)
                 return false;
             var configSetDefinition = configSetQueryResult.QueryResult;
-            var configQueryResult = ContainsElement(configSetQueryResult.QueryResult.Configs, s => s.Type.Name, configSetQueryResult.RemainingPath);
+            var configQueryResult = configSetQueryResult.QueryResult.Configs.TryMatchPath(s => s.Type.Name, configSetQueryResult.RemainingPath);
             if (!configQueryResult.HasResult)
             {
                 await pageBuilder.WriteContent(configSetQueryResult.QueryResult.ConfigSetType.Name, IndexContent.GetContent(routePath, appId, configSetDefinition));
@@ -100,49 +101,11 @@ namespace ConfigServer.Configurator
             return false;
         }
 
-        private PathQueryResult<T> ContainsElement<T>(IEnumerable<T>paths,Func<T,string> selector,  PathString pathToQuery)
-        {
-            foreach(var path in paths)
-            {
-                var queryPath = $"/{selector(path)}";
-                PathString remainingPath;
-                if (pathToQuery.StartsWithSegments(queryPath, out remainingPath))
-                    return PathQueryResult<T>.Success(path, remainingPath);             
-            }
-            return PathQueryResult<T>.Failed<T>();
-        }
-
         private PathQueryResult<string> ContainsElement(IEnumerable<string> paths, PathString pathToQuery)
         {
-            return ContainsElement<string>(paths, r => r, pathToQuery);
+            return paths.TryMatchPath(r => r, pathToQuery);
         }
 
-        private class PathQueryResult<T>
-        {
-            private PathQueryResult()
-            {
-
-            }
-
-            public static PathQueryResult<TResult> Success<TResult>(TResult queryResult, PathString remainingPath)
-            {
-                return new PathQueryResult<TResult>
-                {
-                    HasResult = true,
-                    QueryResult = queryResult,
-                    RemainingPath = remainingPath
-                };
-            }
-
-            public static PathQueryResult<TResult> Failed<TResult>()
-            {
-                return new PathQueryResult<TResult>();
-            }
-
-            public bool HasResult { get; private set; }
-            public T QueryResult { get; private set; }
-            public PathString RemainingPath { get; private set; }
-        }
-
+       
     }
 }
