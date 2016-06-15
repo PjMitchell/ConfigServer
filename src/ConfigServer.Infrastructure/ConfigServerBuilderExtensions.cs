@@ -1,12 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ConfigServer.Core;
+using ConfigServer.Core.Hosting;
+
 namespace ConfigServer.Infrastructure
 {
     public static class ConfigServerBuilderExtensions
     {
         public static ConfigServerBuilder UseConfigServer(this IServiceCollection source)
         {
-            var configurationCollection = new ConfigurationCollection();
+            source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
+            return new ConfigServerBuilder(source);
+        }
+
+        public static ConfigServerBuilder UseLocalConfigServer(this IServiceCollection source)
+        {
             return new ConfigServerBuilder(source);
         }
 
@@ -18,7 +25,7 @@ namespace ConfigServer.Infrastructure
             return source;
         }
 
-        public static ConfigServerClientBuilder UseLocalConfigServer(this ConfigServerBuilder source, string applicationId)
+        public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, string applicationId)
         {
             var configurationCollection = new ConfigurationCollection();
             var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
