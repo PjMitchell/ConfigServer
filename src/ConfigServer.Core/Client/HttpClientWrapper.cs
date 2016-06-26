@@ -16,11 +16,11 @@ namespace ConfigServer.Core.Client
             return GetAsync(uri).Result;
         }
 
-        public Task<HttpResponseMessage> GetAsync(Uri uri)
+        public async Task<HttpResponseMessage> GetAsync(Uri uri)
         {
             using (var httpClient = new HttpClient())
             {
-                return httpClient.GetAsync(uri);
+                return await httpClient.GetAsync(uri);                
             }
         }
     }

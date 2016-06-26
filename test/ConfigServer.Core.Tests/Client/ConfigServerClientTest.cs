@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests.Client
             collection.AddRegistration(ConfigurationRegistration.Build<SimpleConfig>());
             options = new ConfigServerClientOptions();
             options.ApplicationId = "1234-5678-1234";
-            options.ConfigServer = "https://test.com";
+            options.ConfigServer = "https://test.com/Config";
 
             clientWrapper = new Mock<IHttpClientWrapper>();
             target = new ConfigServerClient(clientWrapper.Object, collection, options);
@@ -110,7 +110,7 @@ namespace ConfigServer.Core.Tests.Client
 
         private bool Check(Uri uri)
         {
-            var expectedUri = new Uri(new Uri(options.ConfigServer), $"{options.ApplicationId}/{typeof(SimpleConfig).Name}");
+            var expectedUri = new Uri($"{options.ConfigServer}/{options.ApplicationId}/{typeof(SimpleConfig).Name}");
             var result = uri.Equals(expectedUri);
             return result;
         }

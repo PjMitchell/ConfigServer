@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ConfigServer.Core;
 using ConfigServer.Core.Hosting;
+using ConfigServer.Core.Client;
 
 namespace ConfigServer.Infrastructure
 {
@@ -30,6 +31,15 @@ namespace ConfigServer.Infrastructure
             var configurationCollection = new ConfigurationCollection();
             var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
             source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(),applicationId)));
+            return builder;
+        }
+
+        public static ConfigServerClientBuilder UseConfigServerClient(this IServiceCollection source, ConfigServerClientOptions options)
+        {
+            var configurationCollection = new ConfigurationCollection();
+            var builder = new ConfigServerClientBuilder(source, configurationCollection);
+            source.Add(ServiceDescriptor.Transient<IHttpClientWrapper>(r => new HttpClientWrapper()));
+            source.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new ConfigServerClient(r.GetService<IHttpClientWrapper>(), r.GetService<ConfigurationCollection>(), options)));
             return builder;
         }
 

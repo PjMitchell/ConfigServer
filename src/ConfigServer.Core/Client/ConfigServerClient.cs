@@ -51,8 +51,7 @@ namespace ConfigServer.Core
 
         private Uri GetUri(string configName)
         {
-            var baseUri = new Uri(options.ConfigServer);
-            return new Uri(baseUri, $"{options.ApplicationId}/{configName}");
+            return new Uri($"{options.ConfigServer}/{options.ApplicationId}/{configName}");
         }
 
         private void ThrowIfConfigNotRegistered(Type type)

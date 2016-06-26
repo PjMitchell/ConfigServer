@@ -35,6 +35,7 @@ namespace ConfigServer.Sample.mvc
         public void ConfigureServices(IServiceCollection services)
         {
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
+            var application2Id = "6A302E7D-05E9-4188-9612-4A2920E5C1AE";
             // Add framework services.
             services.AddMvc();
             services.UseConfigServer()
@@ -50,9 +51,19 @@ namespace ConfigServer.Sample.mvc
                 StartDate = new DateTime(2013,10,10),
                 IsLlamaFarmer = false
             };
+            var config2 = new SampleConfig
+            {
+                LlamaCapacity = 41,
+                Name = "Name 2",
+                Decimal = 41.47m,
+                StartDate = new DateTime(2013, 11, 11),
+                IsLlamaFarmer = true
+            };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
             configRepo.SaveChanges(new Config<SampleConfig> { ConfigSetId = applicationId, Configuration = config });
+            configRepo.SaveChanges(new Config<SampleConfig> { ConfigSetId = application2Id, Configuration = config2 });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
