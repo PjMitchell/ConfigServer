@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModelDefinition_PropertyWithMaxValueValidation()
         {
-            DateTime max = new DateTime(2013, 10,10);
+            var max = new DateTime(2013, 10,10);
             target.Property(x => x.DateTimeProperty)
                 .WithMaxValue(max);
             var result = target.Build();
@@ -63,7 +63,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModelDefinition_PropertyWithMinValueValidation()
         {
-            DateTime min = new DateTime(2013, 10, 10);
+            var min = new DateTime(2013, 10, 10);
             target.Property(x => x.DateTimeProperty)
                 .WithMinValue(min);
             var result = target.Build();

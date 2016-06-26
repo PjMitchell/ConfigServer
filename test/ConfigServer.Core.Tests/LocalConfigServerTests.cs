@@ -25,7 +25,7 @@ namespace ConfigServer.Core.Tests
         {
             var expected = 23;
             repository.SaveChanges(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
-            var localServer = new LocalConfigServer(repository,configSetId);
+            var localServer = new LocalConfigServerClient(repository,configSetId);
             var config = localServer.BuildConfig<SimpleConfig>();
             Assert.Equal(expected, config.IntProperty);
         }
@@ -35,7 +35,7 @@ namespace ConfigServer.Core.Tests
         {
             var expected = 23;
             repository.SaveChanges(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
-            var localServer = new LocalConfigServer(repository, configSetId);
+            var localServer = new LocalConfigServerClient(repository, configSetId);
             var config = (SimpleConfig)localServer.BuildConfig(typeof(SimpleConfig));
             Assert.Equal(expected, config.IntProperty);
         }

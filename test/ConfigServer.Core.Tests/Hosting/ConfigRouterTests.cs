@@ -9,12 +9,12 @@ namespace ConfigServer.Core.Tests.Hosting
 {
     public class ConfigRouterTests
     {
-        private ConfigRouter target;
-        private Mock<IConfigRepository> repository;
-        private Mock<IConfigHttpResponseFactory> responseFactory;
-        private ConfigurationSetCollection configSetConfig;
-        private List<string> configSetIds;
-        private Config<SimpleConfig> defaultConfig;
+        private readonly ConfigRouter target;
+        private readonly Mock<IConfigRepository> repository;
+        private readonly Mock<IConfigHttpResponseFactory> responseFactory;
+        private readonly ConfigurationSetCollection configSetConfig;
+        private readonly List<string> configSetIds;
+        private readonly Config<SimpleConfig> defaultConfig;
 
         public ConfigRouterTests()
         {
