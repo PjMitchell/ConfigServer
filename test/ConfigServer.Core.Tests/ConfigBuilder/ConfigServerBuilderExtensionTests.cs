@@ -3,6 +3,7 @@ using System.Linq;
 using ConfigServer.InMemoryProvider;
 using ConfigServer.Infrastructure;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace ConfigServer.Core.Tests
 {
@@ -16,7 +17,7 @@ namespace ConfigServer.Core.Tests
         }
 
         [Fact]
-        public void CanSetUpSimpleInMemoryConfig()
+        public async Task CanSetUpSimpleInMemoryConfig()
         {
             var config = new SimpleConfig { IntProperty = 23 };
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
@@ -26,7 +27,7 @@ namespace ConfigServer.Core.Tests
                 .WithConfig<SimpleConfig>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChanges(new Config<SimpleConfig> { ConfigSetId = applicationId, Configuration = config });
+            await configRepo.SaveChangesAsync(new Config<SimpleConfig> { ConfigSetId = applicationId, Configuration = config });
             var configFromServer = serviceProvider.GetService<SimpleConfig>();
             Assert.Equal(config.IntProperty, configFromServer.IntProperty);
 
