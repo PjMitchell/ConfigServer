@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ConfigServer.Core
@@ -15,24 +13,16 @@ namespace ConfigServer.Core
             this.applicationId = new ConfigurationIdentity { ConfigSetId = applicationId };
         }
 
-        public TConfig BuildConfig<TConfig>() where TConfig : class, new()
+        public async Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new()
         {
-            return configProvider.Get<TConfig>(applicationId).Configuration;
+            var config = await configProvider.GetAsync<TConfig>(applicationId);
+            return config.Configuration;
         }
 
-        public object BuildConfig(Type type)
+        public async Task<object> BuildConfigAsync(Type type)
         {
-            return configProvider.Get(type, applicationId).GetConfiguration();
-        }
-
-        public Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new()
-        {
-            return Task.FromResult(BuildConfig<TConfig>());
-        }
-
-        public Task<object> BuildConfigAsync(Type type)
-        {
-            return Task.FromResult(BuildConfig(type));
+            var config = await configProvider.GetAsync(type,applicationId);
+            return config.GetConfiguration();
         }
     }
 }

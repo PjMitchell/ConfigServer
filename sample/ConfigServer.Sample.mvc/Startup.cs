@@ -61,8 +61,8 @@ namespace ConfigServer.Sample.mvc
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChanges(new Config<SampleConfig> { ConfigSetId = applicationId, Configuration = config });
-            configRepo.SaveChanges(new Config<SampleConfig> { ConfigSetId = application2Id, Configuration = config2 });
+            configRepo.SaveChangesAsync(new Config<SampleConfig> { ConfigSetId = applicationId, Configuration = config }).Wait();
+            configRepo.SaveChangesAsync(new Config<SampleConfig> { ConfigSetId = application2Id, Configuration = config2 }).Wait();
 
         }
 

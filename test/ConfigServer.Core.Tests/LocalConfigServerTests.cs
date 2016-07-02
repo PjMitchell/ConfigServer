@@ -21,23 +21,24 @@ namespace ConfigServer.Core.Tests
         }
 
         [Fact]
-        public void CanGetConfig()
+        public async Task CanGetConfig()
         {
             var expected = 23;
-            repository.SaveChanges(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
+            await repository.SaveChangesAsync(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
             var localServer = new LocalConfigServerClient(repository,configSetId);
-            var config = localServer.BuildConfig<SimpleConfig>();
+            var config =await localServer.BuildConfigAsync<SimpleConfig>();
             Assert.Equal(expected, config.IntProperty);
         }
 
         [Fact]
-        public void CanGetConfig_ByType()
+        public async Task CanGetConfig_ByType()
         {
             var expected = 23;
-            repository.SaveChanges(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
+            await repository.SaveChangesAsync(new Config<SimpleConfig> { ConfigSetId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
             var localServer = new LocalConfigServerClient(repository, configSetId);
-            var config = (SimpleConfig)localServer.BuildConfig(typeof(SimpleConfig));
-            Assert.Equal(expected, config.IntProperty);
+            var config = await localServer.BuildConfigAsync(typeof(SimpleConfig));
+            var castedConfig = (SimpleConfig)config;
+            Assert.Equal(expected, castedConfig.IntProperty);
         }
     }
 }

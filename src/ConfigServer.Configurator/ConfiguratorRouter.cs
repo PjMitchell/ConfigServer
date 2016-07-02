@@ -28,7 +28,7 @@ namespace ConfigServer.Configurator
             if (!context.Request.Path.StartsWithSegments(routePath, out remaining))
                 return false;
             
-            var applicationIds = configRepository.GetConfigSetIds();
+            var applicationIds = await configRepository.GetConfigSetIdsAsync();
 
             if (string.IsNullOrWhiteSpace(remaining))
             {

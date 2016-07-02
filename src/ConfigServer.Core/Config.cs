@@ -15,6 +15,15 @@ namespace ConfigServer.Core
         public abstract void SetConfiguration(object value);
         public abstract Type ConfigType { get; }
 
+        public static Config CreateInstance(Type type, string configSetId = "")
+        {
+            var config = typeof(Config<>);
+            Type[] typeArgs = { type };
+            var configType = config.MakeGenericType(typeArgs);
+            var result = (Config)Activator.CreateInstance(configType);
+            result.ConfigSetId = configSetId;
+            return result;
+        }
     }
 
     public class Config<TConfig> : Config where TConfig : class, new()
