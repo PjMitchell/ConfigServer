@@ -11,6 +11,13 @@ namespace ConfigServer.Core.Client
 
     public class HttpClientWrapper : IHttpClientWrapper
     {
+        readonly IConfigServerClientAuthenticator authenticator;
+
+        public HttpClientWrapper(IConfigServerClientAuthenticator authenticator)
+        {
+            this.authenticator = authenticator;
+        }
+
         public HttpResponseMessage Get(Uri uri)
         {
             return GetAsync(uri).Result;
@@ -19,8 +26,8 @@ namespace ConfigServer.Core.Client
         public async Task<HttpResponseMessage> GetAsync(Uri uri)
         {
             using (var httpClient = new HttpClient())
-            {
-                return await httpClient.GetAsync(uri);                
+            {              
+                return await authenticator.ApplyAuthentication(httpClient).GetAsync(uri);                
             }
         }
     }

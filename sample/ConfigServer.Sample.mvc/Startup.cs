@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -84,8 +81,8 @@ namespace ConfigServer.Sample.mvc
             
 
             app.UseStaticFiles();
-            app.Map("/Config", configSrv => configSrv.UseConfigServer());
-            app.UseConfigServerConfigurator();
+            app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions { AuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false } }));
+            app.UseConfigServerConfigurator(new ConfigServerConfiguratorOptions { AuthenticationOptions =  new ConfigServerAuthenticationOptions { RequireAuthentication = false } });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

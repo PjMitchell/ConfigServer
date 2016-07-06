@@ -38,7 +38,7 @@ namespace ConfigServer.Infrastructure
         {
             var configurationCollection = new ConfigurationCollection();
             var builder = new ConfigServerClientBuilder(source, configurationCollection);
-            source.Add(ServiceDescriptor.Transient<IHttpClientWrapper>(r => new HttpClientWrapper()));
+            source.Add(ServiceDescriptor.Transient<IHttpClientWrapper>(r => new HttpClientWrapper(options.Authenticator)));
             source.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new ConfigServerClient(r.GetService<IHttpClientWrapper>(), r.GetService<ConfigurationCollection>(), options)));
             return builder;
         }

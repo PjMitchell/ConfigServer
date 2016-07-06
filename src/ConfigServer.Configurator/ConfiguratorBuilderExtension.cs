@@ -5,15 +5,10 @@ namespace ConfigServer.Configurator
 {
     public static class ConfiguratorBuilderExtension
     {
-        public static IApplicationBuilder UseConfigServerConfigurator(this IApplicationBuilder app, string path)
+        public static IApplicationBuilder UseConfigServerConfigurator(this IApplicationBuilder app, ConfigServerConfiguratorOptions options = null)
         {
-            app.Use((context, next) => ConfigServerConfigurator.Setup(path, context, next));
+            app.Use((context, next) => ConfigServerConfigurator.Setup(options?? new ConfigServerConfiguratorOptions(), context, next));
             return app;
-        }
-
-        public static IApplicationBuilder UseConfigServerConfigurator(this IApplicationBuilder app)
-        {
-            return app.UseConfigServerConfigurator("/Configurator");
         }
 
         public static IServiceCollection UseUseConfigServerConfigurator(this IServiceCollection collection)
