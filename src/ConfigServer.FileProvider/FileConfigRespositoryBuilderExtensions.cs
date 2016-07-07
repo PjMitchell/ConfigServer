@@ -1,5 +1,4 @@
 ﻿using ConfigServer.Core;
-using ConfigServer.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;

@@ -1,17 +1,11 @@
 ﻿using System.Net.Http;
 
-namespace ConfigServer.Core.Client
+namespace ConfigServer.Core
 {
     public interface IConfigServerClientAuthenticator
     {
         HttpClient ApplyAuthentication(HttpClient client);
     }
 
-    public class DefaultConfigServerClientAuthenticator : IConfigServerClientAuthenticator
-    {
-        public HttpClient ApplyAuthentication(HttpClient client)
-        {
-            return client;
-        }
-    }
+
 }

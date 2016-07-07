@@ -1,5 +1,4 @@
-﻿using ConfigServer.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ConfigServer.Core;
 
 namespace ConfigServer.InMemoryProvider

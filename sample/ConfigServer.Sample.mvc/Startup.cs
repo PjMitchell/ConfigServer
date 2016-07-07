@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ConfigServer.Infrastructure;
 using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Configurator;
-using ConfigServer.Core.Hosting;
 
 
 namespace ConfigServer.Sample.mvc

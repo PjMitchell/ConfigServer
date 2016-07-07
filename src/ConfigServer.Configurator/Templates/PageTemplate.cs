@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class PageBuilder
+    internal class PageBuilder
     {
         private readonly HttpContext context;
 

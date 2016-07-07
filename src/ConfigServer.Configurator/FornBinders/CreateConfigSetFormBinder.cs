@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ConfigServer.Configurator
 {
-    public static class CreateConfigSetFormBinder
+    internal static class CreateConfigSetFormBinder
     {
         public static string BindForm(IFormCollection collection)
         {

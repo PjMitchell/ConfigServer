@@ -1,21 +1,19 @@
 ﻿using ConfigServer.Configurator.Templates;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ConfigServer.Core;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
-using ConfigServer.Core.Hosting;
+using ConfigServer.Core.Internal;
 
 namespace ConfigServer.Configurator
 {
-    public class ConfiguratorRouter
+    internal class ConfiguratorRouter
     {
         private readonly IConfigRepository configRepository;
         private readonly ConfigurationSetCollection configCollection;
         private readonly PageBuilder pageBuilder;
-        public ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetCollection configCollection, PageBuilder pageBuilder)
+
+        internal ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetCollection configCollection, PageBuilder pageBuilder)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;

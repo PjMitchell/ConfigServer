@@ -2,9 +2,9 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ConfigServer.Core.Hosting
+namespace ConfigServer.Core.Internal
 {
-    public class ConfigServerHost
+    internal static class ConfigServerHost
     {
         public static async Task Setup(HttpContext context, Func<Task> next, ConfigServerOptions options)
         {

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public static class EditorContent
+    internal static class EditorContent
     {
         public static string GetContent(Config config, ConfigurationModelDefinition modelDefinition)
         {

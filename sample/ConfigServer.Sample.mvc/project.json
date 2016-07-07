@@ -14,7 +14,6 @@
     "dependencies": {
         "ConfigServer.Configurator": "1.0.0-*",
         "ConfigServer.Core": "1.0.0-*",
-        "ConfigServer.Infrastructure": "1.0.0-*",
         "ConfigServer.InMemoryProvider": "1.0.0-*",
         "Microsoft.AspNetCore.Diagnostics": "1.0.0",
         "Microsoft.AspNetCore.Hosting": "1.0.0",

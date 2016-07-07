@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ConfigServer.Core.Hosting
+namespace ConfigServer.Core.Internal
 {
     public static class PathQueryExtensions
     {

@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using ConfigServer.Configurator.Templates;
 using ConfigServer.Core;
+using ConfigServer.Core.Internal;
 using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Configurator
 {
 
-    public class ConfigServerConfigurator 
+    public static class ConfigServerConfigurator 
     {
         public static async Task Setup(ConfigServerConfiguratorOptions options,HttpContext context, Func<Task> next)
         {

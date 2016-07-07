@@ -2,14 +2,14 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ConfigServer.Core.Client
+namespace ConfigServer.Core
 {
-    public interface IHttpClientWrapper
+    internal interface IHttpClientWrapper
     {
         Task<HttpResponseMessage> GetAsync(Uri uri);
     }
 
-    public class HttpClientWrapper : IHttpClientWrapper
+    internal class HttpClientWrapper : IHttpClientWrapper
     {
         readonly IConfigServerClientAuthenticator authenticator;
 

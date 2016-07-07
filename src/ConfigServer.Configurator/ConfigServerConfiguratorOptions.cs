@@ -1,4 +1,4 @@
-﻿using ConfigServer.Core.Hosting;
+﻿using ConfigServer.Core;
 
 namespace ConfigServer.Configurator
 {

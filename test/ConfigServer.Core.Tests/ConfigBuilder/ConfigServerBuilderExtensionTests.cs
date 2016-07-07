@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using ConfigServer.InMemoryProvider;
-using ConfigServer.Infrastructure;
 using Xunit;
 using System.Threading.Tasks;
 

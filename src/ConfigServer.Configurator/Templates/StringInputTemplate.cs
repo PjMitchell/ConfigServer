@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class StringInputTemplate
+    internal static class StringInputTemplate
     {
         public static string Build(object value, ConfigurationPropertyDefinition definition)
         {

@@ -1,7 +1,6 @@
-﻿using ConfigServer.Core.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Core.Internal
 {
     public static class AuthenticationHelper
     {

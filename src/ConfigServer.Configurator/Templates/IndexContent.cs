@@ -5,7 +5,7 @@ using ConfigServer.Core;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public static class IndexContent
+    internal static class IndexContent
     {
         public static string GetContent(PathString routeString, IEnumerable<string> configIdentities)
         {

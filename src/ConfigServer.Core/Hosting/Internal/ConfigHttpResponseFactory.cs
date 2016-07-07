@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ConfigServer.Core.Hosting
+namespace ConfigServer.Core.Internal
 {
-    public interface IConfigHttpResponseFactory
+    internal interface IConfigHttpResponseFactory
     {
         Task BuildResponse(HttpContext context, object config);
     }
 
-    public class ConfigHttpResponseFactory : IConfigHttpResponseFactory
+    internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
     {
         public Task BuildResponse(HttpContext context, object config)
         {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class DateTimeInputTemplate
+    internal static class DateTimeInputTemplate
     {
         public static string Build(object value, ConfigurationPropertyDefinition definition)
         {

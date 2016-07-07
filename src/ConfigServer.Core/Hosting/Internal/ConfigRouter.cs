@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.Runtime.CompilerServices;
+using ConfigServer.Core.Internal;
 
-namespace ConfigServer.Core.Hosting
+[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
+namespace ConfigServer.Core.Internal
 {
-    public class ConfigRouter
+    internal class ConfigRouter
     {
         readonly IConfigRepository configRepository;
         readonly IEnumerable<ConfigurationModelDefinition> configModelCollection;

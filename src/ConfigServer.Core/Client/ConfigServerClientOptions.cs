@@ -1,4 +1,4 @@
-﻿using ConfigServer.Core.Client;
+﻿using ConfigServer.Core.Internal;
 
 namespace ConfigServer.Core
 {

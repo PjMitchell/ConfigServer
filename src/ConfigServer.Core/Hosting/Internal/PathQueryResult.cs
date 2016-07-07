@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace ConfigServer.Core.Hosting
+namespace ConfigServer.Core.Internal
 {
     public class PathQueryResult<T>
     {

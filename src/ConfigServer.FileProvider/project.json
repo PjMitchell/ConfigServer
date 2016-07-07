@@ -4,8 +4,7 @@
     "dependencies": {
         "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
         "ConfigServer.Core": "1.0.0-*",
-        "NETStandard.Library": "1.6.0",
-        "ConfigServer.Infrastructure": "1.0.0-*"
+        "NETStandard.Library": "1.6.0"
     },
 
       "frameworks": {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ConfigServer.Core
 {
-    public class LocalConfigServerClient : IConfigServerClient
+    internal class LocalConfigServerClient : IConfigServerClient
     {
         private readonly IConfigProvider configProvider;
         private readonly ConfigurationIdentity applicationId;
