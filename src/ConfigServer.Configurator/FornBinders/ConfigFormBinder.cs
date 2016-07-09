@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace ConfigServer.Configurator
 {
-    public static class ConfigFormBinder
+    internal static class ConfigFormBinder
     {
         public static Config BindForm(Config existingConfig, IFormCollection collection)
         {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
+using ConfigServer.Core.Internal;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -12,7 +13,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private readonly ConfigRouter target;
         private readonly Mock<IConfigRepository> repository;
         private readonly Mock<IConfigHttpResponseFactory> responseFactory;
-        private readonly ConfigurationSetCollection configSetConfig;
+        private readonly ConfigurationSetRegistry configSetConfig;
         private readonly List<string> configSetIds;
         private readonly Config<SimpleConfig> defaultConfig;
 
@@ -27,8 +28,8 @@ namespace ConfigServer.Core.Tests.Hosting
             repository.Setup(s => s.GetConfigSetIdsAsync())
                 .ReturnsAsync(configSetIds);
 
-            configSetConfig = new ConfigurationSetCollection();
-            var configSetDef = new ConfigurationSetDefinition(typeof(ConfigurationSet));
+            configSetConfig = new ConfigurationSetRegistry();
+            var configSetDef = new ConfigurationSetModel(typeof(ConfigurationSet));
             configSetDef.GetOrInitialize<SimpleConfig>();
             configSetConfig.AddConfigurationSet(configSetDef);
 

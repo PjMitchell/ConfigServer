@@ -5,7 +5,7 @@ using ConfigServer.Core;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public static class IndexContent
+    internal static class IndexContent
     {
         public static string GetContent(PathString routeString, IEnumerable<string> configIdentities)
         {
@@ -17,7 +17,7 @@ namespace ConfigServer.Configurator.Templates
             { string.Join("<br>", configIdentityLinks)}";
         }
 
-        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetCollection configSets)
+        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetRegistry configSets)
         {
             var configSetLinks = configSets.Select(config => LinkForConfig(configIdentity, config, routePath));
             return $@"
@@ -25,7 +25,7 @@ namespace ConfigServer.Configurator.Templates
             {string.Join("<br>", configSetLinks)}";
         }
 
-        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetDefinition configSetDef)
+        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetModel configSetDef)
         {
             var configLinks = configSetDef.Configs.Select(config => LinkForConfig(configIdentity, configSetDef, config, routePath));
             return $@"
@@ -38,11 +38,11 @@ namespace ConfigServer.Configurator.Templates
             return $"<a href=\"{routeString}/{configIdentity}\">{configIdentity}</a>";
         }
 
-        private static string LinkForConfig(string configIdentity, ConfigurationSetDefinition config, PathString routeString)
+        private static string LinkForConfig(string configIdentity, ConfigurationSetModel config, PathString routeString)
         {
             return $"<a href=\"{routeString}/{configIdentity}/{config.ConfigSetType.Name}\">{config.ConfigSetType.Name}</a>";
         }
-        private static string LinkForConfig(string configIdentity, ConfigurationSetDefinition configSet, ConfigurationModelDefinition configModel, PathString routeString)
+        private static string LinkForConfig(string configIdentity, ConfigurationSetModel configSet, ConfigurationModel configModel, PathString routeString)
         {
             return $"<a href=\"{routeString}/{configIdentity}/{configSet.ConfigSetType.Name}/{configModel.Type.Name}\">{configModel.ConfigurationDisplayName}</a>";
         }

@@ -3,14 +3,14 @@ using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class FloatInputTemplate
+    internal static class FloatInputTemplate
     {
-        public static string Build(object value, ConfigurationPropertyDefinition definition)
+        public static string Build(object value, ConfigurationPropertyModel definition)
         {
             return $"<input type=\"number\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" step=\"0.00001\" {BuildValidationElement(definition)}>";
         }
 
-        private static string BuildValidationElement(ConfigurationPropertyDefinition definition)
+        private static string BuildValidationElement(ConfigurationPropertyModel definition)
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.Min != null)

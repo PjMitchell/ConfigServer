@@ -1,14 +1,13 @@
 ﻿{
-  "version": "1.0.0-*",
-
+    "version": "1.0.0-*",
+    "buildOptions": { "xmlDoc": true },
     "dependencies": {
         "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
         "ConfigServer.Core": "1.0.0-*",
-        "NETStandard.Library": "1.6.0",
-        "ConfigServer.Infrastructure": "1.0.0-*"
+        "NETStandard.Library": "1.6.0"
     },
 
-      "frameworks": {
+    "frameworks": {
         "netstandard1.6": {
             "imports": [
                 "dotnet5.6",

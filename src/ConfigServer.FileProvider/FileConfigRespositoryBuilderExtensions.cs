@@ -1,14 +1,23 @@
 ﻿using ConfigServer.Core;
-using ConfigServer.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 
 namespace ConfigServer.FileProvider
 {
+    /// <summary>
+    /// ConfigServer builder extensions for FileConfigRepository.
+    /// Used in the initial configuration of ConfigServer FileConfigRepository
+    /// </summary>
     public static class FileConfigRespositoryBuilderExtensions
     {
-        public static ConfigServerBuilder UseInMemoryProvider(this ConfigServerBuilder builder, FileConfigRespositoryBuilderOptions options)
+        /// <summary>
+        /// Uses FileConfigRepository as IConfigRepository  
+        /// </summary>
+        /// <param name="builder">ConfigServerBuilder to add FileConfigRepository to</param>
+        /// <param name="options">Options for FileConfigRepository</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder UseFileConfigProvider(this ConfigServerBuilder builder, FileConfigRespositoryBuilderOptions options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));

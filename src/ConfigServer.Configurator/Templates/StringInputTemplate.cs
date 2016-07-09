@@ -3,14 +3,14 @@ using System.Text;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class StringInputTemplate
+    internal static class StringInputTemplate
     {
-        public static string Build(object value, ConfigurationPropertyDefinition definition)
+        public static string Build(object value, ConfigurationPropertyModel definition)
         {
             return $"<input type=\"text\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
-        private static string BuildValidationElement(ConfigurationPropertyDefinition definition)
+        private static string BuildValidationElement(ConfigurationPropertyModel definition)
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.MaxLength.HasValue)

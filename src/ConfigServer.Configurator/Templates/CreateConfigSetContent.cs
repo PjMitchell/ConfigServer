@@ -2,7 +2,7 @@
 
 namespace ConfigServer.Configurator.Templates
 {
-    public static class CreateConfigSetContent
+    internal static class CreateConfigSetContent
     {
         public static string GetContent()
         {

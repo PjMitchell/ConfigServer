@@ -1,20 +1,16 @@
 ﻿using ConfigServer.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ConfigServer.Configurator.Templates
 {
-    public class IntergerInputTemplate
+    internal static class IntergerInputTemplate
     {
-        public static string Build(object value, ConfigurationPropertyDefinition definition)
+        public static string Build(object value, ConfigurationPropertyModel definition)
         {
             return $"<input type=\"number\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
-        private static string BuildValidationElement(ConfigurationPropertyDefinition definition)
+        private static string BuildValidationElement(ConfigurationPropertyModel definition)
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.Min != null)

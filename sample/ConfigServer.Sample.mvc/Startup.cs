@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ConfigServer.Infrastructure;
 using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Configurator;
-using ConfigServer.Core.Hosting;
 
 
 namespace ConfigServer.Sample.mvc
@@ -35,7 +33,7 @@ namespace ConfigServer.Sample.mvc
             var application2Id = "6A302E7D-05E9-4188-9612-4A2920E5C1AE";
             // Add framework services.
             services.AddMvc();
-            services.UseConfigServer()
+            services.AddConfigServer()
                 .UseConfigSet<SampleConfigSet>()
                 .UseInMemoryProvider()
                 .UseLocalConfigServerClient(applicationId)
@@ -58,8 +56,8 @@ namespace ConfigServer.Sample.mvc
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChangesAsync(new Config<SampleConfig> { ConfigSetId = applicationId, Configuration = config }).Wait();
-            configRepo.SaveChangesAsync(new Config<SampleConfig> { ConfigSetId = application2Id, Configuration = config2 }).Wait();
+            configRepo.SaveChangesAsync(new Config<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
+            configRepo.SaveChangesAsync(new Config<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
 
         }
 

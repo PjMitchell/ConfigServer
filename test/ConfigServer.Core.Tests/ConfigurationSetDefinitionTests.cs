@@ -13,7 +13,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void NewConfiguarationSetDefinition_ContainsNoDefinitions()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
 
             Assert.Equal(0, result.Configs.Count());
         }
@@ -21,7 +21,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanGetOrInitializeByType()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
             var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(result.Configs.Single(), gotValue);
@@ -30,7 +30,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanGetOrInitializeByTypeDoesNotDuplicateInitialization()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
             var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
             var gotValue2 = result.GetOrInitialize(typeof(SimpleConfig));
 
@@ -41,7 +41,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanGetOrInitializeByGenericType()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
             var gotValue = result.GetOrInitialize<SimpleConfig>();
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(result.Configs.Single(), gotValue);
@@ -50,7 +50,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanGetExistingType()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
             var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
             var gotValue2 = result.Get(typeof(SimpleConfig));
 
@@ -60,7 +60,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanGetExistingType_Generic()
         {
-            var result = new ConfigurationSetDefinition(defaultType);
+            var result = new ConfigurationSetModel(defaultType);
             var gotValue = result.GetOrInitialize<SimpleConfig>();
             var gotValue2 = result.Get<SimpleConfig>();
 
@@ -70,7 +70,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void Throws_IfConfigTYpeNotFound()
         {
-            var target = new ConfigurationSetDefinition(defaultType);
+            var target = new ConfigurationSetModel(defaultType);
             Assert.Throws(typeof(ConfigurationModelNotFoundException),()=> target.Get<SimpleConfig>());
         }
 

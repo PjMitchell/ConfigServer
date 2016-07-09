@@ -1,21 +1,19 @@
 ﻿using ConfigServer.Configurator.Templates;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ConfigServer.Core;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
-using ConfigServer.Core.Hosting;
+using ConfigServer.Core.Internal;
 
 namespace ConfigServer.Configurator
 {
-    public class ConfiguratorRouter
+    internal class ConfiguratorRouter
     {
         private readonly IConfigRepository configRepository;
-        private readonly ConfigurationSetCollection configCollection;
+        private readonly ConfigurationSetRegistry configCollection;
         private readonly PageBuilder pageBuilder;
-        public ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetCollection configCollection, PageBuilder pageBuilder)
+
+        internal ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetRegistry configCollection, PageBuilder pageBuilder)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;
@@ -28,7 +26,7 @@ namespace ConfigServer.Configurator
             if (!context.Request.Path.StartsWithSegments(routePath, out remaining))
                 return false;
             
-            var applicationIds = await configRepository.GetConfigSetIdsAsync();
+            var applicationIds = await configRepository.GetClientIdsAsync();
 
             if (string.IsNullOrWhiteSpace(remaining))
             {
@@ -63,7 +61,7 @@ namespace ConfigServer.Configurator
                 return true; //Lists ConfigSet Configs
             }
 
-            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.Type, new ConfigurationIdentity { ConfigSetId = appIdQueryResult.QueryResult });
+            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.Type, new ConfigurationIdentity { ClientId = appIdQueryResult.QueryResult });
 
             if (context.Request.Method.Equals("GET"))
             {
@@ -93,7 +91,7 @@ namespace ConfigServer.Configurator
             if (context.Request.Method.Equals("POST"))
             {
                 var configSetId = CreateConfigSetFormBinder.BindForm(context.Request.Form);
-                await configRepository.CreateConfigSetAsync(configSetId);
+                await configRepository.CreateClientAsync(configSetId);
                 pageBuilder.Redirect(routePath);
                 return true;
             }

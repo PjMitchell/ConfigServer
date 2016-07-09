@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using ConfigServer.Infrastructure;
 using ConfigServer.Core;
 using Microsoft.Extensions.Logging;
 using ConfigServer.Sample.mvcApp2.Models;
@@ -20,9 +14,9 @@ namespace ConfigServer.Sample.mvcApp2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.UseConfigServerClient(new ConfigServerClientOptions
+            services.AddConfigServerClient(new ConfigServerClientOptions
             {
-                ApplicationId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
+                ClientId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
                 ConfigServer = "http://localhost:58201/Config"
             })
             .WithConfig<SampleConfig>();
