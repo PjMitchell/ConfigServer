@@ -8,23 +8,37 @@ using System.Threading.Tasks;
 
 namespace ConfigServer.FileProvider
 {
+    /// <summary>
+    /// File store implementation of IConfigRepository
+    /// </summary>
     public class FileConfigRepository : IConfigRepository
     {
         readonly string folderPath;
         readonly JsonSerializerSettings jsonSerializerSettings;
 
-        public FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
+        internal FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
         {
             this.folderPath = folderPath;
             this.jsonSerializerSettings = jsonSerializerSettings ?? new JsonSerializerSettings();
         }
 
-        public Task CreateClientAsync(string configSetId)
+        /// <summary>
+        /// Creates new client in store
+        /// </summary>
+        /// <param name="clientId">new client Id</param>
+        /// <returns>A task that represents the asynchronous creation operation.</returns>
+        public Task CreateClientAsync(string clientId)
         {
-            GetFileStore().CreateSubdirectory(configSetId);
+            GetFileStore().CreateSubdirectory(clientId);
             return Task.FromResult(true);
         }
 
+        /// <summary>
+        /// Gets Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be retrieved</param>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Config of the type requested</returns>
         public Task<Config> GetAsync(Type type, ConfigurationIdentity id)
         {
             
@@ -36,6 +50,12 @@ namespace ConfigServer.FileProvider
             return Task.FromResult(result);
         }
 
+        /// <summary>
+        /// Gets Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Config of the type requested</returns>
         public Task<Config<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
             string configjson;
@@ -48,11 +68,20 @@ namespace ConfigServer.FileProvider
             return Task.FromResult(result);
         }
 
+        /// <summary>
+        /// Get all Client Ids in store
+        /// </summary>
+        /// <returns>AvailableClientIds</returns>
         public Task<IEnumerable<string>> GetClientIdsAsync()
         {
             return Task.FromResult<IEnumerable<string>>(GetFileStore().EnumerateDirectories().Select(s => s.Name).ToList()); 
         }
 
+        /// <summary>
+        /// Saves changes to configuration
+        /// </summary>
+        /// <param name="config">Updated configuration to be saved</param>
+        /// <returns>A task that represents the asynchronous save operation.</returns>
         public Task SaveChangesAsync(Config config)
         {
             var configPath = GetConfigPath(config.ConfigType, config.ClientId);

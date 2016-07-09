@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Configurator
 {
-
-    public static class ConfigServerConfigurator 
+    internal static class ConfigServerConfigurator 
     {
         public static async Task Setup(ConfigServerConfiguratorOptions options,HttpContext context, Func<Task> next)
         {
