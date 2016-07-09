@@ -9,6 +9,7 @@ namespace ConfigServer.Configurator
     {
         /// <summary>
         /// Path to configurator
+        /// Default: /Configurator
         /// </summary>
         public string Path { get; set; } = "/Configurator";
 
