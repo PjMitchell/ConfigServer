@@ -16,9 +16,7 @@ namespace ConfigServer.InMemoryProvider
             innerStore = new Dictionary<string, Dictionary<Type, Config>>();
         }
 
-
-
-        public Task<IEnumerable<string>> GetConfigSetIdsAsync()
+        public Task<IEnumerable<string>> GetClientIdsAsync()
         {
             var tcs = new TaskCompletionSource<IEnumerable<string>>();
             tcs.SetResult(GetConfigSetIds());
@@ -39,8 +37,6 @@ namespace ConfigServer.InMemoryProvider
             return tcs.Task;
         }
 
-
-
         public Task SaveChangesAsync(Config config)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -49,9 +45,7 @@ namespace ConfigServer.InMemoryProvider
             return tcs.Task;
         }
 
-
-
-        public Task CreateConfigSetAsync(string configSetId)
+        public Task CreateClientAsync(string configSetId)
         {
             var tcs = new TaskCompletionSource<bool>();
             CreateConfigSet(configSetId);
@@ -61,12 +55,11 @@ namespace ConfigServer.InMemoryProvider
 
         private Config Get(Type type, ConfigurationIdentity id)
         {
-            var innerDic = innerStore[id.ConfigSetId];
+            var innerDic = innerStore[id.ClientId];
             Config config;
             if (!innerDic.TryGetValue(type, out config))
             {
-                config = Config.CreateInstance(type);
-                config.ConfigSetId = id.ConfigSetId;
+                config = ConfigFactory.CreateGenericInstance(type, id.ClientId);
             }
 
             return config;
@@ -77,7 +70,6 @@ namespace ConfigServer.InMemoryProvider
             return (Config<TConfig>)Get(typeof(TConfig), id);
         }
 
-
         private IEnumerable<string> GetConfigSetIds()
         {
             return innerStore.Keys.ToList();
@@ -85,10 +77,10 @@ namespace ConfigServer.InMemoryProvider
 
         private void SaveChanges(Config config)
         {
-            if (!innerStore.ContainsKey(config.ConfigSetId))
-                innerStore.Add(config.ConfigSetId, new Dictionary<Type, Config>());
+            if (!innerStore.ContainsKey(config.ClientId))
+                innerStore.Add(config.ClientId, new Dictionary<Type, Config>());
 
-            innerStore[config.ConfigSetId][config.ConfigType] = config;
+            innerStore[config.ClientId][config.ConfigType] = config;
         }
 
         private void CreateConfigSet(string configSetId)

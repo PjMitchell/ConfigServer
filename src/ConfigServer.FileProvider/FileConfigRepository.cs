@@ -19,7 +19,7 @@ namespace ConfigServer.FileProvider
             this.jsonSerializerSettings = jsonSerializerSettings ?? new JsonSerializerSettings();
         }
 
-        public Task CreateConfigSetAsync(string configSetId)
+        public Task CreateClientAsync(string configSetId)
         {
             GetFileStore().CreateSubdirectory(configSetId);
             return Task.FromResult(true);
@@ -28,9 +28,9 @@ namespace ConfigServer.FileProvider
         public Task<Config> GetAsync(Type type, ConfigurationIdentity id)
         {
             
-            var result = Config.CreateInstance(type, id.ConfigSetId);
+            var result = ConfigFactory.CreateGenericInstance(type, id.ClientId);
             string configjson;
-            if (!TryGetConfigJson(type, id.ConfigSetId, out configjson))
+            if (!TryGetConfigJson(type, id.ClientId, out configjson))
                 return Task.FromResult(result);
             result.SetConfiguration(JsonConvert.DeserializeObject(configjson, type, jsonSerializerSettings));
             return Task.FromResult(result);
@@ -39,8 +39,8 @@ namespace ConfigServer.FileProvider
         public Task<Config<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
             string configjson;
-            if (!TryGetConfigJson(typeof(TConfig), id.ConfigSetId, out configjson))
-                return Task.FromResult(new Config<TConfig> { ConfigSetId = id.ConfigSetId });
+            if (!TryGetConfigJson(typeof(TConfig), id.ClientId, out configjson))
+                return Task.FromResult(new Config<TConfig> { ClientId = id.ClientId });
             var result = new Config<TConfig>
             {
                 Configuration = JsonConvert.DeserializeObject<TConfig>(configjson, jsonSerializerSettings)
@@ -48,14 +48,14 @@ namespace ConfigServer.FileProvider
             return Task.FromResult(result);
         }
 
-        public Task<IEnumerable<string>> GetConfigSetIdsAsync()
+        public Task<IEnumerable<string>> GetClientIdsAsync()
         {
             return Task.FromResult<IEnumerable<string>>(GetFileStore().EnumerateDirectories().Select(s => s.Name).ToList()); 
         }
 
         public Task SaveChangesAsync(Config config)
         {
-            var configPath = GetConfigPath(config.ConfigType, config.ConfigSetId);
+            var configPath = GetConfigPath(config.ConfigType, config.ClientId);
             File.WriteAllText(configPath, JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings));
             return Task.FromResult(true);
         }

@@ -11,16 +11,16 @@ namespace ConfigServer.Core.Tests.Client
     public class ConfigServerClientTest
     {
         private readonly IConfigServerClient target;
-        private readonly ConfigurationCollection collection;
+        private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
 
         public ConfigServerClientTest()
         {
-            collection = new ConfigurationCollection();
+            collection = new ConfigurationRegistry();
             collection.AddRegistration(ConfigurationRegistration.Build<SimpleConfig>());
             options = new ConfigServerClientOptions();
-            options.ApplicationId = "1234-5678-1234";
+            options.ClientId = "1234-5678-1234";
             options.ConfigServer = "https://test.com/Config";
 
             clientWrapper = new Mock<IHttpClientWrapper>();
@@ -109,7 +109,7 @@ namespace ConfigServer.Core.Tests.Client
 
         private bool Check(Uri uri)
         {
-            var expectedUri = new Uri($"{options.ConfigServer}/{options.ApplicationId}/{typeof(SimpleConfig).Name}");
+            var expectedUri = new Uri($"{options.ConfigServer}/{options.ClientId}/{typeof(SimpleConfig).Name}");
             var result = uri.Equals(expectedUri);
             return result;
         }

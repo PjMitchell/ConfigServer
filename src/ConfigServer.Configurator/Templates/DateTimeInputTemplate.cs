@@ -6,12 +6,12 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class DateTimeInputTemplate
     {
-        public static string Build(object value, ConfigurationPropertyDefinition definition)
+        public static string Build(object value, ConfigurationPropertyModel definition)
         {
             return $"<input type=\"datetime\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
-        private static string BuildValidationElement(ConfigurationPropertyDefinition definition)
+        private static string BuildValidationElement(ConfigurationPropertyModel definition)
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.Min != null)

@@ -7,12 +7,12 @@ namespace ConfigServer.Core.Tests
 {
     public class InMemoryRespositoryTests
     {
-        private readonly ConfigurationCollection configurationCollection;
+        private readonly ConfigurationRegistry configurationCollection;
         private readonly IConfigRepository target;
 
         public InMemoryRespositoryTests()
         {
-            configurationCollection = new ConfigurationCollection();
+            configurationCollection = new ConfigurationRegistry();
             configurationCollection.BuildAndAddRegistration<SimpleConfig>();
             target = new InMemoryRepository();
         }
@@ -24,12 +24,12 @@ namespace ConfigServer.Core.Tests
         {
             var configId = new ConfigurationIdentity
             {
-                ConfigSetId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
             
@@ -43,12 +43,12 @@ namespace ConfigServer.Core.Tests
         {
             var configId = new ConfigurationIdentity
             {
-                ConfigSetId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
@@ -62,19 +62,19 @@ namespace ConfigServer.Core.Tests
         {
             var configId = new ConfigurationIdentity
             {
-                ConfigSetId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
             await target.SaveChangesAsync(config);
-            var result =(await target.GetConfigSetIdsAsync()).ToList();
+            var result =(await target.GetClientIdsAsync()).ToList();
             Assert.Equal(1, result.Count);
-            Assert.Equal(configId.ConfigSetId, result[0]);
+            Assert.Equal(configId.ClientId, result[0]);
         }
 
         [Fact]
@@ -82,8 +82,8 @@ namespace ConfigServer.Core.Tests
         {
             var configSet = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
 
-            await target.CreateConfigSetAsync(configSet);
-            var result = (await target.GetConfigSetIdsAsync()).ToList();
+            await target.CreateClientAsync(configSet);
+            var result = (await target.GetClientIdsAsync()).ToList();
             Assert.Equal(1, result.Count);
             Assert.Equal(configSet, result[0]);
         }
@@ -94,19 +94,19 @@ namespace ConfigServer.Core.Tests
             var configSet = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             var configId = new ConfigurationIdentity
             {
-                ConfigSetId = configSet
+                ClientId = configSet
             };
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
-            await target.CreateConfigSetAsync(configSet);
+            await target.CreateClientAsync(configSet);
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.NotNull(result);
-            Assert.Equal(configSet, config.ConfigSetId);
+            Assert.Equal(configSet, config.ClientId);
             Assert.Equal(0, result.Configuration.IntProperty);
         }
     }

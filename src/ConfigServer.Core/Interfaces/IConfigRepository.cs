@@ -1,20 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ConfigServer.Core
 {
+    /// <summary>
+    /// Store for ConfigServer Configurations
+    /// </summary>
     public interface IConfigRepository : IConfigProvider
     {
+        /// <summary>
+        /// Saves changes to configuration
+        /// </summary>
+        /// <param name="config">Updated configuration to be saved</param>
+        /// <returns>A task that represents the asynchronous save operation.</returns>
         Task SaveChangesAsync(Config config);
-        Task<IEnumerable<string>> GetConfigSetIdsAsync();
-        Task CreateConfigSetAsync(string configSetId);
 
-    }
+        /// <summary>
+        /// Get all Client Ids in store
+        /// </summary>
+        /// <returns>AvailableClientIds</returns>
+        Task<IEnumerable<string>> GetClientIdsAsync();
 
-    public interface IConfigProvider
-    {
-        Task<Config<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new();
-        Task<Config> GetAsync(Type type,ConfigurationIdentity id);
+        /// <summary>
+        /// Creates new client in store
+        /// </summary>
+        /// <param name="clientId">new client Id</param>
+        /// <returns>A task that represents the asynchronous creation operation.</returns>
+        Task CreateClientAsync(string clientId);
     }
 }

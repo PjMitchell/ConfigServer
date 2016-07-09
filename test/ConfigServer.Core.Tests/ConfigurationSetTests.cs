@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests
         public void BuildsDefinitionWithAllConfigs()
         {
             var configSet = new TestConfiguationModule();
-            var definition = configSet.BuildModelDefinition();
+            var definition = configSet.BuildConfigurationSetModel();
 
             Assert.NotNull(definition);
             Assert.Equal(1, definition.Configs.Count());

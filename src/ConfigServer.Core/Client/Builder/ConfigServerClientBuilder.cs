@@ -2,17 +2,28 @@
 
 namespace ConfigServer.Core
 {
+    /// <summary>
+    /// ConfigServer client builder.
+    /// Used in the initial configuration of the ConfigServer client
+    /// </summary>
     public class ConfigServerClientBuilder
     {
-        public ConfigServerClientBuilder(IServiceCollection serviceCollection, ConfigurationCollection configurationCollection)
+
+        internal ConfigServerClientBuilder(IServiceCollection serviceCollection, ConfigurationRegistry configurationCollection)
         {
             ServiceCollection = serviceCollection;
-            ConfigurationCollection = configurationCollection;
+            ConfigurationRegistry = configurationCollection;
             ServiceCollection.AddSingleton(configurationCollection);
         }
 
+        /// <summary>
+        /// ServiceCollection for builder
+        /// </summary>
         public IServiceCollection ServiceCollection { get; }
 
-        public ConfigurationCollection ConfigurationCollection { get; }
+        /// <summary>
+        /// ConfigurationRegistry for builder that forms a registry of available configurations types 
+        /// </summary>
+        public ConfigurationRegistry ConfigurationRegistry { get; }
     }
 }

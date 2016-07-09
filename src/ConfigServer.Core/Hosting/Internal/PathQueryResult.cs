@@ -2,31 +2,51 @@
 
 namespace ConfigServer.Core.Internal
 {
+    /// <summary>
+    /// Represents the result of a path query returning whether or not the query was successful and the resulting object from the query 
+    /// </summary>
+    /// <typeparam name="T">Type of the object returned by the query</typeparam>
     public class PathQueryResult<T>
     {
-        private PathQueryResult()
+        private PathQueryResult() {}
+        private PathQueryResult(T queryResult, PathString remainingPath)
         {
-
+            HasResult = true;
+            QueryResult = queryResult;
+            RemainingPath = remainingPath;
         }
 
-        public static PathQueryResult<TResult> Success<TResult>(TResult queryResult, PathString remainingPath)
-        {
-            return new PathQueryResult<TResult>
-            {
-                HasResult = true,
-                QueryResult = queryResult,
-                RemainingPath = remainingPath
-            };
-        }
 
-        public static PathQueryResult<TResult> Failed<TResult>()
-        {
-            return new PathQueryResult<TResult>();
-        }
+        /// <summary>
+        /// Initializes a Successful path query result with object found by query and remaining path 
+        /// </summary>
+        /// <typeparam name="TResult">Type of object found by query</typeparam>
+        /// <param name="queryResult">object found by query</param>
+        /// <param name="remainingPath">remaining path from the original query</param>
+        /// <returns>The initialized successful PathQueryResult</returns>
+        public static PathQueryResult<TResult> Success<TResult>(TResult queryResult, PathString remainingPath) => new PathQueryResult<TResult>(queryResult, remainingPath);
 
-        public bool HasResult { get; private set; }
-        public T QueryResult { get; private set; }
-        public PathString RemainingPath { get; private set; }
+        /// <summary>
+        ///  Initializes a failed path query result
+        /// </summary>
+        /// <typeparam name="TResult">Type of object expected by quer</typeparam>
+        /// <returns>The initialized failed PathQueryResult</returns>
+        public static PathQueryResult<TResult> Failed<TResult>() => new PathQueryResult<TResult>();
+
+        /// <summary>
+        /// Did the query return an object?
+        /// </summary>
+        public bool HasResult { get; }
+
+        /// <summary>
+        /// Object returned by the query
+        /// </summary>
+        public T QueryResult { get; }
+
+        /// <summary>
+        /// Path remaining from the original query once the queried object is removed from the path
+        /// </summary>
+        public PathString RemainingPath { get; }
     }
 
 }

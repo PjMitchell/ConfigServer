@@ -11,10 +11,10 @@ namespace ConfigServer.Core.Internal
     internal class ConfigRouter
     {
         readonly IConfigRepository configRepository;
-        readonly IEnumerable<ConfigurationModelDefinition> configModelCollection;
+        readonly IEnumerable<ConfigurationModel> configModelCollection;
         readonly IConfigHttpResponseFactory responseFactory;
 
-        public ConfigRouter(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory, ConfigurationSetCollection configCollection)
+        public ConfigRouter(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection)
         {
             this.responseFactory = responseFactory;
             this.configModelCollection = configCollection.SelectMany(s=> s.Configs).ToList();
@@ -23,14 +23,14 @@ namespace ConfigServer.Core.Internal
 
         public async Task<bool> TryHandle(HttpContext context)
         {
-            var configSetIds = await configRepository.GetConfigSetIdsAsync();
+            var configSetIds = await configRepository.GetClientIdsAsync();
             var configSetIdResult = configSetIds.TryMatchPath(context.Request.Path);
             if(!configSetIdResult.HasResult)
                 return false;
             var configModelResult = configModelCollection.TryMatchPath(s => s.Type.Name, configSetIdResult.RemainingPath);
             if (!configModelResult.HasResult)
                 return false;
-            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ConfigSetId = configSetIdResult.QueryResult });
+            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult });
             await responseFactory.BuildResponse(context, config.GetConfiguration());
             return true;
         }

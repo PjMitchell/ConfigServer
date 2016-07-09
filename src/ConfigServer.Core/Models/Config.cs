@@ -2,49 +2,45 @@
 
 namespace ConfigServer.Core
 {
+    /// <summary>
+    /// Represents a configuration with meta data such as client id
+    /// </summary>
     public abstract class Config
     {
-        protected Config(string name)
+        /// <summary>
+        /// Initializes new Config with name
+        /// </summary>
+        /// <param name="type">type of config</param>
+        protected Config(Type type)
         {
-            Name = name;
+            Name = type.Name;
+            ConfigType = type;
         }
 
+        /// <summary>
+        /// Name of configuration
+        /// </summary>
         public string Name { get; }
-        public string ConfigSetId { get; set; }
+        /// <summary>
+        /// Client Id for configuration
+        /// </summary>
+        public string ClientId { get; set; }
+
+        /// <summary>
+        /// Gets configuration as object
+        /// </summary>
+        /// <returns>configuration as object</returns>
         public abstract object GetConfiguration();
-        public abstract void SetConfiguration(object value);
-        public abstract Type ConfigType { get; }
-
-        public static Config CreateInstance(Type type, string configSetId = "")
-        {
-            var config = typeof(Config<>);
-            Type[] typeArgs = { type };
-            var configType = config.MakeGenericType(typeArgs);
-            var result = (Config)Activator.CreateInstance(configType);
-            result.ConfigSetId = configSetId;
-            return result;
-        }
-    }
-
-    public class Config<TConfig> : Config where TConfig : class, new()
-    {
-        public Config() : base(typeof(TConfig).Name)
-        {
-            Configuration = new TConfig();
-        }
-
-        public Config(TConfig config) : base(typeof(TConfig).Name)
-        {
-            Configuration = config;
-        }
-
-        public override Type ConfigType => typeof(TConfig);
         
-        public TConfig Configuration { get; set; }
+        /// <summary>
+        /// Sets configuration
+        /// </summary>
+        /// <param name="value">value of configuration</param>
+        public abstract void SetConfiguration(object value);
 
-        public override object GetConfiguration() => Configuration;
-
-        public override void SetConfiguration(object value) => Configuration = (TConfig)value;
-
+        /// <summary>
+        /// Type of Configuration
+        /// </summary>
+        public Type ConfigType { get; }
     }
 }

@@ -2,112 +2,55 @@
 
 namespace ConfigServer.Core
 {
-    public abstract class ConfigurationPropertyBuilder<T> where T :ConfigurationPropertyBuilder<T>
+    /// <summary>
+    /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
+    /// </summary>
+    /// <typeparam name="T">Implementation of ConfigurationPropertyModelBuilder</typeparam>
+    public abstract class ConfigurationPropertyModelBuilder<T> where T :ConfigurationPropertyModelBuilder<T>
     {
-        protected readonly ConfigurationPropertyDefinition definition;
+        /// <summary>
+        /// ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder
+        /// </summary>
+        protected readonly ConfigurationPropertyModel model;
 
-        protected ConfigurationPropertyBuilder(ConfigurationPropertyDefinition definition)
+        /// <summary>
+        /// Initializes Builder for ConfigurationPropertyModel
+        /// </summary>
+        /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
+        protected ConfigurationPropertyModelBuilder(ConfigurationPropertyModel model)
         {
-            this.definition = definition;
+            this.model = model;
         }
 
+        /// <summary>
+        /// Updates display name of property 
+        /// </summary>
+        /// <param name="name">Display name of property</param>
+        /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public T WithDisplayName(string name)
         {
-            definition.PropertyDisplayName = name;
+            model.PropertyDisplayName = name;
             return (T)this;
         }
-
-        public T WithDiscription(string description)
+        /// <summary>
+        /// Updates description of property 
+        /// </summary>
+        /// <param name="description">Description of property</param>
+        /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
+        public T WithDescription(string description)
         {
-            definition.PropertyDescription = description;
+            model.PropertyDescription = description;
             return (T)this;
         }
     }
 
-    public class ConfigurationIntergerPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationIntergerPropertyBuilder>
-    {
-        public ConfigurationIntergerPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
 
-        public ConfigurationIntergerPropertyBuilder WithMaxValue(long value)
-        {
-            definition.ValidationRules.Max = value;
-            return this;
-        }
 
-        public ConfigurationIntergerPropertyBuilder WithMinValue(long value)
-        {
-            definition.ValidationRules.Min = value;
-            return this;
-        }        
-    }
 
-    public class ConfigurationFloatPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationFloatPropertyBuilder>
-    {
-        public ConfigurationFloatPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
 
-        public ConfigurationFloatPropertyBuilder WithMaxValue(double value)
-        {
-            definition.ValidationRules.Max = value;
-            return this;
-        }
+    //public class ConfigurationModelPropertyBuilder : ConfigurationPropertyModelBuilder<ConfigurationModelPropertyBuilder>
+    //{
+    //    public ConfigurationModelPropertyBuilder(ConfigurationPropertyModel definition) : base(definition) { }
 
-        public ConfigurationFloatPropertyBuilder WithMinValue(double value)
-        {
-            definition.ValidationRules.Min = value;
-            return this;
-        }
-
-    }
-
-    public class ConfigurationStringPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationStringPropertyBuilder>
-    {
-        public ConfigurationStringPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
-
-        public ConfigurationStringPropertyBuilder WithMaxLength(int value)
-        {
-            definition.ValidationRules.MaxLength = value;
-            return this;
-        }
-
-        public ConfigurationStringPropertyBuilder WithPattern(string value)
-        {
-            definition.ValidationRules.Pattern = value;
-            return this;
-        }
-    }
-
-    public class ConfigurationBoolPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationBoolPropertyBuilder>
-    {
-        public ConfigurationBoolPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
-
-    }
-
-    public class ConfigurationEnumPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationEnumPropertyBuilder>
-    {
-        public ConfigurationEnumPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
-
-    }
-
-    public class ConfigurationDateTimePropertyBuilder : ConfigurationPropertyBuilder<ConfigurationDateTimePropertyBuilder>
-    {
-        public ConfigurationDateTimePropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
-
-        public ConfigurationDateTimePropertyBuilder WithMaxValue(DateTime value)
-        {
-            definition.ValidationRules.Max = value;
-            return this;
-        }
-
-        public ConfigurationDateTimePropertyBuilder WithMinValue(DateTime value)
-        {
-            definition.ValidationRules.Min = value;
-            return this;
-        }
-    }
-
-    public class ConfigurationModelPropertyBuilder : ConfigurationPropertyBuilder<ConfigurationModelPropertyBuilder>
-    {
-        public ConfigurationModelPropertyBuilder(ConfigurationPropertyDefinition definition) : base(definition) { }
-
-    }
+    //}
 }

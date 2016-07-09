@@ -22,9 +22,9 @@ namespace ConfigServer.Core.Tests
             target = new FileConfigRepository(testdirectory);
             configId = new ConfigurationIdentity
             {
-                ConfigSetId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
-            target.CreateConfigSetAsync(configId.ConfigSetId).Wait();
+            target.CreateClientAsync(configId.ClientId).Wait();
         }
 
         public void Dispose()
@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
@@ -67,7 +67,7 @@ namespace ConfigServer.Core.Tests
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
@@ -82,14 +82,14 @@ namespace ConfigServer.Core.Tests
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
             await target.SaveChangesAsync(config);
-            var result = (await target.GetConfigSetIdsAsync()).ToList();
+            var result = (await target.GetClientIdsAsync()).ToList();
             Assert.Equal(1, result.Count);
-            Assert.Equal(configId.ConfigSetId, result[0]);
+            Assert.Equal(configId.ClientId, result[0]);
         }
 
         [Fact]
@@ -98,13 +98,13 @@ namespace ConfigServer.Core.Tests
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
-                ConfigSetId = configId.ConfigSetId,
+                ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.NotNull(result);
-            Assert.Equal(configId.ConfigSetId, config.ConfigSetId);
+            Assert.Equal(configId.ClientId, config.ClientId);
             Assert.Equal(0, result.Configuration.IntProperty);
         }
 

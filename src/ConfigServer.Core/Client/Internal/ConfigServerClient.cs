@@ -8,11 +8,11 @@ namespace ConfigServer.Core
 {
     internal class ConfigServerClient : IConfigServerClient
     {
-        private readonly ConfigurationCollection collection;
+        private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly IHttpClientWrapper client;
 
-        public ConfigServerClient(IHttpClientWrapper client, ConfigurationCollection collection, ConfigServerClientOptions options)
+        public ConfigServerClient(IHttpClientWrapper client, ConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
             this.collection = collection;
@@ -48,7 +48,7 @@ namespace ConfigServer.Core
 
         private Uri GetUri(string configName)
         {
-            return new Uri($"{options.ConfigServer}/{options.ApplicationId}/{configName}");
+            return new Uri($"{options.ConfigServer}/{options.ClientId}/{configName}");
         }
 
         private void ThrowIfConfigNotRegistered(Type type)

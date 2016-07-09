@@ -8,21 +8,21 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class EditorContent
     {
-        public static string GetContent(Config config, ConfigurationModelDefinition modelDefinition)
+        public static string GetContent(Config config, ConfigurationModel modelDefinition)
         {
             var configItem = config.GetConfiguration();
             var editFields = config.ConfigType.GetProperties()
                 .Where(prop => prop.CanWrite)
                 .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType,modelDefinition.GetPropertyDefinition(prop.Name)));
             return $@"
-            <h3>Edit {config.ConfigSetId} - {config.Name}</h3>
+            <h3>Edit {config.ClientId} - {config.Name}</h3>
             <form method=""post"">
             { string.Join<string>("<br>", editFields)}
             <input type=""submit"" value=""Submit"">
             </form>";
         }
 
-        private static string GetEditField(object value,Type type, ConfigurationPropertyDefinition definition)
+        private static string GetEditField(object value,Type type, ConfigurationPropertyModel definition)
         {
             var description = string.IsNullOrWhiteSpace(definition.PropertyDescription) 
                 ? string.Empty 
@@ -30,7 +30,7 @@ namespace ConfigServer.Configurator.Templates
             return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition)}<br>";
         }
 
-        private static string GetInputElement(object value, Type type, ConfigurationPropertyDefinition definition)
+        private static string GetInputElement(object value, Type type, ConfigurationPropertyModel definition)
         {
             if(IsIntergerType(type))
                 return IntergerInputTemplate.Build(value, definition);

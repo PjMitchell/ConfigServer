@@ -14,9 +14,9 @@ namespace ConfigServer.Sample.mvcApp2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.UseConfigServerClient(new ConfigServerClientOptions
+            services.AddConfigServerClient(new ConfigServerClientOptions
             {
-                ApplicationId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
+                ClientId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
                 ConfigServer = "http://localhost:58201/Config"
             })
             .WithConfig<SampleConfig>();

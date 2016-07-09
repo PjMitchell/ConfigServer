@@ -15,7 +15,7 @@ namespace ConfigServer.Core.Internal
             }
 
             var serviceProvider = context.RequestServices;
-            var router = new ConfigRouter((IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)), (IConfigHttpResponseFactory)serviceProvider.GetService(typeof(IConfigHttpResponseFactory)), (ConfigurationSetCollection)serviceProvider.GetService(typeof(ConfigurationSetCollection)));
+            var router = new ConfigRouter((IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)), (IConfigHttpResponseFactory)serviceProvider.GetService(typeof(IConfigHttpResponseFactory)), (ConfigurationSetRegistry)serviceProvider.GetService(typeof(ConfigurationSetRegistry)));
             var result = await router.TryHandle(context);
             if (!result)
                 await next.Invoke();
