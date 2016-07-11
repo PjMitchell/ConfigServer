@@ -25,7 +25,7 @@ namespace ConfigServer.Core.Tests.Hosting
                 "AplicationId-1"
             };
             repository = new Mock<IConfigRepository>();
-            repository.Setup(s => s.GetConfigSetIdsAsync())
+            repository.Setup(s => s.GetClientIdsAsync())
                 .ReturnsAsync(configSetIds);
 
             configSetConfig = new ConfigurationSetRegistry();
@@ -34,7 +34,7 @@ namespace ConfigServer.Core.Tests.Hosting
             configSetConfig.AddConfigurationSet(configSetDef);
 
             defaultConfig = new Config<SimpleConfig>(new SimpleConfig { IntProperty = 43 });
-            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ConfigSetId == configSetIds[0]))).ReturnsAsync(defaultConfig);
+            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == configSetIds[0]))).ReturnsAsync(defaultConfig);
 
             responseFactory = new Mock<IConfigHttpResponseFactory>();
             responseFactory.Setup(r => r.BuildResponse(It.IsAny<HttpContext>(), defaultConfig.Configuration))
@@ -74,7 +74,7 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var context = new TestHttpContext($"/{configSetIds[0]}/{nameof(SimpleConfig)}");
             var config = new Config<SimpleConfig>(new SimpleConfig { IntProperty = 43 });
-            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ConfigSetId == configSetIds[0]))).ReturnsAsync(config);
+            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == configSetIds[0]))).ReturnsAsync(config);
             responseFactory.Setup(r => r.BuildResponse(context, config.Configuration))
                 .Returns(Task.FromResult(true));
 

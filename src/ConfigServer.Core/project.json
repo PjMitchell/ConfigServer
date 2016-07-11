@@ -1,12 +1,11 @@
 {
-    "version": "1.0.0-*",
-
-    "description": "ConfigServer.Core Class Library",
-    "authors": [ "Boo" ],
+    "description": "Handling of application configuration storage and management across multiple instances.",
+    "version": "1.0.0-beta1-*",
     "packOptions": {
-        "tags": [ "" ],
-        "projectUrl": "",
-        "licenseUrl": ""
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/PjMitchell/ConfigServer"
+        }
     },
     "buildOptions": { "xmlDoc": true },
     "dependencies": {

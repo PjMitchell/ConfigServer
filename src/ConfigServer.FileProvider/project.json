@@ -1,5 +1,13 @@
 ﻿{
-    "version": "1.0.0-*",
+    "description": "File storage implementation for the configurations repository",
+    "version": "1.0.0-beta1-*",
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/PjMitchell/ConfigServer"
+        }
+    },
+
     "buildOptions": { "xmlDoc": true },
     "dependencies": {
         "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
@@ -17,5 +25,6 @@
         "netcoreapp1.0": {
             "imports": "dnxcore50"
         }
+
     }
 }

@@ -9,7 +9,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationDateTimePropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<DateTimeTestClass>(new ConfigurationModelDefinition(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<DateTimeTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace ConfigServer.Core.Tests
 
             target.Property(x => x.DateTimeProperty)
                 .WithDisplayName(name)
-                .WithDiscription(description);
+                .WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(DateTimeTestClass.DateTimeProperty)].PropertyDescription);
@@ -71,7 +71,7 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetDateTimeProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyDefinition GetDateTimeProperty(ConfigurationModelDefinition def)
+        private ConfigurationPropertyModel GetDateTimeProperty(ConfigurationModel def)
         {
             return def.ConfigurationProperties[nameof(DateTimeTestClass.DateTimeProperty)];
         }

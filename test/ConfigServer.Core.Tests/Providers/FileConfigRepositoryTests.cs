@@ -1,7 +1,5 @@
 ﻿using ConfigServer.FileProvider;
-using ConfigServer.InMemoryProvider;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +27,7 @@ namespace ConfigServer.Core.Tests
 
         public void Dispose()
         {
-            System.IO.DirectoryInfo di = new DirectoryInfo(testdirectory);
+            var di = new DirectoryInfo(testdirectory);
 
             foreach (FileInfo file in di.GetFiles())
             {

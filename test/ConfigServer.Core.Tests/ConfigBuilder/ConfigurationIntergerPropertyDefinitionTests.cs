@@ -8,7 +8,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationIntergerPropertyDefinitionTests()
         {
-            target = new ConfigurationModelBuilder<IntergerTestClass>(new ConfigurationModelDefinition(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<IntergerTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace ConfigServer.Core.Tests
 
             target.Property(x => x.IntProperty)
                 .WithDisplayName(name)
-                .WithDiscription(description);
+                .WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(IntergerTestClass.IntProperty)].PropertyDescription);
@@ -70,7 +70,7 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetIntProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyDefinition GetIntProperty(ConfigurationModelDefinition def)
+        private ConfigurationPropertyModel GetIntProperty(ConfigurationModel def)
         {
             return def.ConfigurationProperties[nameof(IntergerTestClass.IntProperty)];
         }

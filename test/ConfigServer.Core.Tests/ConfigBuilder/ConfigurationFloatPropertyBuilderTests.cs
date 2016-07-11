@@ -1,4 +1,5 @@
 ﻿using Xunit;
+using ConfigServer.Core;
 
 namespace ConfigServer.Core.Tests
 {
@@ -8,7 +9,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationFloatPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<FloatTestClass>(new ConfigurationModelDefinition(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<FloatTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
         }
 
         [Fact]
@@ -30,7 +31,7 @@ namespace ConfigServer.Core.Tests
 
             target.Property(x => x.FloatProperty)
                 .WithDisplayName(name)
-                .WithDiscription(description);
+                .WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(FloatTestClass.FloatProperty)].PropertyDescription);
@@ -70,7 +71,7 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetFloatProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyDefinition GetFloatProperty(ConfigurationModelDefinition def)
+        private ConfigurationPropertyModel GetFloatProperty(ConfigurationModel def)
         {
             return def.ConfigurationProperties[nameof(FloatTestClass.FloatProperty)];
         }

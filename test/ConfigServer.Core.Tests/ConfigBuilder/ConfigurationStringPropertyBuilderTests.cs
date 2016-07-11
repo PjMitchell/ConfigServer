@@ -8,7 +8,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationStringPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<StringTestClass>(new ConfigurationModelDefinition(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<StringTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace ConfigServer.Core.Tests
 
             target.Property(x => x.StringProperty)
                 .WithDisplayName(name)
-                .WithDiscription(description);
+                .WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(StringTestClass.StringProperty)].PropertyDescription);
@@ -70,7 +70,7 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(pattern, GetStringProperty(result).ValidationRules.Pattern);
         }
 
-        private ConfigurationPropertyDefinition GetStringProperty(ConfigurationModelDefinition def)
+        private ConfigurationPropertyModel GetStringProperty(ConfigurationModel def)
         {
             return def.ConfigurationProperties[nameof(StringTestClass.StringProperty)];
         }

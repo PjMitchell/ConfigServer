@@ -1,11 +1,11 @@
 {
-    "version": "1.0.0-*",
-    "description": "ConfigServer.Configurator Class Library",
-    "authors": [ "Boo" ],
+    "description": "Provides configurators a way of configuring associated client configuration through a simple web interface with meta data and validation.",
+    "version": "1.0.0-beta1-*",
     "packOptions": {
-        "tags": [ "" ],
-        "projectUrl": "",
-        "licenseUrl": ""
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/PjMitchell/ConfigServer"
+        }
     },
     "buildOptions": { "xmlDoc": true },
     "dependencies": {

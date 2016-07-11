@@ -1,11 +1,11 @@
 {
-    "version": "1.0.0-*",
-    "description": "ConfigServer.InMemoryProvider Class Library",
-    "authors": [ "Boo" ],
+    "description": "In Memory implementation for the configurations repository",
+    "version": "1.0.0-beta1-*",
     "packOptions": {
-        "tags": [ "" ],
-        "projectUrl": "",
-        "licenseUrl": ""
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/PjMitchell/ConfigServer"
+        }
     },
     "buildOptions": { "xmlDoc": true },
     "dependencies": {

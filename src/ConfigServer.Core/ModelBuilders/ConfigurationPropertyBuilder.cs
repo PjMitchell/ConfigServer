@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConfigServer.Core
+﻿namespace ConfigServer.Core
 {
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.

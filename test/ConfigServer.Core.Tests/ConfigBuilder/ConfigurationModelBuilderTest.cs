@@ -11,7 +11,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationModelBuilderTest()
         {
-            target = new ConfigurationModelBuilder<SimpleConfig>(new ConfigurationModelDefinition(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<SimpleConfig>(new ConfigurationModel(typeof(SimpleConfig)));
         }
 
 
@@ -51,7 +51,7 @@ namespace ConfigServer.Core.Tests
 
             var description = "A Discription";
 
-            target.Property(x => x.IntProperty).WithDiscription(description);
+            target.Property(x => x.IntProperty).WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDescription);
@@ -66,7 +66,7 @@ namespace ConfigServer.Core.Tests
 
             target.Property(x => x.IntProperty)
                 .WithDisplayName(name)
-                .WithDiscription(description);
+                .WithDescription(description);
             var result = target.Build();
 
             Assert.Equal(description, result.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDescription);
