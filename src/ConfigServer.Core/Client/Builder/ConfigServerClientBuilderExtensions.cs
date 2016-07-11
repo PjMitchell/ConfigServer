@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ConfigServer.Core.Internal;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConfigServer.Core
 {

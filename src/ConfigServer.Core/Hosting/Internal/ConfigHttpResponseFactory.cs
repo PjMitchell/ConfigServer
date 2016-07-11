@@ -5,8 +5,17 @@ using System.Threading.Tasks;
 
 namespace ConfigServer.Core.Internal
 {
-    internal interface IConfigHttpResponseFactory
+    /// <summary>
+    /// Serializes config object then adds it to http context response
+    /// </summary>
+    public interface IConfigHttpResponseFactory
     {
+        /// <summary>
+        /// Builds config object then adds it to http context 
+        /// </summary>
+        /// <param name="context">HttpContext of request</param>
+        /// <param name="config">Config to be serialized</param>
+        /// <returns>A task that represents the asynchronous build operation.</returns>
         Task BuildResponse(HttpContext context, object config);
     }
 

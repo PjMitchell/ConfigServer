@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ConfigServer.Core.Internal;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;

@@ -2,10 +2,19 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ConfigServer.Core
+
+namespace ConfigServer.Core.Internal
 {
-    internal interface IHttpClientWrapper
+    /// <summary>
+    /// Wrapper for httpClient 
+    /// </summary>
+    public interface IHttpClientWrapper
     {
+        /// <summary>
+        /// Gets http response for uri
+        /// </summary>
+        /// <param name="uri">uri to be requested</param>
+        /// <returns>HttpResponseMessage from request</returns>
         Task<HttpResponseMessage> GetAsync(Uri uri);
     }
 
