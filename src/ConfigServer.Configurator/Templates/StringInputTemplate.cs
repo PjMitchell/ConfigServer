@@ -15,7 +15,7 @@ namespace ConfigServer.Configurator.Templates
             var builder = new StringBuilder();
             if (definition.ValidationRules.MaxLength.HasValue)
                 builder.Append($"maxlength=\"{definition.ValidationRules.MaxLength}\" ");
-            if (string.IsNullOrWhiteSpace(definition.ValidationRules.Pattern))
+            if (!string.IsNullOrWhiteSpace(definition.ValidationRules.Pattern))
                 builder.Append($"pattern=\"{definition.ValidationRules.Pattern}\" ");
             return builder.ToString();
         }
