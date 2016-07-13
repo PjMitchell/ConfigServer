@@ -1,5 +1,6 @@
 {
     "description": "Provides configurators a way of configuring associated client configuration through a simple web interface with meta data and validation.",
+    "authors": [ "Peter Mitchell" ],
     "version": "1.0.0-beta1-*",
     "packOptions": {
         "repository": {

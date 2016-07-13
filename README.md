@@ -1,6 +1,7 @@
 # ConfigServer
-
 Handling of application configuration storage and management across multiple instances.
+
+[![Build status](https://ci.appveyor.com/api/projects/status/qmqipgjgyg70r3su/branch/master?svg=true)](https://ci.appveyor.com/project/PjMitchell/configserver/branch/master)
 
 ## Core concepts
 
