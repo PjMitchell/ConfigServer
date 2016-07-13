@@ -1,6 +1,7 @@
 ﻿{
     "description": "File storage implementation for the configurations repository",
     "version": "1.0.0-beta1-*",
+    "authors": [ "Peter Mitchell" ],
     "packOptions": {
         "repository": {
             "type": "git",

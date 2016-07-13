@@ -1,7 +1,7 @@
 {
     "version": "1.0.0-*",
     "description": "ConfigServer.Core.Tests Class Library",
-    "authors": [ "Boo" ],
+    "authors": [ "Peter Mitchell" ],
     "testRunner": "xunit",
     "dependencies": {
         "xunit": "2.2.0-*",

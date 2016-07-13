@@ -1,5 +1,6 @@
 {
     "description": "In Memory implementation for the configurations repository",
+    "authors": [ "Peter Mitchell" ],
     "version": "1.0.0-beta1-*",
     "packOptions": {
         "repository": {
