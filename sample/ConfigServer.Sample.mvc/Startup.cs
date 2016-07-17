@@ -56,8 +56,11 @@ namespace ConfigServer.Sample.mvc
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.SaveChangesAsync(new Config<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
-            configRepo.SaveChangesAsync(new Config<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application"}).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
+
+            configRepo.UpdateConfigAsync(new Config<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
+            configRepo.UpdateConfigAsync(new Config<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
 
         }
 

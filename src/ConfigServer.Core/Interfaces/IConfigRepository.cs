@@ -13,19 +13,19 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        Task SaveChangesAsync(Config config);
+        Task UpdateConfigAsync(Config config);
 
         /// <summary>
-        /// Get all Client Ids in store
+        /// Get all Client in store
         /// </summary>
-        /// <returns>AvailableClientIds</returns>
-        Task<IEnumerable<string>> GetClientIdsAsync();
+        /// <returns>Available Client</returns>
+        Task<IEnumerable<ConfigurationClient>> GetClientsAsync();
 
         /// <summary>
-        /// Creates new client in store
+        /// Creates or updates client details in store
         /// </summary>
-        /// <param name="clientId">new client Id</param>
-        /// <returns>A task that represents the asynchronous creation operation.</returns>
-        Task CreateClientAsync(string clientId);
+        /// <param name="client">Updated Client detsils</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
+        Task UpdateClientAsync(ConfigurationClient client);
     }
 }

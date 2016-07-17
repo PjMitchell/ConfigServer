@@ -11,6 +11,7 @@ namespace ConfigServer.Core.Tests
     {
         private readonly IConfigRepository target;
         private readonly string testdirectory;
+        private readonly Core.ConfigurationClient client; 
         private readonly ConfigurationIdentity configId;
 
 
@@ -18,11 +19,17 @@ namespace ConfigServer.Core.Tests
         {
             testdirectory = $"{AppContext.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             target = new FileConfigRepository(testdirectory);
+            client = new ConfigurationClient
+            {
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
+                Name = "Client 1",
+                Description = "A description Client"
+            };
             configId = new ConfigurationIdentity
             {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+                ClientId = client.ClientId
             };
-            target.CreateClientAsync(configId.ClientId).Wait();
+            target.UpdateClientAsync(client).Wait();
         }
 
         public void Dispose()
@@ -41,12 +48,9 @@ namespace ConfigServer.Core.Tests
             Directory.Delete(testdirectory);
         }
 
-
-
         [Fact]
         public async Task CanSaveAndRetriveAsync()
         {
-            
             const int testValue = 23;
             var config = new Config<SimpleConfig>
             {
@@ -54,7 +58,7 @@ namespace ConfigServer.Core.Tests
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
-            await target.SaveChangesAsync(config);
+            await target.UpdateConfigAsync(config);
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.Equal(testValue, result.Configuration.IntProperty);
         }
@@ -69,25 +73,35 @@ namespace ConfigServer.Core.Tests
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
-            await target.SaveChangesAsync(config);
+            await target.UpdateConfigAsync(config);
             var result = (Config<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig), configId));
             Assert.Equal(testValue, result.Configuration.IntProperty);
         }
 
         [Fact]
-        public async Task CanGetConfigSetIdsAsync()
+        public async Task CanSaveAndGetClientsAsync()
         {
-            const int testValue = 23;
-            var config = new Config<SimpleConfig>
-            {
-                ClientId = configId.ClientId,
-                Configuration = new SimpleConfig { IntProperty = testValue }
-            };
-
-            await target.SaveChangesAsync(config);
-            var result = (await target.GetClientIdsAsync()).ToList();
+            await target.UpdateClientAsync(client);
+            var result = (await target.GetClientsAsync()).ToList();
             Assert.Equal(1, result.Count);
-            Assert.Equal(configId.ClientId, result[0]);
+            Assert.Equal(client.ClientId, result[0].ClientId);
+            Assert.Equal(client.Name, result[0].Name);
+            Assert.Equal(client.Description, result[0].Description);
+
+        }
+
+        [Fact]
+        public async Task CanUpdateClientAsync()
+        {
+            var clientUpdated = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4", Name = "Client 1", Description = "Client Description" };
+            await target.UpdateClientAsync(client);
+            await target.UpdateClientAsync(clientUpdated);
+
+            var result = (await target.GetClientsAsync()).ToList();
+            Assert.Equal(1, result.Count);
+            Assert.Equal(client.ClientId, result[0].ClientId);
+            Assert.Equal(clientUpdated.Name, result[0].Name);
+            Assert.Equal(clientUpdated.Description, result[0].Description);
         }
 
         [Fact]
@@ -100,12 +114,12 @@ namespace ConfigServer.Core.Tests
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
+            await target.UpdateClientAsync(client);
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.NotNull(result);
-            Assert.Equal(configId.ClientId, config.ClientId);
+            Assert.Equal(client.ClientId, config.ClientId);
             Assert.Equal(0, result.Configuration.IntProperty);
         }
-
 
     }
 }

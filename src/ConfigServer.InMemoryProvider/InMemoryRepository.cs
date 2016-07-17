@@ -11,6 +11,7 @@ namespace ConfigServer.InMemoryProvider
     /// </summary>
     public class InMemoryRepository : IConfigRepository
     {
+        private readonly Dictionary<string, ConfigurationClient> clientStore;
         private readonly Dictionary<string, Dictionary<Type, Config>> innerStore;
         
         /// <summary>
@@ -18,6 +19,7 @@ namespace ConfigServer.InMemoryProvider
         /// </summary>
         public InMemoryRepository()
         {
+            clientStore = new Dictionary<string, ConfigurationClient>();
             innerStore = new Dictionary<string, Dictionary<Type, Config>>();
         }
 
@@ -25,10 +27,10 @@ namespace ConfigServer.InMemoryProvider
         /// Get all Client Ids in store
         /// </summary>
         /// <returns>AvailableClientIds</returns>
-        public Task<IEnumerable<string>> GetClientIdsAsync()
+        public Task<IEnumerable<ConfigurationClient>> GetClientsAsync()
         {
-            var tcs = new TaskCompletionSource<IEnumerable<string>>();
-            tcs.SetResult(GetConfigSetIds());
+            var tcs = new TaskCompletionSource<IEnumerable<ConfigurationClient>>();
+            tcs.SetResult(GetClients());
             return tcs.Task;
         }
 
@@ -63,7 +65,7 @@ namespace ConfigServer.InMemoryProvider
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        public Task SaveChangesAsync(Config config)
+        public Task UpdateConfigAsync(Config config)
         {
             var tcs = new TaskCompletionSource<bool>();
             SaveChanges(config);
@@ -72,14 +74,17 @@ namespace ConfigServer.InMemoryProvider
         }
 
         /// <summary>
-        /// Creates new client in store
+        /// Creates or updates client details in store
         /// </summary>
-        /// <param name="clientId">new client Id</param>
-        /// <returns>A task that represents the asynchronous creation operation.</returns>
-        public Task CreateClientAsync(string clientId)
+        /// <param name="client">Updated Client detsils</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
+        public Task UpdateClientAsync(ConfigurationClient client)
         {
             var tcs = new TaskCompletionSource<bool>();
-            CreateConfigSet(clientId);
+            if (clientStore.ContainsKey(client.ClientId))
+                clientStore[client.ClientId] = client;
+            else
+                CreateConfigSet(client);
             tcs.SetResult(true);
             return tcs.Task;
         }
@@ -101,9 +106,9 @@ namespace ConfigServer.InMemoryProvider
             return (Config<TConfig>)Get(typeof(TConfig), id);
         }
 
-        private IEnumerable<string> GetConfigSetIds()
+        private IEnumerable<ConfigurationClient> GetClients()
         {
-            return innerStore.Keys.ToList();
+            return clientStore.Values.ToList();
         }
 
         private void SaveChanges(Config config)
@@ -114,9 +119,10 @@ namespace ConfigServer.InMemoryProvider
             innerStore[config.ClientId][config.ConfigType] = config;
         }
 
-        private void CreateConfigSet(string configSetId)
+        private void CreateConfigSet(ConfigurationClient client)
         {
-            innerStore.Add(configSetId, new Dictionary<Type, Config>());
+            clientStore.Add(client.ClientId, client);
+            innerStore.Add(client.ClientId, new Dictionary<Type, Config>());
         }
 
     }
