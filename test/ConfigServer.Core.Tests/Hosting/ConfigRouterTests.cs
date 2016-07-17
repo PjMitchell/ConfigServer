@@ -14,19 +14,19 @@ namespace ConfigServer.Core.Tests.Hosting
         private readonly Mock<IConfigRepository> repository;
         private readonly Mock<IConfigHttpResponseFactory> responseFactory;
         private readonly ConfigurationSetRegistry configSetConfig;
-        private readonly List<string> configSetIds;
+        private readonly List<ConfigurationClient> clients;
         private readonly Config<SimpleConfig> defaultConfig;
 
         public ConfigRouterTests()
         {
             
-            configSetIds = new List<string>
+            clients = new List<ConfigurationClient>
             {
-                "AplicationId-1"
+                new ConfigurationClient { ClientId = " AplicationId-1" }
             };
             repository = new Mock<IConfigRepository>();
-            repository.Setup(s => s.GetClientIdsAsync())
-                .ReturnsAsync(configSetIds);
+            repository.Setup(s => s.GetClientsAsync())
+                .ReturnsAsync(clients);
 
             configSetConfig = new ConfigurationSetRegistry();
             var configSetDef = new ConfigurationSetModel(typeof(ConfigurationSet));
@@ -34,7 +34,7 @@ namespace ConfigServer.Core.Tests.Hosting
             configSetConfig.AddConfigurationSet(configSetDef);
 
             defaultConfig = new Config<SimpleConfig>(new SimpleConfig { IntProperty = 43 });
-            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == configSetIds[0]))).ReturnsAsync(defaultConfig);
+            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == clients[0].ClientId))).ReturnsAsync(defaultConfig);
 
             responseFactory = new Mock<IConfigHttpResponseFactory>();
             responseFactory.Setup(r => r.BuildResponse(It.IsAny<HttpContext>(), defaultConfig.Configuration))
@@ -56,7 +56,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task ReturnsFalse_IfApplicationfound_ButNoModel()
         {
-            var context = new TestHttpContext($"/{configSetIds[0]}");
+            var context = new TestHttpContext($"/{clients[0].ClientId}");
             var result = await target.TryHandle(context);
             Assert.False(result);
         }
@@ -64,7 +64,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task ReturnsTrue_IfApplicationfound_ButNoModel()
         {
-            var context = new TestHttpContext($"/{configSetIds[0]}/{nameof(SimpleConfig)}");
+            var context = new TestHttpContext($"/{clients[0].ClientId}/{nameof(SimpleConfig)}");
             var result = await target.TryHandle(context);
             Assert.True(result);
         }
@@ -72,9 +72,9 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task CallsResponseFactoryWithConfig()
         {
-            var context = new TestHttpContext($"/{configSetIds[0]}/{nameof(SimpleConfig)}");
+            var context = new TestHttpContext($"/{clients[0].ClientId}/{nameof(SimpleConfig)}");
             var config = new Config<SimpleConfig>(new SimpleConfig { IntProperty = 43 });
-            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == configSetIds[0]))).ReturnsAsync(config);
+            repository.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.ClientId == clients[0].ClientId))).ReturnsAsync(config);
             responseFactory.Setup(r => r.BuildResponse(context, config.Configuration))
                 .Returns(Task.FromResult(true));
 

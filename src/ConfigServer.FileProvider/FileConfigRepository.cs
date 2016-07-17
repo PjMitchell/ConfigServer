@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.FileProvider
 {
@@ -16,6 +17,7 @@ namespace ConfigServer.FileProvider
     {
         readonly string folderPath;
         readonly JsonSerializerSettings jsonSerializerSettings;
+        const string indexFile = "clientIndex.json";
 
         internal FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
         {
@@ -24,13 +26,18 @@ namespace ConfigServer.FileProvider
         }
 
         /// <summary>
-        /// Creates new client in store
+        /// Creates or updates client details in store
         /// </summary>
-        /// <param name="clientId">new client Id</param>
-        /// <returns>A task that represents the asynchronous creation operation.</returns>
-        public Task CreateClientAsync(string clientId)
+        /// <param name="client">Updated Client detsils</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
+        public Task UpdateClientAsync(ConfigurationClient client)
         {
-            GetFileStore().CreateSubdirectory(clientId);
+            
+            var clientLookup = GetClientStore().ToDictionary(k => k.ClientId);
+            if(!clientLookup.ContainsKey(client.ClientId))
+                GetFileStore().CreateSubdirectory(client.ClientId);
+            clientLookup[client.ClientId] = client;
+            SaveClients(clientLookup.Values);
             return Task.FromResult(true);
         }
 
@@ -70,12 +77,12 @@ namespace ConfigServer.FileProvider
         }
 
         /// <summary>
-        /// Get all Client Ids in store
+        /// Get all Client in store
         /// </summary>
-        /// <returns>AvailableClientIds</returns>
-        public Task<IEnumerable<string>> GetClientIdsAsync()
+        /// <returns>Available Client</returns>
+        public Task<IEnumerable<ConfigurationClient>> GetClientsAsync()
         {
-            return Task.FromResult<IEnumerable<string>>(GetFileStore().EnumerateDirectories().Select(s => s.Name).ToList()); 
+            return Task.FromResult<IEnumerable<ConfigurationClient>>(GetClientStore().ToList()); 
         }
 
         /// <summary>
@@ -83,7 +90,7 @@ namespace ConfigServer.FileProvider
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        public Task SaveChangesAsync(Config config)
+        public Task UpdateConfigAsync(Config config)
         {
             var configPath = GetConfigPath(config.ConfigType, config.ClientId);
             File.WriteAllText(configPath, JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings));
@@ -116,6 +123,23 @@ namespace ConfigServer.FileProvider
         private DirectoryInfo GetFileStore()
         {               
             return Directory.CreateDirectory(folderPath);
+        }
+
+        private IEnumerable<ConfigurationClient> GetClientStore()
+        {
+            var path = $"{GetFileStore().FullName}/{indexFile}";
+            if (!File.Exists(path))
+                return Enumerable.Empty<ConfigurationClient>();
+
+            var json = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<List<ConfigurationClient>>(json, jsonSerializerSettings);
+        }
+
+        private void SaveClients(ICollection<ConfigurationClient> clients)
+        {
+            var path = $"{GetFileStore().FullName}/{indexFile}";
+            var json = JsonConvert.SerializeObject(clients, jsonSerializerSettings);
+            File.WriteAllText(path, json);
         }
     }
 }

@@ -8,14 +8,14 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class EditorContent
     {
-        public static string GetContent(Config config, ConfigurationModel modelDefinition)
+        public static string GetContent(ConfigurationClient client, Config config, ConfigurationModel modelDefinition)
         {
             var configItem = config.GetConfiguration();
             var editFields = config.ConfigType.GetProperties()
                 .Where(prop => prop.CanWrite)
                 .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType,modelDefinition.GetPropertyDefinition(prop.Name)));
             return $@"
-            <h3>Edit {config.ClientId} - {config.Name}</h3>
+            <h3>Edit {client.Name} - {config.Name}</h3>
             <form method=""post"">
             { string.Join<string>("<br>", editFields)}
             <input type=""submit"" value=""Submit"">

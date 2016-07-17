@@ -16,7 +16,7 @@ namespace ConfigServer.Core
         /// <param name="type">Type for generic Config</param>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        public static Config CreateGenericInstance(Type type, string clientId = "")
+        public static Config CreateGenericInstance(Type type, string clientId)
         {
             var config = typeof(Config<>);
             Type[] typeArgs = { type };

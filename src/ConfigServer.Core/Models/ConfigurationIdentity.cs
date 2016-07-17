@@ -1,4 +1,6 @@
-﻿namespace ConfigServer.Core
+﻿using System;
+
+namespace ConfigServer.Core
 {
     /// <summary>
     /// Identity of Configuration. 

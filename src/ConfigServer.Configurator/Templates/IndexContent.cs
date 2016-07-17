@@ -7,7 +7,7 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class IndexContent
     {
-        public static string GetContent(PathString routeString, IEnumerable<string> configIdentities)
+        public static string GetContent(PathString routeString, IEnumerable<ConfigurationClient> configIdentities)
         {
             var configIdentityLinks = configIdentities.Select(s => LinkForConfigSet(s, routeString));
             return $@"
@@ -17,25 +17,30 @@ namespace ConfigServer.Configurator.Templates
             { string.Join("<br>", configIdentityLinks)}";
         }
 
-        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetRegistry configSets)
+        public static string GetContent(PathString routePath, ConfigurationClient client, ConfigurationSetRegistry configSets)
         {
-            var configSetLinks = configSets.Select(config => LinkForConfig(configIdentity, config, routePath));
+            var configSetLinks = configSets.Select(config => LinkForConfig(client.ClientId, config, routePath));
             return $@"
-            <H3>{configIdentity} - Config Sets</H3>
+            <H3>{client.Name} - Config Sets</H3>
+            <p>{client.Description}</p>
+            <br>
+            <a href=""{routePath}/Edit/{client.ClientId}"">Edit {client.Name}</a>
+            <br>
             {string.Join("<br>", configSetLinks)}";
         }
 
-        public static string GetContent(PathString routePath, string configIdentity, ConfigurationSetModel configSetDef)
+        public static string GetContent(PathString routePath, ConfigurationClient client, ConfigurationSetModel configSetDef)
         {
-            var configLinks = configSetDef.Configs.Select(config => LinkForConfig(configIdentity, configSetDef, config, routePath));
+            var configLinks = configSetDef.Configs.Select(config => LinkForConfig(client.ClientId, configSetDef, config, routePath));
             return $@"
-            <H3>{configIdentity} - {configSetDef.ConfigSetType.Name}</H3>
+            <H3>{client.Name} - {configSetDef.ConfigSetType.Name}</H3>            
+            <br>
             {string.Join("<br>", configLinks)}";
         }
 
-        private static string LinkForConfigSet(string configIdentity, PathString routeString)
+        private static string LinkForConfigSet(ConfigurationClient configIdentity, PathString routeString)
         {
-            return $"<a href=\"{routeString}/{configIdentity}\">{configIdentity}</a>";
+            return $"<a href=\"{routeString}/{configIdentity.ClientId}\">{configIdentity.Name}</a>";
         }
 
         private static string LinkForConfig(string configIdentity, ConfigurationSetModel config, PathString routeString)
