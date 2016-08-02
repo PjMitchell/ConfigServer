@@ -24,14 +24,14 @@ namespace ConfigServer.Core.Internal
         public async Task<bool> TryHandle(HttpContext context)
         {
             var configSetIds = await configRepository.GetClientsAsync();
-            var configSetIdResult = configSetIds.TryMatchPath(c => c.ClientId.ToString(),
+            var configSetIdResult = configSetIds.TryMatchPath(c => c.ClientId,
             context.Request.Path);
             if(!configSetIdResult.HasResult)
                 return false;
             var configModelResult = configModelCollection.TryMatchPath(s => s.Type.Name, configSetIdResult.RemainingPath);
             if (!configModelResult.HasResult)
                 return false;
-            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult.ClientId.ToString() });
+            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult.ClientId });
             await responseFactory.BuildResponse(context, config.GetConfiguration());
             return true;
         }
