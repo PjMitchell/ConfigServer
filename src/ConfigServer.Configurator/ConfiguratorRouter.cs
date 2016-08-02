@@ -35,40 +35,20 @@ namespace ConfigServer.Configurator
             }
 
             if(remaining == "/Create")
-            {
                 return await HandleCreateConfigurationClient(context, routePath);
-            }
 
             PathString editRemaining;
             if (remaining.StartsWithSegments("/Edit", out editRemaining))
-            {
-                var clientResult = clients.TryMatchPath(s => s.ClientId, editRemaining);
-                if (!clientResult.HasResult)
-                    return false;
-                if (context.Request.Method.Equals("GET"))
-                {
-                    await pageBuilder.WriteContent($"Edit {clientResult.QueryResult.Name}", EditClientContent.GetContent(clientResult.QueryResult));
-                    return true;
-                }
-
-                if (context.Request.Method.Equals("POST"))
-                {
-                    var result = UpdateConfigurationClientFormBinder.BindForm(context.Request.Form);
-                    await configRepository.UpdateClientAsync(result);
-                    pageBuilder.Redirect(routePath + "/" + clientResult.QueryResult.ClientId);
-                    return true;
-                }
-                return false;
-            }
+                return await HandleEditConfigurationClient(context, clients, routePath, editRemaining);
 
             var clientQueryResult = clients.TryMatchPath(s=> s.ClientId, remaining);
             if (!clientQueryResult.HasResult)
                 return false;
-            var appId = clientQueryResult.QueryResult;
+            var client = clientQueryResult.QueryResult;
             var configs = configCollection;
             if(string.IsNullOrEmpty(clientQueryResult.RemainingPath))
             {
-                await pageBuilder.WriteContent("Index", IndexContent.GetContent(routePath, appId, configs));
+                await pageBuilder.WriteContent("Index", IndexContent.GetContent(routePath, client, configs));
                 return true; //Lists ConfigSet
             }
             
@@ -79,23 +59,28 @@ namespace ConfigServer.Configurator
             var configQueryResult = configSetQueryResult.QueryResult.Configs.TryMatchPath(s => s.Type.Name, configSetQueryResult.RemainingPath);
             if (!configQueryResult.HasResult)
             {
-                await pageBuilder.WriteContent(configSetQueryResult.QueryResult.ConfigSetType.Name, IndexContent.GetContent(routePath, appId, configSetDefinition));
+                await pageBuilder.WriteContent(configSetQueryResult.QueryResult.Name, IndexContent.GetContent(routePath, client, configSetDefinition));
                 return true; //Lists ConfigSet Configs
             }
 
-            var currentConfig =await configRepository.GetAsync(configQueryResult.QueryResult.Type, new ConfigurationIdentity { ClientId = clientQueryResult.QueryResult.ClientId });
+            return await HandleEditConfiguration(context, routePath, configQueryResult, clientQueryResult.QueryResult);
+        }
+
+        private async Task<bool> HandleEditConfiguration(HttpContext context, PathString routePath, PathQueryResult<ConfigurationModel> configQueryResult, ConfigurationClient client)
+        {
+            var currentConfig = await configRepository.GetAsync(configQueryResult.QueryResult.Type, new ConfigurationIdentity { ClientId = client.ClientId });
 
             if (context.Request.Method.Equals("GET"))
             {
-                await pageBuilder.WriteContent(configQueryResult.QueryResult.Type.Name, EditorContent.GetContent(clientQueryResult.QueryResult, currentConfig, configQueryResult.QueryResult));
-                return true; 
+                await pageBuilder.WriteContent(configQueryResult.QueryResult.Type.Name, EditorContent.GetContent(client, currentConfig, configQueryResult.QueryResult));
+                return true;
             }
 
             if (context.Request.Method.Equals("POST"))
             {
                 var configResult = ConfigFormBinder.BindForm(currentConfig, context.Request.Form);
                 await configRepository.UpdateConfigAsync(configResult);
-                pageBuilder.Redirect(routePath + "/" + clientQueryResult.QueryResult);
+                pageBuilder.Redirect(routePath + "/" + client);
                 return true;
             }
 
@@ -118,6 +103,27 @@ namespace ConfigServer.Configurator
                 return true;
             }
 
+            return false;
+        }
+
+        private async Task<bool> HandleEditConfigurationClient(HttpContext context, IEnumerable<ConfigurationClient> clients, PathString routePath, PathString editRemaining)
+        {
+            var clientResult = clients.TryMatchPath(s => s.ClientId, editRemaining);
+            if (!clientResult.HasResult)
+                return false;
+            if (context.Request.Method.Equals("GET"))
+            {
+                await pageBuilder.WriteContent($"Edit {clientResult.QueryResult.Name}", EditClientContent.GetContent(clientResult.QueryResult));
+                return true;
+            }
+
+            if (context.Request.Method.Equals("POST"))
+            {
+                var result = UpdateConfigurationClientFormBinder.BindForm(context.Request.Form);
+                await configRepository.UpdateClientAsync(result);
+                pageBuilder.Redirect(routePath + "/" + clientResult.QueryResult.ClientId);
+                return true;
+            }
             return false;
         }
 

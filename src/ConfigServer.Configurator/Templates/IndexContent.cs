@@ -33,7 +33,8 @@ namespace ConfigServer.Configurator.Templates
         {
             var configLinks = configSetDef.Configs.Select(config => LinkForConfig(client.ClientId, configSetDef, config, routePath));
             return $@"
-            <H3>{client.Name} - {configSetDef.ConfigSetType.Name}</H3>            
+            <H3>{client.Name} - {configSetDef.Name}</H3>    
+            <p>{configSetDef.Description}</p>        
             <br>
             {string.Join("<br>", configLinks)}";
         }
@@ -45,7 +46,7 @@ namespace ConfigServer.Configurator.Templates
 
         private static string LinkForConfig(string configIdentity, ConfigurationSetModel config, PathString routeString)
         {
-            return $"<a href=\"{routeString}/{configIdentity}/{config.ConfigSetType.Name}\">{config.ConfigSetType.Name}</a>";
+            return $"<a href=\"{routeString}/{configIdentity}/{config.ConfigSetType.Name}\">{config.Name}</a>";
         }
         private static string LinkForConfig(string configIdentity, ConfigurationSetModel configSet, ConfigurationModel configModel, PathString routeString)
         {

@@ -15,7 +15,8 @@ namespace ConfigServer.Configurator.Templates
                 .Where(prop => prop.CanWrite)
                 .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType,modelDefinition.GetPropertyDefinition(prop.Name)));
             return $@"
-            <h3>Edit {client.Name} - {config.Name}</h3>
+            <h3>Edit {client.Name} - {modelDefinition.ConfigurationDisplayName}</h3>
+            <p>{modelDefinition.ConfigurationDescription}</p>
             <form method=""post"">
             { string.Join<string>("<br>", editFields)}
             <input type=""submit"" value=""Submit"">

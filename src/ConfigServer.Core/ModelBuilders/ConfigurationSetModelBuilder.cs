@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Core
 {
     /// <summary>
@@ -9,9 +11,9 @@ namespace ConfigServer.Core
     {
         private readonly ConfigurationSetModel definition;
 
-        internal ConfigurationSetModelBuilder(Type type)
+        internal ConfigurationSetModelBuilder(Type type, string name, string description)
         {
-            definition = new ConfigurationSetModel(type);
+            definition = new ConfigurationSetModel(type, name, description);
         }
 
         /// <summary>
@@ -19,9 +21,30 @@ namespace ConfigServer.Core
         /// </summary>
         /// <typeparam name="TConfig">Configuration type</typeparam>
         /// <returns>ConfigurationModelBuilder for type</returns>
-        public ConfigurationModelBuilder<TConfig> Config<TConfig>()
+        public ConfigurationModelBuilder<TConfig> Config<TConfig>() => Config<TConfig>(typeof(TConfig).Name, string.Empty);
+
+        /// <summary>
+        /// Gets ConfigurationModelBuilder for type
+        /// </summary>
+        /// <typeparam name="TConfig">Configuration type</typeparam>
+        /// <param name="name">Display name for the config</param>
+        /// <returns>ConfigurationModelBuilder for type</returns>
+        public ConfigurationModelBuilder<TConfig> Config<TConfig>(string name) => Config<TConfig>(name, string.Empty);
+
+
+        /// <summary>
+        /// Gets ConfigurationModelBuilder for type
+        /// </summary>
+        /// <typeparam name="TConfig">Configuration type</typeparam>
+        /// <param name="name">Display name for the config</param>
+        /// <param name="description">Description for the config</param>
+        /// <returns>ConfigurationModelBuilder for type</returns>
+        public ConfigurationModelBuilder<TConfig> Config<TConfig>(string name, string description)
         {
-            return new ConfigurationModelBuilder<TConfig>(definition.GetOrInitialize<TConfig>());
+            var model = definition.GetOrInitialize<TConfig>();
+            model.ConfigurationDisplayName = name;
+            model.ConfigurationDescription = description;
+            return new ConfigurationModelBuilder<TConfig>(model);
         }
 
         /// <summary>

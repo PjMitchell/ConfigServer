@@ -14,16 +14,36 @@ namespace ConfigServer.Core
         /// Initializes configuration set model for configuration set type
         /// </summary>
         /// <param name="configSetType">Configuration set type</param>
-        public ConfigurationSetModel(Type configSetType)
+        /// <param name="name">Display name for configuration set</param>
+        /// <param name="description">Description for configuration set type</param>
+        public ConfigurationSetModel(Type configSetType, string name, string description)
         {
             ConfigSetType = configSetType;
+            Name = name;
+            Description = description;
             configurationModels = new Dictionary<Type, ConfigurationModel>();
         }
+
+        /// <summary>
+        /// Initializes configuration set model for configuration set type
+        /// </summary>
+        /// <param name="configSetType">Configuration set type</param>
+        public ConfigurationSetModel(Type configSetType) : this(configSetType, configSetType.Name, string.Empty) { }
 
         /// <summary>
         /// Configuration set type
         /// </summary>
         public Type ConfigSetType { get; }
+
+        /// <summary>
+        /// Display name for Config set
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Config set description
+        /// </summary>
+        public string Description { get; }
 
         /// <summary>
         /// Gets or initializes a configuration model by type
