@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ConfigServer.Core
 {
-    internal class ConfigurationPropertyModelDefinitionFactory
+    internal static class ConfigurationPropertyModelDefinitionFactory
     {
         public static ConfigurationPropertyModelBase Build(PropertyInfo propertyInfo) => Build(propertyInfo.Name, propertyInfo.PropertyType);
 

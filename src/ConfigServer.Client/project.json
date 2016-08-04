@@ -1,5 +1,5 @@
 {
-    "description": "In Memory implementation for the configurations repository",
+    "description": "Client for ConfigServer.",
     "authors": [ "Peter Mitchell" ],
     "version": "1.0.0-beta1-*",
     "packOptions": {
@@ -9,20 +9,15 @@
         }
     },
     "buildOptions": { "xmlDoc": true },
+
     "dependencies": {
         "ConfigServer.Core": "1.0.0-*",
-        "ConfigServer.Server": "1.0.0-*",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
         "NETStandard.Library": "1.6.0"
     },
 
     "frameworks": {
         "netstandard1.6": {
-            "imports": [
-                "dotnet5.6",
-                "dnxcore50"
-            ]
-        },
-        "netcoreapp1.0": {
             "imports": "dnxcore50"
         }
     }

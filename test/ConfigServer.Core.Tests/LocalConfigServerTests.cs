@@ -1,4 +1,5 @@
 ﻿using ConfigServer.InMemoryProvider;
+using ConfigServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;

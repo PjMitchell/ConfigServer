@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
-using ConfigServer.Configurator;
-
+using ConfigServer.Server;
 
 namespace ConfigServer.Sample.mvc
 {

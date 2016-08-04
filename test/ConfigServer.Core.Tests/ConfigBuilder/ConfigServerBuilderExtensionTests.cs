@@ -3,6 +3,7 @@ using System.Linq;
 using ConfigServer.InMemoryProvider;
 using Xunit;
 using System.Threading.Tasks;
+using ConfigServer.Server;
 
 namespace ConfigServer.Core.Tests
 {

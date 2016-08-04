@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
-using ConfigServer.Core.Internal;
+using ConfigServer.Server;
 
 namespace ConfigServer.Core.Tests.Hosting
 {

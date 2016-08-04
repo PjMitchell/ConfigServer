@@ -1,4 +1,4 @@
-﻿using ConfigServer.Core.Internal;
+﻿using ConfigServer.Client;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

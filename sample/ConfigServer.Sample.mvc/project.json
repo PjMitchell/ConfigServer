@@ -12,7 +12,7 @@
 
 
     "dependencies": {
-        "ConfigServer.Configurator": "1.0.0-*",
+        "ConfigServer.Server": "1.0.0-*",
         "ConfigServer.Core": "1.0.0-*",
         "ConfigServer.InMemoryProvider": "1.0.0-*",
         "Microsoft.AspNetCore.Diagnostics": "1.0.0",
