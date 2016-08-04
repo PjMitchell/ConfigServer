@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests
         public async Task CanSaveAndRetriveAsync()
         {
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
@@ -67,14 +67,14 @@ namespace ConfigServer.Core.Tests
         public async Task CanSaveAndRetriveWithTypeAsync()
         {
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
             await target.UpdateConfigAsync(config);
-            var result = (Config<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig), configId));
+            var result = (ConfigInstance<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig), configId));
             Assert.Equal(testValue, result.Configuration.IntProperty);
         }
 
@@ -108,7 +108,7 @@ namespace ConfigServer.Core.Tests
         public async Task Get_ReturnsNewObjectIfNotPresentAsync()
         {
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }

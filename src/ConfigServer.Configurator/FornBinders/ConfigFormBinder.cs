@@ -8,7 +8,7 @@ namespace ConfigServer.Configurator
 {
     internal static class ConfigFormBinder
     {
-        public static Config BindForm(Config existingConfig, IFormCollection collection)
+        public static ConfigInstance BindForm(ConfigInstance existingConfig, IFormCollection collection)
         {
             var configItem = existingConfig.GetConfiguration();
             foreach(var prop in existingConfig.ConfigType.GetProperties().Where(prop => prop.CanWrite))

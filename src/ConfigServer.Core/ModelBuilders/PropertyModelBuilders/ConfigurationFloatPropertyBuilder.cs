@@ -10,7 +10,7 @@
         /// Initializes ConfigurationFloatPropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationFloatPropertyBuilder(ConfigurationPropertyModel model) : base(model) { }
+        public ConfigurationFloatPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
         /// <summary>
         /// Sets Maximum value validation rule for property
@@ -19,7 +19,7 @@
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationFloatPropertyBuilder WithMaxValue(double value)
         {
-            model.ValidationRules.Max = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.Max = value;
             return this;
         }
 
@@ -30,7 +30,7 @@
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationFloatPropertyBuilder WithMinValue(double value)
         {
-            model.ValidationRules.Min = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.Min = value;
             return this;
         }
     }

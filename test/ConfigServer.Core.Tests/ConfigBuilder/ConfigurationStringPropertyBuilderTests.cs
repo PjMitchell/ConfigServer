@@ -70,9 +70,9 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(pattern, GetStringProperty(result).ValidationRules.Pattern);
         }
 
-        private ConfigurationPropertyModel GetStringProperty(ConfigurationModel def)
+        private ConfigurationPrimitivePropertyModel GetStringProperty(ConfigurationModel def)
         {
-            return def.ConfigurationProperties[nameof(StringTestClass.StringProperty)];
+            return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(StringTestClass.StringProperty)];
         }
 
         private class StringTestClass

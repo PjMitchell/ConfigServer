@@ -5,12 +5,12 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class StringInputTemplate
     {
-        public static string Build(object value, ConfigurationPropertyModel definition)
+        public static string Build(object value, ConfigurationPrimitivePropertyModel definition)
         {
             return $"<input type=\"text\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
-        private static string BuildValidationElement(ConfigurationPropertyModel definition)
+        private static string BuildValidationElement(ConfigurationPrimitivePropertyModel definition)
         {
             var builder = new StringBuilder();
             if (definition.ValidationRules.MaxLength.HasValue)

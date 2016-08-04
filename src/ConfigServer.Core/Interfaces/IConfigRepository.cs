@@ -13,7 +13,7 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        Task UpdateConfigAsync(Config config);
+        Task UpdateConfigAsync(ConfigInstance config);
 
         /// <summary>
         /// Get all Client in store

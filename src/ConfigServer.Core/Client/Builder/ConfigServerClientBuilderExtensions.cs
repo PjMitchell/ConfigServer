@@ -25,9 +25,9 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
-        /// Adds Config type to ConfigServer client registry
+        /// Adds ConfigInstance type to ConfigServer client registry
         /// </summary>
-        /// <typeparam name="TConfig">Config type to be added to registry</typeparam>
+        /// <typeparam name="TConfig">ConfigInstance type to be added to registry</typeparam>
         /// <param name="source">Current ConfigServer client builder</param>
         /// <returns>ConfigServer client builder for further configuration</returns>
         public static ConfigServerClientBuilder WithConfig<TConfig>(this ConfigServerClientBuilder source) where TConfig : class, new()

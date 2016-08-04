@@ -12,7 +12,7 @@ namespace ConfigServer.InMemoryProvider
     public class InMemoryRepository : IConfigRepository
     {
         private readonly Dictionary<string, ConfigurationClient> clientStore;
-        private readonly Dictionary<string, Dictionary<Type, Config>> innerStore;
+        private readonly Dictionary<string, Dictionary<Type, ConfigInstance>> innerStore;
         
         /// <summary>
         /// Initializes InMemoryRepository
@@ -20,7 +20,7 @@ namespace ConfigServer.InMemoryProvider
         public InMemoryRepository()
         {
             clientStore = new Dictionary<string, ConfigurationClient>();
-            innerStore = new Dictionary<string, Dictionary<Type, Config>>();
+            innerStore = new Dictionary<string, Dictionary<Type, ConfigInstance>>();
         }
 
         /// <summary>
@@ -39,10 +39,10 @@ namespace ConfigServer.InMemoryProvider
         /// </summary>
         /// <param name="type">Type of configuration to be retrieved</param>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
-        /// <returns>Config of the type requested</returns>
-        public Task<Config> GetAsync(Type type, ConfigurationIdentity id)
+        /// <returns>ConfigInstance of the type requested</returns>
+        public Task<ConfigInstance> GetAsync(Type type, ConfigurationIdentity id)
         {
-            var tcs = new TaskCompletionSource<Config>();
+            var tcs = new TaskCompletionSource<ConfigInstance>();
             tcs.SetResult(Get(type, id));
             return tcs.Task;
         }
@@ -52,10 +52,10 @@ namespace ConfigServer.InMemoryProvider
         /// </summary>
         /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
-        /// <returns>Config of the type requested</returns>
-        public Task<Config<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        /// <returns>ConfigInstance of the type requested</returns>
+        public Task<ConfigInstance<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
-            var tcs = new TaskCompletionSource<Config<TConfig>>();
+            var tcs = new TaskCompletionSource<ConfigInstance<TConfig>>();
             tcs.SetResult(Get<TConfig>(id));
             return tcs.Task;
         }
@@ -65,7 +65,7 @@ namespace ConfigServer.InMemoryProvider
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        public Task UpdateConfigAsync(Config config)
+        public Task UpdateConfigAsync(ConfigInstance config)
         {
             var tcs = new TaskCompletionSource<bool>();
             SaveChanges(config);
@@ -89,10 +89,10 @@ namespace ConfigServer.InMemoryProvider
             return tcs.Task;
         }
 
-        private Config Get(Type type, ConfigurationIdentity id)
+        private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
             var innerDic = innerStore[id.ClientId];
-            Config config;
+            ConfigInstance config;
             if (!innerDic.TryGetValue(type, out config))
             {
                 config = ConfigFactory.CreateGenericInstance(type, id.ClientId);
@@ -101,9 +101,9 @@ namespace ConfigServer.InMemoryProvider
             return config;
         }
 
-        private Config<TConfig> Get<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        private ConfigInstance<TConfig> Get<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
-            return (Config<TConfig>)Get(typeof(TConfig), id);
+            return (ConfigInstance<TConfig>)Get(typeof(TConfig), id);
         }
 
         private IEnumerable<ConfigurationClient> GetClients()
@@ -111,10 +111,10 @@ namespace ConfigServer.InMemoryProvider
             return clientStore.Values.ToList();
         }
 
-        private void SaveChanges(Config config)
+        private void SaveChanges(ConfigInstance config)
         {
             if (!innerStore.ContainsKey(config.ClientId))
-                innerStore.Add(config.ClientId, new Dictionary<Type, Config>());
+                innerStore.Add(config.ClientId, new Dictionary<Type, ConfigInstance>());
 
             innerStore[config.ClientId][config.ConfigType] = config;
         }
@@ -122,7 +122,7 @@ namespace ConfigServer.InMemoryProvider
         private void CreateConfigSet(ConfigurationClient client)
         {
             clientStore.Add(client.ClientId, client);
-            innerStore.Add(client.ClientId, new Dictionary<Type, Config>());
+            innerStore.Add(client.ClientId, new Dictionary<Type, ConfigInstance>());
         }
 
     }

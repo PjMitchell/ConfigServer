@@ -12,7 +12,7 @@ namespace ConfigServer.Core
         /// Initializes ConfigurationDateTimePropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationDateTimePropertyBuilder(ConfigurationPropertyModel model) : base(model) { }
+        public ConfigurationDateTimePropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
         /// <summary>
         /// Sets Maximum value validation rule for property
@@ -21,7 +21,7 @@ namespace ConfigServer.Core
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationDateTimePropertyBuilder WithMaxValue(DateTime value)
         {
-            model.ValidationRules.Max = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.Max = value;
             return this;
         }
 
@@ -32,7 +32,7 @@ namespace ConfigServer.Core
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationDateTimePropertyBuilder WithMinValue(DateTime value)
         {
-            model.ValidationRules.Min = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.Min = value;
             return this;
         }
     }

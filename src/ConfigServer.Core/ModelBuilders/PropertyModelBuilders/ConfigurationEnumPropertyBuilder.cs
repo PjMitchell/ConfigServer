@@ -10,7 +10,7 @@
         /// Initializes ConfigurationEnumPropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationEnumPropertyBuilder(ConfigurationPropertyModel model) : base(model) { }
+        public ConfigurationEnumPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
     }
 }

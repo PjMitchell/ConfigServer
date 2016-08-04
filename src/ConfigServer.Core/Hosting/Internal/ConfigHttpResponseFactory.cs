@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Internal
         /// Builds config object then adds it to http context 
         /// </summary>
         /// <param name="context">HttpContext of request</param>
-        /// <param name="config">Config to be serialized</param>
+        /// <param name="config">ConfigInstance to be serialized</param>
         /// <returns>A task that represents the asynchronous build operation.</returns>
         Task BuildResponse(HttpContext context, object config);
     }

@@ -11,17 +11,17 @@ namespace ConfigServer.Core
     public static class ConfigFactory
     {
         /// <summary>
-        /// Creates Instance of a generic Config
+        /// Creates Instance of a generic ConfigInstance
         /// </summary>
-        /// <param name="type">Type for generic Config</param>
+        /// <param name="type">Type for generic ConfigInstance</param>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        public static Config CreateGenericInstance(Type type, string clientId)
+        public static ConfigInstance CreateGenericInstance(Type type, string clientId)
         {
-            var config = typeof(Config<>);
+            var config = typeof(ConfigInstance<>);
             Type[] typeArgs = { type };
             var configType = config.MakeGenericType(typeArgs);
-            var result = (Config)Activator.CreateInstance(configType);
+            var result = (ConfigInstance)Activator.CreateInstance(configType);
             result.ClientId = clientId;
             return result;
         }

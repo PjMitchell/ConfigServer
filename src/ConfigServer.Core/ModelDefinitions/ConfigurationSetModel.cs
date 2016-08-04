@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace ConfigServer.Core
 {
@@ -36,12 +38,12 @@ namespace ConfigServer.Core
         public Type ConfigSetType { get; }
 
         /// <summary>
-        /// Display name for Config set
+        /// Display name for ConfigInstance set
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Config set description
+        /// ConfigInstance set description
         /// </summary>
         public string Description { get; }
 
@@ -63,6 +65,7 @@ namespace ConfigServer.Core
             if(!configurationModels.TryGetValue(type, out definition))
             {
                 definition = new ConfigurationModel(type);
+                ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(type, definition);
             }
             return definition;
@@ -96,5 +99,13 @@ namespace ConfigServer.Core
         /// Configuration models for configuration set
         /// </summary>
         public IEnumerable<ConfigurationModel> Configs => configurationModels.Values;
+
+        private void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
+        {
+            foreach(PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
+            {
+                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty));
+            }
+        }
     }
 }

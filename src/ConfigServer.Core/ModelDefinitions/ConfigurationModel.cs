@@ -16,7 +16,7 @@ namespace ConfigServer.Core
         {
             Type = type;
             ConfigurationDisplayName = type.Name;
-            ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModel>();
+            ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
         }
 
         /// <summary>
@@ -37,19 +37,13 @@ namespace ConfigServer.Core
         /// <summary>
         /// Property models for configuration
         /// </summary>
-        public Dictionary<string, ConfigurationPropertyModel> ConfigurationProperties {get; set;}
+        public Dictionary<string, ConfigurationPropertyModelBase> ConfigurationProperties {get; set;}
 
         /// <summary>
-        /// Gets or initialize  property model for property name
+        /// Gets all properties in config model
         /// </summary>
-        /// <param name="propertyName">Configuration property name</param>
-        /// <returns>ConfigurationPropertyModel for property name</returns>
-        public ConfigurationPropertyModel GetPropertyDefinition(string propertyName)
-        {
-            ConfigurationPropertyModel result;
-            if (!ConfigurationProperties.TryGetValue(propertyName, out result))
-                result = new ConfigurationPropertyModel(propertyName);
-            return result;
-        }
+        /// <returns>All ConfigurationPropertyModel for model</returns>
+        public IEnumerable<ConfigurationPropertyModelBase> GetPropertyDefinitions() => ConfigurationProperties.Values;
+
     }
 }

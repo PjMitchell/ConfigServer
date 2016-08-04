@@ -9,13 +9,13 @@
         /// <summary>
         /// ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder
         /// </summary>
-        protected readonly ConfigurationPropertyModel model;
+        protected readonly ConfigurationPropertyModelBase model;
 
         /// <summary>
         /// Initializes Builder for ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        protected ConfigurationPropertyModelBuilder(ConfigurationPropertyModel model)
+        protected ConfigurationPropertyModelBuilder(ConfigurationPropertyModelBase model)
         {
             this.model = model;
         }
@@ -41,14 +41,4 @@
             return (T)this;
         }
     }
-
-
-
-
-
-    //public class ConfigurationModelPropertyBuilder : ConfigurationPropertyModelBuilder<ConfigurationModelPropertyBuilder>
-    //{
-    //    public ConfigurationModelPropertyBuilder(ConfigurationPropertyModel definition) : base(definition) { }
-
-    //}
 }

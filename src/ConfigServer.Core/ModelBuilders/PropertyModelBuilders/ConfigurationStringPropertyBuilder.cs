@@ -10,7 +10,7 @@
         /// Initializes ConfigurationStringPropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationStringPropertyBuilder(ConfigurationPropertyModel model) : base(model) { }
+        public ConfigurationStringPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
         /// <summary>
         /// Sets Maximum length validation rule for property
@@ -19,7 +19,7 @@
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationStringPropertyBuilder WithMaxLength(int value)
         {
-            model.ValidationRules.MaxLength = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.MaxLength = value;
             return this;
         }
 
@@ -30,7 +30,7 @@
         /// <returns>ConfigurationPropertyModelBuilder for ConfigurationPropertyModel</returns>
         public ConfigurationStringPropertyBuilder WithPattern(string value)
         {
-            model.ValidationRules.Pattern = value;
+            ((ConfigurationPrimitivePropertyModel)model).ValidationRules.Pattern = value;
             return this;
         }
     }

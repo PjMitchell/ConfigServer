@@ -8,12 +8,11 @@ namespace ConfigServer.Configurator.Templates
 {
     internal static class EditorContent
     {
-        public static string GetContent(ConfigurationClient client, Config config, ConfigurationModel modelDefinition)
+        public static string GetContent(ConfigurationClient client, ConfigInstance config, ConfigurationModel modelDefinition)
         {
             var configItem = config.GetConfiguration();
-            var editFields = config.ConfigType.GetProperties()
-                .Where(prop => prop.CanWrite)
-                .Select(prop => GetEditField(prop.GetValue(configItem),prop.PropertyType,modelDefinition.GetPropertyDefinition(prop.Name)));
+            var editFields = modelDefinition.GetPropertyDefinitions()
+                .Select(prop => GetEditField(prop.GetPropertyValue(configItem), prop.PropertyType,prop));
             return $@"
             <h3>Edit {client.Name} - {modelDefinition.ConfigurationDisplayName}</h3>
             <p>{modelDefinition.ConfigurationDescription}</p>
@@ -23,7 +22,7 @@ namespace ConfigServer.Configurator.Templates
             </form>";
         }
 
-        private static string GetEditField(object value,Type type, ConfigurationPropertyModel definition)
+        private static string GetEditField(object value,Type type, ConfigurationPropertyModelBase definition)
         {
             var description = string.IsNullOrWhiteSpace(definition.PropertyDescription) 
                 ? string.Empty 
@@ -31,18 +30,18 @@ namespace ConfigServer.Configurator.Templates
             return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition)}<br>";
         }
 
-        private static string GetInputElement(object value, Type type, ConfigurationPropertyModel definition)
+        private static string GetInputElement(object value, Type type, ConfigurationPropertyModelBase definition)
         {
             if(IsIntergerType(type))
-                return IntergerInputTemplate.Build(value, definition);
+                return IntergerInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
             if(IsFloatType(type))
-                return FloatInputTemplate.Build(value, definition);
+                return FloatInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
             if (type == typeof(string))
-                return StringInputTemplate.Build(value, definition);
+                return StringInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
             if (type == typeof(bool))
                 return GetInputElementForBool(value, definition.ConfigurationPropertyName);
             if (type == typeof(DateTime))
-                return DateTimeInputTemplate.Build(value, definition);
+                return DateTimeInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
             if (typeof(Enum).IsAssignableFrom(type))
                 return GetInputElementForEnum(value, definition.ConfigurationPropertyName);
             return "Could not create Editor for property";

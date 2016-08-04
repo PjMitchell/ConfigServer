@@ -71,9 +71,9 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetDateTimeProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyModel GetDateTimeProperty(ConfigurationModel def)
+        private ConfigurationPrimitivePropertyModel GetDateTimeProperty(ConfigurationModel def)
         {
-            return def.ConfigurationProperties[nameof(DateTimeTestClass.DateTimeProperty)];
+            return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(DateTimeTestClass.DateTimeProperty)];
         }
 
         private class DateTimeTestClass

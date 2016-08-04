@@ -1,19 +1,22 @@
-﻿namespace ConfigServer.Core
+﻿using System;
+using System.Reflection;
+namespace ConfigServer.Core
 {
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
     /// </summary>
-    public class ConfigurationPropertyModel
+    public abstract class ConfigurationPropertyModelBase
     {
         /// <summary>
         /// Initialize ConfigurationPropertyModel with property name
         /// </summary>
         /// <param name="propertyName">configuration property name</param>
-        public ConfigurationPropertyModel(string propertyName)
+        /// <param name="propertyType">configuration property type</param>
+        protected ConfigurationPropertyModelBase(string propertyName, Type propertyType)
         {
             ConfigurationPropertyName = propertyName;
             PropertyDisplayName = propertyName;
-            ValidationRules = new ConfigurationPropertyValidationDefinition();
+            PropertyType = propertyType;
         }
 
         /// <summary>
@@ -32,8 +35,15 @@
         public string PropertyDescription { get; set; }
 
         /// <summary>
-        /// Validation rules for property
+        /// Property type
         /// </summary>
-        public ConfigurationPropertyValidationDefinition ValidationRules { get; }
+        public Type PropertyType { get; }
+
+        /// <summary>
+        /// Gets property value from configuration model
+        /// </summary>
+        /// <param name="config">Instance of configuration</param>
+        /// <returns>Value of property from instance of configuration</returns>
+        public object GetPropertyValue(object config) => PropertyType.GetProperty(ConfigurationPropertyName).GetValue(config);
     }
 }

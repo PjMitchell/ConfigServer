@@ -10,7 +10,7 @@
         /// Initializes ConfigurationBoolPropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationBoolPropertyBuilder(ConfigurationPropertyModel model) : base(model) { }
+        public ConfigurationBoolPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
     }
 }
