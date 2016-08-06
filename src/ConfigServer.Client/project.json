@@ -19,7 +19,16 @@
 
     "frameworks": {
         "netstandard1.6": {
-            "imports": "dnxcore50"
+            "imports": [
+                "dotnet5.6",
+                "dnxcore50"
+            ]
+        },
+        "netcoreapp1.0": {
+            "imports": "dnxcore50",
+            "dependencies": {
+                "Microsoft.NETCore.App": "1.0.0"
+            }
         }
     }
 }
