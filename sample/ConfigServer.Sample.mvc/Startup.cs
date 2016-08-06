@@ -8,6 +8,7 @@ using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Server;
+using System.Linq;
 
 namespace ConfigServer.Sample.mvc
 {
@@ -37,13 +38,17 @@ namespace ConfigServer.Sample.mvc
                 .UseInMemoryProvider()
                 .UseLocalConfigServerClient(applicationId)
                 .WithConfig<SampleConfig>();
+            services.AddTransient<IOptionProvider, OptionProvider>();
+
+            var optionProvider = new OptionProvider();
             var config = new SampleConfig
             {
                 LlamaCapacity = 23,
                 Name = "Name",
                 Decimal = 23.47m,
                 StartDate = new DateTime(2013,10,10),
-                IsLlamaFarmer = false
+                IsLlamaFarmer = false,
+                Option = optionProvider.GetOptions().First()
             };
             var config2 = new SampleConfig
             {
@@ -51,7 +56,8 @@ namespace ConfigServer.Sample.mvc
                 Name = "Name 2",
                 Decimal = 41.47m,
                 StartDate = new DateTime(2013, 11, 11),
-                IsLlamaFarmer = true
+                IsLlamaFarmer = true,
+                Option = optionProvider.GetOptions().First()
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();

@@ -6,13 +6,20 @@ using System.Text;
 
 namespace ConfigServer.Server.Templates
 {
-    internal static class EditorContent
+    internal class EditorContent
     {
-        public static string GetContent(ConfigurationClient client, ConfigInstance config, ConfigurationModel modelDefinition)
+        private IServiceProvider serviceProvider;
+
+        public EditorContent(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+        }
+
+        public string GetContent(ConfigurationClient client, ConfigInstance config, ConfigurationModel modelDefinition)
         {
             var configItem = config.GetConfiguration();
             var editFields = modelDefinition.GetPropertyDefinitions()
-                .Select(prop => GetEditField(prop.GetPropertyValue(configItem), prop.PropertyType,prop));
+                .Select(prop => GetEditField(prop.GetPropertyValue(configItem),prop));
             return $@"
             <h3>Edit {client.Name} - {modelDefinition.ConfigurationDisplayName}</h3>
             <p>{modelDefinition.ConfigurationDescription}</p>
@@ -22,27 +29,43 @@ namespace ConfigServer.Server.Templates
             </form>";
         }
 
-        private static string GetEditField(object value,Type type, ConfigurationPropertyModelBase definition)
+        private string GetEditField(object value,ConfigurationPropertyModelBase definition)
         {
             var description = string.IsNullOrWhiteSpace(definition.PropertyDescription) 
                 ? string.Empty 
                 : $"<br>{definition.PropertyDescription}";
-            return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, type, definition)}<br>";
+            return  $"{definition.PropertyDisplayName}:{description}<br>{GetInputElement(value, (dynamic)definition)}<br>";
         }
 
-        private static string GetInputElement(object value, Type type, ConfigurationPropertyModelBase definition)
+
+        private string GetInputElement(object value, ConfigurationPropertyWithOptionsModelDefinition definition)
         {
-            if(IsIntergerType(type))
-                return IntergerInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
-            if(IsFloatType(type))
-                return FloatInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
-            if (type == typeof(string))
-                return StringInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
-            if (type == typeof(bool))
+            var options = definition.GetAvailableOptions(serviceProvider)
+                .Select(s=> $"<option value=\"{s.Key}\" {GetOptionSelectedTag(definition,s, value)}>{s.DisplayValue}</option>");
+            return $@"
+            <select name=""{definition.ConfigurationPropertyName}"">
+                {string.Join(Environment.NewLine, options)}
+            </select>";
+        }
+
+        private string GetOptionSelectedTag(ConfigurationPropertyWithOptionsModelDefinition definition,ConfigurationPropertyOptionDefintion optionDef, object value)
+        {
+            return definition.OptionMatchesKey(optionDef.Key, value) ? "selected" : string.Empty;
+        }
+
+        private string GetInputElement(object value, ConfigurationPrimitivePropertyModel definition)
+        {
+            if(IsIntergerType(definition.PropertyType))
+                return IntergerInputTemplate.Build(value, definition);
+            if(IsFloatType(definition.PropertyType))
+                return FloatInputTemplate.Build(value, definition);
+            if (definition.PropertyType == typeof(string))
+                return StringInputTemplate.Build(value, definition);
+            if (definition.PropertyType == typeof(bool))
                 return GetInputElementForBool(value, definition.ConfigurationPropertyName);
-            if (type == typeof(DateTime))
-                return DateTimeInputTemplate.Build(value, (ConfigurationPrimitivePropertyModel)definition);
-            if (typeof(Enum).IsAssignableFrom(type))
+            if (definition.PropertyType == typeof(DateTime))
+                return DateTimeInputTemplate.Build(value, definition);
+            if (typeof(Enum).IsAssignableFrom(definition.PropertyType))
                 return GetInputElementForEnum(value, definition.ConfigurationPropertyName);
             return "Could not create Editor for property";
         }

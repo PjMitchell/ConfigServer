@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents the model of the configuration that contains the information required to build, configure and validate the configuration.

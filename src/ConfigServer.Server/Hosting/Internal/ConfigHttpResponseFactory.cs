@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace ConfigServer.Server
 {
     /// <summary>

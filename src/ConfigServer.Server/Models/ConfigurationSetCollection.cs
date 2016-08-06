@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Registry of ConfigurationSets

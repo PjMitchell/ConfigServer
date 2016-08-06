@@ -1,4 +1,4 @@
-﻿namespace ConfigServer.Core
+﻿namespace ConfigServer.Server
 {
     /// <summary>
     /// Validation information for a configuration property

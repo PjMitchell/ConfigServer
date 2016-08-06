@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents the model of the configuration set that contains the information required to build, configure and validate the configuration.
@@ -104,7 +105,7 @@ namespace ConfigServer.Core
         {
             foreach(PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
             {
-                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty));
+                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty, model.Type));
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using ConfigServer.Server;
+using Xunit;
 
 namespace ConfigServer.Core.Tests
 {

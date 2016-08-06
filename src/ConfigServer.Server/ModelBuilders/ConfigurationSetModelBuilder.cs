@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Builder for ConfigurationSetModel

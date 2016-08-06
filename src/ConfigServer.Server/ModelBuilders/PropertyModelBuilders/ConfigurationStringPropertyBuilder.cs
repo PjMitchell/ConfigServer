@@ -1,4 +1,4 @@
-﻿namespace ConfigServer.Core
+﻿namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
@@ -10,7 +10,7 @@
         /// Initializes ConfigurationStringPropertyBuilder for given ConfigurationPropertyModel
         /// </summary>
         /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationStringPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
+        internal ConfigurationStringPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
 
         /// <summary>
         /// Sets Maximum length validation rule for property

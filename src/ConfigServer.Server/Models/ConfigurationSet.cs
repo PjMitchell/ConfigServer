@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents a set of configurations and sets up the information required to build, configure and validate the configurations.

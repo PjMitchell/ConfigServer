@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConfigServer.Core;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace ConfigServer.Server
 {
@@ -11,12 +12,13 @@ namespace ConfigServer.Server
         private readonly IConfigRepository configRepository;
         private readonly ConfigurationSetRegistry configCollection;
         private readonly PageBuilder pageBuilder;
-
-        internal ConfiguratorRouter(IConfigRepository configRepository, ConfigurationSetRegistry configCollection, PageBuilder pageBuilder)
+        private readonly EditorContent editorContent;
+        internal ConfiguratorRouter(IServiceProvider serviceProvider,  IConfigRepository configRepository, ConfigurationSetRegistry configCollection, PageBuilder pageBuilder)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;
             this.pageBuilder = pageBuilder;
+            editorContent = new EditorContent(serviceProvider);
         }
 
         public async Task<bool> HandleRequest(HttpContext context, PathString routePath)
@@ -71,15 +73,15 @@ namespace ConfigServer.Server
 
             if (context.Request.Method.Equals("GET"))
             {
-                await pageBuilder.WriteContent(configQueryResult.QueryResult.Type.Name, EditorContent.GetContent(client, currentConfig, configQueryResult.QueryResult));
+                await pageBuilder.WriteContent(configQueryResult.QueryResult.Type.Name, editorContent.GetContent(client, currentConfig, configQueryResult.QueryResult));
                 return true;
             }
 
             if (context.Request.Method.Equals("POST"))
             {
-                var configResult = ConfigFormBinder.BindForm(currentConfig, context.Request.Form);
+                var configResult = ConfigFormBinder.BindForm(currentConfig, context, configQueryResult.QueryResult);
                 await configRepository.UpdateConfigAsync(configResult);
-                pageBuilder.Redirect(routePath + "/" + client);
+                pageBuilder.Redirect(routePath + "/" + client.ClientId);
                 return true;
             }
 

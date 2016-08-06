@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Builder for ConfigurationModel 
@@ -115,6 +116,40 @@ namespace ConfigServer.Core
         /// <returns>ConfigurationEnumPropertyBuilder for selected property</returns>
         public ConfigurationEnumPropertyBuilder Property(Expression<Func<TConfig, Enum>> expression) => new ConfigurationEnumPropertyBuilder(GetOrAddPrimitivePropertyDefinition(expression,typeof(Enum)));
 
+        /// <summary>
+        /// Gets ConfigurationPropertyModelBuilder for property with option
+        /// Overides existing configuration from property
+        /// </summary>
+        /// <typeparam name="TOptionProvider">Class used to provide available options</typeparam>
+        /// <typeparam name="TOption">Option type</typeparam>
+        /// <param name="expression">property selector</param>
+        /// <param name="optionProvider">Function that provides the available options</param>
+        /// <param name="keySelector">Selector for the option key</param>
+        /// <param name="displaySelector">Selector for the option display value</param>
+        /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOptionProvider, TOption>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, int> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
+        {
+            return PropertyWithOptions(expression, optionProvider,option => keySelector(option).ToString(), displaySelector);
+        }
+
+        /// <summary>
+        /// Gets ConfigurationPropertyModelBuilder for property with option
+        /// Overides existing configuration from property
+        /// </summary>
+        /// <typeparam name="TOptionProvider">Class used to provide available options</typeparam>
+        /// <typeparam name="TOption">Option type</typeparam>
+        /// <param name="expression">property selector</param>
+        /// <param name="optionProvider">Function that provides the available options</param>
+        /// <param name="keySelector">Selector for the option key</param>
+        /// <param name="displaySelector">Selector for the option display value</param>
+        /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOptionProvider, TOption>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, string> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
+        {
+            var body = GetExpressionBody(expression);
+            var model = new ConfigurationPropertyWithOptionsModelDefinition<TOptionProvider, TOption>(optionProvider, keySelector, displaySelector, body.Member.Name, definition.Type);
+            definition.ConfigurationProperties[body.Member.Name] = model;
+            return new ConfigurationPropertyWithOptionBuilder(model);
+        }
 
         private ConfigurationIntegerPropertyBuilder CreateForInterger(LambdaExpression expression, Type propertyType)
         {
@@ -128,20 +163,26 @@ namespace ConfigServer.Core
 
         private ConfigurationPrimitivePropertyModel GetOrAddPrimitivePropertyDefinition(LambdaExpression expression, Type propertyType)
         {
+            var body = GetExpressionBody(expression);
+            ConfigurationPropertyModelBase value;
+            if (!definition.ConfigurationProperties.TryGetValue(body.Member.Name, out value))
+            {
+                value = new ConfigurationPrimitivePropertyModel(body.Member.Name, propertyType, definition.Type);
+                definition.ConfigurationProperties.Add(value.ConfigurationPropertyName, value);
+            }
+
+            return (ConfigurationPrimitivePropertyModel)value;
+        }
+
+        private MemberExpression GetExpressionBody(LambdaExpression expression)
+        {
             var body = expression.Body as MemberExpression;
 
             if (body == null)
             {
                 body = ((UnaryExpression)expression.Body).Operand as MemberExpression;
             }
-            ConfigurationPropertyModelBase value;
-            if (!definition.ConfigurationProperties.TryGetValue(body.Member.Name, out value))
-            {
-                value = new ConfigurationPrimitivePropertyModel(body.Member.Name, propertyType);
-                definition.ConfigurationProperties.Add(value.ConfigurationPropertyName, value);
-            }
-
-            return (ConfigurationPrimitivePropertyModel)value;
+            return body;
         }
     }
 }

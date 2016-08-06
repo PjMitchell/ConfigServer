@@ -5,6 +5,8 @@ using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Server;
+using System.Runtime.CompilerServices;
+
 
 namespace ConfigServer.Core.Tests.Hosting
 {

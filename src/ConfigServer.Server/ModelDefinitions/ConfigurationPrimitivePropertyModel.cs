@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using System.Reflection;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace ConfigServer.Core
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
@@ -15,7 +15,8 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="propertyName">configuration property name</param>
         /// <param name="propertyType">configuration property type</param>
-        public ConfigurationPrimitivePropertyModel(string propertyName, Type propertyType) : base(propertyName, propertyType)
+        /// <param name="parentPropertyType">configuration property parent type</param>
+        public ConfigurationPrimitivePropertyModel(string propertyName, Type propertyType, Type parentPropertyType) : base(propertyName, propertyType, parentPropertyType)
         {
             ValidationRules = new ConfigurationPropertyValidationDefinition();
         }
@@ -24,5 +25,6 @@ namespace ConfigServer.Core
         /// Validation rules for property
         /// </summary>
         public ConfigurationPropertyValidationDefinition ValidationRules { get; }
+
     }
 }

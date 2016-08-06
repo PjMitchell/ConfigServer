@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ConfigServer.Server;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ConfigServer.Core.Tests

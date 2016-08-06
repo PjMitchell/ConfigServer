@@ -13,12 +13,21 @@ namespace ConfigServer.Sample.mvc.Models
         public decimal Decimal { get; set; }
         public bool IsLlamaFarmer { get; set; }
         public Choice Choice { get; set;}
+        public Option Option { get; set; }
     }
-}
 
-public enum Choice
-{
-    OptionOne =0,
-    OptionTwo =1,
-    OptionThree =3
+
+    public enum Choice
+    {
+        OptionOne =0,
+        OptionTwo =1,
+        OptionThree =3
+    }
+
+    public class Option
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+    }
+
 }

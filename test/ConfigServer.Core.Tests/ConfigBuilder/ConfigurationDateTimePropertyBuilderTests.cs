@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Server;
+using System;
 using Xunit;
 
 namespace ConfigServer.Core.Tests

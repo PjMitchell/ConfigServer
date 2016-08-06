@@ -1,4 +1,4 @@
-﻿namespace ConfigServer.Core
+﻿namespace ConfigServer.Server
 {
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
