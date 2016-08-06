@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Client
@@ -14,26 +15,51 @@ namespace ConfigServer.Client
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly IHttpClientWrapper client;
+        private readonly IMemoryCache cache;
+        private const string cachePrefix = "ConfigServer_";
 
-        public ConfigServerClient(IHttpClientWrapper client, ConfigurationRegistry collection, ConfigServerClientOptions options)
+
+        public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, ConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
             this.collection = collection;
             this.options = options;
+            if (memorycache == null && !options.CacheOptions.IsDisabled)
+                throw new ArgumentNullException(nameof(memorycache), "Caching is enabled, but IMemoryCache is not registered in service collection. Try adding \"services.AddMemoryCache()\" to startup file");
+            this.cache = memorycache;
         }
 
-        public async Task<object> BuildConfigAsync(Type type)
+        public Task<object> BuildConfigAsync(Type type)
         {
             ThrowIfConfigNotRegistered(type);
-            var result = await GetConfig(type.Name);
-            return JsonConvert.DeserializeObject(result, type, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            if(options.CacheOptions.IsDisabled)
+                return GetConfig(type);
+
+            return GetOrAddConfigFromCache(type);
+
         }
 
         public async Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new()
         {
-            ThrowIfConfigNotRegistered(typeof(TConfig));
-            var result = await GetConfig(typeof(TConfig).Name);
-            return JsonConvert.DeserializeObject<TConfig>(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return (TConfig)await BuildConfigAsync(typeof(TConfig));
+        }
+
+        private Task<object> GetOrAddConfigFromCache(Type type)
+        {
+            return cache.GetOrCreateAsync(BuildCacheKey(type), cacheEntry =>
+            {
+                if (options.CacheOptions.AbsoluteExpiration.HasValue)
+                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
+                if (options.CacheOptions.SlidingExpiration.HasValue)
+                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
+                return GetConfig(type);
+            });
+        }
+
+        private async Task<object> GetConfig(Type type)
+        {
+            var result = await GetConfig(type.Name);
+            return JsonConvert.DeserializeObject(result, type, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
         }
 
         private async Task<string> GetConfig(string configName)
@@ -60,6 +86,7 @@ namespace ConfigServer.Client
                 throw new InvalidConfigurationException(type);
         }
 
+        private string BuildCacheKey(Type type) => cachePrefix + type.Name;
     }
 
 

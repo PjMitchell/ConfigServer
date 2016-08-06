@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConfigServer.Client
@@ -20,7 +21,7 @@ namespace ConfigServer.Client
             var configurationCollection = new ConfigurationRegistry();
             var builder = new ConfigServerClientBuilder(source, configurationCollection);
             source.Add(ServiceDescriptor.Transient<IHttpClientWrapper>(r => new HttpClientWrapper(options.Authenticator)));
-            source.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new ConfigServerClient(r.GetService<IHttpClientWrapper>(), r.GetService<ConfigurationRegistry>(), options)));
+            source.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new ConfigServerClient(r.GetService<IHttpClientWrapper>(),r.GetService<IMemoryCache>(), r.GetService<ConfigurationRegistry>(), options)));
             return builder;
         }
     }

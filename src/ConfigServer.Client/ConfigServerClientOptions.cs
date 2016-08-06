@@ -20,5 +20,10 @@
         /// Default: Does not apply any authentication details to the http client
         /// </summary>
         public IConfigServerClientAuthenticator Authenticator { get; set; } = new DefaultConfigServerClientAuthenticator();
+
+        /// <summary>
+        /// Options for Caching client side configs
+        /// </summary>
+        public ConfigServerCacheOptions CacheOptions { get; set; } = ConfigServerCacheOptions.Default;
     }
 }

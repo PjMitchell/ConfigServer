@@ -15,6 +15,7 @@ namespace ConfigServer.Sample.mvcApp2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddMemoryCache();
             services.AddConfigServerClient(new ConfigServerClientOptions
             {
                 ClientId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
