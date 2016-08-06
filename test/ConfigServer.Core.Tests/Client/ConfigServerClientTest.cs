@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Client;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -15,6 +16,8 @@ namespace ConfigServer.Core.Tests.Client
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
+        private readonly Mock<IMemoryCache> cache;
+
 
         public ConfigServerClientTest()
         {
@@ -23,9 +26,10 @@ namespace ConfigServer.Core.Tests.Client
             options = new ConfigServerClientOptions();
             options.ClientId = "1234-5678-1234";
             options.ConfigServer = "https://test.com/Config";
-
+            options.CacheOptions.IsDisabled = true;
             clientWrapper = new Mock<IHttpClientWrapper>();
-            target = new ConfigServerClient(clientWrapper.Object, collection, options);
+            cache = new Mock<IMemoryCache>();
+            target = new ConfigServerClient(clientWrapper.Object, cache.Object, collection, options);
         }
         #region Object
         [Fact]
