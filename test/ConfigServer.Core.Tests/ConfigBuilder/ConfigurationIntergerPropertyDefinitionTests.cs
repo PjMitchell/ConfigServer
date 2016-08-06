@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using ConfigServer.Server;
+using Xunit;
 
 namespace ConfigServer.Core.Tests
 {
@@ -70,9 +71,9 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetIntProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyModel GetIntProperty(ConfigurationModel def)
+        private ConfigurationPrimitivePropertyModel GetIntProperty(ConfigurationModel def)
         {
-            return def.ConfigurationProperties[nameof(IntergerTestClass.IntProperty)];
+            return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(IntergerTestClass.IntProperty)];
         }
 
         private class IntergerTestClass

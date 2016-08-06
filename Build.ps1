@@ -63,7 +63,9 @@ $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 exec { & dotnet test .\test\ConfigServer.Core.Tests -c Release }
 
 exec { & dotnet pack .\src\ConfigServer.Core -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.Server -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.Client -c Release -o .\artifacts --version-suffix=$revision }
 exec { & dotnet pack .\src\ConfigServer.FileProvider -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ConfigServer.InMemoryProvider -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.Configurator -c Release -o .\artifacts --version-suffix=$revision }
+
 

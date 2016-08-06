@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using ConfigServer.Core;
+using ConfigServer.Server;
 
 namespace ConfigServer.Core.Tests
 {
@@ -71,9 +72,9 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(min, GetFloatProperty(result).ValidationRules.Min);
         }
 
-        private ConfigurationPropertyModel GetFloatProperty(ConfigurationModel def)
+        private ConfigurationPrimitivePropertyModel GetFloatProperty(ConfigurationModel def)
         {
-            return def.ConfigurationProperties[nameof(FloatTestClass.FloatProperty)];
+            return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(FloatTestClass.FloatProperty)];
         }
 
         private class FloatTestClass

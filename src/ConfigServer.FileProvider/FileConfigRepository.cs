@@ -46,8 +46,8 @@ namespace ConfigServer.FileProvider
         /// </summary>
         /// <param name="type">Type of configuration to be retrieved</param>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
-        /// <returns>Config of the type requested</returns>
-        public Task<Config> GetAsync(Type type, ConfigurationIdentity id)
+        /// <returns>ConfigInstance of the type requested</returns>
+        public Task<ConfigInstance> GetAsync(Type type, ConfigurationIdentity id)
         {
             
             var result = ConfigFactory.CreateGenericInstance(type, id.ClientId);
@@ -63,13 +63,13 @@ namespace ConfigServer.FileProvider
         /// </summary>
         /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
-        /// <returns>Config of the type requested</returns>
-        public Task<Config<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        /// <returns>ConfigInstance of the type requested</returns>
+        public Task<ConfigInstance<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
         {
             string configjson;
             if (!TryGetConfigJson(typeof(TConfig), id.ClientId, out configjson))
-                return Task.FromResult(new Config<TConfig> { ClientId = id.ClientId });
-            var result = new Config<TConfig>
+                return Task.FromResult(new ConfigInstance<TConfig> { ClientId = id.ClientId });
+            var result = new ConfigInstance<TConfig>
             {
                 Configuration = JsonConvert.DeserializeObject<TConfig>(configjson, jsonSerializerSettings)
             };
@@ -90,7 +90,7 @@ namespace ConfigServer.FileProvider
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
         /// <returns>A task that represents the asynchronous save operation.</returns>
-        public Task UpdateConfigAsync(Config config)
+        public Task UpdateConfigAsync(ConfigInstance config)
         {
             var configPath = GetConfigPath(config.ConfigType, config.ClientId);
             File.WriteAllText(configPath, JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings));

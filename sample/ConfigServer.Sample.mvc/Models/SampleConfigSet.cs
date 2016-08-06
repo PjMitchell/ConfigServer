@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using ConfigServer.Server;
 using System;
 
 namespace ConfigServer.Sample.mvc.Models
@@ -22,6 +23,9 @@ namespace ConfigServer.Sample.mvc.Models
             configBuilder.Property(p => p.StartDate).WithDisplayName("Start date")
                 .WithMinValue(new DateTime(2013, 10, 10));
             configBuilder.Property(p => p.Name).WithMaxLength(250);
+            configBuilder.PropertyWithOptions(p => p.Option, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
+                .WithDescription("Is a selected option");
+
 
         }
     }

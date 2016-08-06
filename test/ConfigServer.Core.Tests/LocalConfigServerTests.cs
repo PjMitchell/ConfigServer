@@ -1,4 +1,5 @@
 ﻿using ConfigServer.InMemoryProvider;
+using ConfigServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace ConfigServer.Core.Tests
         public async Task CanGetConfig()
         {
             var expected = 23;
-            await repository.UpdateConfigAsync(new Config<SimpleConfig> { ClientId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
+            await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig> { ClientId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
             var localServer = new LocalConfigServerClient(repository,configSetId);
             var config =await localServer.BuildConfigAsync<SimpleConfig>();
             Assert.Equal(expected, config.IntProperty);
@@ -34,7 +35,7 @@ namespace ConfigServer.Core.Tests
         public async Task CanGetConfig_ByType()
         {
             var expected = 23;
-            await repository.UpdateConfigAsync(new Config<SimpleConfig> { ClientId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
+            await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig> { ClientId = configSetId, Configuration = new SimpleConfig { IntProperty = expected } });
             var localServer = new LocalConfigServerClient(repository, configSetId);
             var config = await localServer.BuildConfigAsync(typeof(SimpleConfig));
             var castedConfig = (SimpleConfig)config;

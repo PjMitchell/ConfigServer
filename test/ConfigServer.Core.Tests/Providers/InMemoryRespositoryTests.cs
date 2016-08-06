@@ -25,7 +25,7 @@ namespace ConfigServer.Core.Tests
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
@@ -44,14 +44,14 @@ namespace ConfigServer.Core.Tests
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
 
             await target.UpdateConfigAsync(config);
-            var result = (Config<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig),configId));
+            var result = (ConfigInstance<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig),configId));
             Assert.Equal(testValue, result.Configuration.IntProperty);
         }
 
@@ -98,7 +98,7 @@ namespace ConfigServer.Core.Tests
                 ClientId = client.ClientId
             };
             const int testValue = 23;
-            var config = new Config<SimpleConfig>
+            var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }

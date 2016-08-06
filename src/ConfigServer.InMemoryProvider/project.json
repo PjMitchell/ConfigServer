@@ -11,6 +11,7 @@
     "buildOptions": { "xmlDoc": true },
     "dependencies": {
         "ConfigServer.Core": "1.0.0-*",
+        "ConfigServer.Server": "1.0.0-*",
         "NETStandard.Library": "1.6.0"
     },
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ConfigServer.Core;
 using Microsoft.Extensions.Logging;
 using ConfigServer.Sample.mvcApp2.Models;
+using ConfigServer.Client;
 
 namespace ConfigServer.Sample.mvcApp2
 {

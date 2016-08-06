@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ConfigServer.Server;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ConfigServer.Core.Tests
@@ -72,6 +71,19 @@ namespace ConfigServer.Core.Tests
         {
             var target = new ConfigurationSetModel(defaultType);
             Assert.Throws(typeof(ConfigurationModelNotFoundException),()=> target.Get<SimpleConfig>());
+        }
+
+        [Fact]
+        public void GetOrInitializePopulatesModelProperties()
+        {
+            var result = new ConfigurationSetModel(defaultType);
+            var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
+
+            Assert.Equal(1, result.Configs.Count());
+            Assert.Equal(typeof(int), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyType);
+            Assert.Equal(nameof(SimpleConfig.IntProperty), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDisplayName);
+            Assert.Equal(nameof(SimpleConfig.IntProperty), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].ConfigurationPropertyName);
+
         }
 
     }

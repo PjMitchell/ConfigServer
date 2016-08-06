@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ConfigServer.Core;
+using ConfigServer.Server;
 
 namespace ConfigServer.InMemoryProvider
 {
