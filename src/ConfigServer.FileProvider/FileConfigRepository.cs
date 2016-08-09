@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.FileProvider
 {
     /// <summary>
@@ -19,7 +17,10 @@ namespace ConfigServer.FileProvider
         readonly JsonSerializerSettings jsonSerializerSettings;
         const string indexFile = "clientIndex.json";
 
-        internal FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
+        /// <summary>
+        /// Initializes File store
+        /// </summary>
+        public FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
         {
             this.folderPath = folderPath;
             this.jsonSerializerSettings = jsonSerializerSettings ?? new JsonSerializerSettings();
