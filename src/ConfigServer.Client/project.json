@@ -1,7 +1,7 @@
 {
     "description": "Client for ConfigServer.",
     "authors": [ "Peter Mitchell" ],
-    "version": "1.0.0-beta1-*",
+    "version": "1.0.0-beta2-*",
     "packOptions": {
         "repository": {
             "type": "git",
@@ -26,6 +26,7 @@
                 "dnxcore50"
             ]
         },
+        "net451": {},
         "netcoreapp1.0": {
             "imports": "dnxcore50",
             "dependencies": {

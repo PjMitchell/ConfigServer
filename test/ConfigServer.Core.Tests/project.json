@@ -12,20 +12,10 @@
         "Moq": "4.6.25-*",
         "ConfigServer.FileProvider": "1.0.0-*",
         "ConfigServer.Server": "1.0.0-*",
-        "ConfigServer.Client": "1.0.0-*"
+        "ConfigServer.Client": "1.0.0-*",
+        "ConfigServer.AzureBlobStorageProvider": "1.0.0-*"
     },
     "frameworks": {
-        "netcoreapp1.0": {
-            "imports": [
-                "dotnet5.4"
-            ],
-            "dependencies": {
-                "Microsoft.NETCore.App": {
-                    "version": "1.0.0-*",
-                    "type": "platform"
-                },
-                "System.Diagnostics.TraceSource": "4.0.0-*"
-            }
-        }
+        "net451": {}
     }
 }

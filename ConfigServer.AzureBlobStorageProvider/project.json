@@ -1,0 +1,25 @@
+{
+    "description": "Azure storage blob implementation for the configurations repository",
+    "version": "1.0.0-beta2-*",
+    "authors": [ "Peter Mitchell" ],
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/PjMitchell/ConfigServer"
+        }
+    },
+
+    "buildOptions": { "xmlDoc": true },
+
+    "dependencies": {
+        "ConfigServer.Core": "1.0.0-*",
+        "ConfigServer.Server": "1.0.0-*",
+        "Microsoft.Extensions.Caching.Abstractions": "1.0.0",
+        "Microsoft.Extensions.Caching.Memory": "1.0.0",
+        "WindowsAzure.Storage": "7.1.2"
+    },
+
+    "frameworks": {
+        "net451": {}
+    }
+}

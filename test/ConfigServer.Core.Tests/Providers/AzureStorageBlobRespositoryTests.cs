@@ -1,63 +1,40 @@
-﻿using ConfigServer.FileProvider;
-using System;
-using System.IO;
+﻿using ConfigServer.AzureBlobStorageProvider;
+using ConfigServer.Core.Tests.Providers;
+using ConfigServer.InMemoryProvider;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace ConfigServer.Core.Tests
 {
-    public class FileConfigRepositoryTests : IDisposable
+    public class AzureStorageBlobRespositoryTests
     {
+        private readonly ConfigurationRegistry configurationCollection;
         private readonly IConfigRepository target;
-        private readonly string testdirectory;
-        private readonly ConfigurationClient client; 
-        private readonly ConfigurationIdentity configId;
 
-
-        public FileConfigRepositoryTests()
+        public AzureStorageBlobRespositoryTests()
         {
-            testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
-            target = new FileConfigRepository(testdirectory);
-            client = new ConfigurationClient
-            {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
-                Name = "Client 1",
-                Description = "A description Client"
-            };
-            configId = new ConfigurationIdentity
-            {
-                ClientId = client.ClientId
-            };
-            target.UpdateClientAsync(client).Wait();
-        }
-
-        public void Dispose()
-        {
-            var di = new DirectoryInfo(testdirectory);
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-
-            Directory.Delete(testdirectory);
+            configurationCollection = new ConfigurationRegistry();
+            configurationCollection.BuildAndAddRegistration<SimpleConfig>();
+            target = new AzureBlobStorageRepository(new TestStorageConnectors(),new MemoryCache(Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())) , new AzureBlobStorageRepositoryBuilderOptions());
         }
 
         [Fact]
         public async Task CanSaveAndRetriveAsync()
         {
+            var configId = new ConfigurationIdentity
+            {
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+            };
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>
             {
                 ClientId = configId.ClientId,
                 Configuration = new SimpleConfig { IntProperty = testValue }
             };
-
+            
             await target.UpdateConfigAsync(config);
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.Equal(testValue, result.Configuration.IntProperty);
@@ -66,6 +43,10 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveWithTypeAsync()
         {
+            var configId = new ConfigurationIdentity
+            {
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
+            };
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>
             {
@@ -74,15 +55,21 @@ namespace ConfigServer.Core.Tests
             };
 
             await target.UpdateConfigAsync(config);
-            var result = (ConfigInstance<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig), configId));
+            var result = (ConfigInstance<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig),configId));
             Assert.Equal(testValue, result.Configuration.IntProperty);
         }
 
         [Fact]
         public async Task CanSaveAndGetClientsAsync()
         {
+            var client = new ConfigurationClient
+            {
+                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
+                Name = "Client 1",
+                Description = "A description Client"
+            };
             await target.UpdateClientAsync(client);
-            var result = (await target.GetClientsAsync()).ToList();
+            var result =(await target.GetClientsAsync()).ToList();
             Assert.Equal(1, result.Count);
             Assert.Equal(client.ClientId, result[0].ClientId);
             Assert.Equal(client.Name, result[0].Name);
@@ -93,6 +80,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanUpdateClientAsync()
         {
+            var client = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4", Name = "Cleint 1", Description = "Cleint Description" };
             var clientUpdated = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4", Name = "Client 1", Description = "Client Description" };
             await target.UpdateClientAsync(client);
             await target.UpdateClientAsync(clientUpdated);
@@ -107,6 +95,12 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task Get_ReturnsNewObjectIfNotPresentAsync()
         {
+            var client = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4" };
+
+            var configId = new ConfigurationIdentity
+            {
+                ClientId = client.ClientId
+            };
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>
             {
@@ -120,6 +114,5 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(client.ClientId, config.ClientId);
             Assert.Equal(0, result.Configuration.IntProperty);
         }
-
     }
 }
