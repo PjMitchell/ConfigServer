@@ -20,10 +20,10 @@ namespace ConfigServer.FileProvider
         /// <summary>
         /// Initializes File store
         /// </summary>
-        public FileConfigRepository(string folderPath, JsonSerializerSettings jsonSerializerSettings = null)
+        public FileConfigRepository(FileConfigRespositoryBuilderOptions options)
         {
-            this.folderPath = folderPath;
-            this.jsonSerializerSettings = jsonSerializerSettings ?? new JsonSerializerSettings();
+            this.folderPath = options.ConfigStorePath;
+            this.jsonSerializerSettings = options.JsonSerializerSettings;
         }
 
         /// <summary>

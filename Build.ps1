@@ -66,6 +66,7 @@ exec { & dotnet pack .\src\ConfigServer.Core -c Release -o .\artifacts --version
 exec { & dotnet pack .\src\ConfigServer.Server -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ConfigServer.Client -c Release -o .\artifacts --version-suffix=$revision }
 exec { & dotnet pack .\src\ConfigServer.FileProvider -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.InMemoryProvider -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.InMemoryProvider -c Release -o .\artifacts --version-suffix=$revision }
+exec { & dotnet pack .\src\ConfigServer.AzureBlobStorageProvider -c Release -o .\artifacts --version-suffix=$revision }  
 
 
