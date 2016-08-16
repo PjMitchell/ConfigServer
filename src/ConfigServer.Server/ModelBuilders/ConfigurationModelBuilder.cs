@@ -120,14 +120,14 @@ namespace ConfigServer.Server
         /// Gets ConfigurationPropertyModelBuilder for property with option
         /// Overides existing configuration from property
         /// </summary>
-        /// <typeparam name="TOptionProvider">Class used to provide available options</typeparam>
         /// <typeparam name="TOption">Option type</typeparam>
+        /// <typeparam name="TOptionProvider">Class used to provide available options</typeparam>
         /// <param name="expression">property selector</param>
         /// <param name="optionProvider">Function that provides the available options</param>
         /// <param name="keySelector">Selector for the option key</param>
         /// <param name="displaySelector">Selector for the option display value</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOptionProvider, TOption>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, int> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOption, TOptionProvider>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, int> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
         {
             return PropertyWithOptions(expression, optionProvider,option => keySelector(option).ToString(), displaySelector);
         }
@@ -136,17 +136,50 @@ namespace ConfigServer.Server
         /// Gets ConfigurationPropertyModelBuilder for property with option
         /// Overides existing configuration from property
         /// </summary>
+        /// <typeparam name="TOption">Option type</typeparam>
         /// <typeparam name="TOptionProvider">Class used to provide available options</typeparam>
+        /// <param name="expression">property selector</param>
+        /// <param name="optionProvider">Function that provides the available options</param>
+        /// <param name="keySelector">Selector for the option key</param>
+        /// <param name="displaySelector">Selector for the option display value</param>
+        /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOption, TOptionProvider>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, string> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
+        {
+            var body = GetExpressionBody(expression);
+            var model = new ConfigurationPropertyWithOptionsModelDefinition<TOptionProvider, TOption>(optionProvider, keySelector, displaySelector, body.Member.Name, definition.Type);
+            definition.ConfigurationProperties[body.Member.Name] = model;
+            return new ConfigurationPropertyWithOptionBuilder(model);
+        }
+
+        /// <summary>
+        /// Gets ConfigurationPropertyModelBuilder for property with option
+        /// Overides existing configuration from property
+        /// </summary>
         /// <typeparam name="TOption">Option type</typeparam>
         /// <param name="expression">property selector</param>
         /// <param name="optionProvider">Function that provides the available options</param>
         /// <param name="keySelector">Selector for the option key</param>
         /// <param name="displaySelector">Selector for the option display value</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOptionProvider, TOption>(Expression<Func<TConfig, TOption>> expression, Func<TOptionProvider, IEnumerable<TOption>> optionProvider, Func<TOption, string> keySelector, Func<TOption, string> displaySelector) where TOptionProvider : class
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOption>(Expression<Func<TConfig, TOption>> expression, Func<IEnumerable<TOption>> optionProvider, Func<TOption, int> keySelector, Func<TOption, string> displaySelector)
+        {
+            return PropertyWithOptions(expression, optionProvider, option => keySelector(option).ToString(), displaySelector);
+        }
+
+        /// <summary>
+        /// Gets ConfigurationPropertyModelBuilder for property with option
+        /// Overides existing configuration from property
+        /// </summary>
+        /// <typeparam name="TOption">Option type</typeparam>
+        /// <param name="expression">property selector</param>
+        /// <param name="optionProvider">Function that provides the available options</param>
+        /// <param name="keySelector">Selector for the option key</param>
+        /// <param name="displaySelector">Selector for the option display value</param>
+        /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
+        public ConfigurationPropertyWithOptionBuilder PropertyWithOptions<TOption>(Expression<Func<TConfig, TOption>> expression, Func<IEnumerable<TOption>> optionProvider, Func<TOption, string> keySelector, Func<TOption, string> displaySelector)
         {
             var body = GetExpressionBody(expression);
-            var model = new ConfigurationPropertyWithOptionsModelDefinition<TOptionProvider, TOption>(optionProvider, keySelector, displaySelector, body.Member.Name, definition.Type);
+            var model = new ConfigurationPropertyWithOptionsModelDefinition<TOption>(optionProvider, keySelector, displaySelector, body.Member.Name, definition.Type);
             definition.ConfigurationProperties[body.Member.Name] = model;
             return new ConfigurationPropertyWithOptionBuilder(model);
         }

@@ -87,5 +87,42 @@ namespace ConfigServer.Server
         }
     }
 
+    internal class ConfigurationPropertyWithOptionsModelDefinition<TOption> : ConfigurationPropertyWithOptionsModelDefinition
+    {
+        readonly Func<IEnumerable<TOption>> optionProvider;
+        readonly Func<TOption, string> keySelector;
+        readonly Func<TOption, string> displaySelector;
+
+        internal ConfigurationPropertyWithOptionsModelDefinition(Func<IEnumerable<TOption>> optionProvider, Func<TOption, string> keySelector, Func<TOption, string> displaySelector, string propertyName, Type propertyParentType) : base(propertyName, typeof(TOption), propertyParentType)
+        {
+            this.displaySelector = displaySelector;
+            this.keySelector = keySelector;
+            this.optionProvider = optionProvider;
+        }
+
+        public override IEnumerable<ConfigurationPropertyOptionDefintion> GetAvailableOptions(IServiceProvider serviceProvider)
+        {
+            return GetOptions().Select(s => new ConfigurationPropertyOptionDefintion { Key = keySelector(s), DisplayValue = displaySelector(s) });
+        }
+
+        public override bool TryGetOption(IServiceProvider serviceProvider, string key, out object option)
+        {
+            option = GetOptions().SingleOrDefault(s => keySelector(s) == key);
+            return option != null;
+        }
+
+        private IEnumerable<TOption> GetOptions()
+        {
+            return optionProvider();
+        }
+
+        public override bool OptionMatchesKey(string key, object option)
+        {
+            if (!(option is TOption))
+                return false;
+
+            return key == keySelector((TOption)option);
+        }
+    }
 
 }
