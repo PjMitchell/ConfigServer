@@ -6,7 +6,8 @@
         "repository": {
             "type": "git",
             "url": "git://github.com/PjMitchell/ConfigServer"
-        }
+        },
+        "licenseUrl": "https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt"
     },
     "buildOptions": { "xmlDoc": true },
     "dependencies": {
