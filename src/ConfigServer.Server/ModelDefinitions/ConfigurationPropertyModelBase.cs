@@ -17,7 +17,7 @@ namespace ConfigServer.Server
         protected ConfigurationPropertyModelBase(string propertyName, Type propertyType, Type parentPropertyType)
         {
             ConfigurationPropertyName = propertyName;
-            PropertyDisplayName = propertyName;
+            PropertyDisplayName = PropertyNameParser.SplitCamelCase(propertyName);
             PropertyType = propertyType;
             ParentPropertyType = parentPropertyType;
         }

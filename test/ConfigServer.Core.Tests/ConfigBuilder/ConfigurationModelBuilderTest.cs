@@ -32,7 +32,7 @@ namespace ConfigServer.Core.Tests
 
             Assert.True(result.ConfigurationProperties.ContainsKey(nameof(SimpleConfig.IntProperty)));
             Assert.Equal(nameof(SimpleConfig.IntProperty), result.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].ConfigurationPropertyName);
-
+            Assert.Equal("Int Property", result.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDisplayName);
         }
 
         [Fact]

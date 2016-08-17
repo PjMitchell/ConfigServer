@@ -59,7 +59,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var result = target.Build();
 
             Assert.Equal(null, result.ConfigurationProperties[nameof(PropertyWithOptionTestClass.OptionProperty)].PropertyDescription);
-            Assert.Equal(nameof(PropertyWithOptionTestClass.OptionProperty), result.ConfigurationProperties[nameof(PropertyWithOptionTestClass.OptionProperty)].PropertyDisplayName);
+            Assert.Equal("Option Property", result.ConfigurationProperties[nameof(PropertyWithOptionTestClass.OptionProperty)].PropertyDisplayName);
         }
 
         [Fact]
