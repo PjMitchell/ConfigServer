@@ -81,7 +81,7 @@ namespace ConfigServer.Core.Tests
 
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(typeof(int), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyType);
-            Assert.Equal(nameof(SimpleConfig.IntProperty), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDisplayName);
+            Assert.Equal("Int Property", gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDisplayName);
             Assert.Equal(nameof(SimpleConfig.IntProperty), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].ConfigurationPropertyName);
 
         }

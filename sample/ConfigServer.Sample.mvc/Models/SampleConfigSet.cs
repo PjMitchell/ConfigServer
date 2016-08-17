@@ -16,11 +16,11 @@ namespace ConfigServer.Sample.mvc.Models
 
             configBuilder.Property(p => p.IsLlamaFarmer).WithDisplayName("Is Llama farmer?").WithDescription("Is this a Llama farmer");
             configBuilder.Property(p => p.Decimal).WithDisplayName("Value").WithDescription("Is a value in decimal");
-            configBuilder.Property(p => p.LlamaCapacity).WithDisplayName("Llama capacity")
+            configBuilder.Property(p => p.LlamaCapacity)
                 .WithDescription("Is the capacity of llama")
                 .WithMinValue(0)
                 .WithMaxValue(50);
-            configBuilder.Property(p => p.StartDate).WithDisplayName("Start date")
+            configBuilder.Property(p => p.StartDate)
                 .WithMinValue(new DateTime(2013, 10, 10));
             configBuilder.Property(p => p.Name).WithMaxLength(250);
             configBuilder.PropertyWithOptions(p => p.Option, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
