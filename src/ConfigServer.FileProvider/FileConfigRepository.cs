@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,17 @@ namespace ConfigServer.FileProvider
     {
         readonly string folderPath;
         readonly JsonSerializerSettings jsonSerializerSettings;
+        readonly IMemoryCache memoryCache;
         const string indexFile = "clientIndex.json";
-
+        private string cachePrefix = "ConfigServer_FileConfigRepository_";
         /// <summary>
         /// Initializes File store
         /// </summary>
-        public FileConfigRepository(FileConfigRespositoryBuilderOptions options)
+        public FileConfigRepository(IMemoryCache memoryCache,FileConfigRespositoryBuilderOptions options)
         {
             this.folderPath = options.ConfigStorePath;
             this.jsonSerializerSettings = options.JsonSerializerSettings;
+            this.memoryCache = memoryCache;
         }
 
         /// <summary>
@@ -94,20 +97,25 @@ namespace ConfigServer.FileProvider
         public Task UpdateConfigAsync(ConfigInstance config)
         {
             var configPath = GetConfigPath(config.ConfigType, config.ClientId);
-            File.WriteAllText(configPath, JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings));
+            var configText = JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings);
+            File.WriteAllText(configPath, configText);
+            memoryCache.Set<string>(cachePrefix + configPath, configText, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
             return Task.FromResult(true);
         }
 
         private bool TryGetConfigJson(Type configType, string configSetId, out string configJson)
         {
             var configPath = GetConfigPath(configType, configSetId);
-            
-            var result = File.Exists(configPath);
-            if (result)
-                configJson = File.ReadAllText(configPath);
-            else
-                configJson = string.Empty;
-            return result;
+            configJson = memoryCache.GetOrCreate(cachePrefix + configPath, e =>
+            {
+                e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                var result = File.Exists(configPath);
+                if (result)
+                    return File.ReadAllText(configPath);
+                else
+                    return string.Empty;
+            });
+            return !string.IsNullOrWhiteSpace(configJson);
         }
 
         private string GetConfigPath(Type configType, string configSetId)

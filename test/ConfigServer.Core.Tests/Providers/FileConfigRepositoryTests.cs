@@ -1,4 +1,6 @@
 ﻿using ConfigServer.FileProvider;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace ConfigServer.Core.Tests
         public FileConfigRepositoryTests()
         {
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
-            target = new FileConfigRepository(new FileConfigRespositoryBuilderOptions {  ConfigStorePath = testdirectory });
+            target = new FileConfigRepository(new MemoryCache(Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())), new FileConfigRespositoryBuilderOptions {  ConfigStorePath = testdirectory });
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
