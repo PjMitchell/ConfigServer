@@ -25,7 +25,7 @@ namespace ConfigServer.FileProvider
             if (string.IsNullOrWhiteSpace(options.ConfigStorePath))
                 throw new ArgumentException($"{nameof(FileConfigRespositoryBuilderOptions.ConfigStorePath)} cannot be null or whitespace", nameof(options));
             options.JsonSerializerSettings = options.JsonSerializerSettings ?? new JsonSerializerSettings();
-            
+            builder.ServiceCollection.AddMemoryCache();
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton<FileConfigRespositoryBuilderOptions>(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, FileConfigRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, FileConfigRepository>());
