@@ -14,6 +14,8 @@ namespace ConfigServer.Sample.mvc.Models
         public bool IsLlamaFarmer { get; set; }
         public Choice Choice { get; set;}
         public Option Option { get; set; }
+        public List<Option> MoarOptions { get; set; }
+
     }
 
 

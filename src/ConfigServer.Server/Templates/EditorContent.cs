@@ -42,8 +42,9 @@ namespace ConfigServer.Server.Templates
         {
             var options = definition.GetAvailableOptions(serviceProvider)
                 .Select(s=> $"<option value=\"{s.Key}\" {GetOptionSelectedTag(definition,s, value)}>{s.DisplayValue}</option>");
+            var multipleText = definition.IsMultiSelector ? "multiple" : string.Empty;
             return $@"
-            <select name=""{definition.ConfigurationPropertyName}"">
+            <select name=""{definition.ConfigurationPropertyName}"" {multipleText}>
                 {string.Join(Environment.NewLine, options)}
             </select>";
         }

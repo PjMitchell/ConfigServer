@@ -36,5 +36,11 @@ namespace ConfigServer.Server
             definition.TryGetOption(context.RequestServices, formValue, out parsedValue);
             definition.SetPropertyValue(existingConfig.GetConfiguration(), parsedValue);
         }
+
+        private static void SetValueFromForm(ConfigInstance existingConfig, HttpContext context, ConfigurationPropertyWithMultipleOptionsModelDefinition definition)
+        {
+            var formValues = context.Request.Form[definition.ConfigurationPropertyName];
+            definition.SetPropertyValue(context.RequestServices, existingConfig.GetConfiguration(), formValues);
+        }
     }
 }

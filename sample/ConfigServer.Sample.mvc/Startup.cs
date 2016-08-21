@@ -48,7 +48,8 @@ namespace ConfigServer.Sample.mvc
                 Decimal = 23.47m,
                 StartDate = new DateTime(2013,10,10),
                 IsLlamaFarmer = false,
-                Option = optionProvider.GetOptions().First()
+                Option = optionProvider.GetOptions().First(),
+                MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
             };
             var config2 = new SampleConfig
             {
@@ -57,7 +58,8 @@ namespace ConfigServer.Sample.mvc
                 Decimal = 41.47m,
                 StartDate = new DateTime(2013, 11, 11),
                 IsLlamaFarmer = true,
-                Option = optionProvider.GetOptions().First()
+                Option = optionProvider.GetOptions().First(),
+                MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
