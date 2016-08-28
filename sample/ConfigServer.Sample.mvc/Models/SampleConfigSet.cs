@@ -27,6 +27,7 @@ namespace ConfigServer.Sample.mvc.Models
                 .WithDescription("Is a selected option");
             configBuilder.PropertyWithMulitpleOptions(p => p.MoarOptions, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
                 .WithDescription("Is a multi select option");
+            configBuilder.Collection(p=> p.ListOfConfigs);
 
 
         }

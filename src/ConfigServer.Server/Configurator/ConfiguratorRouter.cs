@@ -13,11 +13,14 @@ namespace ConfigServer.Server
         private readonly ConfigurationSetRegistry configCollection;
         private readonly PageBuilder pageBuilder;
         private readonly EditorContent editorContent;
-        internal ConfiguratorRouter(IServiceProvider serviceProvider,  IConfigRepository configRepository, ConfigurationSetRegistry configCollection, PageBuilder pageBuilder)
+        private readonly IConfigurationFormBinder formBinder;
+
+        internal ConfiguratorRouter(IServiceProvider serviceProvider,IConfigurationFormBinder formBinder,  IConfigRepository configRepository, ConfigurationSetRegistry configCollection, PageBuilder pageBuilder)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;
             this.pageBuilder = pageBuilder;
+            this.formBinder = formBinder;
             editorContent = new EditorContent(serviceProvider);
         }
 
@@ -79,7 +82,7 @@ namespace ConfigServer.Server
 
             if (context.Request.Method.Equals("POST"))
             {
-                var configResult = ConfigFormBinder.BindForm(currentConfig, context, configQueryResult.QueryResult);
+                var configResult = formBinder.BuildConfigurationFromForm(currentConfig, context.Request.Form, configQueryResult.QueryResult);
                 await configRepository.UpdateConfigAsync(configResult);
                 pageBuilder.Redirect(routePath + "/" + client.ClientId);
                 return true;
@@ -98,7 +101,7 @@ namespace ConfigServer.Server
 
             if (context.Request.Method.Equals("POST"))
             {
-                var client = UpdateConfigurationClientFormBinder.BindForm(context.Request.Form);
+                var client = formBinder.BuildConfigurationClientFromForm(context.Request.Form);
                 await configRepository.UpdateClientAsync(client);
                 pageBuilder.Redirect(routePath);
                 return true;
@@ -120,7 +123,7 @@ namespace ConfigServer.Server
 
             if (context.Request.Method.Equals("POST"))
             {
-                var result = UpdateConfigurationClientFormBinder.BindForm(context.Request.Form);
+                var result = formBinder.BuildConfigurationClientFromForm(context.Request.Form);
                 await configRepository.UpdateClientAsync(result);
                 pageBuilder.Redirect(routePath + "/" + clientResult.QueryResult.ClientId);
                 return true;
