@@ -14,7 +14,7 @@ namespace ConfigServer.Sample.mvc.Models
         {
             var configBuilder = modelBuilder.Config<SampleConfig>("Sample Config", "Basic Configuration");
 
-            configBuilder.Property(p => p.IsLlamaFarmer).WithDisplayName("Is Llama farmer?").WithDescription("Is this a Llama farmer");
+            configBuilder.Property(p => p.IsLlamaFarmer);
             configBuilder.Property(p => p.Decimal).WithDisplayName("Value").WithDescription("Is a value in decimal");
             configBuilder.Property(p => p.LlamaCapacity)
                 .WithDescription("Is the capacity of llama")

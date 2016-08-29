@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace ConfigServer.Sample.mvc.Models
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public decimal Decimal { get; set; }
+        [Display(Name = "Is Llama farmer?", Description = "Is this a Llama farmer")]
         public bool IsLlamaFarmer { get; set; }
         public Choice Choice { get; set;}
         public Option Option { get; set; }
