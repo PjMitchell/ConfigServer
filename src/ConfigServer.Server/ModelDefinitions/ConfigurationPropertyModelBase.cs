@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+
 namespace ConfigServer.Server
 {
     /// <summary>
@@ -17,9 +19,24 @@ namespace ConfigServer.Server
         protected ConfigurationPropertyModelBase(string propertyName, Type propertyType, Type parentPropertyType)
         {
             ConfigurationPropertyName = propertyName;
-            PropertyDisplayName = PropertyNameParser.SplitCamelCase(propertyName);
             PropertyType = propertyType;
             ParentPropertyType = parentPropertyType;
+            ApplyValuesFromAttribute(propertyName);
+            if(string.IsNullOrWhiteSpace(PropertyDisplayName))
+                PropertyDisplayName = PropertyNameParser.SplitCamelCase(propertyName);
+        }
+
+        private void ApplyValuesFromAttribute(string propertyName)
+        {
+            var displayAttribute = ParentPropertyType.GetAttributeFromOrDefault<DisplayAttribute>(propertyName);
+            if (displayAttribute != null)
+                SetMetaFromDisplayAttribute(displayAttribute);
+        }
+
+        private void SetMetaFromDisplayAttribute(DisplayAttribute displayAttribute)
+        {
+            PropertyDisplayName = displayAttribute.Name;
+            PropertyDescription = displayAttribute.Description;
         }
 
         /// <summary>

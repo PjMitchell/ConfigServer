@@ -1,7 +1,7 @@
 {
     "description": "Provides configurators a way of configuring associated client configuration through a simple web interface with meta data and validation.",
     "authors": [ "Peter Mitchell" ],
-    "version": "1.0.0-beta2-*",
+    "version": "1.0.0-beta3-*",
     "packOptions": {
         "repository": {
             "type": "git",
@@ -19,8 +19,16 @@
     },
 
     "frameworks": {
-        "net451": {},
-        "net452": {},
+        "net451": {
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+            }
+        },
+        "net452": {
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+            }
+        },
         "netstandard1.6": {
             "imports": [
                 "dotnet5.6",
@@ -28,14 +36,16 @@
             ],
             "dependencies": {
                 "System.Reflection.TypeExtensions": "4.1.0",
-                "System.Text.RegularExpressions": "4.1.0"
+                "System.Text.RegularExpressions": "4.1.0",
+                "System.ComponentModel.Annotations": "4.1.0"
             }
         },
         "netcoreapp1.0": {
             "imports": "dnxcore50",
             "dependencies": {
                 "System.Reflection.TypeExtensions": "4.1.0",
-                "System.Text.RegularExpressions": "4.1.0"
+                "System.Text.RegularExpressions": "4.1.0",
+                "System.ComponentModel.Annotations": "4.1.0"
             }
         }
     }
