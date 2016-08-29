@@ -19,14 +19,19 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">collection selector</param>
         /// <returns>ConfigurationCollectionPropertyBuilder for selected property</returns>
-        public static ConfigurationCollectionPropertyBuilder<TConfig> Collection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression)
+        public static ConfigurationCollectionPropertyBuilder<TConfig> Collection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression) where TConfig : new()
         {
             var body = GetExpressionBody(expression);           
             ConfigurationPropertyModelBase value;
-            if (!source.ConfigurationProperties.TryGetValue(body.Member.Name, out value))
+            if (!source.ConfigurationProperties.TryGetValue(body.Member.Name, out value) || !(value is ConfigurationCollectionPropertyDefinition<TConfig>))
             {
-                value = new ConfigurationCollectionPropertyDefinition(body.Member.Name, typeof(TConfig), typeof(TModel));
-                source.ConfigurationProperties.Add(value.ConfigurationPropertyName, value);
+                var type = body.Type;
+                if (type == typeof(ICollection<TConfig>))
+                    type = typeof(List<TConfig>);
+                var definition = new ConfigurationCollectionPropertyDefinition<TConfig>(body.Member.Name, typeof(TConfig), typeof(TModel), type);
+                ApplyDefaultPropertyDefinitions(definition);
+                value = definition;
+                source.ConfigurationProperties[value.ConfigurationPropertyName] = value;
             }
             var builder = new ConfigurationCollectionPropertyBuilder<TConfig>((ConfigurationCollectionPropertyDefinition)value);
             return builder;

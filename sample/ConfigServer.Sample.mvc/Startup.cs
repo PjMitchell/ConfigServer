@@ -9,6 +9,7 @@ using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Server;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ConfigServer.Sample.mvc
 {
@@ -50,6 +51,11 @@ namespace ConfigServer.Sample.mvc
                 IsLlamaFarmer = false,
                 Option = optionProvider.GetOptions().First(),
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
+                ListOfConfigs = new List<ListConfig>
+                {
+                    new ListConfig { Name = "Value One", Value = 1 },
+                    new ListConfig { Name = "Value Two", Value = 2 }
+                }
             };
             var config2 = new SampleConfig
             {

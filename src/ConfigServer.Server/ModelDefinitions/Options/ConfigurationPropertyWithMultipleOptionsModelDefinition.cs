@@ -6,7 +6,7 @@ using System.Reflection;
 namespace ConfigServer.Server
 {
 
-    internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption, TOptionProvider> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionProvider : class where TOptionCollection : ICollection<TOption>
+    internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption, TOptionProvider> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionProvider : class where TOptionCollection : ICollection<TOption> where TOption : new ()
     {
         readonly Func<TOptionProvider, IEnumerable<TOption>> optionProvider;
         readonly Func<TOption, string> keySelector;
@@ -42,31 +42,10 @@ namespace ConfigServer.Server
                 return ((TOptionCollection)option).Any(a => keySelector(a) == key);
             return false;
         }
-
-        public override void SetPropertyValue(IServiceProvider serviceProvider, object config, IEnumerable<string> options)
-        {
-            var optionLookup = GetAvailableOptions(serviceProvider).ToDictionary(k => k);
-            var emptyCollection = CreateNew();
-            foreach (var key in options)
-            {
-                object option;
-                if (TryGetOption(serviceProvider, key, out option))
-                    emptyCollection.Add((TOption)option);
-            }
-            SetPropertyValue(config, emptyCollection);
-        }
-
-
-        protected ICollection<TOption> CreateNew()
-        {
-            if (typeof(TOptionCollection) == typeof(ICollection<TOption>))
-                return new List<TOption>();
-            var constructor = typeof(TOptionCollection).GetConstructor(Type.EmptyTypes);
-            return (TOptionCollection)constructor.Invoke(new object[0]);
-        }
+        public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
     }
 
-    internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionCollection : ICollection<TOption>
+    internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionCollection : ICollection<TOption> where TOption : new()
     {
         readonly Func<IEnumerable<TOption>> optionProvider;
         readonly Func<TOption, string> keySelector;
@@ -102,27 +81,8 @@ namespace ConfigServer.Server
             return false;
         }
 
-        public override void SetPropertyValue(IServiceProvider serviceProvider, object config, IEnumerable<string> options)
-        {
-            var optionLookup = GetAvailableOptions(serviceProvider).ToDictionary(k => k);
-            var emptyCollection = CreateNew();
-            foreach (var key in options)
-            {
-                object option;
-                if (TryGetOption(serviceProvider, key, out option))
-                    emptyCollection.Add((TOption)option);
-            }
-            SetPropertyValue(config, emptyCollection);
-        }
+        public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
 
-
-        protected ICollection<TOption> CreateNew()
-        {
-            if (typeof(TOptionCollection) == typeof(ICollection<TOption>))
-                return new List<TOption>();
-            var constructor = typeof(TOptionCollection).GetConstructor(Type.EmptyTypes);
-            return (TOptionCollection)constructor.Invoke(new object[0]);
-        }
     }
 
     internal abstract class ConfigurationPropertyWithMultipleOptionsModelDefinition : ConfigurationPropertyWithOptionsModelDefinition
@@ -132,7 +92,13 @@ namespace ConfigServer.Server
 
         }
 
-        public abstract void SetPropertyValue(IServiceProvider serviceProvider, object config, IEnumerable<string> options);
+        //public abstract void SetPropertyValue(IServiceProvider serviceProvider, object config, IEnumerable<string> options);
+
+        /// <summary>
+        /// Gets Collection Builder for Property
+        /// </summary>
+        /// <returns>Collection Builder for Property</returns>
+        public abstract CollectionBuilder GetCollectionBuilder();
 
     }
 }

@@ -5,9 +5,9 @@ namespace ConfigServer.Server.Templates
 {
     internal static class FloatInputTemplate
     {
-        public static string Build(object value, ConfigurationPrimitivePropertyModel definition)
+        public static string Build(object value, ConfigurationPrimitivePropertyModel definition, string namePrefix = "")
         {
-            return $"<input type=\"number\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" step=\"0.00001\" {BuildValidationElement(definition)}>";
+            return $"<input type=\"number\" name=\"{namePrefix}{definition.ConfigurationPropertyName}\" value=\"{value}\" step=\"0.00001\" {BuildValidationElement(definition)}>";
         }
 
         private static string BuildValidationElement(ConfigurationPrimitivePropertyModel definition)

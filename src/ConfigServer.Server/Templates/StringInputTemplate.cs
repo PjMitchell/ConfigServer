@@ -5,9 +5,9 @@ namespace ConfigServer.Server.Templates
 {
     internal static class StringInputTemplate
     {
-        public static string Build(object value, ConfigurationPrimitivePropertyModel definition)
+        public static string Build(object value, ConfigurationPrimitivePropertyModel definition, string namePrefix = "")
         {
-            return $"<input type=\"text\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
+            return $"<input type=\"text\" name=\"{namePrefix}{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
         private static string BuildValidationElement(ConfigurationPrimitivePropertyModel definition)

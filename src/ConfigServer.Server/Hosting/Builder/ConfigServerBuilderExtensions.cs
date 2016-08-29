@@ -18,6 +18,7 @@ namespace ConfigServer.Server
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationFormBinder, ConfigurationFormBinder>());            
             return new ConfigServerBuilder(source);
         }
 
