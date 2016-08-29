@@ -59,7 +59,7 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="config">Instance of configuration</param>
         /// <param name="value">Inserted valus</param>
-        public void SetPropertyValue(object config, object value) => ParentPropertyType.GetProperty(ConfigurationPropertyName).SetValue(config, value);
+        public virtual void SetPropertyValue(object config, object value) => ParentPropertyType.GetProperty(ConfigurationPropertyName).SetValue(config, value);
        
     }
 }

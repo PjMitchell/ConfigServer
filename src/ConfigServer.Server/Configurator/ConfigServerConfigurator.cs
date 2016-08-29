@@ -17,7 +17,7 @@ namespace ConfigServer.Server
             }
 
             var serviceProvider = context.RequestServices;
-            var router = new ConfiguratorRouter(serviceProvider, (IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)),(ConfigurationSetRegistry)serviceProvider.GetService(typeof(ConfigurationSetRegistry)), new PageBuilder(context));
+            var router = new ConfiguratorRouter(serviceProvider, (IConfigurationFormBinder)serviceProvider.GetService(typeof(IConfigurationFormBinder)),(IConfigRepository)serviceProvider.GetService(typeof(IConfigRepository)),(ConfigurationSetRegistry)serviceProvider.GetService(typeof(ConfigurationSetRegistry)), new PageBuilder(context));
             var result = await router.HandleRequest(context, options.Path);
             if (!result)
                 await next.Invoke();

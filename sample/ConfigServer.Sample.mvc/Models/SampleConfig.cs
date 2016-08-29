@@ -14,6 +14,8 @@ namespace ConfigServer.Sample.mvc.Models
         public bool IsLlamaFarmer { get; set; }
         public Choice Choice { get; set;}
         public Option Option { get; set; }
+        public List<Option> MoarOptions { get; set; }
+        public List<ListConfig> ListOfConfigs { get; set; }
     }
 
 
@@ -30,4 +32,9 @@ namespace ConfigServer.Sample.mvc.Models
         public string Description { get; set; }
     }
 
+    public class ListConfig
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+    }
 }

@@ -20,14 +20,23 @@
 
     "frameworks": {
         "net451": {},
+        "net452": {},
         "netstandard1.6": {
             "imports": [
                 "dotnet5.6",
                 "dnxcore50"
-            ]
+            ],
+            "dependencies": {
+                "System.Reflection.TypeExtensions": "4.1.0",
+                "System.Text.RegularExpressions": "4.1.0"
+            }
         },
         "netcoreapp1.0": {
-            "imports": "dnxcore50"
+            "imports": "dnxcore50",
+            "dependencies": {
+                "System.Reflection.TypeExtensions": "4.1.0",
+                "System.Text.RegularExpressions": "4.1.0"
+            }
         }
     }
 }

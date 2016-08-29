@@ -6,9 +6,9 @@ namespace ConfigServer.Server.Templates
 {
     internal static class DateTimeInputTemplate
     {
-        public static string Build(object value, ConfigurationPrimitivePropertyModel definition)
+        public static string Build(object value, ConfigurationPrimitivePropertyModel definition, string namePrefix = "")
         {
-            return $"<input type=\"datetime\" name=\"{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
+            return $"<input type=\"datetime\" name=\"{namePrefix}{definition.ConfigurationPropertyName}\" value=\"{value}\" {BuildValidationElement(definition)}>";
         }
 
         private static string BuildValidationElement(ConfigurationPrimitivePropertyModel definition)
