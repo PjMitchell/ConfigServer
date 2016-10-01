@@ -3,12 +3,6 @@ import { Injectable } from '@angular/core';
 import { IConfigurationClient } from '../interfaces/client';
 import 'rxjs/add/operator/toPromise';
 
-
-export interface IConfigurationClientDataService 
-{
-
-}
-
 @Injectable()
 export class ConfigurationClientDataService 
 {
@@ -20,6 +14,13 @@ export class ConfigurationClientDataService
         return this.http.get(this.clientsUrl)
             .toPromise()
             .then(response => response.json() as IConfigurationClient[])
+            .catch(this.handleError);
+    }
+
+    getClient(clientId: string): Promise<IConfigurationClient> {
+        return this.http.get(this.clientsUrl + '/' + clientId)
+            .toPromise()
+            .then(response => response.json() as IConfigurationClient)
             .catch(this.handleError);
     }
 

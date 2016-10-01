@@ -23,8 +23,18 @@ namespace ConfigServer.Server
 
         public async Task<bool> TryHandle(HttpContext context)
         {
+            var routePath = context.Request.Path;
             var configSetIds = await configRepository.GetClientsAsync();
-            await responseFactory.BuildResponse(context, configSetIds);
+            if (string.IsNullOrWhiteSpace(routePath))
+            {
+                await responseFactory.BuildResponse(context, configSetIds);
+                return true;
+            }
+            var queryResult = configSetIds.TryMatchPath(c => c.ClientId, routePath);
+            if (!queryResult.HasResult)
+                return false;
+            await responseFactory.BuildResponse(context, queryResult.QueryResult);
+
             return true;
         }
 
