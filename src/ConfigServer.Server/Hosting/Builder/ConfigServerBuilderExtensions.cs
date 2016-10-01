@@ -1,6 +1,10 @@
 ﻿using ConfigServer.Core;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using System.Reflection;
 
 namespace ConfigServer.Server
 {
@@ -69,7 +73,16 @@ namespace ConfigServer.Server
         public static IApplicationBuilder UseConfigServer(this IApplicationBuilder app, ConfigServerOptions options = null)
         {
             options = options ?? new ConfigServerOptions();
+            var assembly = typeof(ConfigServerBuilderExtensions).GetTypeInfo().Assembly;
+            var provider = new EmbeddedFileProvider(assembly);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = provider
+            });
+            app.Map(HostPaths.Manager, client => client.Use((context, next) => ConfigServerHost.SetupManagerRouter(context, next, options)));
+            app.Map(HostPaths.Clients, client => client.Use((context, next) => ConfigServerHost.SetupClientRouter(context, next, options)));
             app.Use((context, next) => ConfigServerHost.Setup(context, next, options));
+            
             return app;
         }
     }

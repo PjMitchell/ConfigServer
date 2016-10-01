@@ -4,17 +4,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Runtime.CompilerServices;
 using ConfigServer.Core;
+using System;
 
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Server
 {
-    internal class ConfigRouter
+    internal class ConfigEnpoint : IEndpoint
     {
         readonly IConfigRepository configRepository;
         readonly IEnumerable<ConfigurationModel> configModelCollection;
         readonly IConfigHttpResponseFactory responseFactory;
 
-        public ConfigRouter(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection)
+        public ConfigEnpoint(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection)
         {
             this.responseFactory = responseFactory;
             this.configModelCollection = configCollection.SelectMany(s=> s.Configs).ToList();
@@ -34,6 +35,11 @@ namespace ConfigServer.Server
             var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult.ClientId });
             await responseFactory.BuildResponse(context, config.GetConfiguration());
             return true;
+        }
+
+        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        {
+            return context.CheckAuthorization(options.AuthenticationOptions);
         }
     }
 }
