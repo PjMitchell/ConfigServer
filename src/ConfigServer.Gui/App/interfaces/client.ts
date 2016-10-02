@@ -1,4 +1,4 @@
-﻿export interface IConfigurationClient
+﻿export interface ConfigurationClient
 {
     clientId: string;
     name: string;

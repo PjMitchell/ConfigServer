@@ -1,7 +1,10 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
+import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
 import { ActivatedRoute, Params } from '@angular/router';
-import { IConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
+
 
 @Component({
     template: `
@@ -9,12 +12,22 @@ import { IConfigurationClient } from '../interfaces/client';
             <h2>{{client.name}}</h2>
             <p>{{client.description}}</p>
         </div>
+        <h3>ConfigurationSets</h3>
+        <div *ngFor="let configurationSet of configurationSets">
+            <h4>{{configurationSet.name}}</h4>
+            <p>{{configurationSet.description}}</p>
+            <h4>Configurations</h4>
+            <div *ngFor="let config of configurationSet.configs">
+                <h5>{{config.displayName}}</h5>
+                <p>{{config.description}}</p>
+            </div>
+        </div>
 `
 })
 export class ClientComponent implements OnInit {
-    client: IConfigurationClient;
-
-    constructor(private clientDataService: ConfigurationClientDataService, private route: ActivatedRoute) {
+    client: ConfigurationClient;
+    configurationSets: ConfigurationSetSummary[];
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private route: ActivatedRoute) {
 
     }
 
@@ -23,6 +36,8 @@ export class ClientComponent implements OnInit {
             let clientId = value['clientId'];
             this.clientDataService.getClient(clientId)
                 .then(returnedClient => this.client = returnedClient);
+            this.configSetDataService.getConfigurationSets()
+                .then(returnedConfigSet => this.configurationSets = returnedConfigSet)
         })
     }
 }

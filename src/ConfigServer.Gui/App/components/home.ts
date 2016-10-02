@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
-import { IConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/client';
+
 import { Router } from '@angular/router';
 @Component({
     template: `
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 `
 })
 export class HomeComponent implements OnInit {
-    clients: IConfigurationClient[];
+    clients: ConfigurationClient[];
 
     constructor(private clientDataService: ConfigurationClientDataService, private router: Router) {
 

@@ -7,12 +7,13 @@ import { AppShell } from './app.shell';
 import { HomeComponent } from './components/home';
 import { ClientComponent } from './components/client';
 import { ConfigurationClientDataService } from './dataservices/client-data.service';
+import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 
 @NgModule({
     imports: [BrowserModule, routing, HttpModule],
     declarations: [AppShell, HomeComponent, ClientComponent],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService]
 })
 
 export class AppModule { }

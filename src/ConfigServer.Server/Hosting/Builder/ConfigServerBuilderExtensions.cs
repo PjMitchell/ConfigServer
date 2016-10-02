@@ -22,7 +22,11 @@ namespace ConfigServer.Server
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationFormBinder, ConfigurationFormBinder>());            
+            source.Add(ServiceDescriptor.Transient<IConfigurationFormBinder, ConfigurationFormBinder>());  
+            source.Add(ServiceDescriptor.Transient<ConfigurationSetEnpoint, ConfigurationSetEnpoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
             return new ConfigServerBuilder(source);
         }
 
@@ -79,11 +83,18 @@ namespace ConfigServer.Server
             {
                 FileProvider = provider
             });
-            app.Map(HostPaths.Manager, client => client.Use((context, next) => ConfigServerHost.SetupManagerRouter(context, next, options)));
-            app.Map(HostPaths.Clients, client => client.Use((context, next) => ConfigServerHost.SetupClientRouter(context, next, options)));
-            app.Use((context, next) => ConfigServerHost.Setup(context, next, options));
+            
+            app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
+            app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
+            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
+            app.UseEndpoint<ConfigEnpoint>(options);
             
             return app;
+        }
+
+        private static IApplicationBuilder UseEndpoint<TEndpoint>(this IApplicationBuilder app, ConfigServerOptions options) where TEndpoint : IEndpoint
+        {
+            return app.Use((context, next) => ConfigServerHost.HandleEndPoint<TEndpoint>(context, next, options));
         }
     }
 }

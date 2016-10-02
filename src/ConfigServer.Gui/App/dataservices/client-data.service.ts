@@ -1,6 +1,6 @@
 ﻿import { Headers, Http, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { IConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/client';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
@@ -10,17 +10,17 @@ export class ConfigurationClientDataService
 
     constructor(private http: Http) { }
 
-    getClients(): Promise<IConfigurationClient[]> {
+    getClients(): Promise<ConfigurationClient[]> {
         return this.http.get(this.clientsUrl)
             .toPromise()
-            .then(response => response.json() as IConfigurationClient[])
+            .then(response => response.json() as ConfigurationClient[])
             .catch(this.handleError);
     }
 
-    getClient(clientId: string): Promise<IConfigurationClient> {
+    getClient(clientId: string): Promise<ConfigurationClient> {
         return this.http.get(this.clientsUrl + '/' + clientId)
             .toPromise()
-            .then(response => response.json() as IConfigurationClient)
+            .then(response => response.json() as ConfigurationClient)
             .catch(this.handleError);
     }
 
