@@ -9,10 +9,13 @@ namespace ConfigServer.Server
     {
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection)
+        readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
+
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper,  ConfigurationSetRegistry configCollection)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
+            this.modelPayloadMapper = modelPayloadMapper;
         }
 
         public async Task<bool> TryHandle(HttpContext context)
@@ -23,6 +26,15 @@ namespace ConfigServer.Server
                 await responseFactory.BuildResponse(context, GetConfigurationSetSummaries());
                 return true;
             }
+            PathString remainingPath;
+            if (routePath.StartsWithSegments("/Model", out editRemaining))
+            {
+                var queryResult = configCollection.TryMatchPath(c => c.ConfigSetType.Name, remainingPath);
+                if (queryResult.HasResult)
+                    await responseFactory.BuildResponse(context, modelPayloadMapper.Map(queryResult.QueryResult));
+                return queryResult.HasResult;
+            }             
+
             return false;
         }
 
