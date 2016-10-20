@@ -4,6 +4,8 @@ namespace ConfigServer.Server
 {
     internal class ConfigurationPropertyPayload
     {
+
+        public string PropertyName { get; set; }
         public string PropertyType { get; set; }
 
         /// <summary>

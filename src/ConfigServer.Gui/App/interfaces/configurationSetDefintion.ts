@@ -1,0 +1,35 @@
+﻿export interface ConfigurationSetModelPayload{
+    configurationSetId: string;
+    name: string;
+    description: string;
+    config: Dictionary<ConfigurationModelPayload>;
+}
+
+export interface ConfigurationModelPayload {
+    name: string;
+    description: string;
+    property: Dictionary<ConfigurationPropertyPayload>;
+}
+
+export interface ConfigurationPropertyPayload {
+    propertyName: string;
+    propertyType: string;
+    propertyDisplayName: string;
+    propertyDescription: string;
+
+    validationDefinition?: ConfigurationPropertyValidationDefinition;
+    options?: Dictionary<string>;
+
+    childProperty?: Dictionary<ConfigurationPropertyPayload>;
+}
+
+export interface ConfigurationPropertyValidationDefinition {
+    min: string;
+    max: string;
+    maxLength?: number;
+    pattern: string;
+}
+
+export interface Dictionary<T> {
+    [index: string]: T;
+}

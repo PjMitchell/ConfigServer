@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using ConfigServer.Core;
 
 namespace ConfigServer.Server
 {
@@ -10,12 +11,16 @@ namespace ConfigServer.Server
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
+        readonly IConfigurationEditPayloadMapper configurationEditPayloadMapper;
+        readonly IConfigInstanceRouter configInstanceRouter;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper,  ConfigurationSetRegistry configCollection)
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
             this.modelPayloadMapper = modelPayloadMapper;
+            this.configInstanceRouter = configInstanceRouter;
+            this.configurationEditPayloadMapper = configurationEditPayloadMapper;
         }
 
         public async Task<bool> TryHandle(HttpContext context)
@@ -27,14 +32,21 @@ namespace ConfigServer.Server
                 return true;
             }
             PathString remainingPath;
-            if (routePath.StartsWithSegments("/Model", out editRemaining))
+            if (routePath.StartsWithSegments("/Model", out remainingPath))
             {
                 var queryResult = configCollection.TryMatchPath(c => c.ConfigSetType.Name, remainingPath);
                 if (queryResult.HasResult)
                     await responseFactory.BuildResponse(context, modelPayloadMapper.Map(queryResult.QueryResult));
                 return queryResult.HasResult;
-            }             
-
+            }
+            if (routePath.StartsWithSegments("/Value", out remainingPath))
+            {
+                var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(remainingPath);
+                if (configInstance == null)
+                    return false;
+                await responseFactory.BuildResponse(context, configurationEditPayloadMapper.MapToEditConfig(configInstance, configCollection.First(s=> s.Configs.Any(a=> a.Type == configInstance.ConfigType))));
+                return true;
+            }
             return false;
         }
 
@@ -58,7 +70,7 @@ namespace ConfigServer.Server
         {
             return new ConfigurationModelSummary
             {
-                Id = model.Type.Name,
+                Id = model.Type.Name.ToLowerCamelCase(),
                 DisplayName = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription
             };

@@ -43,6 +43,11 @@ namespace ConfigServer.Server
             return false;
         }
         public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
+
+        public override string GetKeyFromObject(object option)
+        {
+            return keySelector((TOption)option);
+        }
     }
 
     internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionCollection : ICollection<TOption> where TOption : new()
@@ -83,6 +88,10 @@ namespace ConfigServer.Server
 
         public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
 
+        public override string GetKeyFromObject(object option)
+        {
+            return keySelector((TOption)option);
+        }
     }
 
     internal abstract class ConfigurationPropertyWithMultipleOptionsModelDefinition : ConfigurationPropertyWithOptionsModelDefinition

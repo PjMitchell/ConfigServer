@@ -1,38 +1,26 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System.Runtime.CompilerServices;
-using ConfigServer.Core;
-using System;
 
-[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Server
 {
     internal class ConfigEnpoint : IEndpoint
     {
-        readonly IConfigRepository configRepository;
+        readonly IConfigInstanceRouter router;
         readonly IEnumerable<ConfigurationModel> configModelCollection;
         readonly IConfigHttpResponseFactory responseFactory;
 
-        public ConfigEnpoint(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection)
+        public ConfigEnpoint(IConfigInstanceRouter router, IConfigHttpResponseFactory responseFactory)
         {
             this.responseFactory = responseFactory;
-            this.configModelCollection = configCollection.SelectMany(s=> s.Configs).ToList();
-            this.configRepository = configRepository;
+            this.router = router;
         }
 
         public async Task<bool> TryHandle(HttpContext context)
         {
-            var configSetIds = await configRepository.GetClientsAsync();
-            var configSetIdResult = configSetIds.TryMatchPath(c => c.ClientId,
-            context.Request.Path);
-            if(!configSetIdResult.HasResult)
+            var config = await router.GetConfigInstanceOrDefault(context.Request.Path);
+            if (config == null)
                 return false;
-            var configModelResult = configModelCollection.TryMatchPath(s => s.Type.Name, configSetIdResult.RemainingPath);
-            if (!configModelResult.HasResult)
-                return false;
-            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult.ClientId });
             await responseFactory.BuildResponse(context, config.GetConfiguration());
             return true;
         }

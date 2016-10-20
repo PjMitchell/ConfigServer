@@ -44,7 +44,7 @@ namespace ConfigServer.Core.Tests.Hosting
 
             responseFactory = new Mock<IConfigHttpResponseFactory>();
 
-            target = new ConfigEnpoint(repository.Object, responseFactory.Object, configSetConfig);
+            target = new ConfigEnpoint(new ConfigInstanceRouter(repository.Object, configSetConfig), responseFactory.Object);
         }
 
         [Fact]

@@ -13,9 +13,11 @@ namespace ConfigServer.Server
     internal class ConfigurationSetModelPayloadMapper : IConfigurationSetModelPayloadMapper
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly IPropertyTypeProvider propertyTypeProvider;
 
-        public ConfigurationSetModelPayloadMapper(IServiceProvider serviceProvider)
+        public ConfigurationSetModelPayloadMapper(IServiceProvider serviceProvider, IPropertyTypeProvider propertyTypeProvider)
         {
+            this.propertyTypeProvider = propertyTypeProvider;
             this.serviceProvider = serviceProvider;
         }
 
@@ -30,32 +32,35 @@ namespace ConfigServer.Server
             };
         }
 
-        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs)
-        {
-            return configs.ToDictionary(c => c.Type.Name, BuildModelPayload);
-        }
 
-        private ConfigurationModelPayload BuildModelPayload(ConfigurationModel arg)
+
+        private ConfigurationModelPayload Map(ConfigurationModel model)
         {
             return new ConfigurationModelPayload
             {
-                Name = arg.ConfigurationDisplayName,
-                Description = arg.ConfigurationDescription,
-                Property = BuildProperties(arg.ConfigurationProperties)
+                Name = model.ConfigurationDisplayName,
+                Description = model.ConfigurationDescription,
+                Property = BuildProperties(model.ConfigurationProperties)
             };
+        }
+
+        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs)
+        {
+            return configs.ToDictionary(c => c.Type.Name.ToLowerCamelCase(), Map);
         }
 
         private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg)
         {
-            return arg.ToDictionary(kvp => kvp.Key, kvp => (ConfigurationPropertyPayload)BuildProperty((dynamic)kvp.Value));
+            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => (ConfigurationPropertyPayload)BuildProperty((dynamic)kvp.Value));
         }
 
         private ConfigurationPropertyPayload BuildProperty(ConfigurationPrimitivePropertyModel value)
         {
-            var propertyType = GetPropertyType(value);
+            var propertyType = propertyTypeProvider.GetPropertyType(value);
 
             return new ConfigurationPropertyPayload
             {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
                 PropertyDisplayName = value.PropertyDisplayName,
                 PropertyType = propertyType,
                 ValidationDefinition = value.ValidationRules,
@@ -68,8 +73,9 @@ namespace ConfigServer.Server
         {
             return new ConfigurationPropertyPayload
             {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
                 PropertyDisplayName = value.PropertyDisplayName,
-                PropertyType = GetPropertyType(value),
+                PropertyType = propertyTypeProvider.GetPropertyType(value),
                 PropertyDescription = value.PropertyDescription,
                 Options = value.GetAvailableOptions(serviceProvider).ToDictionary(k=> k.Key, v=> v.DisplayValue)
             };
@@ -78,6 +84,7 @@ namespace ConfigServer.Server
         {
             return new ConfigurationPropertyPayload
             {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
                 PropertyDisplayName = value.PropertyDisplayName,
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
@@ -88,69 +95,15 @@ namespace ConfigServer.Server
         
         private Dictionary<string, string> BuildEnumOption(Type propertyType)
         {
-            return Enum.GetNames(propertyType).ToDictionary(k => k);
+            return GetEnumValues(propertyType).ToDictionary(k => k.Key.ToString(), v=> v.Value);
         }
 
-        private string GetPropertyType(ConfigurationPrimitivePropertyModel definition)
+        private IEnumerable<KeyValuePair<int,string>> GetEnumValues(Type propertyType)
         {
-            if (IsIntergerType(definition.PropertyType))
-                return ConfigurationPropertyType.Interger;
-            if (IsFloatType(definition.PropertyType))
-                return ConfigurationPropertyType.Float;
-            if (definition.PropertyType == typeof(string))
-                return ConfigurationPropertyType.String;
-            if (definition.PropertyType == typeof(bool))
-                return ConfigurationPropertyType.Bool;
-            if (definition.PropertyType == typeof(DateTime))
-                return ConfigurationPropertyType.DateTime;
-            if (typeof(Enum).IsAssignableFrom(definition.PropertyType))
-                return ConfigurationPropertyType.DateTime;
-            return ConfigurationPropertyType.Unacceptable;
+            foreach(var obj in Enum.GetValues(propertyType))
+            {
+                yield return new KeyValuePair<int, string>((int)obj, obj.ToString());
+            }
         }
-
-        private string GetPropertyType(ConfigurationPropertyWithOptionsModelDefinition definition)
-        {
-            if (definition.GetType().IsAssignableFrom(typeof(ConfigurationPropertyWithMultipleOptionsModelDefinition)))
-                return ConfigurationPropertyType.MultipleOption;
-            return ConfigurationPropertyType.Option;
-        }
-
-        private static bool IsIntergerType(Type type)
-        {
-            return type == typeof(int)
-                || type == typeof(sbyte)
-                || type == typeof(byte)
-                || type == typeof(short)
-                || type == typeof(ushort)
-                || type == typeof(uint)
-                || type == typeof(long)
-                || type == typeof(ulong);
-        }
-
-        private static bool IsFloatType(Type type)
-        {
-            return type == typeof(float)
-                || type == typeof(double)
-                || type == typeof(decimal);
-        }
-    }
-
-    internal class ConfigurationPropertyType
-    {
-        public const string Interger = "Interger";
-        public const string Float = "Float";
-        public const string String = "String";
-        public const string Bool = "Bool";
-        public const string DateTime = "DateTime";
-        public const string Enum = "Enum";
-
-        public const string Option = "Option";
-        public const string MultipleOption = "MultipleOption";
-
-        public const string Collection = "Collection";
-
-        public const string Unacceptable = "Unacceptable";
-
-
     }
 }

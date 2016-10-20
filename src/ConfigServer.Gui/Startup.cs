@@ -62,6 +62,7 @@ namespace ConfigServer.Gui
                 Name = "Name 2",
                 Decimal = 41.47m,
                 StartDate = new DateTime(2013, 11, 11),
+                Choice = Choice.OptionThree,
                 IsLlamaFarmer = true,
                 Option = optionProvider.GetOptions().First(),
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
