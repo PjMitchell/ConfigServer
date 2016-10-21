@@ -20,7 +20,7 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
             <config-property *ngFor="let item of configModel.property | toIterator" [csDefinition]="item" [(csConfig)]="config" >
             </config-property>
         </div>
-        <div>
+        <div *ngIf="configModel && config">
             <button type="button" (click)="save()">Save</button>
         </div>
 `
@@ -54,35 +54,14 @@ export class ClientConfigComponent implements OnInit {
 
     onModelReturned(value: ConfigurationSetModelPayload) {
         this.configModel = value.config[this.configurationId]
-        //this.tryBuildConfig();
     }
 
     onConfigReturned(value: any) {
         this.config = value;
-        //this.tryBuildConfig();
     }
 
     save() {
         var result = this.config;
+        this.configDataService.postConfig(this.clientId, this.configurationId, this.config);
     }
-
-    //tryBuildConfig() {
-    //    if (this.sourceConfig && this.configModel) {
-    //        this.config = this.mapConfig(this.sourceConfig, this.configModel)
-    //    }
-    //}
-
-    //mapConfig(configSource: any, configModel: ConfigurationModelPayload) {
-    //    var keys = Object.keys(configModel.property);
-    //    var config = new Object();
-    //    for (var i = 0; i < keys.length; i++) {
-    //        var key = keys[i];
-    //        var val = configModel.property[key];
-    //        if (val.propertyType === '')
-
-    //        config[val.propertyType] = configSource[val.propertyType]
-    //        array.push({ 'key': key, 'value': val });
-    //    }
-    //    return array;
-    //}
 }

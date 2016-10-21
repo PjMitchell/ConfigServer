@@ -27,7 +27,12 @@ namespace ConfigServer.Server
             var configSetIds = await configRepository.GetClientsAsync();
             if (string.IsNullOrWhiteSpace(routePath))
             {
-                await responseFactory.BuildResponse(context, configSetIds);
+                if(!(context.Request.Method == "GET" || context.Request.Method == "POST"))
+                    return false;
+                if(context.Request.Method == "GET")
+                    await responseFactory.BuildResponse(context, configSetIds);
+                if (context.Request.Method == "POST")
+                    await HandlePost(context);
                 return true;
             }
             var queryResult = configSetIds.TryMatchPath(c => c.ClientId, routePath);
@@ -36,6 +41,30 @@ namespace ConfigServer.Server
             await responseFactory.BuildResponse(context, queryResult.QueryResult);
 
             return true;
+        }
+
+        private async Task HandlePost(HttpContext context)
+        {
+            var data = await context.GetObjectFromJsonBodyAsync<ConfigurationClientPayload>();
+            await configRepository.UpdateClientAsync(Map(data));
+            responseFactory.BuildNoContentResponse(context);
+        }
+
+        private ConfigurationClient Map(ConfigurationClientPayload payload)
+        {
+            return new ConfigurationClient
+            {
+                ClientId = string.IsNullOrWhiteSpace(payload.ClientId) ? Guid.NewGuid().ToString() : payload.ClientId,
+                Name = payload.Name,
+                Description = payload.Description
+            };
+        }
+
+        private class ConfigurationClientPayload
+        {
+            public string ClientId { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
         }
 
     }

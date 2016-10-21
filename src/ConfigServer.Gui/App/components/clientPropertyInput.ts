@@ -14,7 +14,7 @@ import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefi
         <enum-input *ngSwitchCase="'Enum'" [csDefinition]="csDefinition" [(csConfig)]="csConfig"></enum-input>
         <option-input *ngSwitchCase="'Option'" [csDefinition]="csDefinition" [(csConfig)]="csConfig"></option-input>
         <multiple-option-input *ngSwitchCase="'MultipleOption'" [csDefinition]="csDefinition" [(csConfig)]="csConfig"></multiple-option-input>
-        <div *ngSwitchCase="'Collection'">Collection</div>
+        <collection-input *ngSwitchCase="'Collection'" [csDefinition]="csDefinition" [(csConfig)]="csConfig"></collection-input>
         <div *ngSwitchDefault>Not Acceptable</div>
     </div>
 `

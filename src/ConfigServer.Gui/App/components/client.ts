@@ -23,9 +23,6 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
                 <button type="button" (click)="goToConfig(configurationSet.configurationSetId,config.id)">Edit</button>
             </div>
         </div>
-        <div>
-            <button type="button" (click)="save()">Save</button>
-        </div>
 `
 })
 export class ClientComponent implements OnInit {
@@ -48,8 +45,5 @@ export class ClientComponent implements OnInit {
 
     goToConfig(configurationSetId: string, configId: string): void {
         this.router.navigate(['/client', this.clientId, configurationSetId, configId])
-    }
-    save() {
-        var result = this.configurationSets;
     }
 }

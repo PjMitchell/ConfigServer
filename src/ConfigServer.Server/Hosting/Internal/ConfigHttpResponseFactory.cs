@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace ConfigServer.Server
 {
@@ -18,10 +19,19 @@ namespace ConfigServer.Server
         /// <param name="config">ConfigInstance to be serialized</param>
         /// <returns>A task that represents the asynchronous build operation.</returns>
         Task BuildResponse(HttpContext context, object config);
+
+        void BuildNoContentResponse(HttpContext context);
+
+
     }
 
     internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
     {
+        public void BuildNoContentResponse(HttpContext context)
+        {
+            context.Response.StatusCode = 204;
+        }
+
         public Task BuildResponse(HttpContext context, object config)
         {
             context.Response.ContentType = "application/json";

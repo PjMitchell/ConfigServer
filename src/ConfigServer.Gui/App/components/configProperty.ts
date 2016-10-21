@@ -8,7 +8,7 @@ import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefi
             <div>
                 <h3>{{csDefinition.propertyDisplayName}}</h3>
                 <p>{{csDefinition.propertyDescription}}</p>
-                <config-property-item [ngSwitch]="csDefinition.propertyType" [csDefinition]="csDefinition" [(csConfig)]="csConfig">
+                <config-property-item [csDefinition]="csDefinition" [(csConfig)]="csConfig">
                 </config-property-item>
             </div>
 `

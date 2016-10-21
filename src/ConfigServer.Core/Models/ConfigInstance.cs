@@ -39,6 +39,12 @@ namespace ConfigServer.Core
         public abstract void SetConfiguration(object value);
 
         /// <summary>
+        /// Constructs a new instance of the configuration
+        /// </summary>
+        /// <returns>New instance of the configuration </returns>
+        public abstract object ConstructNewConfiguration();
+
+        /// <summary>
         /// Type of Configuration
         /// </summary>
         public Type ConfigType { get; }

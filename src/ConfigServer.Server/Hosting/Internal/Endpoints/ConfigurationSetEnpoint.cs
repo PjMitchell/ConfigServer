@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace ConfigServer.Server
 {
@@ -13,14 +15,21 @@ namespace ConfigServer.Server
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
         readonly IConfigurationEditPayloadMapper configurationEditPayloadMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
+        readonly IConfigRepository configRepository;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection)
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
             this.modelPayloadMapper = modelPayloadMapper;
             this.configInstanceRouter = configInstanceRouter;
             this.configurationEditPayloadMapper = configurationEditPayloadMapper;
+            this.configRepository = configRepository;
+        }
+
+        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        {
+            return context.CheckAuthorization(options.AuthenticationOptions);
         }
 
         public async Task<bool> TryHandle(HttpContext context)
@@ -42,12 +51,34 @@ namespace ConfigServer.Server
             if (routePath.StartsWithSegments("/Value", out remainingPath))
             {
                 var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(remainingPath);
-                if (configInstance == null)
+                if (configInstance == null || !(context.Request.Method == "GET" || context.Request.Method == "POST"))
                     return false;
-                await responseFactory.BuildResponse(context, configurationEditPayloadMapper.MapToEditConfig(configInstance, configCollection.First(s=> s.Configs.Any(a=> a.Type == configInstance.ConfigType))));
+                await HandleValueRequest(context, configInstance); 
                 return true;
             }
             return false;
+        }
+
+        private Task HandleValueRequest(HttpContext context,ConfigInstance configInstance)
+        {
+            if(context.Request.Method == "GET")
+             return responseFactory.BuildResponse(context, configurationEditPayloadMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
+            if (context.Request.Method == "POST")
+                return HandleValuePostRequest(context, configInstance);
+            throw new System.Exception("Only Get or Post methods expected");
+        }
+
+        private async Task HandleValuePostRequest(HttpContext context, ConfigInstance configInstance)
+        {
+            var input = await context.GetJObjectFromJsonBodyAsync();
+            var newConfigInstance = configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance,input,GetConfigurationSetForModel(configInstance));
+            await configRepository.UpdateConfigAsync(newConfigInstance);
+            responseFactory.BuildNoContentResponse(context);
+        }
+
+        private ConfigurationSetModel GetConfigurationSetForModel(ConfigInstance configInstance)
+        {
+            return configCollection.First(s => s.Configs.Any(a => a.Type == configInstance.ConfigType));
         }
 
         private IEnumerable<ConfigurationSetSummary> GetConfigurationSetSummaries()
@@ -74,11 +105,6 @@ namespace ConfigServer.Server
                 DisplayName = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription
             };
-        }
-
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.CheckAuthorization(options.AuthenticationOptions);
         }
     }
 }

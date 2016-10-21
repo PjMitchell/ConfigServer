@@ -18,6 +18,11 @@ import { ConfigurationPropertyStringInputComponent } from './components/clientPr
 import { ConfigurationPropertyEnumInputComponent } from './components/clientPropertyEnumInput';
 import { ConfigurationPropertyOptionInputComponent } from './components/clientPropertyOptionInput';
 import { ConfigurationPropertyMultipleOptionInputComponent } from './components/clientPropertyMultipleOptionInput';
+import { ConfigurationPropertyCollectionInputComponent } from './components/clientPropertyCollectionInput';
+import { CreateClientComponent } from './components/createClient';
+import { EditClientInputComponent } from './components/editClientInput';
+import { EditClientComponent } from './components/editClient';
+
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
 
@@ -42,6 +47,10 @@ import { ConfigurationDataService } from './dataservices/config-data.service';
         ConfigurationPropertyEnumInputComponent,
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
+        ConfigurationPropertyCollectionInputComponent,
+        CreateClientComponent,
+        EditClientInputComponent,
+        EditClientComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe
     ],
