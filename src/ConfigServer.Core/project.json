@@ -1,7 +1,7 @@
 {
     "description": "Handling of application configuration storage and management across multiple instances.",
     "authors": [ "Peter Mitchell" ],
-    "version": "1.0.0-beta3-*",
+    "version": "1.0.0-beta4-*",
     "packOptions": {
         "repository": {
             "type": "git",
