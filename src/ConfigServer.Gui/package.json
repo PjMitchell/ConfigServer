@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "name": "asp.net",
+  "name": "ConfigServer-Gui",
   "private": true,
     "devDependencies": {
         "@angular/core": "2.1.0",
