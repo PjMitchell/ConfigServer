@@ -17,9 +17,11 @@ Store for the configurations.
 Currently support:
 * In Memory store
 * File store
+* Azure Blob storage
 
 #### ConfigServer Manager
 Provides configurators a way of configuring associated client configuration through a simple web interface with meta data and validation.
+Access through configserverpath/Manager
 
 #### ConfigServer Client 
 Client used by application to retrieve configuration. Local and HttpClients available.
@@ -28,7 +30,7 @@ Currently will have issues if multiple config of the same type are expected.
 
 ## Setup
 
-#### Setting up ConfigServer and Configurator
+#### Setting up ConfigServer
 
 Adding ConfigServer and configuration sets to service collection:
 
@@ -46,10 +48,6 @@ Adding ConfigServer to OWIN pipeline:
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {          
         app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions()));
-        
-        //Setup configurator
-        app.UseConfigServerConfigurator(new ConfigServerConfiguratorOptions());
-        //...
 ```
 
 #### Setting up a Configuration Set

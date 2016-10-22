@@ -1,6 +1,6 @@
 {
     "description": "Azure storage blob implementation for the configurations repository",
-    "version": "1.0.0-beta3-*",
+    "version": "1.0.0-beta4-*",
     "authors": [ "Peter Mitchell" ],
     "packOptions": {
         "repository": {
