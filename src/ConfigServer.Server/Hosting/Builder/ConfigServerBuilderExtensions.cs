@@ -1,6 +1,10 @@
 ﻿using ConfigServer.Core;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using System.Reflection;
 
 namespace ConfigServer.Server
 {
@@ -18,7 +22,18 @@ namespace ConfigServer.Server
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationFormBinder, ConfigurationFormBinder>());            
+            source.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationEditPayloadMapper, ConfigurationEditPayloadMapper>());
+            source.Add(ServiceDescriptor.Transient<IPropertyTypeProvider, PropertyTypeProvider>());
+
+            source.Add(ServiceDescriptor.Transient<IConfigInstanceRouter, ConfigInstanceRouter>());
+
+
+            
+            source.Add(ServiceDescriptor.Transient<ConfigurationSetEnpoint, ConfigurationSetEnpoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
             return new ConfigServerBuilder(source);
         }
 
@@ -69,8 +84,24 @@ namespace ConfigServer.Server
         public static IApplicationBuilder UseConfigServer(this IApplicationBuilder app, ConfigServerOptions options = null)
         {
             options = options ?? new ConfigServerOptions();
-            app.Use((context, next) => ConfigServerHost.Setup(context, next, options));
+            var assembly = typeof(ConfigServerBuilderExtensions).GetTypeInfo().Assembly;
+            var provider = new EmbeddedFileProvider(assembly);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = provider
+            });
+            
+            app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
+            app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
+            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
+            app.UseEndpoint<ConfigEnpoint>(options);
+            
             return app;
+        }
+
+        private static IApplicationBuilder UseEndpoint<TEndpoint>(this IApplicationBuilder app, ConfigServerOptions options) where TEndpoint : IEndpoint
+        {
+            return app.Use((context, next) => ConfigServerHost.HandleEndPoint<TEndpoint>(context, next, options));
         }
     }
 }

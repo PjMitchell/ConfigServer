@@ -48,13 +48,33 @@ function Exec
     }
 }
 
+function ExecuteGulpTasks
+{
+	Push-Location "./src/ConfigServer.Gui"  
+	Write-Host "npm package restore"
+	& "npm" install
+	if ($LastExitCode -ne 0) {
+		Write-Error "Npm package restore failed";
+		exit 1;
+	}
+	npm install --global gulp
+
+	Write-Host "gulp build"
+	& "gulp" BuildPackageAssets
+	if ($LastExitCode -ne 0) {
+		Write-Error "gulp asset package failed";
+		exit 1;
+	}
+	Pop-Location
+}
+
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
 exec { & dotnet restore }
-
+ExecuteGulpTasks
 Invoke-MSBuild
 
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];

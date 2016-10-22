@@ -18,7 +18,7 @@ Currently support:
 * In Memory store
 * File store
 
-#### ConfigServer Configurator
+#### ConfigServer Manager
 Provides configurators a way of configuring associated client configuration through a simple web interface with meta data and validation.
 
 #### ConfigServer Client 

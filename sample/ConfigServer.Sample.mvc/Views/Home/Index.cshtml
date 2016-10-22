@@ -3,7 +3,7 @@
     ViewData["Title"] = "Home Page";
 }
 <div>
-    <a href="/Configurator">Editor</a>
+    <a href="/Config/Manager">Editor</a>
     <p>@Model.Name</p>
     <p>@Model.IsLlamaFarmer</p>
     <p>@Model.LlamaCapacity</p>
@@ -15,7 +15,7 @@
     @foreach(var option in Model.MoarOptions)
     {
         <ul>
-            <li>@option</li>
+            <li>@option.Description</li>
         </ul>
     }
     <h3>List</h3>

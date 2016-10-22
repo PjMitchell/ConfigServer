@@ -31,6 +31,12 @@ namespace ConfigServer.Core
         public TConfig Configuration { get; set; }
 
         /// <summary>
+        /// Constructs a new instance of the configuration
+        /// </summary>
+        /// <returns>New instance of the configuration </returns>
+        public override object ConstructNewConfiguration() => new TConfig();
+
+        /// <summary>
         /// Gets configuration as object
         /// </summary>
         /// <returns>configuration as object</returns>
@@ -42,6 +48,8 @@ namespace ConfigServer.Core
         /// <param name="value">value of configuration</param>
         /// <exception cref="InvalidCastException">When object is not of the same type as generic type parameter.</exception>
         public override void SetConfiguration(object value) => Configuration = (TConfig)value;
+
+
 
     }
 }

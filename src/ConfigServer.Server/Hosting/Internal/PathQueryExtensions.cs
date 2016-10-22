@@ -34,7 +34,7 @@ namespace ConfigServer.Server
             {
                 var queryPath = $"/{selector(option)}";
                 PathString remainingPath;
-                if (pathToQuery.StartsWithSegments(queryPath, out remainingPath))
+                if (pathToQuery.StartsWithSegments(queryPath,StringComparison.CurrentCultureIgnoreCase, out remainingPath))
                     return PathQueryResult<T>.Success(option, remainingPath);
             }
             return PathQueryResult<T>.Failed<T>();

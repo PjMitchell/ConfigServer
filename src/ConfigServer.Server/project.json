@@ -9,11 +9,18 @@
         },
         "licenseUrl": "https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt"
     },
-    "buildOptions": { "xmlDoc": true },
+    "buildOptions": {
+        "xmlDoc": true,
+        "embed": [
+            "Assets/**/*.*"
+        ]
+    },
 
     "dependencies": {
         "ConfigServer.Core": "1.0.0-*",
         "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+        "Microsoft.AspNetCore.StaticFiles": "1.0.0",
+        "Microsoft.Extensions.FileProviders.Embedded": "1.0.0",
         "NETStandard.Library": "1.6.0",
         "Newtonsoft.Json": "9.0.1"
     },

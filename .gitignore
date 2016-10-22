@@ -243,3 +243,8 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+*.js
+*.js.map
+!systemjs.config.js
+!gulpfile.js

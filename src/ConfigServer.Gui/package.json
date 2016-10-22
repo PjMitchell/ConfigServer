@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "name": "ConfigServer-Gui",
+  "private": true,
+    "devDependencies": {
+        "@angular/core": "2.1.0",
+        "@angular/router": "3.1.0",
+        "@angular/common": "2.1.0",
+        "@angular/compiler": "2.1.0",
+        "@angular/http": "2.1.0",
+        "@angular/forms": "2.1.0",
+        "@angular/platform-browser": "2.1.0",
+        "@angular/platform-browser-dynamic": "2.1.0",
+        "rxjs": "5.0.0-beta.12",
+        "gulp": "3.9.1",
+        "gulp-typescript": "3.0.0",
+        "zone.js": "~0.6.25",
+        "typescript": "2.0.3"
+    },
+  "dependencies": {}
+}

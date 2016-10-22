@@ -49,6 +49,13 @@ namespace ConfigServer.Server
         public abstract bool OptionMatchesKey(string key, object option);
 
         /// <summary>
+        /// Gets Key from option
+        /// </summary>
+        /// <param name="option">option to retrieve key from</param>
+        /// <returns>Key from Object</returns>
+        public abstract string GetKeyFromObject(object option);
+
+        /// <summary>
         /// Determines if multiple options can be selected
         /// </summary>
         public bool IsMultiSelector { get; }
@@ -88,8 +95,13 @@ namespace ConfigServer.Server
         public override bool OptionMatchesKey(string key, object option)
         {
             if (option is TOption)
-                return key == keySelector((TOption)option);
+                return key == GetKeyFromObject(option);
             return false; 
+        }
+
+        public override string GetKeyFromObject(object option)
+        {
+            return keySelector((TOption)option);
         }
     }
 
@@ -125,8 +137,13 @@ namespace ConfigServer.Server
         public override bool OptionMatchesKey(string key, object option)
         {
             if (option is TOption)
-                return key == keySelector((TOption)option);
+                return key == GetKeyFromObject(option);
             return false;
+        }
+
+        public override string GetKeyFromObject(object option)
+        {
+            return keySelector((TOption)option);
         }
     }
 
