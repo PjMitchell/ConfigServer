@@ -8,7 +8,7 @@ export class ObjectToIteratorPipe implements PipeTransform {
             var val = value[keys[i]];
             array.push(val);
         }
-        return array;       
+        return array;
     }
 }
 

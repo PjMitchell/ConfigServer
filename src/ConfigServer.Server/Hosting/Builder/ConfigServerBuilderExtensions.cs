@@ -22,7 +22,6 @@ namespace ConfigServer.Server
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationFormBinder, ConfigurationFormBinder>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationEditPayloadMapper, ConfigurationEditPayloadMapper>());
             source.Add(ServiceDescriptor.Transient<IPropertyTypeProvider, PropertyTypeProvider>());

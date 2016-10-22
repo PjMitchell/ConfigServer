@@ -8,6 +8,11 @@
         /// <summary>
         /// Authentication options for ConfigServer
         /// </summary>
-        public ConfigServerAuthenticationOptions AuthenticationOptions { get; set; } = new ConfigServerAuthenticationOptions();
+        public ConfigServerAuthenticationOptions ServerAuthenticationOptions { get; set; } = new ConfigServerAuthenticationOptions();
+
+        /// <summary>
+        /// Authentication options for Configuration Manager
+        /// </summary>
+        public ConfigServerAuthenticationOptions ManagerAuthenticationOptions { get; set; } = new ConfigServerAuthenticationOptions();
     }
 }

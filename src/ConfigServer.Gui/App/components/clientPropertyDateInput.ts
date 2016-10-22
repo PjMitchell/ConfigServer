@@ -13,17 +13,16 @@ export class ConfigurationPropertyDateInputComponent implements OnInit {
     csConfig: any;
     @Output()
     csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    @ViewChild('input')
+    input: any;
 
-    @ViewChild('input') input: any;
-    
-
-    inputDate: string
+    inputDate: string;
 
     ngOnInit() {
         this.inputDate = this.csConfig[this.csDefinition.propertyName];
     }
 
-    onBlur() {        
+    onBlur() {
         this.csConfig[this.csDefinition.propertyName] = this.input.nativeElement.value;
         this.csConfigChange.emit(this.csConfig);
     }

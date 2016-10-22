@@ -95,8 +95,10 @@ namespace ConfigServer.Sample.mvc
             
 
             app.UseStaticFiles();
-            app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions { AuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false } }));
-            app.UseConfigServerConfigurator(new ConfigServerConfiguratorOptions { AuthenticationOptions =  new ConfigServerAuthenticationOptions { RequireAuthentication = false } });
+            app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions {
+                ServerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
+                ManagerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false } 
+            }));
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

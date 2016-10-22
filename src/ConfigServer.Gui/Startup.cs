@@ -93,7 +93,12 @@ namespace ConfigServer.Gui
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseConfigServer(new ConfigServerOptions { AuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false } });
+            app.UseConfigServer(new ConfigServerOptions {
+                ServerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
+                ManagerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false }
+
+
+            });
         }
     }
 }

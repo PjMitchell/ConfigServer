@@ -29,7 +29,7 @@ namespace ConfigServer.Server
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.AuthenticationOptions);
+            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
         }
 
         public async Task<bool> TryHandle(HttpContext context)

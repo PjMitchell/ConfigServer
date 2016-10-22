@@ -1,11 +1,10 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
 import { ConfigurationDataService } from '../dataservices/config-data.service';
 
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/client';
-import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
 import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../interfaces/configurationSetDefintion';
 
 
@@ -16,12 +15,17 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
             <h2>{{client.name}}: {{configModel.name}}</h2>
             <p>{{configModel.description}}</p>
         </div>
+        <div class="break">
+        </div>
         <div *ngIf="configModel && config"> 
-            <config-property *ngFor="let item of configModel.property | toIterator" [csDefinition]="item" [(csConfig)]="config" >
+            <config-property class="configProperty" *ngFor="let item of configModel.property | toIterator" [csDefinition]="item" [(csConfig)]="config" >
             </config-property>
         </div>
-        <div *ngIf="configModel && config">
-            <button type="button" (click)="save()">Save</button>
+        <div class="break">
+        </div>
+        <div>
+            <button type="button" (click)="back()">Back</button>
+            <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" (click)="save()">Save</button>
         </div>
 `
 })
@@ -31,9 +35,11 @@ export class ClientConfigComponent implements OnInit {
     configurationId: string;
     sourceConfig: any;
     config: any;
+    isDisabled: boolean;
     client: ConfigurationClient;
     configModel: ConfigurationModelPayload;
-    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private route: ActivatedRoute) {
+
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private route: ActivatedRoute, private router: Router) {
 
     }
 
@@ -49,11 +55,11 @@ export class ClientConfigComponent implements OnInit {
                 .then(returnedConfigSet => this.onModelReturned(returnedConfigSet));
             this.configDataService.getConfig(this.clientId, this.configurationId)
                 .then(returnedConfigSet => this.onConfigReturned(returnedConfigSet));
-        })
+        });
     }
 
     onModelReturned(value: ConfigurationSetModelPayload) {
-        this.configModel = value.config[this.configurationId]
+        this.configModel = value.config[this.configurationId];
     }
 
     onConfigReturned(value: any) {
@@ -61,7 +67,15 @@ export class ClientConfigComponent implements OnInit {
     }
 
     save() {
-        var result = this.config;
-        this.configDataService.postConfig(this.clientId, this.configurationId, this.config);
+        this.isDisabled = true;
+
+        this.configDataService.postConfig(this.clientId, this.configurationId, this.config)
+            .then(()=> this.back());
+    }
+
+
+
+    back() {
+        this.router.navigate(['/client', this.clientId]);
     }
 }

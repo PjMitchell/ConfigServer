@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
     template: `
         <h2>Clients</h2>
         <button type="button" (click)="createNew()">Create</button>
-        <div *ngFor="let client of clients">
+        <div class="break"></div>
+        <div class="item" *ngFor="let client of clients">
             <h3>{{client.name}}</h3>
             <p>{{client.description}}</p>
             <button type="button" (click)="goToClient(client.clientId)">Manage configurations</button>
@@ -28,14 +29,14 @@ export class HomeComponent implements OnInit {
     }
 
     goToClient(clientId: string) {
-        this.router.navigate(['/client', clientId])
+        this.router.navigate(['/client', clientId]);
     }
 
     createNew() {
-        this.router.navigate(['/createClient'])
+        this.router.navigate(['/createClient']);
     }
 
     editClient(clientId: string) {
-        this.router.navigate(['/editClient', clientId])
+        this.router.navigate(['/editClient', clientId]);
     }
 }

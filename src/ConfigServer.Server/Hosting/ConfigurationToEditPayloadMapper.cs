@@ -71,12 +71,15 @@ namespace ConfigServer.Server
 
         private object GetPropertyValue(object source, ConfigurationPropertyWithOptionsModelDefinition propertyModel)
         {
-            return propertyModel.GetKeyFromObject(propertyModel.GetPropertyValue(source));
+            var value = propertyModel.GetPropertyValue(source);
+            if (value == null)
+                return null;
+            return  propertyModel.GetKeyFromObject(value);
         }
 
         private object GetPropertyValue(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel)
         {
-            var collection = (IEnumerable)propertyModel.GetPropertyValue(source);
+            var collection = propertyModel.GetPropertyValue(source) as IEnumerable ?? new List<object>();
             var result = new List<string>();
             foreach(var item in collection)
             {
@@ -89,8 +92,8 @@ namespace ConfigServer.Server
 
         private object GetPropertyValue(object source, ConfigurationCollectionPropertyDefinition propertyModel)
         {
-            var collection = (IEnumerable)propertyModel.GetPropertyValue(source);
-            
+            var collection = propertyModel.GetPropertyValue(source) as IEnumerable ?? new List<object>();
+
             var result = new List<object>();
             foreach (var item in collection)
             {

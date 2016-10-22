@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
@@ -7,7 +6,6 @@ namespace ConfigServer.Server
     internal class ConfigEnpoint : IEndpoint
     {
         readonly IConfigInstanceRouter router;
-        readonly IEnumerable<ConfigurationModel> configModelCollection;
         readonly IConfigHttpResponseFactory responseFactory;
 
         public ConfigEnpoint(IConfigInstanceRouter router, IConfigHttpResponseFactory responseFactory)
@@ -27,7 +25,7 @@ namespace ConfigServer.Server
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.AuthenticationOptions);
+            return context.CheckAuthorization(options.ServerAuthenticationOptions);
         }
     }
 }

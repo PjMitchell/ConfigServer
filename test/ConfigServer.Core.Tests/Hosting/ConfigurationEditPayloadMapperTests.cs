@@ -103,12 +103,21 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample), definition);
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
-
-            var expected = sample.MoarOptions.Select(s => s.Id.ToString()).ToList();
             Assert.Equal(1, listOfConfigs.Count());
             Assert.Equal(sample.ListOfConfigs[0].Name, listOfConfigs.First().Name);
             Assert.Equal(sample.ListOfConfigs[0].Value, listOfConfigs.First().Value);
 
+        }
+
+        [Fact]
+        public void MapsNewObject()
+        {
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig()), definition);
+            var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
+
+            var moarOptions = response.MoarOptions as IEnumerable<dynamic>;
+            Assert.Equal(0, listOfConfigs.Count());
+            Assert.Equal(0, moarOptions.Count());
         }
         #endregion
 
