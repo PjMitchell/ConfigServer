@@ -56,7 +56,9 @@ namespace ConfigServer.Server
             {
                 ClientId = string.IsNullOrWhiteSpace(payload.ClientId) ? Guid.NewGuid().ToString() : payload.ClientId,
                 Name = payload.Name,
-                Description = payload.Description
+                Description = payload.Description,
+                Group = payload.Group,
+                Enviroment = payload.Enviroment
             };
         }
 
@@ -65,6 +67,8 @@ namespace ConfigServer.Server
             public string ClientId { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
+            public string Group { get; set; }
+            public string Enviroment { get; set; }
         }
 
     }

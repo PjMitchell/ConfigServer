@@ -33,3 +33,8 @@ export interface ConfigurationPropertyValidationDefinition {
 export interface Dictionary<T> {
     [index: string]: T;
 }
+
+export interface Group<TKey, TItem> {
+    key: TKey;
+    items: TItem[];
+}

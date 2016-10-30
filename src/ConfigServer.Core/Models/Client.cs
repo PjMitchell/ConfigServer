@@ -16,6 +16,16 @@
         public string Name { get; set; }
 
         /// <summary>
+        /// Defines the group the the client belongs to. Can be empty
+        /// </summary>
+        public string Group { get; set; }
+
+        /// <summary>
+        /// Enviroment of the client e.g. develop, staging, live
+        /// </summary>
+        public string Enviroment { get; set; }
+
+        /// <summary>
         /// Description of client
         /// </summary>
         public string Description { get; set; }

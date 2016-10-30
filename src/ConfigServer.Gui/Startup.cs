@@ -69,8 +69,8 @@ namespace ConfigServer.Gui
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application" }).Wait();
-            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId,  Name = "Mvc App Live", Group="My app",  Enviroment="Live",  Description = "Embeded Application" }).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App Test", Group = "My app", Enviroment = "UAT", Description = "Second Application" }).Wait();
 
             configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
             configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
