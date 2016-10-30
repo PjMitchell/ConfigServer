@@ -10,7 +10,9 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
     template: `
         <div *ngIf="client">
             <h2>{{client.name}}</h2>
-            <p>{{client.description}}</p>
+                <p>Id: {{client.clientId}}</p>
+                <p>{{client.enviroment}}</p>
+                <p>{{client.description}}</p>
         </div>
         <h3>ConfigurationSets</h3>
         <div class="break">

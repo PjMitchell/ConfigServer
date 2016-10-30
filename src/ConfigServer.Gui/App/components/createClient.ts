@@ -8,7 +8,7 @@ import { ConfigurationClient } from '../interfaces/client';
     template: `
         <h2>Create client</h2>
         <div>
-            <edit-client-input [(csClient)]="client"></edit-client-input>
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
             <div class="break">
             </div>
             <div>
@@ -20,13 +20,25 @@ import { ConfigurationClient } from '../interfaces/client';
 })
 export class CreateClientComponent {
     client: ConfigurationClient;
+    clients: ConfigurationClient[];
     isDisabled: boolean;
     constructor(private clientDataService: ConfigurationClientDataService, private router: Router) {
         this.client = {
             clientId: '',
             name: '',
+            group: '',
+            enviroment: '',
             description: ''
         };
+    }
+
+    ngOnInit() {
+       this.clientDataService.getClients()
+            .then(returnedClient => this.onAllClientsReturned(returnedClient));
+    }
+
+    onAllClientsReturned(returnedClients: ConfigurationClient[]) {
+        this.clients = returnedClients;
     }
 
     create(): void {
@@ -34,8 +46,6 @@ export class CreateClientComponent {
         this.clientDataService.postClient(this.client)
             .then(() => this.back());
     }
-
-
 
     back() {
         this.router.navigate(['/']);

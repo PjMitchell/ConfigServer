@@ -3,4 +3,6 @@
     clientId: string;
     name: string;
     description: string;
+    group: string;
+    enviroment : string
 }

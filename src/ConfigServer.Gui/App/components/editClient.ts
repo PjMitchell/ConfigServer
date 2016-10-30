@@ -8,7 +8,7 @@ import { ConfigurationClient } from '../interfaces/client';
     template: `
         <h2>Edit client</h2>
         <div *ngIf="client">
-            <edit-client-input [(csClient)]="client"></edit-client-input>
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
             <div class="break">
             </div>
             <div>
@@ -20,6 +20,8 @@ import { ConfigurationClient } from '../interfaces/client';
 })
 export class EditClientComponent implements OnInit {
     client: ConfigurationClient;
+    clients: ConfigurationClient[];
+
     clientId: string;
     isDisabled: boolean;
     constructor(private clientDataService: ConfigurationClientDataService, private route: ActivatedRoute, private router: Router) {
@@ -28,8 +30,15 @@ export class EditClientComponent implements OnInit {
     ngOnInit() {
         this.route.params.forEach((value) => {
             this.clientId = value['clientId'];
-            this.clientDataService.getClient(this.clientId)
-                .then(returnedClient => this.client = returnedClient);
+            this.clientDataService.getClients()
+                .then(returnedClient => this.onAllClientsReturned(returnedClient));
+        });
+    }
+
+    onAllClientsReturned(returnedClients: ConfigurationClient[]) {
+        this.clients = returnedClients
+        returnedClients.filter((value) => value.clientId === this.clientId).forEach((value) => {
+            this.client = value;
         });
     }
 
