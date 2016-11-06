@@ -34,6 +34,8 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
             source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
             source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
+            source.Add(ServiceDescriptor.Transient<ConfigurationDownloadEndpoint, ConfigurationDownloadEndpoint>());
+
             return new ConfigServerBuilder(source);
         }
 
@@ -94,6 +96,8 @@ namespace ConfigServer.Server
             app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
             app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
             app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
+            app.Map(HostPaths.Download, client => client.UseEndpoint<ConfigurationDownloadEndpoint>(options));
+
             app.UseEndpoint<ConfigEnpoint>(options);
             
             return app;

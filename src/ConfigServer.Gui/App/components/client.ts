@@ -20,10 +20,12 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
         <div class="group" *ngFor="let configurationSet of configurationSets">
             <h4>{{configurationSet.name}}</h4>
             <p>{{configurationSet.description}}</p>
+            <button type="button" (click)="downloadConfigSet(configurationSet.configurationSetId)">Download</button>
             <h4>Configurations</h4>
             <div class="item" *ngFor="let config of configurationSet.configs">
                 <h5>{{config.displayName}}</h5>
                 <p>{{config.description}}</p>
+                <button type="button" (click)="downloadConfig(configurationSet.configurationSetId,config.id)">Download</button>
                 <button type="button" (click)="goToConfig(configurationSet.configurationSetId,config.id)">Edit</button>
             </div>
         </div>
@@ -50,6 +52,13 @@ export class ClientComponent implements OnInit {
 
     goToConfig(configurationSetId: string, configId: string): void {
         this.router.navigate(['/client', this.clientId, configurationSetId, configId])
+    }
+    downloadConfigSet(configurationSetId: string) {
+        window.open('download/' + this.clientId + '/' + configurationSetId + '.json') 
+    }
+
+    downloadConfig(configurationSetId: string, configId : string) {
+        window.open('download/' + this.clientId + '/' + configurationSetId + '/' + configId + '.json')
     }
 
     back() {
