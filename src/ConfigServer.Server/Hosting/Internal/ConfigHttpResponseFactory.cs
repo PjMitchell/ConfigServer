@@ -21,8 +21,7 @@ namespace ConfigServer.Server
         Task BuildResponse(HttpContext context, object config);
 
         void BuildNoContentResponse(HttpContext context);
-
-
+        Task BuildJsonFileResponse(HttpContext context, object config, string fileName);
     }
 
     internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
@@ -34,8 +33,20 @@ namespace ConfigServer.Server
 
         public Task BuildResponse(HttpContext context, object config)
         {
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = HttpContentType.Json;
             return context.Response.WriteAsync(JsonConvert.SerializeObject(config, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         }
+
+        public Task BuildJsonFileResponse(HttpContext context, object config,string fileName)
+        {
+            context.Response.ContentType = HttpContentType.Json;
+            context.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+            return context.Response.WriteAsync(JsonConvert.SerializeObject(config, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+        }
+    }
+
+    internal class HttpContentType
+    {
+        public const string Json = "application/json";
     }
 }
