@@ -51,7 +51,22 @@ namespace ConfigServer.Server
 
         private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg)
         {
-            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => (ConfigurationPropertyPayload)BuildProperty((dynamic)kvp.Value));
+            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => BuildProperty(kvp.Value));
+        }
+
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value)
+        {
+            switch (value)
+            {
+                case ConfigurationPrimitivePropertyModel input:
+                    return BuildProperty(input);
+                case ConfigurationPropertyWithOptionsModelDefinition input:
+                    return BuildProperty(input);
+                case ConfigurationCollectionPropertyDefinition input:
+                    return BuildProperty(input);
+                default:
+                    throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
+            }
         }
 
         private ConfigurationPropertyPayload BuildProperty(ConfigurationPrimitivePropertyModel value)

@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <Description>File storage implementation for the configurations repository</Description>
     <VersionPrefix>1.0.0-beta4</VersionPrefix>
     <Authors>Peter Mitchell</Authors>
-    <TargetFrameworks>netstandard1.6</TargetFrameworks>
-    <RuntimeIdentifiers>win7-x64;win7-x86;osx.10.10-x64;osx.10.11-x64;ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;rhel.7.2-x64;debian.8-x64;fedora.23-x64;opensuse.13.2-x64</RuntimeIdentifiers>
+    <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.FileProvider</AssemblyName>
     <PackageLicenseUrl>https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt</PackageLicenseUrl>
