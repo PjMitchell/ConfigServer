@@ -80,13 +80,13 @@ $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BU
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 exec { & dotnet build -c Release}
 
-exec { & dotnet test .\test\ConfigServer.Core.Tests -c Release }
+exec { & dotnet test .\test\ConfigServer.Core.Tests\ConfigServer.Core.Tests.csproj -c Release }
 
-exec { & dotnet pack .\src\ConfigServer.Core -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.Server -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.Client -c Release -o .\artifacts --version-suffix=$revision }
-exec { & dotnet pack .\src\ConfigServer.FileProvider -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.InMemoryProvider -c Release -o .\artifacts --version-suffix=$revision }
-exec { & dotnet pack .\src\ConfigServer.AzureBlobStorageProvider -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.Core\ConfigServer.Core.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.Server\ConfigServer.Server.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.Client\ConfigServer.Client.csproj -c Release -o .\artifacts --version-suffix=$revision }
+exec { & dotnet pack .\src\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }
+exec { & dotnet pack .\src\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
 
 
