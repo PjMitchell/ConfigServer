@@ -4,13 +4,17 @@ pull_requests:
 branches:  
   only:
   - master
+install:
+  - ps: appveyor DownloadFile https://go.microsoft.com/fwlink/?LinkID=838401 -FileName "c:\dotnetsdk.exe"
+  - cmd: call c:\dotnetsdk.exe /quiet
+
 nuget:  
   disable_publish_on_pr: true
 build_script:  
 - ps: .\Build.ps1
 test: off  
 artifacts:  
-- path: .\artifacts\**\*.nupkg
+- path: .\**\**\artifacts\*.nupkg
   name: NuGet
 deploy:  
 - provider: NuGet

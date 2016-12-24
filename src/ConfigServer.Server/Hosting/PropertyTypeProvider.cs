@@ -11,7 +11,17 @@ namespace ConfigServer.Server
     {
         public string GetPropertyType(ConfigurationPropertyModelBase propertyModel)
         {
-            return GetPropertyType((dynamic)propertyModel);
+            switch (propertyModel)
+            {
+                case ConfigurationPrimitivePropertyModel input:
+                    return GetPropertyType(input);
+                case ConfigurationPropertyWithOptionsModelDefinition input:
+                    return GetPropertyType(input);
+                case ConfigurationCollectionPropertyDefinition input:
+                    return GetPropertyType(input);
+                default:
+                    throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {propertyModel.GetType().Name}");
+            }
         }
 
         private string GetPropertyType(ConfigurationPrimitivePropertyModel definition)
