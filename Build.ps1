@@ -72,7 +72,7 @@ function ExecuteGulpTasks
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
-
+exec { & dotnet --info }
 exec { & dotnet restore }
 ExecuteGulpTasks
 
