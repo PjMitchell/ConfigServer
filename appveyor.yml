@@ -4,7 +4,9 @@ pull_requests:
 branches:  
   only:
   - master
-dotnet: 1.0.0-preview4-004233
+matrix:
+    include:
+        dotnet: 1.0.0-preview4-004233
 nuget:  
   disable_publish_on_pr: true
 build_script:  
