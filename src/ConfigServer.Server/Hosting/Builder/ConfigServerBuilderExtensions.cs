@@ -1,4 +1,6 @@
 ﻿using ConfigServer.Core;
+using ConfigServer.Server.Options;
+using ConfigServer.Server.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +36,11 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
             source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
             source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
-            source.Add(ServiceDescriptor.Transient<ConfigurationDownloadEndpoint, ConfigurationDownloadEndpoint>());
+            source.Add(ServiceDescriptor.Transient<DownloadEndpoint, DownloadEndpoint>());
+            source.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
+
+            source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
 
             return new ConfigServerBuilder(source);
         }
@@ -96,7 +102,9 @@ namespace ConfigServer.Server
             app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
             app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
             app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
-            app.Map(HostPaths.Download, client => client.UseEndpoint<ConfigurationDownloadEndpoint>(options));
+            app.Map(HostPaths.Download, client => client.UseEndpoint<DownloadEndpoint>(options));
+            app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
+
 
             app.UseEndpoint<ConfigEnpoint>(options);
             

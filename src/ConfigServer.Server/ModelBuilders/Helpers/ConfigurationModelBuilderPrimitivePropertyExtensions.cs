@@ -16,7 +16,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, byte>> expression) => source.CreateForInterger(expression, typeof(byte));
+        public static ConfigurationIntegerPropertyBuilder<byte> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, byte>> expression) => source.CreateForInterger<TModel,byte>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for integer value
@@ -25,7 +25,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, sbyte>> expression) => source.CreateForInterger(expression, typeof(sbyte));
+        public static ConfigurationIntegerPropertyBuilder<sbyte> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, sbyte>> expression) => source.CreateForInterger<TModel, sbyte>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for integer value
@@ -34,7 +34,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, int>> expression) => source.CreateForInterger(expression, typeof(int));
+        public static ConfigurationIntegerPropertyBuilder<int> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, int>> expression) => source.CreateForInterger<TModel, int>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for integer value
@@ -43,7 +43,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, uint>> expression) => source.CreateForInterger(expression, typeof(uint));
+        public static ConfigurationIntegerPropertyBuilder<uint> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, uint>> expression) => source.CreateForInterger<TModel, uint>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for integer value
@@ -52,7 +52,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, long>> expression) => source.CreateForInterger(expression, typeof(long));
+        public static ConfigurationIntegerPropertyBuilder<long> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, long>> expression) => source.CreateForInterger<TModel, long>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for integer value
@@ -61,7 +61,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationIntegerPropertyBuilder for selected property</returns>
-        public static ConfigurationIntegerPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ulong>> expression) => source.CreateForInterger(expression, typeof(ulong));
+        public static ConfigurationIntegerPropertyBuilder<ulong> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ulong>> expression) => source.CreateForInterger<TModel, ulong>(expression);
         #endregion
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationFloatPropertyBuilder for selected property</returns>
-        public static ConfigurationFloatPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, float>> expression) => source.CreateForFloat(expression, typeof(float));
+        public static ConfigurationFloatPropertyBuilder<float> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, float>> expression) => source.CreateForFloat<TModel, float>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for float value
@@ -80,7 +80,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationFloatPropertyBuilder for selected property</returns>
-        public static ConfigurationFloatPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, double>> expression) => source.CreateForFloat(expression, typeof(double));
+        public static ConfigurationFloatPropertyBuilder<double> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, double>> expression) => source.CreateForFloat<TModel, double>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for float value
@@ -89,7 +89,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">property selector</param>
         /// <returns>ConfigurationFloatPropertyBuilder for selected property</returns>
-        public static ConfigurationFloatPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, decimal>> expression) => source.CreateForFloat(expression, typeof(decimal));
+        public static ConfigurationFloatPropertyBuilder<decimal> Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, decimal>> expression) => source.CreateForFloat<TModel, decimal>(expression);
 
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for bool value
@@ -127,14 +127,14 @@ namespace ConfigServer.Server
         /// <returns>ConfigurationEnumPropertyBuilder for selected property</returns>
         public static ConfigurationEnumPropertyBuilder Property<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, Enum>> expression) => new ConfigurationEnumPropertyBuilder(source.GetOrAddPrimitivePropertyDefinition(expression, typeof(Enum)));
 
-        private static ConfigurationIntegerPropertyBuilder CreateForInterger<TModel>(this IModelWithProperties<TModel> source, LambdaExpression expression, Type propertyType)
+        private static ConfigurationIntegerPropertyBuilder<TProperty> CreateForInterger<TModel, TProperty>(this IModelWithProperties<TModel> source, LambdaExpression expression) where TProperty : IComparable
         {
-            return new ConfigurationIntegerPropertyBuilder(source.GetOrAddPrimitivePropertyDefinition(expression, propertyType));
+            return new ConfigurationIntegerPropertyBuilder<TProperty>(source.GetOrAddPrimitivePropertyDefinition(expression, typeof(TProperty)));
         }
 
-        private static ConfigurationFloatPropertyBuilder CreateForFloat<TModel>(this IModelWithProperties<TModel> source, LambdaExpression expression, Type propertyType)
+        private static ConfigurationFloatPropertyBuilder<TProperty> CreateForFloat<TModel, TProperty>(this IModelWithProperties<TModel> source, LambdaExpression expression) where TProperty : IComparable
         {
-            return new ConfigurationFloatPropertyBuilder(source.GetOrAddPrimitivePropertyDefinition(expression, propertyType));
+            return new ConfigurationFloatPropertyBuilder<TProperty>(source.GetOrAddPrimitivePropertyDefinition(expression, typeof(TProperty)));
         }
 
         private static ConfigurationPrimitivePropertyModel GetOrAddPrimitivePropertyDefinition<TModel>(this IModelWithProperties<TModel> source, LambdaExpression expression, Type propertyType)

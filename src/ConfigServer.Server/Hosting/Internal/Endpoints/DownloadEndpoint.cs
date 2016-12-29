@@ -6,14 +6,14 @@ using System.Dynamic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationDownloadEndpoint : IEndpoint
+    internal class DownloadEndpoint : IEndpoint
     {
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigRepository configRepository;
         const string jsonExtension = ".json";
 
-        public ConfigurationDownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigRepository configRepository)
+        public DownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigRepository configRepository)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;

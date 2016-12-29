@@ -48,6 +48,11 @@ namespace ConfigServer.Server
         {
             return keySelector((TOption)option);
         }
+
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        {
+            return new OptionSet<TOption>(GetOptions(serviceProvider), keySelector, displaySelector);
+        }
     }
 
     internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TOptionCollection, TOption> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionCollection : ICollection<TOption> where TOption : new()
@@ -91,6 +96,11 @@ namespace ConfigServer.Server
         public override string GetKeyFromObject(object option)
         {
             return keySelector((TOption)option);
+        }
+
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        {
+            return new OptionSet<TOption>(GetOptions(), keySelector, displaySelector);
         }
     }
 

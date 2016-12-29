@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace ConfigServer.Server
 {
@@ -16,6 +15,8 @@ namespace ConfigServer.Server
         {
             this.definition = definition;
         }
+
+        internal ConfigurationModelBuilder() : this(new ConfigurationModel(typeof(TConfig))) { }
 
         /// <summary>
         /// Configuration Model Builder Model

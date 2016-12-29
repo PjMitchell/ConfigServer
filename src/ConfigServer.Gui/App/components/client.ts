@@ -22,12 +22,8 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
             <p>{{configurationSet.description}}</p>
             <button type="button" (click)="downloadConfigSet(configurationSet.configurationSetId)">Download</button>
             <h4>Configurations</h4>
-            <div class="item" *ngFor="let config of configurationSet.configs">
-                <h5>{{config.displayName}}</h5>
-                <p>{{config.description}}</p>
-                <button type="button" (click)="downloadConfig(configurationSet.configurationSetId,config.id)">Download</button>
-                <button type="button" (click)="goToConfig(configurationSet.configurationSetId,config.id)">Edit</button>
-            </div>
+            <config-overview *ngFor="let config of configurationSet.configs" [csConfig]="config" [csClientId]="client.clientId" [csConfigurationSetId]="configurationSet.configurationSetId">
+            </config-overview>
         </div>
         <button type="button" (click)="back()">Back</button>
 `
@@ -46,22 +42,15 @@ export class ClientComponent implements OnInit {
             this.clientDataService.getClient(this.clientId)
                 .then(returnedClient => this.client = returnedClient);
             this.configSetDataService.getConfigurationSets()
-                .then(returnedConfigSet => this.configurationSets = returnedConfigSet)
-        })
+                .then(returnedConfigSet => this.configurationSets = returnedConfigSet);
+        });
     }
 
-    goToConfig(configurationSetId: string, configId: string): void {
-        this.router.navigate(['/client', this.clientId, configurationSetId, configId])
-    }
     downloadConfigSet(configurationSetId: string) {
-        window.open('download/' + this.clientId + '/' + configurationSetId + '.json') 
-    }
-
-    downloadConfig(configurationSetId: string, configId : string) {
-        window.open('download/' + this.clientId + '/' + configurationSetId + '/' + configId + '.json')
+        window.open('download/' + this.clientId + '/' + configurationSetId + '.json');
     }
 
     back() {
-        this.router.navigate(['/'])
+        this.router.navigate(['/']);
     }
 }

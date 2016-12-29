@@ -1,4 +1,6 @@
-﻿namespace ConfigServer.Server
+﻿using System;
+
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Validation information for a configuration property
@@ -8,12 +10,12 @@
         /// <summary>
         /// Minimum value for a property
         /// </summary>
-        public object Min { get; set; }
+        public IComparable Min { get; set; }
 
         /// <summary>
         /// Maximum value for a property
         /// </summary>
-        public object Max { get; set; }
+        public IComparable Max { get; set; }
 
         /// <summary>
         /// Maximum length for a property
