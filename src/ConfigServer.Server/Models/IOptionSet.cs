@@ -25,11 +25,26 @@ namespace ConfigServer.Server
         IEnumerable<string> Descriptions { get; }
 
         /// <summary>
+        /// Gets an enumerable collection that contains the option selections available in the set.
+        /// </summary>
+        IEnumerable<OptionSelection> OptionSelections { get; }
+
+        /// <summary>
         /// Gets Description of the option for a given key
         /// </summary>
         /// <param name="key">Key being queried</param>
         /// <returns>Returns Description for the key</returns>
         string GetDescription(string key);
+
+        /// <summary>
+        /// Gets the option associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key of the value to get.</param>
+        /// <param name="value">When this method returns, contains the option associated with the specified key,
+        ///     if the key is found; otherwise, the default option for the type of the value parameter.
+        ///     This parameter is passed uninitialized.</param>
+        /// <returns>true if the wet contains an element with the specified key; otherwise, false</returns>
+        bool TryGetValue(string key, out object value);
 
         /// <summary>
         /// Gets the description for the option associated with the specified key.

@@ -52,6 +52,11 @@ namespace ConfigServer.Server
         public IEnumerable<string> Descriptions => source.Values.Select(descriptionSelector);
 
         /// <summary>
+        /// Gets an enumerable collection that contains the option selections available in the set.
+        /// </summary>
+        public IEnumerable<OptionSelection> OptionSelections => source.Select(kvp=> new OptionSelection(kvp.Key,descriptionSelector(kvp.Value)));
+
+        /// <summary>
         /// Determines whether the set contains the specified key
         /// </summary>
         /// <param name="key">The key to locate in the set</param>
@@ -117,11 +122,24 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="option">Option being Queried</param>
         /// <returns>Returns true if option has a key in the set, else false</returns>
-        public bool OptionKeyInSet(object option) => OptionKeyInSet((TOption)option);
+        public bool OptionKeyInSet(object option)
+        {
+            if (option is TOption)
+                return OptionKeyInSet((TOption)option);
+            return false;
+        }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();        
 
         IEnumerable<object> IOptionSet.Values => Values.Cast<object>();
+
+        bool IOptionSet.TryGetValue(string key, out object value)
+        {
+            TOption option;
+            var result = TryGetValue(key,out option);
+            value = option;
+            return result;
+        }
     }
 
 }
