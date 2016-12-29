@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ConfigServer.Server
 {
@@ -19,39 +17,19 @@ namespace ConfigServer.Server
             this.optionProvider = optionProvider;
         }
 
-        public override IEnumerable<ConfigurationPropertyOptionDefintion> GetAvailableOptions(IServiceProvider serviceProvider)
-        {
-            return GetOptions(serviceProvider).Select(s => new ConfigurationPropertyOptionDefintion { Key = keySelector(s), DisplayValue = displaySelector(s) });
-        }
+        public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
 
-        public override bool TryGetOption(IServiceProvider serviceProvider, string key, out object option)
+        public override string GetKeyFromObject(object option) => keySelector((TOption)option);
+        
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
         {
-            option = GetOptions(serviceProvider).SingleOrDefault(s => keySelector(s) == key);
-            return option != null;
+            return new OptionSet<TOption>(GetOptions(serviceProvider), keySelector, displaySelector);
         }
 
         private IEnumerable<TOption> GetOptions(IServiceProvider serviceProvider)
         {
             var provider = serviceProvider.GetService(typeof(TOptionProvider)) as TOptionProvider;
             return optionProvider(provider);
-        }
-
-        public override bool OptionMatchesKey(string key, object option)
-        {
-            if (option is TOptionCollection)
-                return ((TOptionCollection)option).Any(a => keySelector(a) == key);
-            return false;
-        }
-        public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
-
-        public override string GetKeyFromObject(object option)
-        {
-            return keySelector((TOption)option);
-        }
-
-        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
-        {
-            return new OptionSet<TOption>(GetOptions(serviceProvider), keySelector, displaySelector);
         }
     }
 
@@ -68,39 +46,13 @@ namespace ConfigServer.Server
             this.optionProvider = optionProvider;
         }
 
-        public override IEnumerable<ConfigurationPropertyOptionDefintion> GetAvailableOptions(IServiceProvider serviceProvider)
-        {
-            return GetOptions().Select(s => new ConfigurationPropertyOptionDefintion { Key = keySelector(s), DisplayValue = displaySelector(s) });
-        }
-
-        public override bool TryGetOption(IServiceProvider serviceProvider, string key, out object option)
-        {
-            option = GetOptions().SingleOrDefault(s => keySelector(s) == key);
-            return option != null;
-        }
-
-        private IEnumerable<TOption> GetOptions()
-        {
-            return optionProvider();
-        }
-
-        public override bool OptionMatchesKey(string key, object option)
-        {
-            if (option is TOptionCollection)
-                return ((TOptionCollection)option).Any(a => keySelector(a) == key);
-            return false;
-        }
-
         public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TOption>(typeof(TOptionCollection));
 
-        public override string GetKeyFromObject(object option)
-        {
-            return keySelector((TOption)option);
-        }
+        public override string GetKeyFromObject(object option) => keySelector((TOption)option);
 
         public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
         {
-            return new OptionSet<TOption>(GetOptions(), keySelector, displaySelector);
+            return new OptionSet<TOption>(optionProvider(), keySelector, displaySelector);
         }
     }
 
@@ -110,9 +62,7 @@ namespace ConfigServer.Server
         {
 
         }
-
-        //public abstract void SetPropertyValue(IServiceProvider serviceProvider, object config, IEnumerable<string> options);
-
+        
         /// <summary>
         /// Gets Collection Builder for Property
         /// </summary>

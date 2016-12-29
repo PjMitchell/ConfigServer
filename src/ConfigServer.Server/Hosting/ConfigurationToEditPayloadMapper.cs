@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Dynamic;
 using System.Collections;
 using Newtonsoft.Json.Linq;
+using ConfigServer.Server.Options;
 
 namespace ConfigServer.Server
 {
@@ -19,12 +20,12 @@ namespace ConfigServer.Server
     internal class ConfigurationEditPayloadMapper : IConfigurationEditPayloadMapper
     {
         readonly IPropertyTypeProvider propertyTypeProvider;
-        readonly IServiceProvider serviceProvider;
+        readonly IOptionSetFactory optionSetFactory;
 
-        public ConfigurationEditPayloadMapper(IServiceProvider serviceProvider, IPropertyTypeProvider propertyTypeProvider)
+        public ConfigurationEditPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider)
         {
             this.propertyTypeProvider = propertyTypeProvider;
-            this.serviceProvider = serviceProvider;
+            this.optionSetFactory = optionSetFactory;
         }
 
         public object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model)
@@ -139,18 +140,20 @@ namespace ConfigServer.Server
         private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyWithOptionsModelDefinition propertyModel)
         {
             var key = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).ToObject<string>();
+            var optionSet = optionSetFactory.Build(propertyModel);
             object option = null;
-            propertyModel.TryGetOption(serviceProvider, key, out option);
+            optionSet.TryGetValue(key, out option);
             return option;
         }
 
         private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel)
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
+            var optionSet = optionSetFactory.Build(propertyModel);
             foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).Select(s => s.ToObject<string>()))
             {
                 object option = null;
-                if (propertyModel.TryGetOption(serviceProvider, key, out option))
+                if (optionSet.TryGetValue(key, out option))
                     collectionBuilder.Add(option);
             }
             return collectionBuilder.Collection;

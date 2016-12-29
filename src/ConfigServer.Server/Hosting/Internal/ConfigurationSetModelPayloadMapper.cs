@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Server.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,13 +13,13 @@ namespace ConfigServer.Server
 
     internal class ConfigurationSetModelPayloadMapper : IConfigurationSetModelPayloadMapper
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IOptionSetFactory optionSetFactory;
         private readonly IPropertyTypeProvider propertyTypeProvider;
 
-        public ConfigurationSetModelPayloadMapper(IServiceProvider serviceProvider, IPropertyTypeProvider propertyTypeProvider)
+        public ConfigurationSetModelPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider)
         {
             this.propertyTypeProvider = propertyTypeProvider;
-            this.serviceProvider = serviceProvider;
+            this.optionSetFactory = optionSetFactory;
         }
 
         public ConfigurationSetModelPayload Map(ConfigurationSetModel model)
@@ -86,13 +87,14 @@ namespace ConfigServer.Server
 
         private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyWithOptionsModelDefinition value)
         {
+            var optionSet = optionSetFactory.Build(value);
             return new ConfigurationPropertyPayload
             {
                 PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
                 PropertyDisplayName = value.PropertyDisplayName,
                 PropertyType = propertyTypeProvider.GetPropertyType(value),
                 PropertyDescription = value.PropertyDescription,
-                Options = value.GetAvailableOptions(serviceProvider).ToDictionary(k=> k.Key, v=> v.DisplayValue)
+                Options = optionSet.OptionSelections.ToDictionary(k=> k.Key, v=> v.DisplayValue)
             };
         }
         private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value)

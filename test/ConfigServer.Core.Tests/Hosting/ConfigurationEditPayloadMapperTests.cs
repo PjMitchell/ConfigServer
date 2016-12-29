@@ -10,6 +10,7 @@ using Xunit;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
+using ConfigServer.Core.Tests.TestModels;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -25,11 +26,8 @@ namespace ConfigServer.Core.Tests.Hosting
 
         public ConfigurationEditPayloadMapperTests()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddTransient<IOptionProvider, OptionProvider>();
 
-
-            target = new ConfigurationEditPayloadMapper(serviceCollection.BuildServiceProvider(), new PropertyTypeProvider());
+            target = new ConfigurationEditPayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider());
             definition = new SampleConfigSet().BuildConfigurationSetModel();
             sample = new SampleConfig
             {

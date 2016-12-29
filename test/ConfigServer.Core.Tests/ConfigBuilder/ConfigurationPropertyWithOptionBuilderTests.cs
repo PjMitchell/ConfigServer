@@ -68,8 +68,8 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var optionProvider = new OptionProvider();
             var expected = optionProvider.Get().ToList();
             target.PropertyWithOptions(x => x.OptionProperty, (OptionProvider provider) => provider.Get(), option => option.IntKey, option => option.DisplayValue);
-            var result = GetPropertyWithOption(target.Build());
-            var options = result.GetAvailableOptions(mockServiceProvider.Object).ToList();
+            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object);
+            var options = result.OptionSelections.ToList();
 
             Assert.Equal(expected.Count, options.Count);
             Assert.Equal(expected.Single(s=> s.IntKey == 2).DisplayValue, options.Single(s => s.Key == 2.ToString()).DisplayValue);
@@ -82,26 +82,15 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var optionProvider = new OptionProvider();
             var expected = optionProvider.Get().ToList();
             target.PropertyWithOptions(x => x.OptionProperty, (OptionProvider provider) => provider.Get(), opt => opt.IntKey, opt => opt.DisplayValue);
-            var result = GetPropertyWithOption(target.Build());
+            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object);
             object output;
-            var option = result.TryGetOption(mockServiceProvider.Object, 2.ToString(), out output);
+            var option = result.TryGetValue(2.ToString(), out output);
 
             Assert.True(option);
             var outputAsOption = output as OptionTestClass;
             Assert.NotNull(outputAsOption);
             Assert.Equal(expected.Single(s => s.IntKey == 2).DisplayValue, outputAsOption.DisplayValue);
 
-        }
-
-        [Fact]
-        public void CanBuildModelDefinition_MatchesWork()
-        {
-            var optionProvider = new OptionProvider();
-            var expected = optionProvider.Get().ToList();
-            target.PropertyWithOptions(x => x.OptionProperty, (OptionProvider provider) => provider.Get(), opt => opt.IntKey, opt => opt.DisplayValue);
-            var result = GetPropertyWithOption(target.Build());
-            Assert.True(result.OptionMatchesKey("2",expected.Single(s => s.IntKey == 2)));
-            Assert.False(result.OptionMatchesKey("3", expected.Single(s => s.IntKey == 2)));
         }
 
         private ConfigurationPropertyWithOptionsModelDefinition GetPropertyWithOption(ConfigurationModel def)

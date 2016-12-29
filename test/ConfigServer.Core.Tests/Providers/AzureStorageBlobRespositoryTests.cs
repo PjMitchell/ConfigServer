@@ -18,7 +18,7 @@ namespace ConfigServer.Core.Tests
         {
             configurationCollection = new ConfigurationRegistry();
             configurationCollection.BuildAndAddRegistration<SimpleConfig>();
-            target = new AzureBlobStorageRepository(new TestStorageConnectors(),new MemoryCache(Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())) , new AzureBlobStorageRepositoryBuilderOptions());
+            target = new AzureBlobStorageRepository(new TestStorageConnectors(),new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())) , new AzureBlobStorageRepositoryBuilderOptions());
         }
 
         [Fact]
