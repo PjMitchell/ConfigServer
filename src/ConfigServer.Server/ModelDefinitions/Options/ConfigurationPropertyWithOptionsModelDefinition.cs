@@ -60,6 +60,13 @@ namespace ConfigServer.Server
         /// </summary>
         public bool IsMultiSelector { get; }
 
+        /// <summary>
+        /// Builds OptionSet for Definition
+        /// </summary>
+        /// <param name="serviceProvider">Service provider</param>
+        /// <returns>OptionSet for Definition</returns>
+        public abstract IOptionSet BuildOptionSet(IServiceProvider serviceProvider);
+
     }
 
     internal class ConfigurationPropertyWithOptionsModelDefinition<TOption,TOptionProvider> : ConfigurationPropertyWithOptionsModelDefinition where TOptionProvider : class
@@ -103,6 +110,11 @@ namespace ConfigServer.Server
         {
             return keySelector((TOption)option);
         }
+
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        {
+            return new OptionSet<TOption>(GetOptions(serviceProvider), keySelector, displaySelector);
+        }
     }
 
     internal class ConfigurationPropertyWithOptionsModelDefinition<TOption> : ConfigurationPropertyWithOptionsModelDefinition
@@ -144,6 +156,11 @@ namespace ConfigServer.Server
         public override string GetKeyFromObject(object option)
         {
             return keySelector((TOption)option);
+        }
+
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        {
+            return new OptionSet<TOption>(GetOptions(), keySelector, displaySelector);
         }
     }
 

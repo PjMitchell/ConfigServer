@@ -19,16 +19,19 @@ import { ConfigurationPropertyEnumInputComponent } from './components/clientProp
 import { ConfigurationPropertyOptionInputComponent } from './components/clientPropertyOptionInput';
 import { ConfigurationPropertyMultipleOptionInputComponent } from './components/clientPropertyMultipleOptionInput';
 import { ConfigurationPropertyCollectionInputComponent } from './components/clientPropertyCollectionInput';
+import { JsonFileUploaderComponent } from './components/jsonFileUploader';
 import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
-
+import { ConfigurationOverviewComponent } from './components/configurationOverview';
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
 
 import { ConfigurationClientDataService } from './dataservices/client-data.service';
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
+import { UploadDataService } from './dataservices/upload-data.service';
+
 
 @NgModule({
     imports: [BrowserModule, routing, HttpModule, FormsModule],
@@ -36,6 +39,7 @@ import { ConfigurationDataService } from './dataservices/config-data.service';
         AppShell,
         HomeComponent,
         ClientComponent,
+        ConfigurationOverviewComponent,
         ClientConfigComponent,
         ConfigurationPropertyComponent,
         ConfigurationPropertyInputComponent,
@@ -51,11 +55,12 @@ import { ConfigurationDataService } from './dataservices/config-data.service';
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,
+        JsonFileUploaderComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService, UploadDataService]
 })
 
 export class AppModule { }

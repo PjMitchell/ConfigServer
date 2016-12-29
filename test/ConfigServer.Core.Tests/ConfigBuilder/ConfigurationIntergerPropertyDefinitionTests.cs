@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModelDefinition_PropertyWithMaxValueValidation()
         {
-            long max = 10;
+            var max = 10;
             target.Property(x => x.IntProperty)
                 .WithMaxValue(10);
             var result = target.Build();
@@ -63,7 +63,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModelDefinition_PropertyWithMinValueValidation()
         {
-            long min = 10;
+            var min = 10;
             target.Property(x => x.IntProperty)
                 .WithMinValue(10);
             var result = target.Build();

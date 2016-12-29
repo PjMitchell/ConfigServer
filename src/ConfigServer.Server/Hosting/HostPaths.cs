@@ -6,6 +6,8 @@
         public const string Clients = "/Clients";
         public const string ConfigurationSet = "/ConfigurationSet";
         public const string Download = "/Download";
+        public const string Upload = "/Upload";
+
 
     }
 }
