@@ -10,7 +10,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationDateTimePropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<DateTimeTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<DateTimeTestClass>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
         }
 
         [Fact]

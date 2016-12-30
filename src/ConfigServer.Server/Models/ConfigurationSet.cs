@@ -6,7 +6,7 @@ namespace ConfigServer.Server
     /// <summary>
     /// Represents a set of configurations and sets up the information required to build, configure and validate the configurations.
     /// </summary>
-    public abstract class ConfigurationSet
+    public abstract class ConfigurationSet<T> where T : ConfigurationSet<T>
     {
         /// <summary>
         /// Display name for configuartion set
@@ -52,7 +52,7 @@ namespace ConfigServer.Server
         /// <returns>Initialized ConfigurationSetModel</returns>
         public ConfigurationSetModel BuildConfigurationSetModel()
         {
-            var builder =new ConfigurationSetModelBuilder(this.GetType(), Name?? this.GetType().Name, Description);
+            var builder =new ConfigurationSetModelBuilder<T>(Name?? this.GetType().Name, Description);
             OnModelCreation(builder);
             return builder.Build();
         }
@@ -61,11 +61,11 @@ namespace ConfigServer.Server
         /// overridden to declare how the configuration set sets up the information required to build, configure and validate the configurations.
         /// </summary>
         /// <param name="modelBuilder">ConfigurationSetModelBuilder used to construct ConfigurationSetModel</param>
-        protected virtual void OnModelCreation(ConfigurationSetModelBuilder modelBuilder)
+        protected virtual void OnModelCreation(ConfigurationSetModelBuilder<T> modelBuilder)
         {
-            foreach (var propertyInfo in this.GetType().GetProperties().Where(info =>info.PropertyType.IsConstructedGenericType && info.PropertyType.GetGenericTypeDefinition() == typeof(Config<>)))
+            foreach (var propertyInfo in typeof(T).GetProperties().Where(info =>info.PropertyType.IsConstructedGenericType && info.PropertyType.GetGenericTypeDefinition() == typeof(Config<>)))
             {
-                modelBuilder.AddConfig(propertyInfo.PropertyType.GenericTypeArguments[0]);
+                modelBuilder.AddConfig(propertyInfo.Name, propertyInfo.PropertyType.GenericTypeArguments[0]);
             }
         }
     }

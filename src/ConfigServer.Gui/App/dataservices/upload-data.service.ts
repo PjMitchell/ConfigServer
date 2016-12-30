@@ -5,10 +5,18 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class UploadDataService {
     constructor(private http: Http) { }
-    private configSetModelUrl = 'Upload/Configuration/';  // URL to web api
+    private configUrl = 'Upload/Configuration/';  // URL to web api
+    private configSetUrl = 'Upload/ConfigurationSet/';  // URL to web api
 
     postConfig(clientId: string, configId: string, config: any): Promise<boolean> {
-        return this.http.post(this.configSetModelUrl + clientId + '/' + configId, config)
+        return this.http.post(this.configUrl + clientId + '/' + configId, config)
+            .toPromise()
+            .then(response => response.ok)
+            .catch(this.handleError);
+    }
+
+    postConfigSet(clientId: string, configSetId: string, config: any): Promise<boolean> {
+        return this.http.post(this.configSetUrl + clientId + '/' + configSetId, config)
             .toPromise()
             .then(response => response.ok)
             .catch(this.handleError);

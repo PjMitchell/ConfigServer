@@ -68,12 +68,9 @@ export class ClientConfigComponent implements OnInit {
 
     save() {
         this.isDisabled = true;
-
         this.configDataService.postConfig(this.clientId, this.configurationId, this.config)
             .then(()=> this.back());
     }
-
-
 
     back() {
         this.router.navigate(['/client', this.clientId]);

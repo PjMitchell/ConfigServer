@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests.Validators
 
         public ConfigurationValidatorTests()
         {
-            modelBuilder = new ConfigurationModelBuilder<SampleConfig>();
+            modelBuilder = new ConfigurationModelBuilder<SampleConfig>(nameof(SampleConfig));
             target = new ConfigurationValidator(new TestOptionSetFactory());
         }
 

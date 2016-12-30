@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationModelBuilderTest()
         {
-            target = new ConfigurationModelBuilder<SimpleConfig>(new ConfigurationModel(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<SimpleConfig>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
         }
 
 

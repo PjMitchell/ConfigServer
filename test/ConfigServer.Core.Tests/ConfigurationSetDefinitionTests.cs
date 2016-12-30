@@ -7,7 +7,7 @@ namespace ConfigServer.Core.Tests
 {
     public class ConfigurationSetDefinitionTests
     {
-        private readonly Type defaultType = typeof(ConfigurationSet);
+        private readonly Type defaultType = typeof(DefaultConfigSet);
 
         [Fact]
         public void NewConfiguarationSetDefinition_ContainsNoDefinitions()
@@ -21,7 +21,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetOrInitializeByType()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
+            var gotValue = result.GetOrInitialize(nameof(SimpleConfig), typeof(SimpleConfig));
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(result.Configs.Single(), gotValue);
         }
@@ -30,8 +30,8 @@ namespace ConfigServer.Core.Tests
         public void CanGetOrInitializeByTypeDoesNotDuplicateInitialization()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
-            var gotValue2 = result.GetOrInitialize(typeof(SimpleConfig));
+            var gotValue = result.GetOrInitialize(nameof(SimpleConfig), typeof(SimpleConfig));
+            var gotValue2 = result.GetOrInitialize(nameof(SimpleConfig), typeof(SimpleConfig));
 
             Assert.Equal(1, result.Configs.Count());
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -41,7 +41,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetOrInitializeByGenericType()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize<SimpleConfig>();
+            var gotValue = result.GetOrInitialize<SimpleConfig>(nameof(SimpleConfig));
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(result.Configs.Single(), gotValue);
         }
@@ -50,7 +50,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetExistingType()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
+            var gotValue = result.GetOrInitialize(nameof(SimpleConfig), typeof(SimpleConfig));
             var gotValue2 = result.Get(typeof(SimpleConfig));
 
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -60,7 +60,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetExistingType_Generic()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize<SimpleConfig>();
+            var gotValue = result.GetOrInitialize<SimpleConfig>(nameof(SimpleConfig));
             var gotValue2 = result.Get<SimpleConfig>();
 
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -77,7 +77,7 @@ namespace ConfigServer.Core.Tests
         public void GetOrInitializePopulatesModelProperties()
         {
             var result = new ConfigurationSetModel(defaultType);
-            var gotValue = result.GetOrInitialize(typeof(SimpleConfig));
+            var gotValue = result.GetOrInitialize(nameof(SimpleConfig), typeof(SimpleConfig));
 
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(typeof(int), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyType);
@@ -86,5 +86,9 @@ namespace ConfigServer.Core.Tests
 
         }
 
+        private class DefaultConfigSet : ConfigurationSet<DefaultConfigSet>
+        {
+
+        }
     }
 }

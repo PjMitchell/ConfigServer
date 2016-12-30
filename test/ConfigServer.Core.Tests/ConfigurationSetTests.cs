@@ -24,7 +24,7 @@ namespace ConfigServer.Core.Tests
         }
 
 
-        private class TestConfiguationModule : ConfigurationSet
+        private class TestConfiguationModule : ConfigurationSet<TestConfiguationModule>
         {
             public Config<SimpleConfig> SimpleConfig { get; set; }
         }

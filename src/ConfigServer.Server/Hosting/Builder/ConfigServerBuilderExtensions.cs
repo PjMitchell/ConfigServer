@@ -41,6 +41,7 @@ namespace ConfigServer.Server
 
             source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
             source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>());
 
             return new ConfigServerBuilder(source);
         }
@@ -61,7 +62,7 @@ namespace ConfigServer.Server
         /// <typeparam name="TConfigSet">Type of config set to be added to registry</typeparam>
         /// <param name="source">The IServiceCollection to add config set to</param>
         /// <returns>ConfigServer builder for further configuration</returns>
-        public static ConfigServerBuilder UseConfigSet<TConfigSet>(this ConfigServerBuilder source) where TConfigSet : ConfigurationSet, new()
+        public static ConfigServerBuilder UseConfigSet<TConfigSet>(this ConfigServerBuilder source) where TConfigSet : ConfigurationSet<TConfigSet>, new()
         {
             var configSet = new TConfigSet();
             var definition = configSet.BuildConfigurationSetModel();

@@ -3,15 +3,15 @@ using System;
 
 namespace ConfigServer.Sample.Models
 {
-    public class SampleConfigSet : ConfigurationSet
+    public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
 
         Config<SampleConfig> SampleConfig { get; set; }
 
-        protected override void OnModelCreation(ConfigurationSetModelBuilder modelBuilder)
+        protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
         {
-            var configBuilder = modelBuilder.Config<SampleConfig>("Sample Config", "Basic Configuration");
+            var configBuilder = modelBuilder.Config(s=> s.SampleConfig,"Sample Config", "Basic Configuration");
 
             configBuilder.Property(p => p.IsLlamaFarmer);
             configBuilder.Property(p => p.Decimal).WithDisplayName("Value").WithDescription("Is a value in decimal");

@@ -11,10 +11,12 @@ namespace ConfigServer.Server
         /// <summary>
         /// Initialize ConfigurationModel for type
         /// </summary>
-        /// <param name="type"></param>
-        public ConfigurationModel(Type type)
+        /// <param name="name">Name that identifies config</param>
+        /// <param name="type">Type of config</param>
+        public ConfigurationModel(string name,Type type)
         {
             Type = type;
+            Name = name;
             ConfigurationDisplayName = type.Name;
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
         }
@@ -23,6 +25,11 @@ namespace ConfigServer.Server
         /// Configuration type 
         /// </summary>
         public Type Type { get; }
+
+        /// <summary>
+        /// Name that identifies Config in Config Set
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Display name for configuration

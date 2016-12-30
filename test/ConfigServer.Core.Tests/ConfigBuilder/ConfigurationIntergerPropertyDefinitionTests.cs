@@ -9,7 +9,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationIntergerPropertyDefinitionTests()
         {
-            target = new ConfigurationModelBuilder<IntergerTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<IntergerTestClass>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
         }
 
         [Fact]

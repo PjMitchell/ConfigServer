@@ -31,8 +31,8 @@ namespace ConfigServer.Core.Tests.Hosting
                 .ReturnsAsync(clients);
 
             configSetConfig = new ConfigurationSetRegistry();
-            var configSetDef = new ConfigurationSetModel(typeof(ConfigurationSet));
-            configSetDef.GetOrInitialize<SimpleConfig>();
+            var configSetDef = new ConfigurationSetModel(typeof(DefaultConfigSet));
+            configSetDef.GetOrInitialize<SimpleConfig>(nameof(SimpleConfig));
             configSetConfig.AddConfigurationSet(configSetDef);
 
             defaultConfig = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 43 });
@@ -82,6 +82,11 @@ namespace ConfigServer.Core.Tests.Hosting
 
             var result = await target.TryHandle(context);
             responseFactory.Verify(r => r.BuildResponse(context, config.Configuration), Times.AtLeastOnce());
+        }
+
+        private class DefaultConfigSet : ConfigurationSet<DefaultConfigSet>
+        {
+
         }
     }
 

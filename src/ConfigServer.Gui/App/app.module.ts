@@ -6,7 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { routing, appRoutingProviders } from './app.routing';
 import { AppShell } from './app.shell';
 import { HomeComponent } from './components/home';
-import { ClientComponent } from './components/client';
+import { ClientOverviewComponent } from './components/clientOverview';
 import { ClientConfigComponent } from './components/clientConfig';
 import { ConfigurationPropertyComponent } from './components/configProperty';
 import { ConfigurationPropertyInputComponent } from './components/clientPropertyInput';
@@ -24,6 +24,8 @@ import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
+import { ConfigurationSetComponent } from './components/configurationSetOverview';
+
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
 
@@ -38,7 +40,8 @@ import { UploadDataService } from './dataservices/upload-data.service';
     declarations: [
         AppShell,
         HomeComponent,
-        ClientComponent,
+        ClientOverviewComponent,
+        ConfigurationSetComponent,
         ConfigurationOverviewComponent,
         ClientConfigComponent,
         ConfigurationPropertyComponent,
