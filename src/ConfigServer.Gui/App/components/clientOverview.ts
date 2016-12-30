@@ -17,18 +17,12 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
         <h3>ConfigurationSets</h3>
         <div class="break">
         </div>
-        <div class="group" *ngFor="let configurationSet of configurationSets">
-            <h4>{{configurationSet.name}}</h4>
-            <p>{{configurationSet.description}}</p>
-            <button type="button" (click)="downloadConfigSet(configurationSet.configurationSetId)">Download</button>
-            <h4>Configurations</h4>
-            <config-overview *ngFor="let config of configurationSet.configs" [csConfig]="config" [csClientId]="client.clientId" [csConfigurationSetId]="configurationSet.configurationSetId">
-            </config-overview>
-        </div>
+        <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
+        </configSet-overview>
         <button type="button" (click)="back()">Back</button>
 `
 })
-export class ClientComponent implements OnInit {
+export class ClientOverviewComponent implements OnInit {
     client: ConfigurationClient;
     clientId: string;
     configurationSets: ConfigurationSetSummary[];
@@ -44,10 +38,6 @@ export class ClientComponent implements OnInit {
             this.configSetDataService.getConfigurationSets()
                 .then(returnedConfigSet => this.configurationSets = returnedConfigSet);
         });
-    }
-
-    downloadConfigSet(configurationSetId: string) {
-        window.open('download/' + this.clientId + '/' + configurationSetId + '.json');
     }
 
     back() {

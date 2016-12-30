@@ -16,7 +16,7 @@ namespace ConfigServer.Server
             this.definition = definition;
         }
 
-        internal ConfigurationModelBuilder() : this(new ConfigurationModel(typeof(TConfig))) { }
+        internal ConfigurationModelBuilder(string name) : this(new ConfigurationModel(name,typeof(TConfig))) { }
 
         /// <summary>
         /// Configuration Model Builder Model

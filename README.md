@@ -53,13 +53,13 @@ Adding ConfigServer to OWIN pipeline:
 #### Setting up a Configuration Set
 
 ```csharp
-    public class SampleConfigSet : ConfigurationSet
+    public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         Config<SampleConfig> SampleConfig { get; set; }
 
-        protected override void OnModelCreation(ConfigurationSetModelBuilder modelBuilder)
+        protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
         {
-            var configBuilder = modelBuilder.Config<SampleConfig>();
+            var configBuilder = modelBuilder.Config(x=> x.SampleConfig);
 
             configBuilder.Property(p => p.IsLlamaFarmer).WithDisplayName("Is Llama farmer?").WithDescription("Is this a Llama farmer");
             configBuilder.Property(p => p.Decimal).WithDisplayName("Value").WithDescription("Is a value in decimal");

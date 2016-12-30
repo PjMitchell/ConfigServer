@@ -11,6 +11,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="App\**\*.js;App\**\*.js.map" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\ConfigServer.Server\ConfigServer.Server.csproj" />
     <ProjectReference Include="..\ConfigServer.Core\ConfigServer.Core.csproj" />

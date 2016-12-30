@@ -9,7 +9,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationStringPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<StringTestClass>(new ConfigurationModel(typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<StringTestClass>(new ConfigurationModel(nameof(StringTestClass), typeof(StringTestClass)));
         }
 
         [Fact]

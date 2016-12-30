@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModel_WithBasicProperties()
         {
-            var builder = new ConfigurationSetModelBuilder(typeof(TestConfigSet), setName, setDescription);
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
             var setModel = builder.Build();
             Assert.Equal(setName, setModel.Name);
             Assert.Equal(setDescription, setModel.Description);
@@ -26,22 +26,24 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModel_WithConfig_HasDefaultValues()
         {
-            var builder = new ConfigurationSetModelBuilder(typeof(TestConfigSet), setName, setDescription);
-            builder.Config<SimpleConfig>();
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            builder.Config(x=> x.Sample);
             var setModel = builder.Build();
             var configModel = setModel.Get<SimpleConfig>();
             Assert.Equal(typeof(SimpleConfig), configModel.Type);
             Assert.Equal(string.Empty, configModel.ConfigurationDescription);
             Assert.Equal(typeof(SimpleConfig).Name, configModel.ConfigurationDisplayName);
+            Assert.Equal(nameof(TestConfigSet.Sample), configModel.Name);
+
 
         }
 
         [Fact]
         public void CanBuildModel_WithConfig_WithName()
         {
-            var builder = new ConfigurationSetModelBuilder(typeof(TestConfigSet), setName, setDescription);
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
             var name = "test";
-            builder.Config<SimpleConfig>(name);
+            builder.Config(x => x.Sample,name);
             var setModel = builder.Build();
             var configModel = setModel.Get<SimpleConfig>();
             Assert.Equal(typeof(SimpleConfig), configModel.Type);
@@ -53,11 +55,11 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModel_WithConfig_WithNameDescription()
         {
-            var builder = new ConfigurationSetModelBuilder(typeof(TestConfigSet), setName, setDescription);
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
             var name = "test";
             var descript = "test descript";
 
-            builder.Config<SimpleConfig>(name, descript);
+            builder.Config(x=> x.Sample, name, descript);
             var setModel = builder.Build();
             var configModel = setModel.Get<SimpleConfig>();
             Assert.Equal(typeof(SimpleConfig), configModel.Type);
@@ -66,7 +68,7 @@ namespace ConfigServer.Core.Tests
 
         }
 
-        private class TestConfigSet : ConfigurationSet
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
         {
             public Config<SimpleConfig> Sample { get; set; }
 

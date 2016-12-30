@@ -53,22 +53,25 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
         /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitialize<TConfig>() => GetOrInitialize(typeof(TConfig));
+        public ConfigurationModel GetOrInitialize<TConfig>(string name) => GetOrInitialize(name,typeof(TConfig));
 
         /// <summary>
         /// Gets or initializes a configuration model by type
         /// </summary>
+        /// <param name="name">Name of configuration model to be retrieved or initialized</param>
         /// <param name="type">Configuration type of configuration model to be retrieved or initialized</param>
         /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitialize(Type type)
+        public ConfigurationModel GetOrInitialize(string name,Type type)
         {
             ConfigurationModel definition;
             if(!configurationModels.TryGetValue(type, out definition))
             {
-                definition = new ConfigurationModel(type);
+                definition = new ConfigurationModel(name,type);
                 ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(type, definition);
             }
+            if (definition.Name != name)
+                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
             return definition;
         }
 

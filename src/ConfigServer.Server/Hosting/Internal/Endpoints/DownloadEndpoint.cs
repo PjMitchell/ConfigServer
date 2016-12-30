@@ -65,7 +65,7 @@ namespace ConfigServer.Server
             foreach(var configModel in model.Configs)
             {
                 var config = await configRepository.GetAsync(configModel.Type, new ConfigurationIdentity { ClientId = clientId });
-                configurationSet[configModel.Type.Name] = config.GetConfiguration();
+                configurationSet[configModel.Name] = config.GetConfiguration();
             }
             return configurationSet;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Server.ModelBuilders;
+using System;
 using System.Linq.Expressions;
 
 namespace ConfigServer.Server
@@ -139,26 +140,17 @@ namespace ConfigServer.Server
 
         private static ConfigurationPrimitivePropertyModel GetOrAddPrimitivePropertyDefinition<TModel>(this IModelWithProperties<TModel> source, LambdaExpression expression, Type propertyType)
         {
-            var body = GetExpressionBody(expression);
+            var name = ExpressionHelper.GetPropertyNameFromExpression(expression);
             ConfigurationPropertyModelBase value;
-            if (!source.ConfigurationProperties.TryGetValue(body.Member.Name, out value))
+            if (!source.ConfigurationProperties.TryGetValue(name, out value))
             {
-                value = new ConfigurationPrimitivePropertyModel(body.Member.Name, propertyType, typeof(TModel));
+                value = new ConfigurationPrimitivePropertyModel(name, propertyType, typeof(TModel));
                 source.ConfigurationProperties.Add(value.ConfigurationPropertyName, value);
             }
 
             return (ConfigurationPrimitivePropertyModel)value;
         }
 
-        private static MemberExpression GetExpressionBody(LambdaExpression expression)
-        {
-            var body = expression.Body as MemberExpression;
 
-            if (body == null)
-            {
-                body = ((UnaryExpression)expression.Body).Operand as MemberExpression;
-            }
-            return body;
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
 
         public ConfigurationPropertyWithOptionBuilderTests()
         {
-            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass>(new ConfigurationModel(typeof(PropertyWithOptionTestClass)));
+            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass>(new ConfigurationModel(nameof(PropertyWithOptionTestClass), typeof(PropertyWithOptionTestClass)));
             mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(p => p.GetService(typeof(OptionProvider))).Returns(()=> new OptionProvider());
         }
