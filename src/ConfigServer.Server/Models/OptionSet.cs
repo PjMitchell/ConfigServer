@@ -80,6 +80,25 @@ namespace ConfigServer.Server
         public bool TryGetValue(string key, out TOption value) => source.TryGetValue(key, out value);
 
         /// <summary>
+        /// Tries to Get option from prexisting object. Useful when the option store has been updated a existing configs need to be updated
+        /// </summary>
+        /// <param name="existingObject">Existing object</param>
+        /// <param name="actualValue">Value in store</param>
+        /// <returns>Returns true if object has recongisable key else false</returns>
+        public bool TryGetValue(object existingObject, out object actualValue)
+        {
+            
+            if (existingObject is TOption && source.TryGetValue(keySelector((TOption)existingObject),out var result))
+            {
+                actualValue = result;
+                return true;
+            }
+            actualValue = null;
+            return false;
+
+        }
+
+        /// <summary>
         /// Gets the description for the option associated with the specified key.
         /// </summary>
         /// <param name="key">The key of the value to get.</param>

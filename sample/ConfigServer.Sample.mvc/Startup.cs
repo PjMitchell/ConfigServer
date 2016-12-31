@@ -72,8 +72,8 @@ namespace ConfigServer.Sample.mvc
             configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application"}).Wait();
             configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
 
-            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
-            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
+            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config , applicationId)).Wait();
+            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config2, application2Id)).Wait();
 
         }
 

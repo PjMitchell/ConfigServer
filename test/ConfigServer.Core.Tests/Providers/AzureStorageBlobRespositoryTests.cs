@@ -29,11 +29,7 @@ namespace ConfigServer.Core.Tests
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
-            var config = new ConfigInstance<SimpleConfig>
-            {
-                ClientId = configId.ClientId,
-                Configuration = new SimpleConfig { IntProperty = testValue }
-            };
+            var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
             
             await target.UpdateConfigAsync(config);
             var result = await target.GetAsync<SimpleConfig>(configId);
@@ -48,11 +44,7 @@ namespace ConfigServer.Core.Tests
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
             };
             const int testValue = 23;
-            var config = new ConfigInstance<SimpleConfig>
-            {
-                ClientId = configId.ClientId,
-                Configuration = new SimpleConfig { IntProperty = testValue }
-            };
+            var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
             await target.UpdateConfigAsync(config);
             var result = (ConfigInstance<SimpleConfig>)(await target.GetAsync(typeof(SimpleConfig),configId));
@@ -102,11 +94,7 @@ namespace ConfigServer.Core.Tests
                 ClientId = client.ClientId
             };
             const int testValue = 23;
-            var config = new ConfigInstance<SimpleConfig>
-            {
-                ClientId = configId.ClientId,
-                Configuration = new SimpleConfig { IntProperty = testValue }
-            };
+            var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, client.ClientId);
 
             await target.UpdateClientAsync(client);
             var result = await target.GetAsync<SimpleConfig>(configId);

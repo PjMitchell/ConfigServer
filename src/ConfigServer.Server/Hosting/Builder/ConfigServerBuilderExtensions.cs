@@ -1,5 +1,4 @@
 ﻿using ConfigServer.Core;
-using ConfigServer.Server.Options;
 using ConfigServer.Server.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -42,6 +41,7 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
             source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationService, ConfigurationService>());
 
             return new ConfigServerBuilder(source);
         }

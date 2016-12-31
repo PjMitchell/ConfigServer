@@ -27,7 +27,7 @@ namespace ConfigServer.Core.Tests
                 .WithConfig<SimpleConfig>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            await configRepo.UpdateConfigAsync(new ConfigInstance<SimpleConfig> { ClientId = applicationId, Configuration = config });
+            await configRepo.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(config,applicationId));
             var configFromServer = serviceProvider.GetService<SimpleConfig>();
             Assert.Equal(config.IntProperty, configFromServer.IntProperty);
 

@@ -72,8 +72,8 @@ namespace ConfigServer.FileProvider
         {
             string configjson;
             if (!TryGetConfigJson(typeof(TConfig), id.ClientId, out configjson))
-                return Task.FromResult(new ConfigInstance<TConfig> { ClientId = id.ClientId });
-            var result = new ConfigInstance<TConfig>
+                return Task.FromResult(new ConfigInstance<TConfig>(id.ClientId));
+            var result = new ConfigInstance<TConfig>(id.ClientId)
             {
                 Configuration = JsonConvert.DeserializeObject<TConfig>(configjson, jsonSerializerSettings)
             };
