@@ -17,10 +17,20 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
+        /// Initializes ConfigInstance with empty configuration
+        /// </summary>
+        /// <param name="clientId">Client Id</param>
+        public ConfigInstance(string clientId) : base(typeof(TConfig), clientId)
+        {
+            Configuration = new TConfig();
+        }
+
+        /// <summary>
         /// Initializes ConfigInstance with supplied configuration
         /// </summary>
         /// <param name="config">configuration</param>
-        public ConfigInstance(TConfig config) : base(typeof(TConfig))
+        /// <param name="clientId">Client Id</param>
+        public ConfigInstance(TConfig config,string clientId) : base(typeof(TConfig),clientId)
         {
             Configuration = config;
         }

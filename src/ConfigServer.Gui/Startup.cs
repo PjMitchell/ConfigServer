@@ -72,8 +72,8 @@ namespace ConfigServer.Gui
             configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId,  Name = "Mvc App Live", Group="My app",  Enviroment="Live",  Description = "Embeded Application" }).Wait();
             configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App Test", Group = "My app", Enviroment = "UAT", Description = "Second Application" }).Wait();
 
-            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = applicationId, Configuration = config }).Wait();
-            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig> { ClientId = application2Id, Configuration = config2 }).Wait();
+            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config, applicationId)).Wait();
+            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config2, application2Id)).Wait();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,4 @@
-﻿using ConfigServer.Server.Options;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using ConfigServer.Sample.Models;
 
 namespace ConfigServer.Core.Tests.TestModels

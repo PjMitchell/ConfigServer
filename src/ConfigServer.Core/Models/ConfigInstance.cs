@@ -18,6 +18,18 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
+        /// Initializes new ConfigInstance with name
+        /// </summary>
+        /// <param name="type">type of config</param>
+        /// <param name="clientId">Client Id</param>
+        protected ConfigInstance(Type type, string clientId)
+        {
+            Name = type.Name;
+            ConfigType = type;
+            ClientId = clientId;
+        }
+
+        /// <summary>
         /// Name of configuration
         /// </summary>
         public string Name { get; }

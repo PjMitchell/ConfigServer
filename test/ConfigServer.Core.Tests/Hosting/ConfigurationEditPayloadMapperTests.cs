@@ -22,6 +22,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private JObject updatedObject;
         private SampleConfig updatedSample;
 
+        private const string clientId = "7aa7d5f0-90fb-420b-a906-d482428a0c44";
 
 
         public ConfigurationEditPayloadMapperTests()
@@ -73,7 +74,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsRegularValues()
         {          
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
             Assert.Equal(sample.Choice, response.Choice);
             Assert.Equal(sample.IsLlamaFarmer, response.IsLlamaFarmer);
             Assert.Equal(sample.Decimal, response.Decimal);
@@ -84,14 +85,14 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsOptionValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
             Assert.Equal(sample.Option.Id.ToString(), response.Option);
         }
 
         [Fact]
         public void MapsOptionsValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
             var expected = sample.MoarOptions.Select(s => s.Id.ToString()).ToList();
             Assert.Equal(expected, response.MoarOptions);
         }
@@ -99,7 +100,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsListOfConfigsValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
             Assert.Equal(1, listOfConfigs.Count());
             Assert.Equal(sample.ListOfConfigs[0].Name, listOfConfigs.First().Name);
@@ -110,7 +111,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsNewObject()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig()), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig(), clientId), definition);
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
 
             var moarOptions = response.MoarOptions as IEnumerable<dynamic>;
@@ -123,7 +124,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void UpdatesRegularValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample),updatedObject, definition);
+            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId),updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Choice, result.Choice);
             Assert.Equal(updatedSample.IsLlamaFarmer, result.IsLlamaFarmer);
@@ -135,7 +136,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void UpdatesOptionValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample), updatedObject, definition);
+            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Option.Description, result.Option.Description);
         }
@@ -143,7 +144,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void UpdatesOptionsValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample), updatedObject, definition);
+            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.MoarOptions.Count, result.MoarOptions.Count);
             Assert.Equal(updatedSample.MoarOptions.Select(s=>s.Description), result.MoarOptions.Select(s => s.Description));
@@ -151,7 +152,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void UpdatesListOfConfigsValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample), updatedObject, definition);
+            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(1, result.ListOfConfigs.Count);
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ConfigServer.Server.Options
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Builds OptionSet for Definition
