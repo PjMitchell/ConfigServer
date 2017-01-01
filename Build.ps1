@@ -86,8 +86,11 @@ exec { & dotnet test .\test\ConfigServer.Core.Tests\ConfigServer.Core.Tests.cspr
 exec { & dotnet pack .\src\ConfigServer.Core\ConfigServer.Core.csproj -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ConfigServer.Server\ConfigServer.Server.csproj -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ConfigServer.Client\ConfigServer.Client.csproj -c Release -o .\artifacts --version-suffix=$revision }
-exec { & dotnet pack .\src\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }
-exec { & dotnet pack .\src\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+
+exec { & dotnet pack .\src\ConfigProviders\ConfigServer.TextProvider.Core\ConfigServer.TextProvider.Core.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }
+exec { & dotnet pack .\src\ConfigProviders\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ConfigProviders\ConfigServer.AzureTableStorageProvider\ConfigServer.AzureTableStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
 
 
