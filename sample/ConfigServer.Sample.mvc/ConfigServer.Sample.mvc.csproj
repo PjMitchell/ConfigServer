@@ -12,9 +12,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Server\ConfigServer.Server.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Core\ConfigServer.Core.csproj" />
-    <ProjectReference Include="..\..\src\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System.ComponentModel.DataAnnotations">
