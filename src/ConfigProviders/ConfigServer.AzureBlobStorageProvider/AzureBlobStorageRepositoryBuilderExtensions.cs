@@ -1,5 +1,6 @@
 ﻿using ConfigServer.Core;
 using ConfigServer.Server;
+using ConfigServer.TextProvider.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -28,10 +29,11 @@ namespace ConfigServer.AzureBlobStorageProvider
 
             options.JsonSerializerSettings = options.JsonSerializerSettings ?? new JsonSerializerSettings();
             builder.ServiceCollection.AddMemoryCache();
-            builder.ServiceCollection.Add(ServiceDescriptor.Singleton<AzureBlobStorageRepositoryBuilderOptions>(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Singleton<ITextStorageSetting>(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, StorageConnector>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, AzureBlobStorageRepository>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, AzureBlobStorageRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
             return builder;
         }        
     }

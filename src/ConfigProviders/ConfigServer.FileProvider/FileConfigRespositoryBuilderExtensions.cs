@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using ConfigServer.TextProvider.Core;
 using ConfigServer.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -26,9 +27,12 @@ namespace ConfigServer.FileProvider
                 throw new ArgumentException($"{nameof(FileConfigRespositoryBuilderOptions.ConfigStorePath)} cannot be null or whitespace", nameof(options));
             options.JsonSerializerSettings = options.JsonSerializerSettings ?? new JsonSerializerSettings();
             builder.ServiceCollection.AddMemoryCache();
-            builder.ServiceCollection.Add(ServiceDescriptor.Singleton<FileConfigRespositoryBuilderOptions>(options));
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, FileConfigRepository>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, FileConfigRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Singleton<ITextStorageSetting>(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, FileStorageConnector>());
+
             return builder;
         }
 

@@ -1,13 +1,14 @@
-﻿using Microsoft.WindowsAzure.Storage.Auth;
+﻿using ConfigServer.TextProvider.Core;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Newtonsoft.Json;
 using System;
 
-namespace ConfigServer.AzureBlobStorageProvider
+namespace ConfigServer.AzureTableStorageProvider
 {
     /// <summary>
-    /// Azure Blob Storage Repository Builder Options
+    /// Azure Table Storage Repository Builder Options
     /// </summary>
-    public class AzureBlobStorageRepositoryBuilderOptions
+    public class AzureTableStorageRepositoryBuilderOptions : ITextStorageSetting
     {
         /// <summary>
         /// Azure storage base url
@@ -15,15 +16,15 @@ namespace ConfigServer.AzureBlobStorageProvider
         public Uri Uri { get; set; }
 
         /// <summary>
-        /// Azure storage blob storage credentials
+        /// Azure storage table storage credentials
         /// </summary>
         public StorageCredentials Credentials { get; set; }
         
         /// <summary>
-        /// Azure storage blob container used
+        /// Azure storage table used
         /// Default ConfigServerStore
         /// </summary>
-        public string Container { get; set; } = "ConfigServerStore";
+        public string Table { get; set; } = "ConfigServerStore";
 
         /// <summary>
         /// Json Serialization settings

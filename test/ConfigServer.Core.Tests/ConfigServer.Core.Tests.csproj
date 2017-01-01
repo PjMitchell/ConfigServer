@@ -51,11 +51,12 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj" />
+    <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj" />
+    <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
+    <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
+    <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.TextProvider.Core\ConfigServer.TextProvider.Core.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Client\ConfigServer.Client.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Core\ConfigServer.Core.csproj" />
-    <ProjectReference Include="..\..\src\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
-    <ProjectReference Include="..\..\src\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Server\ConfigServer.Server.csproj" />
   </ItemGroup>
   <ItemGroup>

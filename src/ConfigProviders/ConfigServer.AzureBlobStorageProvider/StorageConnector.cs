@@ -1,42 +1,44 @@
-﻿using Microsoft.WindowsAzure.Storage.Blob;
+﻿using ConfigServer.TextProvider.Core;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace ConfigServer.AzureBlobStorageProvider
 {
-    /// <summary>
-    /// Interface for storage connector
-    /// </summary>
-    public interface IStorageConnector
-    {
-        /// <summary>
-        /// Gets File from storage
-        /// </summary>
-        /// <param name="location">location of file in storage</param>
-        /// <returns>Text from file</returns>
-        Task<string> GetFileAsync(string location);
-
-        /// <summary>
-        /// Set File in storage
-        /// </summary>
-        /// <param name="location">location of file in storage</param>
-        /// <param name="value">new value</param>
-        /// <returns>Task from operation</returns>
-        Task SetFileAsync(string location, string value);
-    }
-
     internal class StorageConnector : IStorageConnector
     {
         private readonly CloudBlobClient client;
         private readonly string container;
+        const string indexFile = "clientIndex.json";
 
         public StorageConnector(AzureBlobStorageRepositoryBuilderOptions options)
         {
             client = new CloudBlobClient(options.Uri, options.Credentials);
-            this.container = options.Container;
+            container = options.Container;
         }
 
-        public async Task<string> GetFileAsync(string location)
+        public Task<string> GetClientRegistryFileAsync()
+        {
+            return GetFileAsync(indexFile);
+        }
+
+        public Task<string> GetConfigFileAsync(string configId, string instanceId)
+        {
+            return GetFileAsync(GetConfigPath(configId,instanceId));
+        }
+
+        public Task SetClientRegistryFileAsync(string value)
+        {
+            return SetFileAsync(indexFile,value);
+        }
+
+        public Task SetConfigFileAsync(string configId, string instanceId, string value)
+        {
+            return SetFileAsync(GetConfigPath(configId, instanceId), value);
+        }
+
+        private async Task<string> GetFileAsync(string location)
         {
             var containerRef = client.GetContainerReference(container);
             ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
@@ -45,10 +47,10 @@ namespace ConfigServer.AzureBlobStorageProvider
                 await entry.DownloadToStreamAsync(stream);
                 var streamReader = new StreamReader(stream);
                 return await streamReader.ReadToEndAsync();
-            }              
+            }
         }
 
-        public async Task SetFileAsync(string location, string value)
+        private async Task SetFileAsync(string location, string value)
         {
             var containerRef = client.GetContainerReference(container);
             ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
@@ -59,5 +61,7 @@ namespace ConfigServer.AzureBlobStorageProvider
                 await entry.UploadFromStreamAsync(stream);
             }
         }
+
+        private string GetConfigPath(string configId, string clientId) => $"{clientId}/{configId}.json";
     }
 }
