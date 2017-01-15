@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace ConfigServer.Server
 {
@@ -19,5 +21,34 @@ namespace ConfigServer.Server
         /// Propertes of collection object
         /// </summary>
         public Dictionary<string, ConfigurationPropertyModelBase> ConfigurationProperties => definition.ConfigurationProperties;
+
+        /// <summary>
+        /// Declares a Unique key for Collection model
+        /// </summary>
+        /// <param name="expression">Path to Unique key</param>
+        /// <returns>Builder</returns>
+        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, int>> expression) => WithUniqueKeyInternal(expression);
+
+        /// <summary>
+        /// Declares a Unique key for Collection model
+        /// </summary>
+        /// <param name="expression">Path to Unique key</param>
+        /// <returns>Builder</returns>
+        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, long>> expression) => WithUniqueKeyInternal(expression);
+
+        /// <summary>
+        /// Declares a Unique key for Collection model
+        /// </summary>
+        /// <param name="expression">Path to Unique key</param>
+        /// <returns>Builder</returns>
+        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, string>> expression) => WithUniqueKeyInternal(expression);
+
+        private ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKeyInternal(LambdaExpression expression)
+        {
+            var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
+            definition.HasUniqueKey = true;
+            definition.KeyPropertyName = propertyName;
+            return this;
+        }
     }
 }

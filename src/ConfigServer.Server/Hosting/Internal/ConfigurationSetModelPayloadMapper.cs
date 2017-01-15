@@ -104,6 +104,7 @@ namespace ConfigServer.Server
                 PropertyDisplayName = value.PropertyDisplayName,
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
+                KeyPropertyName = value?.KeyPropertyName?.ToLowerCamelCase(),
                 ChildProperty = BuildProperties(value.ConfigurationProperties)
             };
         }

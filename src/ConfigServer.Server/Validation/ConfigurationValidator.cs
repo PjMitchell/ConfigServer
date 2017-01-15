@@ -92,8 +92,15 @@ namespace ConfigServer.Server.Validation
         {
             var results = new List<ValidationResult>();
             var propertyValue = propertyModel.GetPropertyValue(target) as IEnumerable;
+            var duplicateChecker = new HashSet<string>();
             foreach (var value in propertyValue)
             {
+                if (propertyModel.HasUniqueKey)
+                {
+                    var key = propertyModel.GetKeyFromMember(value);
+                    if (!duplicateChecker.Add(key))
+                        results.Add(new ValidationResult(string.Format(ValidationStrings.DuplicateKeys, propertyModel.ConfigurationPropertyName, key)));
+                }
                 results.Add(ValidateProperties(value, propertyModel.ConfigurationProperties));
             }
             return new ValidationResult(results);

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ConfigServer.Server.ModelBuilders
+namespace ConfigServer.Server
 {
     internal class ExpressionHelper
     {

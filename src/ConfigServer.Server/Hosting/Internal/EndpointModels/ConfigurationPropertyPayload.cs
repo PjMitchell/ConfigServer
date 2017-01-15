@@ -18,6 +18,8 @@ namespace ConfigServer.Server
         /// </summary>
         public string PropertyDescription { get; set; }
 
+        public string KeyPropertyName { get; set; }
+
         public Dictionary<string, ConfigurationPropertyPayload> ChildProperty { get; set; }
 
         public ConfigurationPropertyValidationDefinition ValidationDefinition { get; set; }

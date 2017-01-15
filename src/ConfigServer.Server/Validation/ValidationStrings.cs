@@ -8,5 +8,7 @@
         public const string GreaterThanMaxLength = "Property: {0} is greater than max length({1})";
         public const string MatchesPattern = "Property: {0} does not match pattern({1})";
         public const string OptionNotFound = "Property: {0} does not match available option";
+        public const string DuplicateKeys = "Property: {0} has duplicate keys in collection({1})";
+
     }
 }

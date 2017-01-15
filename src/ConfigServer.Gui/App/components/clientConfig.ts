@@ -15,6 +15,8 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
             <h2>{{client.name}}: {{configModel.name}}</h2>
             <p>{{configModel.description}}</p>
         </div>
+        <div class="validationResult">
+        </div>
         <div class="break">
         </div>
         <div *ngIf="configModel && config"> 
