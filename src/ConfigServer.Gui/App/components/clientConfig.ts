@@ -71,7 +71,15 @@ export class ClientConfigComponent implements OnInit {
     save() {
         this.isDisabled = true;
         this.configDataService.postConfig(this.clientId, this.configurationId, this.config)
-            .then(()=> this.back());
+            .then(result => {
+                if (result.suceeded) {
+                    this.back();
+                }
+                else {
+                    alert(result.failureMessage);
+                    this.isDisabled = false;
+                }
+            });
     }
 
     back() {

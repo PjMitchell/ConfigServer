@@ -4,6 +4,7 @@ using Newtonsoft.Json.Serialization;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace ConfigServer.Server
@@ -26,6 +27,8 @@ namespace ConfigServer.Server
         void BuildStatusResponse(HttpContext context, int statusCode);
 
         Task BuildJsonFileResponse(HttpContext context, object config, string fileName);
+
+        Task BuildInvalidRequestResponse(HttpContext context, IEnumerable<string> errors);
     }
 
     internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
@@ -49,10 +52,19 @@ namespace ConfigServer.Server
             context.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
             return context.Response.WriteAsync(JsonConvert.SerializeObject(config, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         }
+
+        public Task BuildInvalidRequestResponse(HttpContext context, IEnumerable<string> errors)
+        {
+            context.Response.StatusCode = 409;
+            context.Response.ContentType = HttpContentType.Text;
+            var body = string.Join(Environment.NewLine, errors);
+            return context.Response.WriteAsync(body);
+        }
     }
 
     internal class HttpContentType
     {
         public const string Json = "application/json";
+        public const string Text = "text/plain";
     }
 }

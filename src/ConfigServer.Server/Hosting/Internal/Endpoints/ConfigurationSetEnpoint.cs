@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
+using ConfigServer.Server.Validation;
 
 namespace ConfigServer.Server
 {
@@ -14,8 +15,9 @@ namespace ConfigServer.Server
         readonly IConfigurationEditPayloadMapper configurationEditPayloadMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
+        readonly IConfigurationValidator validator;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository)
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -23,6 +25,7 @@ namespace ConfigServer.Server
             this.configInstanceRouter = configInstanceRouter;
             this.configurationEditPayloadMapper = configurationEditPayloadMapper;
             this.configRepository = configRepository;
+            this.validator = validator;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -69,9 +72,18 @@ namespace ConfigServer.Server
         private async Task HandleValuePostRequest(HttpContext context, ConfigInstance configInstance)
         {
             var input = await context.GetJObjectFromJsonBodyAsync();
-            var newConfigInstance = configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance,input,GetConfigurationSetForModel(configInstance));
-            await configRepository.UpdateConfigAsync(newConfigInstance);
-            responseFactory.BuildNoContentResponse(context);
+            var model = GetConfigurationSetForModel(configInstance);
+            var newConfigInstance = configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance,input, model);
+            var validationResult = validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType));
+            if (validationResult.IsValid)
+            {
+                await configRepository.UpdateConfigAsync(newConfigInstance);
+                responseFactory.BuildNoContentResponse(context);
+            }
+            else
+            {
+                await responseFactory.BuildInvalidRequestResponse(context, validationResult.Errors);
+            }
         }
 
         private ConfigurationSetModel GetConfigurationSetForModel(ConfigInstance configInstance)
