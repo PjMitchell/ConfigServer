@@ -5,7 +5,7 @@ branches:
   only:
   - master
 install:
-  - ps: appveyor DownloadFile https://go.microsoft.com/fwlink/?LinkID=838401 -FileName "c:\dotnetsdk.exe"
+  - ps: appveyor DownloadFile https://go.microsoft.com/fwlink/?linkid=839640 -FileName "c:\dotnetsdk.exe"
   - cmd: call c:\dotnetsdk.exe /quiet
 
 nuget:  
