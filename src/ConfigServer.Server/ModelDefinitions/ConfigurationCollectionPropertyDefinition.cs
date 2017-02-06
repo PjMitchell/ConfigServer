@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace ConfigServer.Server
 {
@@ -34,10 +35,32 @@ namespace ConfigServer.Server
         public Type CollectionType { get; }
 
         /// <summary>
+        /// Indicates If a collection has a unique key
+        /// </summary>
+        public bool HasUniqueKey { get; set; }
+
+        /// <summary>
+        /// Property of collection model that is used for unique key
+        /// </summary>
+        public string KeyPropertyName { get; set; }
+
+        /// <summary>
         /// Gets Collection Builder for Property
         /// </summary>
         /// <returns>Collection Builder for Property</returns>
         public abstract CollectionBuilder GetCollectionBuilder();
+
+        /// <summary>
+        /// Gets Key From Collection Item
+        /// </summary>
+        /// <param name="member">Collection Item</param>
+        /// <returns>Key for Collection Item</returns>
+        public string GetKeyFromMember(object member)
+        {
+            return PropertyType.GetProperty(KeyPropertyName).GetValue(member).ToString();
+        }
+
+        
     }
 
     /// <summary>

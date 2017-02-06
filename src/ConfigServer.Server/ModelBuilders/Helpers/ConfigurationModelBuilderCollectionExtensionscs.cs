@@ -21,7 +21,7 @@ namespace ConfigServer.Server
         /// <returns>ConfigurationCollectionPropertyBuilder for selected property</returns>
         public static ConfigurationCollectionPropertyBuilder<TConfig> Collection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression) where TConfig : new()
         {
-            var body = GetExpressionBody(expression);           
+            var body = ExpressionHelper.GetExpressionBody(expression);           
             ConfigurationPropertyModelBase value;
             if (!source.ConfigurationProperties.TryGetValue(body.Member.Name, out value) || !(value is ConfigurationCollectionPropertyDefinition<TConfig>))
             {
@@ -35,17 +35,6 @@ namespace ConfigServer.Server
             }
             var builder = new ConfigurationCollectionPropertyBuilder<TConfig>((ConfigurationCollectionPropertyDefinition)value);
             return builder;
-        }
-
-        private static MemberExpression GetExpressionBody(LambdaExpression expression)
-        {
-            var body = expression.Body as MemberExpression;
-
-            if (body == null)
-            {
-                body = ((UnaryExpression)expression.Body).Operand as MemberExpression;
-            }
-            return body;
         }
 
         private static void ApplyDefaultPropertyDefinitions(ConfigurationCollectionPropertyDefinition model)

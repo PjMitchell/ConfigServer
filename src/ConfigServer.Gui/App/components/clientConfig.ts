@@ -15,6 +15,8 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
             <h2>{{client.name}}: {{configModel.name}}</h2>
             <p>{{configModel.description}}</p>
         </div>
+        <div class="validationResult">
+        </div>
         <div class="break">
         </div>
         <div *ngIf="configModel && config"> 
@@ -69,7 +71,15 @@ export class ClientConfigComponent implements OnInit {
     save() {
         this.isDisabled = true;
         this.configDataService.postConfig(this.clientId, this.configurationId, this.config)
-            .then(()=> this.back());
+            .then(result => {
+                if (result.suceeded) {
+                    this.back();
+                }
+                else {
+                    alert(result.failureMessage);
+                    this.isDisabled = false;
+                }
+            });
     }
 
     back() {

@@ -409,5 +409,43 @@ namespace ConfigServer.Core.Tests.Validators
             var result = target.Validate(sample, model);
             Assert.True(result.IsValid);
         }
+
+        [Fact]
+        public void FailsIfDuplicateKeysInCollection()
+        {
+            var sample = new SampleConfig
+            {
+                ListOfConfigs = new List<ListConfig>
+                {
+                    new ListConfig { Name = "item one", Value=2 },
+                    new ListConfig { Name = "item two", Value=2 }
+                }
+            };
+            modelBuilder.Collection(p => p.ListOfConfigs)
+                .WithUniqueKey(p => p.Value);
+            var model = modelBuilder.Build();
+            var result = target.Validate(sample, model);
+            Assert.False(result.IsValid);
+            Assert.Equal(1, result.Errors.Count());
+            Assert.Equal(string.Format(ValidationStrings.DuplicateKeys, nameof(SampleConfig.ListOfConfigs), 2), result.Errors.Single());
+        }
+
+        [Fact]
+        public void SucceedsIfDuplicateKeysNotInCollection()
+        {
+            var sample = new SampleConfig
+            {
+                ListOfConfigs = new List<ListConfig>
+                {
+                    new ListConfig { Name = "item one", Value=2 },
+                    new ListConfig { Name = "item two", Value=3 }
+                }
+            };
+            modelBuilder.Collection(p => p.ListOfConfigs)
+                .WithUniqueKey(p => p.Value);
+            var model = modelBuilder.Build();
+            var result = target.Validate(sample, model);
+            Assert.True(result.IsValid);
+        }
     }
 }
