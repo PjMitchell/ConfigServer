@@ -1,24 +1,30 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConfigServer.Server
 {
-    /// <summary>
-    /// Builds OptionSet for Definition
-    /// </summary>
-    public interface IOptionSetFactory
+    internal interface IOptionSetFactory
     {
         /// <summary>
         /// Builds OptionSet for Definition
         /// </summary>
         /// <param name="definition">Definition used to build optionSet</param>
+        /// <param name="configIdentity">Identity of Configuration instance being loaded</param>
         /// <returns>OptionSet </returns>
-        IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition);
+        IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity configIdentity);
+
+        /// <summary>
+        /// Builds OptionSet for Definition
+        /// </summary>
+        /// <param name="definition">Definition used to build optionSet</param>
+        /// <param name="configurationSets">Configurations sets used to build optionSet</param>
+        /// <returns>OptionSet </returns>
+        IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition,IEnumerable<ConfigurationSet> configurationSets);
     }
 
-    /// <summary>
-    /// Builds OptionSet for Definition
-    /// </summary>
-    public class OptionSetFactory : IOptionSetFactory
+    internal class OptionSetFactory : IOptionSetFactory
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -30,15 +36,16 @@ namespace ConfigServer.Server
         {
             this.serviceProvider = serviceProvider;
         }
-        
-        /// <summary>
-        /// Builds OptionSet for Definition
-        /// </summary>
-        /// <param name="definition">Definition used to build optionSet</param>
-        /// <returns>OptionSet </returns>
-        public IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition)
+
+        public IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity configIdentity)
         {
-            return definition.BuildOptionSet(serviceProvider);
+            return definition.BuildOptionSet(serviceProvider, configIdentity);
+        }
+
+        public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
+        {
+            var configurationSet = configurationSets.Single(r => r.GetType() == definition.ConfigurationSetType);
+            return definition.GetOptionSet(configurationSet);
         }
     }
 }

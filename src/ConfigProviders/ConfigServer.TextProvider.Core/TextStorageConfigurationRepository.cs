@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -76,6 +77,43 @@ namespace ConfigServer.TextProvider.Core
         }
 
         /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public async Task<IEnumerable<TConfig>> GetCollectionAsync<TConfig>(ConfigurationIdentity id)
+        {
+            var config = await GetAsync(typeof(TConfig), id);
+            var castedInstance = (ConfigInstance<List<TConfig>>)config;
+            return castedInstance.Configuration;
+        }
+
+        /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be retrieved</param>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public async Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
+        {
+            var configId = type.Name;
+            var configPath = GetCollectionConfigCacheKey(configId, id.ClientId);
+
+            var json = await memoryCache.GetOrCreateAsync(cachePrefix + configPath, e => {
+                e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                return storageConnector.GetConfigFileAsync(type.Name, id.ClientId);
+            });
+
+            if (!string.IsNullOrWhiteSpace(json))
+                 return (IEnumerable)JsonConvert.DeserializeObject(json, type, jsonSerializerSettings);
+            var config = typeof(List<>);
+            Type[] typeArgs = { type };
+            var configType = config.MakeGenericType(typeArgs);
+            return (IEnumerable)Activator.CreateInstance(configType);
+        }
+
+        /// <summary>
         /// Get all Client in store
         /// </summary>
         /// <returns>Available Client</returns>
@@ -100,6 +138,9 @@ namespace ConfigServer.TextProvider.Core
         }
 
         private string GetCacheKey(string configId, string clientId) => $"{clientId}_{configId}";
+
+        private string GetCollectionConfigCacheKey(string configId, string clientId) => $"Collection_{clientId}_{configId}";
+
 
         private async Task SaveClients(ICollection<ConfigurationClient> clients)
         {

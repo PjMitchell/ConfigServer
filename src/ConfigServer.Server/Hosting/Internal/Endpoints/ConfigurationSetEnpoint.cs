@@ -46,7 +46,7 @@ namespace ConfigServer.Server
             {
                 var queryResult = configCollection.TryMatchPath(c => c.ConfigSetType.Name, remainingPath);
                 if (queryResult.HasResult)
-                    await responseFactory.BuildResponse(context, modelPayloadMapper.Map(queryResult.QueryResult));
+                    await responseFactory.BuildResponse(context, modelPayloadMapper.Map(queryResult.QueryResult, new ConfigurationIdentity(remainingPath)));
                 return queryResult.HasResult;
             }
             if (routePath.StartsWithSegments("/Value", out remainingPath))
@@ -74,7 +74,7 @@ namespace ConfigServer.Server
             var input = await context.GetJObjectFromJsonBodyAsync();
             var model = GetConfigurationSetForModel(configInstance);
             var newConfigInstance = configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance,input, model);
-            var validationResult = validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType));
+            var validationResult = validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {
                 await configRepository.UpdateConfigAsync(newConfigInstance);

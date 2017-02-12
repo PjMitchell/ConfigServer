@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using ConfigServer.Core;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,7 +8,7 @@ namespace ConfigServer.Server.Validation
 {
     internal interface IConfigurationValidator
     {
-        ValidationResult Validate(object target, ConfigurationModel model);
+        ValidationResult Validate(object target, ConfigurationModel model, ConfigurationIdentity configIdentity);
     }
 
     internal class ConfigurationValidator : IConfigurationValidator
@@ -19,30 +20,30 @@ namespace ConfigServer.Server.Validation
             this.optionSetFactory = optionSetFactory;
         }
 
-        public ValidationResult Validate(object target, ConfigurationModel model)
+        public ValidationResult Validate(object target, ConfigurationModel model, ConfigurationIdentity configIdentity)
         {
             if (target == null || target.GetType() != model.Type)
                 return new ValidationResult(string.Format(ValidationStrings.InvalidConfigType, model.Type.FullName));
-            return ValidateProperties(target, model.ConfigurationProperties);
+            return ValidateProperties(target, model.ConfigurationProperties, configIdentity);
         }
 
-        private ValidationResult ValidateProperties(object target, Dictionary<string, ConfigurationPropertyModelBase> properties)
+        private ValidationResult ValidateProperties(object target, Dictionary<string, ConfigurationPropertyModelBase> properties, ConfigurationIdentity configIdentity)
         {
-            var propertyResults = properties .Select(propModel => ValidateProperty(target, propModel.Value));
+            var propertyResults = properties .Select(propModel => ValidateProperty(target, propModel.Value, configIdentity));
             return new ValidationResult(propertyResults);
         }
-        private ValidationResult ValidateProperty(object target, ConfigurationPropertyModelBase propertyModelBase)
+        private ValidationResult ValidateProperty(object target, ConfigurationPropertyModelBase propertyModelBase, ConfigurationIdentity configIdentity)
         {
             switch (propertyModelBase)
             {
                 case ConfigurationPrimitivePropertyModel propertyModel:
                     return ValidateProperty(target, propertyModel);
                 case ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel:
-                    return ValidateProperty(target, propertyModel);
+                    return ValidateProperty(target, propertyModel, configIdentity);
                 case ConfigurationPropertyWithOptionsModelDefinition propertyModel:
-                    return ValidateProperty(target, propertyModel);
+                    return ValidateProperty(target, propertyModel, configIdentity);
                 case ConfigurationCollectionPropertyDefinition propertyModel:
-                    return ValidateProperty(target, propertyModel);
+                    return ValidateProperty(target, propertyModel, configIdentity);
                 default:
                     return ValidationResult.CreateValid();
             }
@@ -63,21 +64,21 @@ namespace ConfigServer.Server.Validation
             return new ValidationResult(errors);
         }
 
-        private ValidationResult ValidateProperty(object target, ConfigurationPropertyWithOptionsModelDefinition propertyModel)
+        private ValidationResult ValidateProperty(object target, ConfigurationPropertyWithOptionsModelDefinition propertyModel, ConfigurationIdentity configIdentity)
         {
             var errors = new List<string>();
             var propertyValue = propertyModel.GetPropertyValue(target);
-            var options = optionSetFactory.Build(propertyModel);
+            var options = optionSetFactory.Build(propertyModel, configIdentity);
             if(!options.OptionKeyInSet(propertyValue))
                 errors.Add(string.Format(ValidationStrings.OptionNotFound, propertyModel.ConfigurationPropertyName));
             return new ValidationResult(errors);
         }
 
-        private ValidationResult ValidateProperty(object target, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel)
+        private ValidationResult ValidateProperty(object target, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel, ConfigurationIdentity configIdentity)
         {
             var errors = new List<string>();
             var propertyValue = propertyModel.GetPropertyValue(target) as IEnumerable;
-            var options = optionSetFactory.Build(propertyModel);
+            var options = optionSetFactory.Build(propertyModel, configIdentity);
             foreach(var value in propertyValue)
             {
                 if (options.OptionKeyInSet(value))
@@ -88,7 +89,7 @@ namespace ConfigServer.Server.Validation
             return new ValidationResult(errors);
         }
 
-        private ValidationResult ValidateProperty(object target, ConfigurationCollectionPropertyDefinition propertyModel)
+        private ValidationResult ValidateProperty(object target, ConfigurationCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity)
         {
             var results = new List<ValidationResult>();
             var propertyValue = propertyModel.GetPropertyValue(target) as IEnumerable;
@@ -101,7 +102,7 @@ namespace ConfigServer.Server.Validation
                     if (!duplicateChecker.Add(key))
                         results.Add(new ValidationResult(string.Format(ValidationStrings.DuplicateKeys, propertyModel.ConfigurationPropertyName, key)));
                 }
-                results.Add(ValidateProperties(value, propertyModel.ConfigurationProperties));
+                results.Add(ValidateProperties(value, propertyModel.ConfigurationProperties, configIdentity));
             }
             return new ValidationResult(results);
         }

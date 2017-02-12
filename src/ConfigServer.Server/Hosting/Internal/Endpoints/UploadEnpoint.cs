@@ -62,7 +62,7 @@ namespace ConfigServer.Server
         private async Task HandleUploadRequest(HttpContext context, ConfigInstance configInstance)
         {
             var input = await context.GetObjectFromJsonBodyOrDefaultAsync(configInstance.ConfigType);
-            var validationResult = confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType));
+            var validationResult = confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {
                 configInstance.SetConfiguration(input);
@@ -79,12 +79,13 @@ namespace ConfigServer.Server
         {
             var input = await context.GetJObjectFromJsonBodyAsync();
             var mappedConfigs = configurationSetUploadMapper.MapConfigurationSetUpload(input, configSetModel).ToArray();
-            var validationResult = ValidateConfigs(mappedConfigs, configSetModel);
+            var identity = new ConfigurationIdentity(clientid);
+            var validationResult = ValidateConfigs(mappedConfigs, configSetModel, identity);
             if (validationResult.IsValid)
             {
                 foreach(var config in mappedConfigs)
                 {
-                    var instance = await configRepository.GetAsync(config.Value.GetType(), new ConfigurationIdentity { ClientId = clientid });
+                    var instance = await configRepository.GetAsync(config.Value.GetType(), identity);
                     instance.SetConfiguration(config.Value);
                     await configRepository.UpdateConfigAsync(instance);
                 }
@@ -96,9 +97,9 @@ namespace ConfigServer.Server
             }
         }
 
-        private ValidationResult ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, ConfigurationSetModel configSetModel)
+        private ValidationResult ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, ConfigurationSetModel configSetModel, ConfigurationIdentity configIdentity)
         {
-            var validationResults = source.Select(kvp => confgiurationValidator.Validate(kvp.Value, configSetModel.Configs.Single(s => s.Name == kvp.Key)));
+            var validationResults = source.Select(kvp => confgiurationValidator.Validate(kvp.Value, configSetModel.Configs.Single(s => s.Name == kvp.Key), configIdentity));
             return new ValidationResult(validationResults);
         }
 

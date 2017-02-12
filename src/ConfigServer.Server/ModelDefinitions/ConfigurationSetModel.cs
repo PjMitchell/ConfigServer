@@ -104,6 +104,29 @@ namespace ConfigServer.Server
         /// </summary>
         public IEnumerable<ConfigurationModel> Configs => configurationModels.Values;
 
+        /// <summary>
+        /// Gets or initializes a configuration option model by type
+        /// </summary>
+        /// <typeparam name="TOption">Configuration type of configuration model to be retrieved or initialized</typeparam>
+        /// <returns>Configuration model for type</returns>
+        public ConfigurationModel GetOrInitializeOption<TOption>(string name, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector)
+        {
+            var type = typeof(TOption);
+            ConfigurationModel definition;
+            if (!configurationModels.TryGetValue(type, out definition))
+            {
+                definition = new ConfigurationOptionModel<TOption>(name, keySelector, descriptionSelector);
+                ApplyDefaultPropertyDefinitions(definition);
+                configurationModels.Add(type, definition);
+            }
+            if (definition.Name != name)
+                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
+            if (!(definition is ConfigurationOptionModel<TOption>))
+                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when model is not setup as an option");
+            return definition;
+        }
+
+
         private void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
         {
             foreach(PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))

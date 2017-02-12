@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Core;
+using ConfigServer.Gui.Models;
 using ConfigServer.Server;
 using System;
 
@@ -7,6 +8,8 @@ namespace ConfigServer.Sample.mvc.Models
     public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
+
+        OptionSet<OptionFromConfigSet> Options { get; set; }
 
         Config<SampleConfig> SampleConfig { get; set; }
 

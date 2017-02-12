@@ -20,10 +20,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveAsync()
         {
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
-            };
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
@@ -36,10 +33,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveWithTypeAsync()
         {
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
-            };
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
@@ -87,10 +81,7 @@ namespace ConfigServer.Core.Tests
         {
             var client = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4" };
 
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = client.ClientId
-            };
+            var configId = new ConfigurationIdentity(client.ClientId);
             const int testValue = 23;
 
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);

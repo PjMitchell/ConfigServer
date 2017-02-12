@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 
 namespace ConfigServer.Server
@@ -76,6 +78,11 @@ namespace ConfigServer.Server
         /// <param name="config">Instance of configuration</param>
         /// <param name="value">Inserted valus</param>
         public virtual void SetPropertyValue(object config, object value) => ParentPropertyType.GetProperty(ConfigurationPropertyName).SetValue(config, value);
-       
+
+        /// <summary>
+        /// Gets Dependencies for property
+        /// </summary>
+        /// <returns>ConfigurationDependency for property</returns>
+        public virtual IEnumerable<ConfigurationDependency> GetDependencies() => Enumerable.Empty<ConfigurationDependency>();
     }
 }

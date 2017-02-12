@@ -8,7 +8,7 @@ namespace ConfigServer.Server
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
     /// </summary>
-    public class ConfigurationPrimitivePropertyModel : ConfigurationPropertyModelBase
+    internal class ConfigurationPrimitivePropertyModel : ConfigurationPropertyModelBase
     {
         /// <summary>
         /// Initialize ConfigurationPrimitivePropertyModel with property name

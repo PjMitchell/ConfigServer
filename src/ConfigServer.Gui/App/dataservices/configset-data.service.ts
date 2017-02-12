@@ -21,8 +21,8 @@ export class ConfigurationSetDataService
             .catch(this.handleError);
     }
 
-    getConfigurationSetModel(configurationSetName: string): Promise<ConfigurationSetModelPayload> {
-        return this.http.get(this.configSetModelUrl + configurationSetName)
+    getConfigurationSetModel(configurationSetName: string, clientId : string): Promise<ConfigurationSetModelPayload> {
+        return this.http.get(this.configSetModelUrl + configurationSetName + '/' + clientId)
             .toPromise()
             .then(response => response.json() as ConfigurationSetModelPayload)
             .catch(this.handleError);

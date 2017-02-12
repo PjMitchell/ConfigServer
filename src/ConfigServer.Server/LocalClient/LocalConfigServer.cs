@@ -11,7 +11,7 @@ namespace ConfigServer.Server
         public LocalConfigServerClient(IConfigProvider configProvider, string applicationId)
         {
             this.configProvider = configProvider;
-            this.applicationId = new ConfigurationIdentity { ClientId = applicationId };
+            this.applicationId = new ConfigurationIdentity(applicationId);
         }
 
         public async Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new()

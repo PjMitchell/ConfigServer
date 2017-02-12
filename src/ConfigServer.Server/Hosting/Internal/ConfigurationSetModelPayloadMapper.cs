@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ namespace ConfigServer.Server
 {
     internal interface IConfigurationSetModelPayloadMapper
     {
-        ConfigurationSetModelPayload Map(ConfigurationSetModel model);
+        ConfigurationSetModelPayload Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity);
     }
 
     internal class ConfigurationSetModelPayloadMapper : IConfigurationSetModelPayloadMapper
@@ -21,49 +22,49 @@ namespace ConfigServer.Server
             this.optionSetFactory = optionSetFactory;
         }
 
-        public ConfigurationSetModelPayload Map(ConfigurationSetModel model)
+        public ConfigurationSetModelPayload Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationSetModelPayload
             {
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
-                Config = BuildConfigs(model.Configs)
+                Config = BuildConfigs(model.Configs, configIdentity)
             };
         }
 
 
 
-        private ConfigurationModelPayload Map(ConfigurationModel model)
+        private ConfigurationModelPayload Map(ConfigurationModel model, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationModelPayload
             {
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
-                Property = BuildProperties(model.ConfigurationProperties)
+                Property = BuildProperties(model.ConfigurationProperties,configIdentity)
             };
         }
 
-        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs)
+        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity)
         {
-            return configs.ToDictionary(c => c.Type.Name.ToLowerCamelCase(), Map);
+            return configs.ToDictionary(c => c.Type.Name.ToLowerCamelCase(),v=> Map(v,configIdentity));
         }
 
-        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg)
+        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity)
         {
-            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => BuildProperty(kvp.Value));
+            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => BuildProperty(kvp.Value,configIdentity));
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity)
         {
             switch (value)
             {
                 case ConfigurationPrimitivePropertyModel input:
                     return BuildProperty(input);
                 case ConfigurationPropertyWithOptionsModelDefinition input:
-                    return BuildProperty(input);
+                    return BuildProperty(input, configIdentity);
                 case ConfigurationCollectionPropertyDefinition input:
-                    return BuildProperty(input);
+                    return BuildProperty(input,configIdentity);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
             }
@@ -84,9 +85,9 @@ namespace ConfigServer.Server
             };
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyWithOptionsModelDefinition value)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyWithOptionsModelDefinition value, ConfigurationIdentity configIdentity)
         {
-            var optionSet = optionSetFactory.Build(value);
+            var optionSet = optionSetFactory.Build(value, configIdentity);
             return new ConfigurationPropertyPayload
             {
                 PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
@@ -96,7 +97,7 @@ namespace ConfigServer.Server
                 Options = optionSet.OptionSelections.ToDictionary(k=> k.Key, v=> v.DisplayValue)
             };
         }
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationPropertyPayload
             {
@@ -105,7 +106,7 @@ namespace ConfigServer.Server
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
                 KeyPropertyName = value?.KeyPropertyName?.ToLowerCamelCase(),
-                ChildProperty = BuildProperties(value.ConfigurationProperties)
+                ChildProperty = BuildProperties(value.ConfigurationProperties,configIdentity)
             };
         }
 

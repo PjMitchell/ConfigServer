@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace ConfigServer.InMemoryProvider
 {
@@ -61,6 +62,33 @@ namespace ConfigServer.InMemoryProvider
         }
 
         /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public Task<IEnumerable<TConfig>> GetCollectionAsync<TConfig>(ConfigurationIdentity id)
+        {
+            var item = Get<List<TConfig>>(id).Configuration;
+            return Task.FromResult<IEnumerable<TConfig>>(item);
+        }
+
+        /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be retrieved</param>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
+        {
+            var config = typeof(List<>);
+            Type[] typeArgs = { type };
+            var configType = config.MakeGenericType(typeArgs);
+            var item = (IEnumerable)Get(configType, id).GetConfiguration();
+            return Task.FromResult(item);
+        }
+
+        /// <summary>
         /// Saves changes to configuration
         /// </summary>
         /// <param name="config">Updated configuration to be saved</param>
@@ -88,6 +116,8 @@ namespace ConfigServer.InMemoryProvider
             tcs.SetResult(true);
             return tcs.Task;
         }
+
+
 
         private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
@@ -124,6 +154,7 @@ namespace ConfigServer.InMemoryProvider
             clientStore.Add(client.ClientId, client);
             innerStore.Add(client.ClientId, new Dictionary<Type, ConfigInstance>());
         }
+
 
     }
 }

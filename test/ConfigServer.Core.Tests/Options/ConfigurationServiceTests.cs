@@ -39,10 +39,6 @@ namespace ConfigServer.Core.Tests.Options
             Assert.Equal(config.Option.Description, OptionProvider.OptionOne.Description);
             Assert.Equal(config.MoarOptions[0].Description, OptionProvider.OptionThree.Description);
             Assert.Equal(config.MoarOptions[1], OptionProvider.OptionTwo);
-
-
-
-
         }
     }
 }

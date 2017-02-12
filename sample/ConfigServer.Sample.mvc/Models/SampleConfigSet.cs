@@ -1,5 +1,4 @@
-﻿using ConfigServer.Core;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 
 namespace ConfigServer.Sample.mvc.Models

@@ -32,46 +32,46 @@ namespace ConfigServer.Server
         {
             var model = registry.GetConfigDefinition(type);
             var configInstance =await configProvider.GetAsync(type, id);
-            UpdateOptions(configInstance.GetConfiguration(), model.ConfigurationProperties);
+            UpdateOptions(configInstance.GetConfiguration(), model.ConfigurationProperties,id);
             return configInstance;
         }
 
-        private void UpdateOptions(object source, Dictionary<string, ConfigurationPropertyModelBase> models)
+        private void UpdateOptions(object source, Dictionary<string, ConfigurationPropertyModelBase> models, ConfigurationIdentity configIdentity)
         {
             foreach(var model in models)
             {
-                UpdateOptions(source, model.Value);
+                UpdateOptions(source, model.Value, configIdentity);
             }
         }
-        private void UpdateOptions(object source, ConfigurationPropertyModelBase model)
+        private void UpdateOptions(object source, ConfigurationPropertyModelBase model, ConfigurationIdentity configIdentity)
         {
 
             switch (model)
             {
                 case ConfigurationPropertyWithMultipleOptionsModelDefinition optionsProperty:
-                    UpdateOptions(source, optionsProperty);
+                    UpdateOptions(source, optionsProperty,configIdentity);
                     break;
                 case ConfigurationPropertyWithOptionsModelDefinition optionProperty:
-                    UpdateOptions(source, optionProperty);
+                    UpdateOptions(source, optionProperty,configIdentity);
                     break;
                 case ConfigurationCollectionPropertyDefinition collectionProperty:
-                    UpdateOptions(source, collectionProperty);
+                    UpdateOptions(source, collectionProperty,configIdentity);
                     break;
                 default:
                     break;
             }
         }
-        private void UpdateOptions(object source, ConfigurationPropertyWithOptionsModelDefinition model)
+        private void UpdateOptions(object source, ConfigurationPropertyWithOptionsModelDefinition model, ConfigurationIdentity configIdentity)
         {
-            var optionSet = optionSetFactory.Build(model);
+            var optionSet = optionSetFactory.Build(model,configIdentity);
             var orignal = model.GetPropertyValue(source);
             optionSet.TryGetValue(orignal, out var actualValue);
             model.SetPropertyValue(source,actualValue);
         }
 
-        private void UpdateOptions(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition model)
+        private void UpdateOptions(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition model, ConfigurationIdentity configIdentity)
         {
-            var optionSet = optionSetFactory.Build(model);
+            var optionSet = optionSetFactory.Build(model,configIdentity);
             var collectionBuilder = model.GetCollectionBuilder();
             var items = model.GetPropertyValue(source) as IEnumerable;
             foreach (var item in items?? Enumerable.Empty<object>())
@@ -83,7 +83,7 @@ namespace ConfigServer.Server
             model.SetPropertyValue(source, collectionBuilder.Collection);
         }
 
-        private void UpdateOptions(object source, ConfigurationCollectionPropertyDefinition model)
+        private void UpdateOptions(object source, ConfigurationCollectionPropertyDefinition model, ConfigurationIdentity configIdentity)
         {
             var items = model.GetPropertyValue(source) as IEnumerable;
             if(items == null)
@@ -94,7 +94,7 @@ namespace ConfigServer.Server
             }
             foreach(var item in items)
             {
-                UpdateOptions(item, model.ConfigurationProperties);
+                UpdateOptions(item, model.ConfigurationProperties,configIdentity);
             }
         }
     }

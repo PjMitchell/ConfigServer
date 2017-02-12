@@ -56,6 +56,16 @@ namespace ConfigServer.Server
         }
 
         /// <summary>
+        /// Gets definition for configuration set type
+        /// </summary>
+        /// <param name="type">configuration set type to be retrieved</param>
+        /// <returns>ConfigurationModel for selected configuration set type</returns>
+        public ConfigurationSetModel GetConfigSetDefinition(Type type)
+        {
+            return collection[type];
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the ConfigurationSetModels
         /// </summary>
         /// <returns>Enumerator for the ConfigurationSetCollection</returns>

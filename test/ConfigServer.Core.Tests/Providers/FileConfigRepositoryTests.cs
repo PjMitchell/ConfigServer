@@ -28,10 +28,7 @@ namespace ConfigServer.Core.Tests
                 Name = "Client 1",
                 Description = "A description Client"
             };
-            configId = new ConfigurationIdentity
-            {
-                ClientId = client.ClientId
-            };
+            configId = new ConfigurationIdentity(client.ClientId);
             target.UpdateClientAsync(client).Wait();
         }
 

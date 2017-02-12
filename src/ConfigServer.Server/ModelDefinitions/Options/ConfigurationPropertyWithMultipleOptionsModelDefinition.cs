@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 
 namespace ConfigServer.Server
@@ -21,7 +22,7 @@ namespace ConfigServer.Server
 
         public override string GetKeyFromObject(object option) => keySelector((TOption)option);
         
-        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider, ConfigurationIdentity configIdentity)
         {
             return new OptionSet<TOption>(GetOptions(serviceProvider), keySelector, displaySelector);
         }
@@ -50,7 +51,7 @@ namespace ConfigServer.Server
 
         public override string GetKeyFromObject(object option) => keySelector((TOption)option);
 
-        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider)
+        public override IOptionSet BuildOptionSet(IServiceProvider serviceProvider, ConfigurationIdentity configIdentity)
         {
             return new OptionSet<TOption>(optionProvider(), keySelector, displaySelector);
         }
@@ -63,10 +64,6 @@ namespace ConfigServer.Server
 
         }
         
-        /// <summary>
-        /// Gets Collection Builder for Property
-        /// </summary>
-        /// <returns>Collection Builder for Property</returns>
         public abstract CollectionBuilder GetCollectionBuilder();
 
     }

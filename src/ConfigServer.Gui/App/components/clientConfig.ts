@@ -53,7 +53,7 @@ export class ClientConfigComponent implements OnInit {
 
             this.clientDataService.getClient(this.clientId)
                 .then(returnedClient => this.client = returnedClient);
-            this.configSetDataService.getConfigurationSetModel(this.configurationSetId)
+            this.configSetDataService.getConfigurationSetModel(this.configurationSetId, this.clientId)
                 .then(returnedConfigSet => this.onModelReturned(returnedConfigSet));
             this.configDataService.getConfig(this.clientId, this.configurationId)
                 .then(returnedConfigSet => this.onConfigReturned(returnedConfigSet));
