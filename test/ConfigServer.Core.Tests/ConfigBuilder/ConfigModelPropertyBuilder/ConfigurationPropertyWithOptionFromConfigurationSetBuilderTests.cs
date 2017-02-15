@@ -8,11 +8,11 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
 {
     public class ConfigurationPropertyWithOptionFromConfigurationSetBuilderTests
     {
-        private readonly ConfigurationModelBuilder<TestConfig> target;
+        private readonly ConfigurationModelBuilder<TestConfig, TestConfiguationModule> target;
         private readonly ConfigurationIdentity configIdentity;
         public ConfigurationPropertyWithOptionFromConfigurationSetBuilderTests()
         {
-            target = new ConfigurationModelBuilder<TestConfig>(new ConfigurationModel(nameof(TestConfig), typeof(TestConfig)));
+            target = new ConfigurationModelBuilder<TestConfig, TestConfiguationModule>(new ConfigurationModel<TestConfig, TestConfiguationModule>(nameof(TestConfiguationModule.TestConfig), c=> c.TestConfig));
             configIdentity = new ConfigurationIdentity("TestId");
         }
 

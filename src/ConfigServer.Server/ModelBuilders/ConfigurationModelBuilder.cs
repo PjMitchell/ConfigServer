@@ -6,8 +6,9 @@ namespace ConfigServer.Server
     /// <summary>
     /// Builder for ConfigurationModel 
     /// </summary>
-    /// <typeparam name="TConfig">Configuration type being built</typeparam>
-    public class ConfigurationModelBuilder<TConfig> : IModelWithProperties<TConfig>
+    /// <typeparam name="TConfiguration">Configuration type being built</typeparam>
+    /// <typeparam name="TConfigurationSet">Configuration Set of type being built</typeparam>
+    public class ConfigurationModelBuilder<TConfiguration, TConfigurationSet> : IModelWithProperties<TConfiguration> where TConfigurationSet : ConfigurationSet
     {
         private readonly ConfigurationModel definition;
 
@@ -16,7 +17,7 @@ namespace ConfigServer.Server
             this.definition = definition;
         }
 
-        internal ConfigurationModelBuilder(string name) : this(new ConfigurationModel(name,typeof(TConfig))) { }
+        internal ConfigurationModelBuilder(string name, Func<TConfigurationSet, Config<TConfiguration>> configSelector) : this(new ConfigurationModel<TConfiguration, TConfigurationSet>(name, configSelector)) { }
 
         /// <summary>
         /// Configuration Model Builder Model

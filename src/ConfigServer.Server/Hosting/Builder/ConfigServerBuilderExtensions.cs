@@ -22,15 +22,17 @@ namespace ConfigServer.Server
         /// <returns>ConfigServer builder for further configuration</returns>
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
+            source.AddMemoryCache();
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationEditPayloadMapper, ConfigurationEditPayloadMapper>());
             source.Add(ServiceDescriptor.Transient<IPropertyTypeProvider, PropertyTypeProvider>());
 
             source.Add(ServiceDescriptor.Transient<IConfigInstanceRouter, ConfigInstanceRouter>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationSetService, ConfigurationSetService>());
 
 
-            
+
             source.Add(ServiceDescriptor.Transient<ConfigurationSetEnpoint, ConfigurationSetEnpoint>());
             source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
             source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
@@ -39,6 +41,7 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
 
             source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
+            source.Add(ServiceDescriptor.Transient<IConfigurationSetFactory, ConfigurationSetFactory>());
             source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationService, ConfigurationService>());

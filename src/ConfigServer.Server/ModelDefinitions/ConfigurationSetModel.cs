@@ -9,9 +9,9 @@ namespace ConfigServer.Server
     /// <summary>
     /// Represents the model of the configuration set that contains the information required to build, configure and validate the configuration.
     /// </summary>
-    public class ConfigurationSetModel
+    public abstract class ConfigurationSetModel
     {
-        private readonly Dictionary<Type, ConfigurationModel> configurationModels;
+        protected readonly Dictionary<Type, ConfigurationModel> configurationModels;
 
         /// <summary>
         /// Initializes configuration set model for configuration set type
@@ -19,19 +19,13 @@ namespace ConfigServer.Server
         /// <param name="configSetType">Configuration set type</param>
         /// <param name="name">Display name for configuration set</param>
         /// <param name="description">Description for configuration set type</param>
-        public ConfigurationSetModel(Type configSetType, string name, string description)
+        protected ConfigurationSetModel(Type configSetType, string name, string description)
         {
             ConfigSetType = configSetType;
             Name = name;
             Description = description;
             configurationModels = new Dictionary<Type, ConfigurationModel>();
         }
-
-        /// <summary>
-        /// Initializes configuration set model for configuration set type
-        /// </summary>
-        /// <param name="configSetType">Configuration set type</param>
-        public ConfigurationSetModel(Type configSetType) : this(configSetType, configSetType.Name, string.Empty) { }
 
         /// <summary>
         /// Configuration set type
@@ -47,33 +41,6 @@ namespace ConfigServer.Server
         /// ConfigInstance set description
         /// </summary>
         public string Description { get; }
-
-        /// <summary>
-        /// Gets or initializes a configuration model by type
-        /// </summary>
-        /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
-        /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitialize<TConfig>(string name) => GetOrInitialize(name,typeof(TConfig));
-
-        /// <summary>
-        /// Gets or initializes a configuration model by type
-        /// </summary>
-        /// <param name="name">Name of configuration model to be retrieved or initialized</param>
-        /// <param name="type">Configuration type of configuration model to be retrieved or initialized</param>
-        /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitialize(string name,Type type)
-        {
-            ConfigurationModel definition;
-            if(!configurationModels.TryGetValue(type, out definition))
-            {
-                definition = new ConfigurationModel(name,type);
-                ApplyDefaultPropertyDefinitions(definition);
-                configurationModels.Add(type, definition);
-            }
-            if (definition.Name != name)
-                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
-            return definition;
-        }
 
         /// <summary>
         /// Gets a configuration model by type
@@ -105,6 +72,36 @@ namespace ConfigServer.Server
         public IEnumerable<ConfigurationModel> Configs => configurationModels.Values;
 
         /// <summary>
+        /// Gets Dependencies for Configuration Set Model
+        /// </summary>
+        /// <returns>Dependencies for Configuration Set Model</returns>
+        public IEnumerable<ConfigurationDependency> GetDependencies() => configurationModels.SelectMany(r => r.Value.GetDependencies()).Distinct();
+
+        /// <summary>
+        /// Does ConfigurationSetModel contain Configuration 
+        /// </summary>
+        /// <param name="type">Configuration type</param>
+        /// <returns>True if ConfigurationSet contains Configuration type</returns>
+        public bool ContainsConfig(Type type) => configurationModels.ContainsKey(type);
+
+        protected void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
+        {
+            foreach (PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
+            {
+                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty, model.Type));
+            }
+        }
+    }
+
+    internal class ConfigurationSetModel<TConfigurationSet> : ConfigurationSetModel where TConfigurationSet : ConfigurationSet
+    {
+        public ConfigurationSetModel(string name, string description) : base(typeof(TConfigurationSet), name, description)
+        {
+            
+        }
+        public ConfigurationSetModel() : this(typeof(TConfigurationSet).Name, string.Empty) { }
+
+        /// <summary>
         /// Gets or initializes a configuration option model by type
         /// </summary>
         /// <typeparam name="TOption">Configuration type of configuration model to be retrieved or initialized</typeparam>
@@ -115,24 +112,59 @@ namespace ConfigServer.Server
             ConfigurationModel definition;
             if (!configurationModels.TryGetValue(type, out definition))
             {
-                definition = new ConfigurationOptionModel<TOption>(name, keySelector, descriptionSelector);
+                definition = new ConfigurationOptionModel<TOption, TConfigurationSet>(name, keySelector, descriptionSelector);
                 ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(type, definition);
             }
             if (definition.Name != name)
                 throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
-            if (!(definition is ConfigurationOptionModel<TOption>))
+            if (!(definition is ConfigurationOptionModel<TOption, TConfigurationSet>))
                 throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when model is not setup as an option");
             return definition;
         }
 
-
-        private void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
+        /// <summary>
+        /// Gets or initializes a configuration model by type
+        /// </summary>
+        /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
+        /// <returns>Configuration model for type</returns>
+        public ConfigurationModel GetOrInitialize<TConfig>(string name, Func<TConfigurationSet, Config<TConfig>> selector)
         {
-            foreach(PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
+            var type = typeof(TConfig);
+            ConfigurationModel definition;
+            if (!configurationModels.TryGetValue(type, out definition))
             {
-                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty, model.Type));
+                definition = new ConfigurationModel<TConfig,TConfigurationSet>(name, selector);
+                ApplyDefaultPropertyDefinitions(definition);
+                configurationModels.Add(type, definition);
             }
+            if (definition.Name != name)
+                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
+            return definition;
+        }
+
+        /// <summary>
+        /// Gets or initializes a configuration model by type
+        /// </summary>
+        /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
+        /// <returns>Configuration model for type</returns>
+        public ConfigurationModel GetOrInitialize(PropertyInfo configProperty)
+        {
+            var name = configProperty.Name;
+            var configType = configProperty.PropertyType.GenericTypeArguments[0];
+            ConfigurationModel definition;
+            if (!configurationModels.TryGetValue(configType, out definition))
+            {
+                var configModelType = ReflectionHelpers.BuildGenericType(typeof(ConfigurationModel<,>), configType, typeof(TConfigurationSet));
+                var funcType = ReflectionHelpers.BuildGenericType(typeof(Func<,>), typeof(TConfigurationSet), configProperty.PropertyType);
+                var selector = configProperty.GetMethod.CreateDelegate(funcType);
+                definition = (ConfigurationModel)Activator.CreateInstance(configModelType, name, selector);
+                ApplyDefaultPropertyDefinitions(definition);
+                configurationModels.Add(configType, definition);
+            }
+            if (definition.Name != name)
+                throw new InvalidOperationException($"Tried to Get model:{name} of type:{configType} when there is already a named config for that type ({definition.Name})");
+            return definition;
         }
     }
 }

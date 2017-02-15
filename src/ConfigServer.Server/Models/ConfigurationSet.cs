@@ -79,7 +79,7 @@ namespace ConfigServer.Server
         {
             foreach (var propertyInfo in typeof(T).GetProperties().Where(info =>info.PropertyType.IsConstructedGenericType && info.PropertyType.GetGenericTypeDefinition() == typeof(Config<>)))
             {
-                modelBuilder.AddConfig(propertyInfo.Name, propertyInfo.PropertyType.GenericTypeArguments[0]);
+                modelBuilder.AddConfig(propertyInfo);
             }
         }
     }

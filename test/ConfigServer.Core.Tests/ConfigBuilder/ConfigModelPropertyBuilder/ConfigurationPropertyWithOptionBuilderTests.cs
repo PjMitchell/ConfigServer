@@ -10,12 +10,12 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
 {
     public class ConfigurationPropertyWithOptionBuilderTests
     {
-        private readonly ConfigurationModelBuilder<PropertyWithOptionTestClass> target;
+        private readonly ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet> target;
         private readonly Mock<IServiceProvider> mockServiceProvider;
         private readonly ConfigurationIdentity configIdentity;
         public ConfigurationPropertyWithOptionBuilderTests()
         {
-            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass>(new ConfigurationModel(nameof(PropertyWithOptionTestClass), typeof(PropertyWithOptionTestClass)));
+            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet>(new ConfigurationModel<PropertyWithOptionTestClass, TestConfigSet>(nameof(TestConfigSet.Option), c => c.Option));
             mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(p => p.GetService(typeof(OptionProvider))).Returns(()=> new OptionProvider());
             configIdentity = new ConfigurationIdentity("TestId");
@@ -97,6 +97,11 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         private ConfigurationPropertyWithOptionsModelDefinition GetPropertyWithOption(ConfigurationModel def)
         {
             return (ConfigurationPropertyWithOptionsModelDefinition)def.ConfigurationProperties[nameof(PropertyWithOptionTestClass.OptionProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<PropertyWithOptionTestClass> Option { get; set; }
         }
 
         private class PropertyWithOptionTestClass

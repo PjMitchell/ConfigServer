@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
@@ -8,6 +9,23 @@ namespace ConfigServer.Server
     /// <typeparam name="TConfig">Configuration type</typeparam>
     public class Config<TConfig> : Config
     {
+        /// <summary>
+        /// Creates Empty Config
+        /// </summary>
+        public Config()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates Config with value
+        /// </summary>
+        /// <param name="value">Value of config</param>
+        public Config(TConfig value)
+        {
+            Value = value;
+        }
+        
         /// <summary>
         /// Configuration Type
         /// </summary>
@@ -60,7 +78,7 @@ namespace ConfigServer.Server
         {
             var config = typeof(Config<>);
             Type[] typeArgs = { configType };
-            var genericType = config.MakeGenericType(typeArgs);
+            var genericType = ReflectionHelpers.BuildGenericType(typeof(Config<>), configType);
             var result = (Config)Activator.CreateInstance(genericType);
             result.SetConfig(value);
             return result;

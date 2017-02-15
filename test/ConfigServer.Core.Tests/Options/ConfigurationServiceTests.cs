@@ -5,12 +5,13 @@ using ConfigServer.Server;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-
+using Moq;
 namespace ConfigServer.Core.Tests.Options
 {
     public class ConfigurationServiceTests
     {
         private IConfigurationService target;
+        private Mock<IConfigurationSetService> configurationSetService;
         private InMemoryRepository repository;
         private const string clientId = "7aa7d5f0-90fb-420b-a906-d482428a0c44";
 
@@ -18,8 +19,8 @@ namespace ConfigServer.Core.Tests.Options
         {
             var registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(new SampleConfigSet().BuildConfigurationSetModel());
-            repository = new InMemoryRepository();
-            target = new ConfigurationService(repository, new TestOptionSetFactory(), registry);
+            configurationSetService = new Mock<IConfigurationSetService>();
+            target = new ConfigurationService(configurationSetService.Object, registry);
         }
 
         [Fact]

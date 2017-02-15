@@ -69,7 +69,7 @@ namespace ConfigServer.Server
         /// Returns an enumerator that iterates through the set
         /// </summary>
         /// <returns>An enumerator that iterates through the set</returns>
-        public IEnumerator<KeyValuePair<string, TOption>> GetEnumerator() => source.GetEnumerator();
+        public IEnumerator<TOption> GetEnumerator() => source.Values.GetEnumerator();
 
         /// <summary>
         /// Gets the option associated with the specified key.

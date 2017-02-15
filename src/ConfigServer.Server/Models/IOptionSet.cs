@@ -82,7 +82,7 @@ namespace ConfigServer.Server
     /// <summary>
     /// Collection of Options
     /// </summary>
-    public interface IOptionSet<TOption> : IReadOnlyDictionary<string, TOption>, IOptionSet
+    public interface IOptionSet<TOption> : IReadOnlyCollection<TOption>, IOptionSet
     {
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,14 +7,15 @@ namespace ConfigServer.Server
     /// <summary>
     /// Represents the model of the configuration that contains the information required to build, configure and validate the configuration.
     /// </summary>
-    public class ConfigurationModel
+    public abstract class ConfigurationModel
     {
         /// <summary>
         /// Initialize ConfigurationModel for type
         /// </summary>
         /// <param name="name">Name that identifies config</param>
         /// <param name="type">Type of config</param>
-        public ConfigurationModel(string name, Type type)
+        /// <param name="configurationSetType">ConfigurationSet type that contains configuration</param>
+        public ConfigurationModel(string name, Type type, Type configurationSetType)
         {
             Type = type;
             Name = name;
@@ -54,39 +54,32 @@ namespace ConfigServer.Server
         /// <returns>All ConfigurationPropertyModel for model</returns>
         public IEnumerable<ConfigurationPropertyModelBase> GetPropertyDefinitions() => ConfigurationProperties.Values;
 
-    }
-
-    internal abstract class ConfigurationOptionModel : ConfigurationModel
-    {
-        public ConfigurationOptionModel(string name, Type type) :base(name, type)
-        {
-        }
-
-        public abstract IOptionSet BuildOptionSet(IEnumerable souce);
-        public Type StoredType { get; protected set; }
+        /// <summary>
+        /// Gets Dependencies for Configuration Model
+        /// </summary>
+        /// <returns>Dependencies for Configuration Model</returns>
         public IEnumerable<ConfigurationDependency> GetDependencies() => ConfigurationProperties.SelectMany(r => r.Value.GetDependencies()).Distinct();
+
+        /// <summary>
+        /// Gets Configuration from ConfigurationSet
+        /// </summary>
+        /// <param name="configurationSet">ConfigurationSet</param>
+        /// <returns>Configuration</returns>
+        public abstract object GetConfigurationFromConfigurationSet(object configurationSet);
     }
 
-    internal class ConfigurationOptionModel<TOption> : ConfigurationOptionModel
+    internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet
     {
-        private readonly Func<TOption, string> keySelector;
-        private readonly Func<TOption, object> descriptionSelector;
+        private readonly Func<TConfigurationSet, Config<TConfiguration>> configSelector;
 
-        public ConfigurationOptionModel(string name, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector) : base(name, typeof(TOption))
+        public ConfigurationModel(string name, Func<TConfigurationSet, Config<TConfiguration>> configSelector) : base(name,typeof(TConfiguration), typeof(TConfigurationSet))
         {
-            this.keySelector = keySelector;
-            this.descriptionSelector = descriptionSelector;
-            StoredType = typeof(List<TOption>);
-        }
-        
-        private string DescriptionSelector(TOption option)
-        {
-            return descriptionSelector(option).ToString();
+            this.configSelector = configSelector;
         }
 
-        public override IOptionSet BuildOptionSet(IEnumerable source)
+        public override object GetConfigurationFromConfigurationSet(object configurationSet)
         {
-            return new OptionSet<TOption>(source, keySelector, DescriptionSelector);
+            return configSelector((TConfigurationSet)configurationSet).GetConfig();
         }
     }
 }

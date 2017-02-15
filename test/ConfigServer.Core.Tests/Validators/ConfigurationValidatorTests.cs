@@ -11,12 +11,12 @@ namespace ConfigServer.Core.Tests.Validators
 {
     public class ConfigurationValidatorTests
     {
-        private readonly ConfigurationModelBuilder<SampleConfig> modelBuilder;
+        private readonly ConfigurationModelBuilder<SampleConfig, SampleConfigSet> modelBuilder;
         private readonly IConfigurationValidator target;
         private readonly ConfigurationIdentity configIdentity;
         public ConfigurationValidatorTests()
         {
-            modelBuilder = new ConfigurationModelBuilder<SampleConfig>(nameof(SampleConfig));
+            modelBuilder = new ConfigurationModelBuilder<SampleConfig, SampleConfigSet>(nameof(SampleConfigSet.SampleConfig), c=> c.SampleConfig);
             configIdentity = new ConfigurationIdentity("TestId");
             target = new ConfigurationValidator(new TestOptionSetFactory());
         }

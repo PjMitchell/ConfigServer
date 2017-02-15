@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
@@ -10,70 +11,70 @@ namespace ConfigServer.Server
     /// </summary>
     public class ConfigurationSetModelBuilder<TConfigurationSet> where TConfigurationSet : ConfigurationSet<TConfigurationSet>, new()
     {
-        private readonly ConfigurationSetModel definition;
+        private readonly ConfigurationSetModel<TConfigurationSet> definition;
 
         internal ConfigurationSetModelBuilder(string name, string description)
         {
-            definition = new ConfigurationSetModel(typeof(TConfigurationSet), name, description);
+            definition = new ConfigurationSetModel<TConfigurationSet>(name, description);
         }
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for type
         /// </summary>
         /// <param name="expression">Path to config</param> 
-        /// <typeparam name="TConfig">Configuration type</typeparam>
+        /// <typeparam name="TConfiguration">Configuration type</typeparam>
         /// <returns>ConfigurationModelBuilder for type</returns>
-        public ConfigurationModelBuilder<TConfig> Config<TConfig>(Expression<Func<TConfigurationSet, Config<TConfig>>> expression) => Config(expression,typeof(TConfig).Name, string.Empty);
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Config<TConfiguration>(Expression<Func<TConfigurationSet, Config<TConfiguration>>> expression) => Config(expression,typeof(TConfiguration).Name, string.Empty);
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for type
         /// </summary>
-        /// <typeparam name="TConfig">Configuration type</typeparam>
+        /// <typeparam name="TConfiguration">Configuration type</typeparam>
         /// <param name="expression">Path to config</param>
         /// <param name="displayName">Display name for the config</param>
         /// <returns>ConfigurationModelBuilder for type</returns>
-        public ConfigurationModelBuilder<TConfig> Config<TConfig>(Expression<Func<TConfigurationSet, Config<TConfig>>> expression,string displayName) => Config(expression, displayName, string.Empty);
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Config<TConfiguration>(Expression<Func<TConfigurationSet, Config<TConfiguration>>> expression,string displayName) => Config(expression, displayName, string.Empty);
 
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for type
         /// </summary>
-        /// <typeparam name="TConfig">Configuration type</typeparam>
+        /// <typeparam name="TConfiguration">Configuration type</typeparam>
         /// <param name="expression">Path to config</param>
         /// <param name="displayName">Display name for the config</param>
         /// <param name="description">Description for the config</param>
         /// <returns>ConfigurationModelBuilder for type</returns>
-        public ConfigurationModelBuilder<TConfig> Config<TConfig>(Expression<Func<TConfigurationSet, Config<TConfig>>> expression,string displayName, string description)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Config<TConfiguration>(Expression<Func<TConfigurationSet, Config<TConfiguration>>> expression,string displayName, string description)
         {
-            var model = definition.GetOrInitialize<TConfig>(ExpressionHelper.GetPropertyNameFromExpression(expression));
+            var model = definition.GetOrInitialize(ExpressionHelper.GetPropertyNameFromExpression(expression), expression.Compile());
             model.ConfigurationDisplayName = displayName;
             model.ConfigurationDescription = description;
-            return new ConfigurationModelBuilder<TConfig>(model);
+            return new ConfigurationModelBuilder<TConfiguration, TConfigurationSet>(model);
         }
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, int> keySelector, Func<TConfig, object> descriptionSelector)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, int> keySelector, Func<TConfiguration, object> descriptionSelector)
         {
-            return Options(expression, keySelector, descriptionSelector, typeof(TConfig).Name, string.Empty);
+            return Options(expression, keySelector, descriptionSelector, typeof(TConfiguration).Name, string.Empty);
         }
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <param name="displayName">Display name for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, int> keySelector, Func<TConfig, object> descriptionSelector, string displayName)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, int> keySelector, Func<TConfiguration, object> descriptionSelector, string displayName)
         {
             return Options(expression, option => keySelector(option).ToString(), descriptionSelector, displayName, string.Empty);
         }
@@ -81,14 +82,14 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <param name="displayName">Display name for the config</param>
         /// <param name="description">Description for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, int> keySelector, Func<TConfig, object> descriptionSelector, string displayName, string description)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, int> keySelector, Func<TConfiguration, object> descriptionSelector, string displayName, string description)
         {
             return Options(ExpressionHelper.GetPropertyNameFromExpression(expression), option => keySelector(option).ToString(), descriptionSelector, displayName, description);
         }
@@ -96,26 +97,26 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, string> keySelector, Func<TConfig, object> descriptionSelector)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, string> keySelector, Func<TConfiguration, object> descriptionSelector)
         {
-            return Options(expression, keySelector, descriptionSelector, typeof(TConfig).Name, string.Empty);
+            return Options(expression, keySelector, descriptionSelector, typeof(TConfiguration).Name, string.Empty);
         }
 
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <param name="displayName">Display name for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, string> keySelector, Func<TConfig, object> descriptionSelector, string displayName)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, string> keySelector, Func<TConfiguration, object> descriptionSelector, string displayName)
         {
             return Options(expression, keySelector, descriptionSelector, displayName, string.Empty);
         }
@@ -123,14 +124,14 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <param name="displayName">Display name for the config</param>
         /// <param name="description">Description for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, string> keySelector, Func<TConfig, object> descriptionSelector, string displayName, string description)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, string> keySelector, Func<TConfiguration, object> descriptionSelector, string displayName, string description)
         {
             return Options(ExpressionHelper.GetPropertyNameFromExpression(expression), keySelector, descriptionSelector, displayName, description);
         }
@@ -138,14 +139,14 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets ConfigurationModelBuilder for Options
         /// </summary>
-        /// <typeparam name="TConfig">Option Type</typeparam>
+        /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, long> keySelector, Func<TConfig, object> descriptionSelector)
+        public ConfigurationModelBuilder<TConfiguration, TConfigurationSet> Options<TConfiguration>(Expression<Func<TConfigurationSet, OptionSet<TConfiguration>>> expression, Func<TConfiguration, long> keySelector, Func<TConfiguration, object> descriptionSelector)
         {
-            return Options(expression, option => keySelector(option).ToString(), descriptionSelector, typeof(TConfig).Name, string.Empty);
+            return Options(expression, option => keySelector(option).ToString(), descriptionSelector, typeof(TConfiguration).Name, string.Empty);
         }
 
         /// <summary>
@@ -157,7 +158,7 @@ namespace ConfigServer.Server
         /// <param name="descriptionSelector">Option Description Selector</param>
         /// <param name="displayName">Display name for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, long> keySelector, Func<TConfig, object> descriptionSelector, string displayName)
+        public ConfigurationModelBuilder<TConfig, TConfigurationSet> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, long> keySelector, Func<TConfig, object> descriptionSelector, string displayName)
         {
             return Options(expression, option => keySelector(option).ToString(), descriptionSelector, displayName, string.Empty);
         }
@@ -172,7 +173,7 @@ namespace ConfigServer.Server
         /// <param name="displayName">Display name for the config</param>
         /// <param name="description">Description for the config</param>
         /// <returns>ConfigurationModelBuilder for Options</returns>
-        public ConfigurationModelBuilder<TConfig> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, long> keySelector, Func<TConfig, object> descriptionSelector, string displayName, string description)
+        public ConfigurationModelBuilder<TConfig, TConfigurationSet> Options<TConfig>(Expression<Func<TConfigurationSet, OptionSet<TConfig>>> expression, Func<TConfig, long> keySelector, Func<TConfig, object> descriptionSelector, string displayName, string description)
         {
             return Options(ExpressionHelper.GetPropertyNameFromExpression(expression),option => keySelector(option).ToString(), descriptionSelector, displayName, description);
         }
@@ -180,11 +181,10 @@ namespace ConfigServer.Server
         /// <summary>
         /// Adds configuration to ConfigurationSetModel
         /// </summary>
-        /// <param name="name">name of the configuration model on the configurationSet</param>
-        /// <param name="type">type of configuration to be added to configuration set</param>
-        public void AddConfig(string name, Type type)
+        /// <param name="configProperty">property info of ConfigurationSet Config Property</param>
+        public void AddConfig(PropertyInfo configProperty)
         {
-            definition.GetOrInitialize(name,type);            
+            definition.GetOrInitialize(configProperty);            
         }
 
         /// <summary>
@@ -196,12 +196,12 @@ namespace ConfigServer.Server
             return definition;
         }
 
-        private ConfigurationModelBuilder<TOption> Options<TOption>(string optionPropertyName, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector, string displayName, string description)
+        private ConfigurationModelBuilder<TOption, TConfigurationSet> Options<TOption>(string optionPropertyName, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector, string displayName, string description)
         {
             var model = definition.GetOrInitializeOption(optionPropertyName, keySelector, descriptionSelector);
             model.ConfigurationDisplayName = displayName;
             model.ConfigurationDescription = description;
-            return new ConfigurationModelBuilder<TOption>(model);
+            return new ConfigurationModelBuilder<TOption, TConfigurationSet>(model);
         }
 
         private static MemberExpression GetExpressionBody(LambdaExpression expression)

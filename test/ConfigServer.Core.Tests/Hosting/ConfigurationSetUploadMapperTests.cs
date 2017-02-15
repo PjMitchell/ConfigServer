@@ -8,14 +8,14 @@ namespace ConfigServer.Core.Tests.Hosting
 {
     public class ConfigurationSetUploadMapperTests
     {
-        private ConfigurationSetModel model;
+        private ConfigurationSetModel<TestConfigurationSet> model;
         private IConfigurationSetUploadMapper target;
 
         public ConfigurationSetUploadMapperTests()
         {
-            model = new ConfigurationSetModel(typeof(TestConfigurationSet));
-            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigOne), typeof(TestConfigOne));
-            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigTwo), typeof(TestConfigTwo));
+            model = new ConfigurationSetModel<TestConfigurationSet>();
+            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigOne), c=> c.ConfigOne);
+            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigTwo), c=> c.ConfigTwo);
             target = new ConfigurationSetUploadMapper();
         }
 
@@ -24,8 +24,8 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var configSet = new TestConfigurationSet
             {
-                ConfigOne = new TestConfigOne { IntProperty = 2 },
-                ConfigTwo = new TestConfigTwo { StringProperty = "Test" }
+                ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
+                ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
             var json = JsonConvert.SerializeObject(configSet);
             var jObject = JObject.Parse(json);
@@ -33,10 +33,10 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(2, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
-            Assert.Equal(configSet.ConfigOne.IntProperty, configOne.IntProperty);
+            Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);
             var configTwo = result[nameof(TestConfigurationSet.ConfigTwo)] as TestConfigTwo;
             Assert.NotNull(configTwo);
-            Assert.Equal(configSet.ConfigTwo.StringProperty, configTwo.StringProperty);
+            Assert.Equal(configSet.ConfigTwo.Value.StringProperty, configTwo.StringProperty);
         }
 
         [Fact]
@@ -44,8 +44,8 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var configSet = new TestConfigurationSet
             {
-                ConfigOne = new TestConfigOne { IntProperty = 2 },
-                ConfigTwo = new TestConfigTwo { StringProperty = "Test" }
+                ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
+                ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
             var json = $"{{\"ConfigOne\":{jsonOne},\"ConfigTwo\":{jsonOne}}}";
@@ -55,7 +55,7 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(2, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
-            Assert.Equal(configSet.ConfigOne.IntProperty, configOne.IntProperty);
+            Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);
             var configTwo = result[nameof(TestConfigurationSet.ConfigTwo)] as TestConfigTwo;
             Assert.Null(configTwo);
         }
@@ -65,8 +65,8 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var configSet = new TestConfigurationSet
             {
-                ConfigOne = new TestConfigOne { IntProperty = 2 },
-                ConfigTwo = new TestConfigTwo { StringProperty = "Test" }
+                ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
+                ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
             var json = $"{{\"ConfigOne\":{jsonOne}}}";
@@ -76,7 +76,7 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(1, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
-            Assert.Equal(configSet.ConfigOne.IntProperty, configOne.IntProperty);
+            Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);
         }
 
         [Fact]
@@ -84,8 +84,8 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var configSet = new TestConfigurationSet
             {
-                ConfigOne = new TestConfigOne { IntProperty = 2 },
-                ConfigTwo = new TestConfigTwo { StringProperty = "Test" }
+                ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
+                ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
             var json = $"{{\"ConfigOne\":{jsonOne},\"Meta\":{jsonOne}}}";
@@ -95,7 +95,7 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(1, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
-            Assert.Equal(configSet.ConfigOne.IntProperty, configOne.IntProperty);
+            Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);
         }
 
 
@@ -109,10 +109,10 @@ namespace ConfigServer.Core.Tests.Hosting
             public string StringProperty { get; set; }
         }
 
-        private class TestConfigurationSet
+        private class TestConfigurationSet : ConfigurationSet<TestConfigurationSet>
         {
-            public TestConfigOne ConfigOne { get; set; }
-            public TestConfigTwo ConfigTwo { get; set; }
+            public Config<TestConfigOne> ConfigOne { get; set; }
+            public Config<TestConfigTwo> ConfigTwo { get; set; }
         }
     }
 }
