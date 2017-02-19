@@ -6,13 +6,14 @@ using System.Reflection;
 using System.Dynamic;
 using System.Collections;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace ConfigServer.Server
 {
     internal interface IConfigurationEditPayloadMapper
     {
         object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model);
-        ConfigInstance UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model);
+        Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model);
     }
 
 
@@ -20,11 +21,13 @@ namespace ConfigServer.Server
     {
         readonly IPropertyTypeProvider propertyTypeProvider;
         readonly IOptionSetFactory optionSetFactory;
+        readonly IConfigurationSetService configurationSetService;
 
-        public ConfigurationEditPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider)
+        public ConfigurationEditPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider, IConfigurationSetService configurationSetService)
         {
             this.propertyTypeProvider = propertyTypeProvider;
             this.optionSetFactory = optionSetFactory;
+            this.configurationSetService = configurationSetService;
         }
 
         public object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model)
@@ -34,10 +37,12 @@ namespace ConfigServer.Server
             return BuildObject(source, configModel.ConfigurationProperties);
         }
 
-        public ConfigInstance UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model)
+        public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model)
         {
             var configModel = model.Configs.Single(s => s.Type == original.ConfigType);
-            var newConfig = UpdateObject(original.ConstructNewConfiguration(), newEditPayload,configModel.ConfigurationProperties, new ConfigurationIdentity(original.ClientId));
+            var identity = new ConfigurationIdentity(original.ClientId);
+            var configurationSets = await GetRequiredConfiguration(model, identity);
+            var newConfig = UpdateObject(original.ConstructNewConfiguration(), newEditPayload,configModel.ConfigurationProperties, identity, configurationSets);
             original.SetConfiguration(newConfig);
             return original; 
         }
@@ -58,7 +63,7 @@ namespace ConfigServer.Server
             switch (propertyType)
             {
                 case ConfigurationPropertyType.Option:
-                    return GetPropertyValue(source, (ConfigurationPropertyWithOptionsModelDefinition)propertyModel);
+                    return GetOptionPropertyValue(source, propertyModel);
                 case ConfigurationPropertyType.MultipleOption:
                     return GetPropertyValue(source, (ConfigurationPropertyWithMultipleOptionsModelDefinition)propertyModel);
                 case ConfigurationPropertyType.Collection:
@@ -69,12 +74,14 @@ namespace ConfigServer.Server
             }
         }
 
-        private object GetPropertyValue(object source, ConfigurationPropertyWithOptionsModelDefinition propertyModel)
+        private object GetOptionPropertyValue(object source, ConfigurationPropertyModelBase propertyModel)
         {
             var value = propertyModel.GetPropertyValue(source);
             if (value == null)
                 return null;
-            return  propertyModel.GetKeyFromObject(value);
+            if(propertyModel is ConfigurationPropertyWithOptionsModelDefinition optionModel)
+                return optionModel.GetKeyFromObject(value);
+            return optionSetFactory.GetKeyFromObject(value, (ConfigurationPropertyWithConfigSetOptionsModelDefinition)propertyModel);
         }
 
         private object GetPropertyValue(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel)
@@ -104,26 +111,26 @@ namespace ConfigServer.Server
             return result;
         }
 
-        private object UpdateObject(object target, JObject source, Dictionary<string, ConfigurationPropertyModelBase> properties, ConfigurationIdentity configIdentity)
+        private object UpdateObject(object target, JObject source, Dictionary<string, ConfigurationPropertyModelBase> properties, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             foreach (var property in properties)
             {
                 var propertyType = propertyTypeProvider.GetPropertyType(property.Value);
-                property.Value.SetPropertyValue(target, GetConfigPropertyValueFromInput(propertyType, source, property.Value, configIdentity));
+                property.Value.SetPropertyValue(target, GetConfigPropertyValueFromInput(propertyType, source, property.Value, configIdentity, requiredConfigurationSets));
             }
             return target;
         }
 
-        private object GetConfigPropertyValueFromInput(string propertyType, JObject source, ConfigurationPropertyModelBase propertyModel, ConfigurationIdentity configIdentity)
+        private object GetConfigPropertyValueFromInput(string propertyType, JObject source, ConfigurationPropertyModelBase propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             switch (propertyType)
             {
                 case ConfigurationPropertyType.Option:
-                    return GetConfigPropertyValueFromInput(source, (ConfigurationPropertyWithOptionsModelDefinition)propertyModel, configIdentity);
+                    return GetOptionConfigPropertyValueFromInput(source, propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.MultipleOption:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationPropertyWithMultipleOptionsModelDefinition)propertyModel, configIdentity);
                 case ConfigurationPropertyType.Collection:
-                    return GetConfigPropertyValueFromInput(source, (ConfigurationCollectionPropertyDefinition)propertyModel, configIdentity);
+                    return GetConfigPropertyValueFromInput(source, (ConfigurationCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 default:
                     return GetConfigPropertyValueFromInput(source, propertyModel);
 
@@ -136,10 +143,14 @@ namespace ConfigServer.Server
             return result;
         }
 
-        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyWithOptionsModelDefinition propertyModel, ConfigurationIdentity configIdentity)
+        private object GetOptionConfigPropertyValueFromInput(JObject source, ConfigurationPropertyModelBase propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var key = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).ToObject<string>();
-            var optionSet = optionSetFactory.Build(propertyModel,configIdentity);
+            IOptionSet optionSet;
+            if(propertyModel is ConfigurationPropertyWithOptionsModelDefinition optionProperty)
+                optionSet = optionSetFactory.Build(optionProperty, configIdentity);
+            else
+                optionSet = optionSetFactory.Build((ConfigurationPropertyWithConfigSetOptionsModelDefinition)propertyModel, requiredConfigurationSets);
             object option = null;
             optionSet.TryGetValue(key, out option);
             return option;
@@ -158,16 +169,32 @@ namespace ConfigServer.Server
             return collectionBuilder.Collection;
         }
 
-        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity)
+        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
             foreach (var item in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()))
             {
                 var config = collectionBuilder.IntializeNewItem();
-                config = UpdateObject(config, (JObject)item, propertyModel.ConfigurationProperties, configIdentity);
+                config = UpdateObject(config, (JObject)item, propertyModel.ConfigurationProperties, configIdentity, requiredConfigurationSets);
                 collectionBuilder.Add(config);
             }
             return collectionBuilder.Collection;
+        }
+
+        private async Task<IEnumerable<ConfigurationSet>> GetRequiredConfiguration(ConfigurationSetModel model, ConfigurationIdentity identity)
+        {
+            var requiredConfigurationSetTypes = model.GetDependencies()
+                .Select(s => s.ConfigurationSet)
+                .Distinct()
+                .ToArray();
+            var configurationSet = new ConfigurationSet[requiredConfigurationSetTypes.Length];
+            var i = 0;
+            foreach(var type in requiredConfigurationSetTypes)
+            {
+                configurationSet[i] = await configurationSetService.GetConfigurationSet(type, identity);
+                i++;
+            }
+            return configurationSet;
         }
     }
 }

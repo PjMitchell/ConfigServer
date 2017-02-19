@@ -10,7 +10,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationDateTimePropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet>(new ConfigurationModel<DateTimeTestClass, TestConfigSet>(nameof(TestConfigSet.DateTime), c=> c.DateTime));
+            target = new ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet>(new ConfigurationModel<DateTimeTestClass, TestConfigSet>(nameof(TestConfigSet.DateTime), c=> c.DateTime, (set, c) => set.DateTime = c));
         }
 
         [Fact]

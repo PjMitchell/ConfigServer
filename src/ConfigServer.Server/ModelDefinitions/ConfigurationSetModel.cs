@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ConfigServer.Server
@@ -11,6 +12,9 @@ namespace ConfigServer.Server
     /// </summary>
     public abstract class ConfigurationSetModel
     {
+        /// <summary>
+        /// configuration model lookup
+        /// </summary>
         protected readonly Dictionary<Type, ConfigurationModel> configurationModels;
 
         /// <summary>
@@ -84,6 +88,10 @@ namespace ConfigServer.Server
         /// <returns>True if ConfigurationSet contains Configuration type</returns>
         public bool ContainsConfig(Type type) => configurationModels.ContainsKey(type);
 
+        /// <summary>
+        /// Applies default propery definition
+        /// </summary>
+        /// <param name="model"></param>
         protected void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
         {
             foreach (PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
@@ -106,13 +114,16 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TOption">Configuration type of configuration model to be retrieved or initialized</typeparam>
         /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitializeOption<TOption>(string name, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector)
+        public ConfigurationModel GetOrInitializeOption<TOption>(Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionSelector, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector) where TOption : class, new()
         {
+            var propertyInfo = ExpressionHelper.GetPropertyInfo(optionSelector);
+            var name = propertyInfo.Name;
             var type = typeof(TOption);
             ConfigurationModel definition;
             if (!configurationModels.TryGetValue(type, out definition))
             {
-                definition = new ConfigurationOptionModel<TOption, TConfigurationSet>(name, keySelector, descriptionSelector);
+                var setter = (Action<TConfigurationSet, OptionSet<TOption>>)propertyInfo.SetMethod.CreateDelegate(typeof(Action<TConfigurationSet, OptionSet<TOption>>));
+                definition = new ConfigurationOptionModel<TOption, TConfigurationSet>(name, keySelector, descriptionSelector, optionSelector.Compile(), setter);
                 ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(type, definition);
             }
@@ -126,15 +137,18 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets or initializes a configuration model by type
         /// </summary>
-        /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
+        /// <typeparam name="TConfiguration">Configuration type of configuration model to be retrieved or initialized</typeparam>
         /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitialize<TConfig>(string name, Func<TConfigurationSet, Config<TConfig>> selector)
+        public ConfigurationModel GetOrInitialize<TConfiguration>(Expression<Func<TConfigurationSet, Config<TConfiguration>>> selector) where TConfiguration : class, new()
         {
-            var type = typeof(TConfig);
+            var propertyInfo = ExpressionHelper.GetPropertyInfo(selector);
+            var name = propertyInfo.Name;
+            var type = typeof(TConfiguration);
             ConfigurationModel definition;
             if (!configurationModels.TryGetValue(type, out definition))
             {
-                definition = new ConfigurationModel<TConfig,TConfigurationSet>(name, selector);
+                var setter = (Action<TConfigurationSet, Config<TConfiguration>>)propertyInfo.SetMethod.CreateDelegate(typeof(Action<TConfigurationSet, Config<TConfiguration>>));
+                definition = new ConfigurationModel<TConfiguration,TConfigurationSet>(name, selector.Compile(), setter);
                 ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(type, definition);
             }
@@ -146,7 +160,7 @@ namespace ConfigServer.Server
         /// <summary>
         /// Gets or initializes a configuration model by type
         /// </summary>
-        /// <typeparam name="TConfig">Configuration type of configuration model to be retrieved or initialized</typeparam>
+        /// <param name="configProperty">Configuration property info</param>
         /// <returns>Configuration model for type</returns>
         public ConfigurationModel GetOrInitialize(PropertyInfo configProperty)
         {
@@ -156,9 +170,11 @@ namespace ConfigServer.Server
             if (!configurationModels.TryGetValue(configType, out definition))
             {
                 var configModelType = ReflectionHelpers.BuildGenericType(typeof(ConfigurationModel<,>), configType, typeof(TConfigurationSet));
-                var funcType = ReflectionHelpers.BuildGenericType(typeof(Func<,>), typeof(TConfigurationSet), configProperty.PropertyType);
-                var selector = configProperty.GetMethod.CreateDelegate(funcType);
-                definition = (ConfigurationModel)Activator.CreateInstance(configModelType, name, selector);
+                var getFuncType = ReflectionHelpers.BuildGenericType(typeof(Func<,>), typeof(TConfigurationSet), configProperty.PropertyType);
+                var setFuncType = ReflectionHelpers.BuildGenericType(typeof(Action<,>), typeof(TConfigurationSet), configProperty.PropertyType);
+                var selector = configProperty.GetMethod.CreateDelegate(getFuncType);
+                var setter = configProperty.SetMethod.CreateDelegate(setFuncType);
+                definition = (ConfigurationModel)Activator.CreateInstance(configModelType, name, selector, setter);
                 ApplyDefaultPropertyDefinitions(definition);
                 configurationModels.Add(configType, definition);
             }

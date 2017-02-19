@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ConfigServer.Server
 {
@@ -18,6 +19,12 @@ namespace ConfigServer.Server
                 body = ((UnaryExpression)expression.Body).Operand as MemberExpression;
             }
             return body;
+        }
+
+        public static PropertyInfo GetPropertyInfo(LambdaExpression expression)
+        {
+            var member = GetExpressionBody(expression);
+            return (PropertyInfo)member.Member;
         }
     }
 }

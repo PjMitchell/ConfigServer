@@ -51,26 +51,26 @@ namespace ConfigServer.InMemoryProvider
         /// <summary>
         /// Gets Configuration
         /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
         /// <returns>ConfigInstance of the type requested</returns>
-        public Task<ConfigInstance<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        public Task<ConfigInstance<TConfiguration>> GetAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
         {
-            var tcs = new TaskCompletionSource<ConfigInstance<TConfig>>();
-            tcs.SetResult(Get<TConfig>(id));
+            var tcs = new TaskCompletionSource<ConfigInstance<TConfiguration>>();
+            tcs.SetResult(Get<TConfiguration>(id));
             return tcs.Task;
         }
 
         /// <summary>
         /// Gets Collection Configuration
         /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
         /// <returns>Enumerable of the type requested</returns>
-        public Task<IEnumerable<TConfig>> GetCollectionAsync<TConfig>(ConfigurationIdentity id)
+        public Task<IEnumerable<TConfiguration>> GetCollectionAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
         {
-            var item = Get<List<TConfig>>(id).Configuration;
-            return Task.FromResult<IEnumerable<TConfig>>(item);
+            var item = (IEnumerable<TConfiguration>)Get(typeof(TConfiguration), id).GetConfiguration();
+            return Task.FromResult(item);
         }
 
         /// <summary>
@@ -81,10 +81,7 @@ namespace ConfigServer.InMemoryProvider
         /// <returns>Enumerable of the type requested</returns>
         public Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
         {
-            var config = typeof(List<>);
-            Type[] typeArgs = { type };
-            var configType = config.MakeGenericType(typeArgs);
-            var item = (IEnumerable)Get(configType, id).GetConfiguration();
+            var item = (IEnumerable)Get(type, id).GetConfiguration();
             return Task.FromResult(item);
         }
 

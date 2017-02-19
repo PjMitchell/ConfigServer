@@ -28,10 +28,12 @@ namespace ConfigServer.Server
 
         public async Task<ConfigInstance> GetAsync(Type type, ConfigurationIdentity id)
         {
-            var model = registry.GetConfigDefinition(type);
-            var configurationSet =await configurationSetService.GetConfigurationSet(model.Type, id);
-            
-            return null;
+            var setModel = registry.GetConfigSetForConfig(type);
+            var model = setModel.Get(type);
+
+            var configurationSet =await configurationSetService.GetConfigurationSet(setModel.ConfigSetType, id);
+            var config = model.GetConfigInstanceFromConfigurationSet(configurationSet);
+            return config;
         }
     }
 }

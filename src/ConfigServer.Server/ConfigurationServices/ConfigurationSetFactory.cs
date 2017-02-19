@@ -56,7 +56,7 @@ namespace ConfigServer.Server
                 {
                     UpdateOptions(item, option.ConfigurationProperties, configurationDependencies, identity);
                 }
-                setType.GetProperty(option.Name).SetValue(result,optionSet);
+                option.SetConfigurationOnConfigurationSet(result, optionSet);
             }
         }
 
@@ -68,8 +68,7 @@ namespace ConfigServer.Server
                 var configInstance = await configProvider.GetAsync(configDefinition.Type, identity);
                 var configuration = configInstance.GetConfiguration();
                 UpdateOptions(configuration, configDefinition.ConfigurationProperties, configurationDependencies, identity);
-                var configPayload = Config.Create(configDefinition.Type, configuration);
-                setType.GetProperty(configDefinition.Name).SetValue(result, configPayload);
+                configDefinition.SetConfigurationOnConfigurationSet(result, configuration);
             }
         }
 

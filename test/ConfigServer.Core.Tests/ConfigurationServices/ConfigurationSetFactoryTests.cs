@@ -117,12 +117,14 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         [Fact]
         public async Task CheckOptionsAreUpdated()
         {
-            var config = new SampleConfig();
-            config.Option = new Option { Id = 1, Description = "Not the right description" };
-            config.MoarOptions = new List<Option>
+            var config = new SampleConfig
             {
-                new Option{ Id = 3, Description ="fail"},
-                OptionProvider.OptionTwo
+                Option = new Option { Id = 1, Description = "Not the right description" },
+                MoarOptions = new List<Option>
+                {
+                    new Option{ Id = 3, Description ="fail"},
+                    OptionProvider.OptionTwo
+                }
             };
             var instance = new ConfigInstance<SampleConfig>(config, identity.ClientId);
             mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))

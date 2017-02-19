@@ -1,9 +1,8 @@
 ﻿using ConfigServer.Server;
 using ConfigServer.Sample.Models;
-using ConfigServer.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ConfigServer.Core.Tests.TestModels
 {
@@ -17,7 +16,15 @@ namespace ConfigServer.Core.Tests.TestModels
         public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
         {
             var configurationSet = configurationSets.SingleOrDefault(r => r.GetType() == definition.ConfigurationSetType);
-            return definition.GetOptionSet(configurationSet);
+            return Build(definition,configurationSet);
+        }
+
+        public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
+
+        public string GetKeyFromObject(object value, ConfigurationPropertyWithConfigSetOptionsModelDefinition definition)
+        {
+            var dynamic = (dynamic)value;
+            return dynamic.Id.ToString();
         }
     }
 }

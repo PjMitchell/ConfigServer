@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,7 @@ namespace ConfigServer.Server
         public ConfigurationModel(string name, Type type, Type configurationSetType)
         {
             Type = type;
+            ConfigurationSetType = configurationSetType;
             Name = name;
             ConfigurationDisplayName = type.Name;
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
@@ -27,6 +29,11 @@ namespace ConfigServer.Server
         /// Configuration type 
         /// </summary>
         public Type Type { get; }
+
+        /// <summary>
+        /// Configuration Set type 
+        /// </summary>
+        public Type ConfigurationSetType { get; }
 
         /// <summary>
         /// Name that identifies Config in Config Set
@@ -66,20 +73,48 @@ namespace ConfigServer.Server
         /// <param name="configurationSet">ConfigurationSet</param>
         /// <returns>Configuration</returns>
         public abstract object GetConfigurationFromConfigurationSet(object configurationSet);
+
+        /// <summary>
+        /// Gets Configuration from ConfigurationSet
+        /// </summary>
+        /// <param name="configurationSet">ConfigurationSet</param>
+        /// <param name="value">Config To be added</param>
+        /// <returns>Configuration</returns>
+        public abstract void SetConfigurationOnConfigurationSet(object configurationSet,object value);
+
+        /// <summary>
+        /// Gets Configuration from ConfigurationSet
+        /// </summary>
+        /// <param name="configurationSet">ConfigurationSet</param>
+        /// <returns>Configuration</returns>
+        public abstract ConfigInstance GetConfigInstanceFromConfigurationSet(object configurationSet);
     }
 
-    internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet
+    internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet where TConfiguration : class, new()
     {
         private readonly Func<TConfigurationSet, Config<TConfiguration>> configSelector;
-
-        public ConfigurationModel(string name, Func<TConfigurationSet, Config<TConfiguration>> configSelector) : base(name,typeof(TConfiguration), typeof(TConfigurationSet))
+        private readonly Action<TConfigurationSet, Config<TConfiguration>> configSetter;
+        public ConfigurationModel(string name, Func<TConfigurationSet, Config<TConfiguration>> configSelector, Action<TConfigurationSet, Config<TConfiguration>> configSetter) : base(name,typeof(TConfiguration), typeof(TConfigurationSet))
         {
             this.configSelector = configSelector;
+            this.configSetter = configSetter;
         }
 
         public override object GetConfigurationFromConfigurationSet(object configurationSet)
         {
             return configSelector((TConfigurationSet)configurationSet).GetConfig();
+        }
+
+        public override void SetConfigurationOnConfigurationSet(object configurationSet, object value)
+        {
+            configSetter((TConfigurationSet)configurationSet,new Config<TConfiguration>((TConfiguration)value));
+        }
+
+        public override ConfigInstance GetConfigInstanceFromConfigurationSet(object configurationSet)
+        {
+            var castConfigurationSet = (TConfigurationSet)configurationSet;
+            var config = configSelector(castConfigurationSet).GetConfig();
+            return new ConfigInstance<TConfiguration>((TConfiguration)config, castConfigurationSet.Instance.ClientId); 
         }
     }
 }

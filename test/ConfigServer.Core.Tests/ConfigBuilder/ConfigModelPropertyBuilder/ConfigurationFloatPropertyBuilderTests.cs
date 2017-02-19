@@ -10,7 +10,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationFloatPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<FloatTestClass, TestConfigSet>(new ConfigurationModel<FloatTestClass, TestConfigSet>(nameof(TestConfigSet.Float), c => c.Float));
+            target = new ConfigurationModelBuilder<FloatTestClass, TestConfigSet>(new ConfigurationModel<FloatTestClass, TestConfigSet>(nameof(TestConfigSet.Float), c => c.Float, (set, c) => set.Float = c));
         }
 
         [Fact]

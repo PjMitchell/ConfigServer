@@ -15,8 +15,9 @@ namespace ConfigServer.Server
         readonly IConfigRepository configRepository;
         readonly IConfigurationValidator confgiurationValidator;
         readonly IConfigurationSetUploadMapper configurationSetUploadMapper;
+        readonly IEventService eventService;
 
-        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper)
+        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -24,6 +25,7 @@ namespace ConfigServer.Server
             this.configRepository = configRepository;
             this.confgiurationValidator = confgiurationValidator;
             this.configurationSetUploadMapper = configurationSetUploadMapper;
+            this.eventService = eventService;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -67,6 +69,7 @@ namespace ConfigServer.Server
             {
                 configInstance.SetConfiguration(input);
                 await configRepository.UpdateConfigAsync(configInstance);
+                await eventService.Publish(new ConfigurationUpdatedEvent(configInstance));
                 responseFactory.BuildNoContentResponse(context);
             }
             else
@@ -88,6 +91,7 @@ namespace ConfigServer.Server
                     var instance = await configRepository.GetAsync(config.Value.GetType(), identity);
                     instance.SetConfiguration(config.Value);
                     await configRepository.UpdateConfigAsync(instance);
+                    await eventService.Publish(new ConfigurationUpdatedEvent(instance));
                 }
                 responseFactory.BuildNoContentResponse(context);
             }

@@ -67,26 +67,25 @@ namespace ConfigServer.TextProvider.Core
         /// <summary>
         /// Gets Configuration
         /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
         /// <returns>ConfigInstance of the type requested</returns>
-        public async Task<ConfigInstance<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        public async Task<ConfigInstance<TConfiguration>> GetAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
         {
-            var result = await GetAsync(typeof(TConfig), id);
-            return (ConfigInstance<TConfig>)result;
+            var result = await GetAsync(typeof(TConfiguration), id);
+            return (ConfigInstance<TConfiguration>)result;
         }
 
         /// <summary>
         /// Gets Collection Configuration
         /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
         /// <returns>Enumerable of the type requested</returns>
-        public async Task<IEnumerable<TConfig>> GetCollectionAsync<TConfig>(ConfigurationIdentity id)
+        public async Task<IEnumerable<TConfiguration>> GetCollectionAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
         {
-            var config = await GetAsync(typeof(TConfig), id);
-            var castedInstance = (ConfigInstance<List<TConfig>>)config;
-            return castedInstance.Configuration;
+            var config = await GetCollectionAsync(typeof(TConfiguration), id);
+            return (IEnumerable<TConfiguration>)config;
         }
 
         /// <summary>
@@ -104,12 +103,9 @@ namespace ConfigServer.TextProvider.Core
                 e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
                 return storageConnector.GetConfigFileAsync(type.Name, id.ClientId);
             });
-
+            var configType = BuildGenericType(typeof(List<>), type);
             if (!string.IsNullOrWhiteSpace(json))
-                 return (IEnumerable)JsonConvert.DeserializeObject(json, type, jsonSerializerSettings);
-            var config = typeof(List<>);
-            Type[] typeArgs = { type };
-            var configType = config.MakeGenericType(typeArgs);
+                 return (IEnumerable)JsonConvert.DeserializeObject(json, configType, jsonSerializerSettings);
             return (IEnumerable)Activator.CreateInstance(configType);
         }
 
@@ -146,6 +142,11 @@ namespace ConfigServer.TextProvider.Core
         {
             var json = JsonConvert.SerializeObject(clients, jsonSerializerSettings);
             await storageConnector.SetClientRegistryFileAsync(json);
+        }
+
+        private static Type BuildGenericType(Type genericType, params Type[] typeArgs)
+        {
+            return genericType.MakeGenericType(typeArgs);
         }
     }
 }

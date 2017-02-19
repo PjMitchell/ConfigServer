@@ -19,6 +19,8 @@ namespace ConfigServer.Server
                     return GetPropertyType(input);
                 case ConfigurationCollectionPropertyDefinition input:
                     return GetPropertyType(input);
+                case ConfigurationPropertyWithConfigSetOptionsModelDefinition input:
+                    return GetPropertyType(input);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {propertyModel.GetType().Name}");
             }
@@ -53,6 +55,8 @@ namespace ConfigServer.Server
         {
             return ConfigurationPropertyType.Collection;
         }
+
+        private string GetPropertyType(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition) => ConfigurationPropertyType.Option;
 
         private static bool IsIntergerType(Type type)
         {

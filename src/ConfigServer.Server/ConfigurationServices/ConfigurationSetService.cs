@@ -9,6 +9,7 @@ namespace ConfigServer.Server
     internal interface IConfigurationSetService
     {
         Task<ConfigurationSet> GetConfigurationSet(Type type, ConfigurationIdentity identity);
+        void HandleConfigurationUpdatedEvent(ConfigurationUpdatedEvent arg);
     }
 
     internal class ConfigurationSetService : IConfigurationSetService
@@ -36,6 +37,10 @@ namespace ConfigServer.Server
             });
         }
 
+        public void HandleConfigurationUpdatedEvent(ConfigurationUpdatedEvent arg) => ClearConfig(arg.ConfigurationType, arg.Identity);
+
+
+
         private async Task<ConfigurationSet> GetConfigurationSetFromSource(Type type, ConfigurationIdentity identity)
         {
             ConfigurationSetModel model;
@@ -54,5 +59,26 @@ namespace ConfigServer.Server
         }
 
         private string GetKey(Type type, ConfigurationIdentity identity) => $"{type.Name}_{identity.ClientId}";
+
+        private void ClearConfig(Type configurationtype, ConfigurationIdentity identity)
+        {
+            var setModel = registry.GetConfigSetForConfig(configurationtype);
+            ClearCache(setModel.ConfigSetType, identity);
+            var model = setModel.Get(configurationtype) as ConfigurationOptionModel;
+            if (model != null)
+            {
+                var dependencies = registry.SelectMany(s => s.Configs).Where(set => set.ConfigurationSetType != setModel.ConfigSetType && set.GetDependencies().Any(a => a.ConfigurationSet == setModel.ConfigSetType && a.PropertyPath == model.Name)).ToArray();
+                foreach (var dependency in dependencies)
+                {
+                    ClearConfig(dependency.Type, identity);
+                }
+            }
+        }
+
+        private void ClearCache(Type type, ConfigurationIdentity identity)
+        {
+            var key = GetKey(type, identity);
+            memoryCache.Remove(cachePrefix + key);
+        }
     }
 }

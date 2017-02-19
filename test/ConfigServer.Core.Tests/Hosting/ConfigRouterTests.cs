@@ -33,7 +33,7 @@ namespace ConfigServer.Core.Tests.Hosting
 
             configSetConfig = new ConfigurationSetRegistry();
             var configSetDef = new ConfigurationSetModel<SimpleConfigSet>();
-            configSetDef.GetOrInitialize(nameof(SimpleConfigSet.Config), c=> c.Config);
+            configSetDef.GetOrInitialize(c=> c.Config);
             configSetConfig.AddConfigurationSet(configSetDef);
 
             defaultConfig = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 43 }, clients[0].ClientId);

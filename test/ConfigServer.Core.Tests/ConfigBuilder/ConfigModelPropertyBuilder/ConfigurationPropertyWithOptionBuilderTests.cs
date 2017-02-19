@@ -15,7 +15,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         private readonly ConfigurationIdentity configIdentity;
         public ConfigurationPropertyWithOptionBuilderTests()
         {
-            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet>(new ConfigurationModel<PropertyWithOptionTestClass, TestConfigSet>(nameof(TestConfigSet.Option), c => c.Option));
+            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet>(new ConfigurationModel<PropertyWithOptionTestClass, TestConfigSet>(nameof(TestConfigSet.Option), c => c.Option, (set, c) => set.Option = c));
             mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(p => p.GetService(typeof(OptionProvider))).Returns(()=> new OptionProvider());
             configIdentity = new ConfigurationIdentity("TestId");

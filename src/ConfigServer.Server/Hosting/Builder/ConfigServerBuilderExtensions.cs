@@ -45,6 +45,8 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationService, ConfigurationService>());
+            source.Add(ServiceDescriptor.Transient<IEventService, EventService>());
+            source.Add(ServiceDescriptor.Transient<IEventHandler<ConfigurationUpdatedEvent>, ConfigurationUpdatedEventHandler>());
 
             return new ConfigServerBuilder(source);
         }

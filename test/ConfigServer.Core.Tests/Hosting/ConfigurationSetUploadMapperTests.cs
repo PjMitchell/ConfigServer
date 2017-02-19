@@ -14,8 +14,8 @@ namespace ConfigServer.Core.Tests.Hosting
         public ConfigurationSetUploadMapperTests()
         {
             model = new ConfigurationSetModel<TestConfigurationSet>();
-            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigOne), c=> c.ConfigOne);
-            model.GetOrInitialize(nameof(TestConfigurationSet.ConfigTwo), c=> c.ConfigTwo);
+            model.GetOrInitialize(c=> c.ConfigOne);
+            model.GetOrInitialize(c=> c.ConfigTwo);
             target = new ConfigurationSetUploadMapper();
         }
 
@@ -27,7 +27,10 @@ namespace ConfigServer.Core.Tests.Hosting
                 ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
                 ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
-            var json = JsonConvert.SerializeObject(configSet);
+            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
+            var jsonTwo = JsonConvert.SerializeObject(configSet.ConfigTwo.Value);
+
+            var json = $"{{\"ConfigOne\":{jsonOne},\"ConfigTwo\":{jsonTwo}}}";
             var jObject = JObject.Parse(json);
             var result = target.MapConfigurationSetUpload(jObject, model).ToDictionary(k=>k.Key, v=>v.Value);
             Assert.Equal(2, result.Count);
@@ -47,7 +50,7 @@ namespace ConfigServer.Core.Tests.Hosting
                 ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
                 ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
-            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
+            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne},\"ConfigTwo\":{jsonOne}}}";
 
             var jObject = JObject.Parse(json);
@@ -68,7 +71,7 @@ namespace ConfigServer.Core.Tests.Hosting
                 ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
                 ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
-            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
+            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne}}}";
 
             var jObject = JObject.Parse(json);
@@ -87,7 +90,7 @@ namespace ConfigServer.Core.Tests.Hosting
                 ConfigOne = new Config<TestConfigOne>(new TestConfigOne { IntProperty = 2 }),
                 ConfigTwo = new Config<TestConfigTwo>(new TestConfigTwo { StringProperty = "Test" })
             };
-            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne);
+            var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne},\"Meta\":{jsonOne}}}";
 
             var jObject = JObject.Parse(json);

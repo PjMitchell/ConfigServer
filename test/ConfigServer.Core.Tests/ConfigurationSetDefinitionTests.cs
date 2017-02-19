@@ -30,8 +30,8 @@ namespace ConfigServer.Core.Tests
         public void CanGetOrInitializeByTypeDoesNotDuplicateInitialization()
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
-            var gotValue = result.GetOrInitialize(nameof(SimpleConfigSet.Config), c => c.Config);
-            var gotValue2 = result.GetOrInitialize(nameof(SimpleConfigSet.Config), c => c.Config);
+            var gotValue = result.GetOrInitialize(c => c.Config);
+            var gotValue2 = result.GetOrInitialize(c => c.Config);
 
             Assert.Equal(1, result.Configs.Count());
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -41,7 +41,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetOrInitializeByGenericType()
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
-            var gotValue = result.GetOrInitialize<SimpleConfig>(nameof(SimpleConfigSet.Config), c=> c.Config);
+            var gotValue = result.GetOrInitialize<SimpleConfig>(c=> c.Config);
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(result.Configs.Single(), gotValue);
         }
@@ -50,7 +50,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetExistingType()
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
-            var gotValue = result.GetOrInitialize(nameof(SimpleConfigSet.Config), c => c.Config);
+            var gotValue = result.GetOrInitialize(c => c.Config);
             var gotValue2 = result.Get(typeof(SimpleConfig));
 
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -60,7 +60,7 @@ namespace ConfigServer.Core.Tests
         public void CanGetExistingType_Generic()
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
-            var gotValue = result.GetOrInitialize(nameof(SimpleConfigSet.Config), c => c.Config);
+            var gotValue = result.GetOrInitialize(c => c.Config);
             var gotValue2 = result.Get<SimpleConfig>();
 
             Assert.True(ReferenceEquals(gotValue, gotValue2));
@@ -77,7 +77,7 @@ namespace ConfigServer.Core.Tests
         public void GetOrInitializePopulatesModelProperties()
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
-            var gotValue = result.GetOrInitialize(nameof(SimpleConfigSet.Config), c => c.Config);
+            var gotValue = result.GetOrInitialize(c => c.Config);
 
             Assert.Equal(1, result.Configs.Count());
             Assert.Equal(typeof(int), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyType);

@@ -3,59 +3,72 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ConfigServer.Server
 {
     internal interface IConfigurationSetModelPayloadMapper
     {
-        ConfigurationSetModelPayload Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity);
+        Task<ConfigurationSetModelPayload> Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity);
     }
 
     internal class ConfigurationSetModelPayloadMapper : IConfigurationSetModelPayloadMapper
     {
         private readonly IOptionSetFactory optionSetFactory;
         private readonly IPropertyTypeProvider propertyTypeProvider;
+        readonly IConfigurationSetService configurationSetService;
 
-        public ConfigurationSetModelPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider)
+        public ConfigurationSetModelPayloadMapper(IOptionSetFactory optionSetFactory, IConfigurationSetService configurationSetService, IPropertyTypeProvider propertyTypeProvider)
         {
             this.propertyTypeProvider = propertyTypeProvider;
             this.optionSetFactory = optionSetFactory;
+            this.configurationSetService = configurationSetService;
         }
 
-        public ConfigurationSetModelPayload Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity)
+        public async Task<ConfigurationSetModelPayload> Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationSetModelPayload
             {
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
-                Config = BuildConfigs(model.Configs, configIdentity)
+                Config = await BuildConfigs(model.Configs, configIdentity)
             };
         }
 
 
 
-        private ConfigurationModelPayload Map(ConfigurationModel model, ConfigurationIdentity configIdentity)
+        private async Task<ConfigurationModelPayload> Map(ConfigurationModel model, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationModelPayload
             {
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
-                Property = BuildProperties(model.ConfigurationProperties,configIdentity)
+                Property = await BuildProperties(model.ConfigurationProperties,configIdentity)
             };
         }
 
-        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity)
+        private async Task<Dictionary<string, ConfigurationModelPayload>> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity)
         {
-            return configs.ToDictionary(c => c.Type.Name.ToLowerCamelCase(),v=> Map(v,configIdentity));
+            var result = new Dictionary<string, ConfigurationModelPayload>();
+            foreach (var config in configs)
+            {
+                result.Add(config.Type.Name.ToLowerCamelCase(), await Map(config, configIdentity));
+            }
+            return result;
         }
 
-        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity)
+        private async Task<Dictionary<string, ConfigurationPropertyPayload>> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity)
         {
-            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => BuildProperty(kvp.Value,configIdentity));
+            var result = new Dictionary<string, ConfigurationPropertyPayload>();
+            foreach (var config in arg)
+            {
+                result.Add(config.Key.ToLowerCamelCase(), await BuildProperty(config.Value, configIdentity));
+            }
+            return result;
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity)
+        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity)
         {
             switch (value)
             {
@@ -63,8 +76,10 @@ namespace ConfigServer.Server
                     return BuildProperty(input);
                 case ConfigurationPropertyWithOptionsModelDefinition input:
                     return BuildProperty(input, configIdentity);
+                case ConfigurationPropertyWithConfigSetOptionsModelDefinition input:
+                    return await BuildProperty(input, configIdentity);
                 case ConfigurationCollectionPropertyDefinition input:
-                    return BuildProperty(input,configIdentity);
+                    return await BuildProperty(input,configIdentity);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
             }
@@ -97,7 +112,22 @@ namespace ConfigServer.Server
                 Options = optionSet.OptionSelections.ToDictionary(k=> k.Key, v=> v.DisplayValue)
             };
         }
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity)
+
+        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationPropertyWithConfigSetOptionsModelDefinition value, ConfigurationIdentity configIdentity)
+        {
+            var configurationSet = await configurationSetService.GetConfigurationSet(value.ConfigurationSetType, configIdentity);
+            var optionSet = optionSetFactory.Build(value, configurationSet);
+            return new ConfigurationPropertyPayload
+            {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
+                PropertyDisplayName = value.PropertyDisplayName,
+                PropertyType = propertyTypeProvider.GetPropertyType(value),
+                PropertyDescription = value.PropertyDescription,
+                Options = optionSet.OptionSelections.ToDictionary(k => k.Key, v => v.DisplayValue)
+            };
+        }
+
+        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity)
         {
             return new ConfigurationPropertyPayload
             {
@@ -106,7 +136,7 @@ namespace ConfigServer.Server
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
                 KeyPropertyName = value?.KeyPropertyName?.ToLowerCamelCase(),
-                ChildProperty = BuildProperties(value.ConfigurationProperties,configIdentity)
+                ChildProperty = await BuildProperties(value.ConfigurationProperties,configIdentity)
             };
         }
 

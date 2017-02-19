@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Gui.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace ConfigServer.Sample.mvc.Models
         public Option Option { get; set; }
         public List<Option> MoarOptions { get; set; }
         public List<ListConfig> ListOfConfigs { get; set; }
+        public OptionFromConfigSet OptionFromConfigSet { get; set; }
     }
 
 
