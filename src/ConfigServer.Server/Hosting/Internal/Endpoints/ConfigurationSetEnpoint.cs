@@ -76,9 +76,18 @@ namespace ConfigServer.Server
 
         private async Task HandleValuePostRequest(HttpContext context, ConfigInstance configInstance)
         {
-            var input = await context.GetJObjectFromJsonBodyAsync();
             var model = GetConfigurationSetForModel(configInstance);
-            var newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance,input, model);
+            ConfigInstance newConfigInstance;
+            if (configInstance.IsCollection)
+            {
+                var input = await context.GetJArrayFromJsonBodyAsync();
+                newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+            }
+            else
+            {
+                var input = await context.GetJObjectFromJsonBodyAsync();
+                newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+            }
             var validationResult = validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {

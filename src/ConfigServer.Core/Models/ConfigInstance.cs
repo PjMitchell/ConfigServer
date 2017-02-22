@@ -11,21 +11,22 @@ namespace ConfigServer.Core
         /// Initializes new ConfigInstance with name
         /// </summary>
         /// <param name="type">type of config</param>
-        protected ConfigInstance(Type type)
+        /// <param name="isCollection">is instance a collection</param>
+        protected ConfigInstance(Type type, bool isCollection)
         {
             Name = type.Name;
             ConfigType = type;
+            IsCollection = isCollection;
         }
 
         /// <summary>
         /// Initializes new ConfigInstance with name
         /// </summary>
         /// <param name="type">type of config</param>
+        /// <param name="isCollection">is instance a collection</param>
         /// <param name="clientId">Client Id</param>
-        protected ConfigInstance(Type type, string clientId)
+        protected ConfigInstance(Type type, bool isCollection, string clientId) : this(type, isCollection)
         {
-            Name = type.Name;
-            ConfigType = type;
             ClientId = clientId;
         }
 
@@ -43,7 +44,7 @@ namespace ConfigServer.Core
         /// </summary>
         /// <returns>configuration as object</returns>
         public abstract object GetConfiguration();
-        
+
         /// <summary>
         /// Sets configuration
         /// </summary>
@@ -60,5 +61,10 @@ namespace ConfigServer.Core
         /// Type of Configuration
         /// </summary>
         public Type ConfigType { get; }
+
+        /// <summary>
+        /// Is configuration a collection of items
+        /// </summary>
+        public bool IsCollection {get;}
     }
 }

@@ -44,6 +44,7 @@ namespace ConfigServer.Server
             {
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
+                IsOption = model is ConfigurationOptionModel,
                 Property = await BuildProperties(model.ConfigurationProperties,configIdentity)
             };
         }

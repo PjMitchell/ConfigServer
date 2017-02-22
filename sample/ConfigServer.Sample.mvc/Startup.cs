@@ -38,16 +38,27 @@ namespace ConfigServer.Sample.mvc
                 .UseConfigSet<SampleConfigSet>()
                 .UseInMemoryProvider()
                 .UseLocalConfigServerClient(applicationId)
-                .WithConfig<SampleConfig>();
-            services.AddTransient<IOptionProvider, OptionProvider>();
+                .WithConfig<SampleConfig>()
+                .WithCollectionConfig<OptionFromConfigSet>();
 
+            services.AddTransient<IOptionProvider, OptionProvider>();
+            var options1 = new List<OptionFromConfigSet>
+            {
+                new OptionFromConfigSet { Id =1, Description ="One", Value = 2.4},
+                new OptionFromConfigSet { Id =2, Description ="Two", Value = 12.4}
+            };
+            var options2 = new List<OptionFromConfigSet>
+            {
+                new OptionFromConfigSet { Id =1, Description ="One", Value = 24.4},
+                new OptionFromConfigSet { Id =2, Description ="Two", Value = 12.4}
+            };
             var optionProvider = new OptionProvider();
             var config = new SampleConfig
             {
                 LlamaCapacity = 23,
                 Name = "Name",
                 Decimal = 23.47m,
-                StartDate = new DateTime(2013,10,10),
+                StartDate = new DateTime(2013, 10, 10),
                 IsLlamaFarmer = false,
                 Option = optionProvider.GetOptions().First(),
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
@@ -55,7 +66,8 @@ namespace ConfigServer.Sample.mvc
                 {
                     new ListConfig { Name = "Value One", Value = 1 },
                     new ListConfig { Name = "Value Two", Value = 2 }
-                }
+                },
+                OptionFromConfigSet = options1[1]
             };
             var config2 = new SampleConfig
             {
@@ -63,16 +75,19 @@ namespace ConfigServer.Sample.mvc
                 Name = "Name 2",
                 Decimal = 41.47m,
                 StartDate = new DateTime(2013, 11, 11),
+                Choice = Choice.OptionThree,
                 IsLlamaFarmer = true,
                 Option = optionProvider.GetOptions().First(),
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
+                OptionFromConfigSet = options2[0]
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
-            configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application"}).Wait();
-            configRepo.UpdateClientAsync(new ConfigurationClient{ ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
-
-            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config , applicationId)).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application" }).Wait();
+            configRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
+            configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options1, applicationId)).Wait();
+            configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options2, application2Id)).Wait();
+            configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config, applicationId)).Wait();
             configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config2, application2Id)).Wait();
 
         }

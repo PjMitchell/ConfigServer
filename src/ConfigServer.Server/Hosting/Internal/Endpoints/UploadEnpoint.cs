@@ -63,7 +63,11 @@ namespace ConfigServer.Server
         }
         private async Task HandleUploadRequest(HttpContext context, ConfigInstance configInstance)
         {
-            var input = await context.GetObjectFromJsonBodyOrDefaultAsync(configInstance.ConfigType);
+            object input;
+            if(configInstance is ConfigCollectionInstance collectionInstance)
+                input = await context.GetObjectFromJsonBodyOrDefaultAsync(ReflectionHelpers.BuildGenericType(typeof(IEnumerable<>), configInstance.ConfigType));
+            else
+                input = await context.GetObjectFromJsonBodyOrDefaultAsync(configInstance.ConfigType);
             var validationResult = confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {

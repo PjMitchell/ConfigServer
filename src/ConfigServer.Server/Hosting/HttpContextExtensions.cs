@@ -17,6 +17,13 @@ namespace ConfigServer.Server
             return result;
         }
 
+        public static async Task<JArray> GetJArrayFromJsonBodyAsync(this HttpContext source)
+        {
+            var json = await source.ReadBodyTextAsync();
+            var result = JArray.Parse(json);
+            return result;
+        }
+
         public static async Task<T> GetObjectFromJsonBodyAsync<T>(this HttpContext source)
         {
             var json = await source.ReadBodyTextAsync();

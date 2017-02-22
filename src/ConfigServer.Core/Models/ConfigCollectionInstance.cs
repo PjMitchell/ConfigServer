@@ -8,8 +8,37 @@ namespace ConfigServer.Core
     /// <summary>
     /// Represents a collection of configuration with meta data such as client id
     /// </summary>
+    public abstract class ConfigCollectionInstance : ConfigInstance
+    {
+        /// <summary>
+        /// Initializes ConfigCollectionInstance with empty configuration
+        /// </summary>
+        /// <param name="type">Config Type</param>
+        protected ConfigCollectionInstance(Type type) : base(type, true)
+        {
+        }
+
+        /// <summary>
+        /// Initializes ConfigCollectionInstance with empty configuration
+        /// </summary>
+        /// <param name="type">Config Type</param>
+        /// <param name="clientId">Client Id</param>
+        protected ConfigCollectionInstance(Type type, string clientId) : base(type, true, clientId)
+        {
+        }
+
+        /// <summary>
+        /// Create CollectionBuilder For Instance
+        /// </summary>
+        /// <returns>CollectionBuilder For Instance</returns>
+        public abstract CollectionBuilder CreateCollectionBuilder();
+    }
+
+    /// <summary>
+    /// Represents a collection of configuration with meta data such as client id
+    /// </summary>
     /// <typeparam name="TConfig">Configuration type</typeparam>
-    public class ConfigCollectionInstance<TConfig> : ConfigInstance where TConfig : class, new()
+    public class ConfigCollectionInstance<TConfig> : ConfigCollectionInstance where TConfig : class, new()
     {
 
         /// <summary>
@@ -63,5 +92,13 @@ namespace ConfigServer.Core
         /// <exception cref="InvalidCastException">When object is not of the same type as generic type parameter.</exception>
         public override void SetConfiguration(object value) => Configuration = ((IEnumerable<TConfig>)value).ToArray();
 
+        /// <summary>
+        /// Create CollectionBuilder For Instance
+        /// </summary>
+        /// <returns>CollectionBuilder For Instance</returns>
+        public override CollectionBuilder CreateCollectionBuilder()
+        {
+            return new CollectionBuilder<TConfig>(typeof(List<TConfig>));
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ConfigServer.Core
@@ -14,6 +15,13 @@ namespace ConfigServer.Core
         /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
         /// <returns>Configuration of specified type</returns>
         Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new();
+
+        /// <summary>
+        /// Builds Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>Configuration of specified type</returns>
+        Task<IEnumerable<TConfig>> BuildCollectionConfigAsync<TConfig>() where TConfig : class, new();
 
         /// <summary>
         /// Builds Configuration

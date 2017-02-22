@@ -14,13 +14,24 @@ namespace ConfigServer.Core
         /// <returns>Initialized ConfigurationRegistry for specified type</returns>
         public static ConfigurationRegistration Build<TConfig>() where TConfig : class, new()
         {
-            return new ConfigurationRegistration(typeof(TConfig));
+            return new ConfigurationRegistration(typeof(TConfig), false);
         }
 
-        private ConfigurationRegistration(Type type)
+        /// <summary>
+        /// Builds new registration for collection configuration type 
+        /// </summary>
+        /// <typeparam name="TConfig">type of configuration to be registered</typeparam>
+        /// <returns>Initialized ConfigurationRegistry for specified type</returns>
+        public static ConfigurationRegistration BuildCollection<TConfig>() where TConfig : class, new()
+        {
+            return new ConfigurationRegistration(typeof(TConfig), true);
+        }
+
+        private ConfigurationRegistration(Type type, bool isCollection)
         {
             ConfigurationName = type.Name;
             ConfigType = type;
+            IsCollection = isCollection;
         }
 
         /// <summary>
@@ -33,5 +44,10 @@ namespace ConfigServer.Core
         /// Configuration type
         /// </summary>
         public Type ConfigType { get; }
+
+        /// <summary>
+        /// Is Configuration Collection
+        /// </summary>
+        public bool IsCollection { get; }
     }
 }

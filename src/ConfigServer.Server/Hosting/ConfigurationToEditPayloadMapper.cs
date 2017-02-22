@@ -13,7 +13,8 @@ namespace ConfigServer.Server
     internal interface IConfigurationEditPayloadMapper
     {
         object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model);
-        Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model);
+        Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JContainer newEditPayload, ConfigurationSetModel model);
+
     }
 
 
@@ -34,17 +35,40 @@ namespace ConfigServer.Server
         {
             var configModel = model.Configs.Single(s => s.Type == config.ConfigType);
             var source = config.GetConfiguration();
-            return BuildObject(source, configModel.ConfigurationProperties);
+            return BuildObject(source, configModel);
         }
 
-        public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JObject newEditPayload, ConfigurationSetModel model)
+        public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JContainer newEditPayload, ConfigurationSetModel model)
         {
             var configModel = model.Configs.Single(s => s.Type == original.ConfigType);
             var identity = new ConfigurationIdentity(original.ClientId);
             var configurationSets = await GetRequiredConfiguration(model, identity);
-            var newConfig = UpdateObject(original.ConstructNewConfiguration(), newEditPayload,configModel.ConfigurationProperties, identity, configurationSets);
+            var newConfig = UpdateObject(original, newEditPayload,configModel, identity, configurationSets);
             original.SetConfiguration(newConfig);
             return original; 
+        }
+
+
+        #region BuildObject
+        private object BuildObject(object source, ConfigurationModel model)
+        {
+            if (model is ConfigurationOptionModel optionModel)
+                return BuildObject(source, optionModel);
+            return BuildObject(source, model.ConfigurationProperties);
+        }
+
+        private object BuildObject(object source, ConfigurationOptionModel model)
+        {
+            var collection = source as IEnumerable ?? new List<object>();
+
+            var result = new List<object>();
+            foreach (var item in collection)
+            {
+                var itemValue = BuildObject(item, model.ConfigurationProperties);
+                result.Add(itemValue);
+            }
+
+            return result;
         }
 
         private object BuildObject(object source, Dictionary<string, ConfigurationPropertyModelBase> properties)
@@ -109,6 +133,29 @@ namespace ConfigServer.Server
             }
 
             return result;
+        }
+        #endregion
+
+
+
+        private object UpdateObject(ConfigInstance original, JContainer newEditPayload, ConfigurationModel model, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        {
+            if (original is ConfigCollectionInstance collection)
+                return UpdateObject(collection, (JArray)newEditPayload, (ConfigurationOptionModel)model, configIdentity, requiredConfigurationSets);
+            else
+                return UpdateObject(original.ConstructNewConfiguration(), (JObject)newEditPayload, model.ConfigurationProperties, configIdentity, requiredConfigurationSets);
+        }
+
+        private object UpdateObject(ConfigCollectionInstance target, JArray source, ConfigurationOptionModel optionModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        {
+            var collectionBuilder = target.CreateCollectionBuilder();
+            foreach (var item in source)
+            {
+                var obj = collectionBuilder.IntializeNewItem();
+                var itemToAdd = UpdateObject(obj, (JObject)item, optionModel.ConfigurationProperties, configIdentity, requiredConfigurationSets);
+                collectionBuilder.Add(itemToAdd);
+            }
+            return collectionBuilder.Collection;
         }
 
         private object UpdateObject(object target, JObject source, Dictionary<string, ConfigurationPropertyModelBase> properties, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)

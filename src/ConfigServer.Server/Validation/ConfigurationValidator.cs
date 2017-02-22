@@ -22,9 +22,30 @@ namespace ConfigServer.Server.Validation
 
         public ValidationResult Validate(object target, ConfigurationModel model, ConfigurationIdentity configIdentity)
         {
+            if (model is ConfigurationOptionModel optionModel)
+                return ValidateOption(target, optionModel, configIdentity);
+
             if (target == null || target.GetType() != model.Type)
                 return new ValidationResult(string.Format(ValidationStrings.InvalidConfigType, model.Type.FullName));
             return ValidateProperties(target, model.ConfigurationProperties, configIdentity);
+        }
+
+        private ValidationResult ValidateOption(object target, ConfigurationOptionModel model, ConfigurationIdentity configIdentity)
+        {
+            var results = new List<ValidationResult>();
+            var options = target as IEnumerable;
+            if (target == null)
+                return new ValidationResult(string.Format(ValidationStrings.InvalidOptionType, model.Type.FullName));
+            var duplicateChecker = new HashSet<string>();
+            foreach (var option in options)
+            {
+                var key = model.GetKeyFromObject(option);
+                if (!duplicateChecker.Add(key))
+                    results.Add(new ValidationResult(string.Format(ValidationStrings.DuplicateOptionKeys, model.Name, key)));
+
+                results.Add(ValidateProperties(option, model.ConfigurationProperties, configIdentity));
+            }
+            return new ValidationResult(results);
         }
 
         private ValidationResult ValidateProperties(object target, Dictionary<string, ConfigurationPropertyModelBase> properties, ConfigurationIdentity configIdentity)

@@ -10,15 +10,17 @@ namespace ConfigServer.Sample.mvc.Controllers
     public class HomeController : Controller
     {
         private readonly SampleConfig config;
+        private readonly IEnumerable<OptionFromConfigSet> options;
 
-        public HomeController(SampleConfig config)
+        public HomeController(SampleConfig config, IEnumerable<OptionFromConfigSet> options)
         {
             this.config = config;
+            this.options = options;
         }
 
         public IActionResult Index()
         {
-            return View(config);
+            return View(new ConfigViewModel { Config = config, Options = options});
         }
 
         public IActionResult About()
@@ -39,5 +41,14 @@ namespace ConfigServer.Sample.mvc.Controllers
         {
             return View();
         }
+
+        
+    }
+
+    public class ConfigViewModel
+    {
+        public SampleConfig Config { get; set; }
+        public IEnumerable<OptionFromConfigSet> Options { get; set; }
+
     }
 }
