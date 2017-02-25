@@ -10,14 +10,15 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
 {
     public class ConfigurationPropertyWithOptionBuilderTests
     {
-        private readonly ConfigurationModelBuilder<PropertyWithOptionTestClass> target;
+        private readonly ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet> target;
         private readonly Mock<IServiceProvider> mockServiceProvider;
-
+        private readonly ConfigurationIdentity configIdentity;
         public ConfigurationPropertyWithOptionBuilderTests()
         {
-            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass>(new ConfigurationModel(nameof(PropertyWithOptionTestClass), typeof(PropertyWithOptionTestClass)));
+            target = new ConfigurationModelBuilder<PropertyWithOptionTestClass, TestConfigSet>(new ConfigurationModel<PropertyWithOptionTestClass, TestConfigSet>(nameof(TestConfigSet.Option), c => c.Option, (set, c) => set.Option = c));
             mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(p => p.GetService(typeof(OptionProvider))).Returns(()=> new OptionProvider());
+            configIdentity = new ConfigurationIdentity("TestId");
         }
 
         [Fact]
@@ -68,7 +69,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var optionProvider = new OptionProvider();
             var expected = optionProvider.Get().ToList();
             target.PropertyWithOptions(x => x.OptionProperty, (OptionProvider provider) => provider.Get(), option => option.IntKey, option => option.DisplayValue);
-            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object);
+            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object, configIdentity);
             var options = result.OptionSelections.ToList();
 
             Assert.Equal(expected.Count, options.Count);
@@ -82,7 +83,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var optionProvider = new OptionProvider();
             var expected = optionProvider.Get().ToList();
             target.PropertyWithOptions(x => x.OptionProperty, (OptionProvider provider) => provider.Get(), opt => opt.IntKey, opt => opt.DisplayValue);
-            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object);
+            var result = GetPropertyWithOption(target.Build()).BuildOptionSet(mockServiceProvider.Object, configIdentity);
             object output;
             var option = result.TryGetValue(2.ToString(), out output);
 
@@ -96,6 +97,11 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         private ConfigurationPropertyWithOptionsModelDefinition GetPropertyWithOption(ConfigurationModel def)
         {
             return (ConfigurationPropertyWithOptionsModelDefinition)def.ConfigurationProperties[nameof(PropertyWithOptionTestClass.OptionProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<PropertyWithOptionTestClass> Option { get; set; }
         }
 
         private class PropertyWithOptionTestClass

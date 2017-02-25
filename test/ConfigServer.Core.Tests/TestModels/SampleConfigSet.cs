@@ -7,7 +7,7 @@ namespace ConfigServer.Sample.Models
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
 
-        Config<SampleConfig> SampleConfig { get; set; }
+        public Config<SampleConfig> SampleConfig { get; set; }
 
         protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
         {

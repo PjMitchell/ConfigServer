@@ -7,7 +7,10 @@ import { routing, appRoutingProviders } from './app.routing';
 import { AppShell } from './app.shell';
 import { HomeComponent } from './components/home';
 import { ClientOverviewComponent } from './components/clientOverview';
-import { ClientConfigComponent } from './components/clientConfig';
+import { ClientConfigShellComponent } from './components/clientConfigShell';
+import { ConfigurationInputComponent } from './components/clientConfigurationInput';
+import { OptionInputComponent } from './components/clientOptionInput';
+
 import { ConfigurationPropertyComponent } from './components/configProperty';
 import { ConfigurationPropertyInputComponent } from './components/clientPropertyInput';
 import { ConfigurationPropertyIntergerInputComponent } from './components/clientPropertyIntergerInput';
@@ -43,7 +46,9 @@ import { UploadDataService } from './dataservices/upload-data.service';
         ClientOverviewComponent,
         ConfigurationSetComponent,
         ConfigurationOverviewComponent,
-        ClientConfigComponent,
+        ClientConfigShellComponent,
+        ConfigurationInputComponent,
+        OptionInputComponent,
         ConfigurationPropertyComponent,
         ConfigurationPropertyInputComponent,
         ConfigurationPropertyIntergerInputComponent,

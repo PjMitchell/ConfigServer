@@ -2,6 +2,7 @@
 using ConfigServer.TextProvider.Core;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,10 +29,7 @@ namespace ConfigServer.Core.Tests
                 Name = "Client 1",
                 Description = "A description Client"
             };
-            configId = new ConfigurationIdentity
-            {
-                ClientId = client.ClientId
-            };
+            configId = new ConfigurationIdentity(client.ClientId);
             target.UpdateClientAsync(client).Wait();
         }
 
@@ -115,5 +113,49 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(0, result.Configuration.IntProperty);
         }
 
+
+        [Fact]
+        public async Task CanSaveAndRetriveCollectionAsync()
+        {
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
+            const int testValue = 23;
+            const int testValue2 = 24;
+            var values = new[]
+            {
+                new SimpleConfig { IntProperty = testValue },
+                new SimpleConfig { IntProperty = testValue2 }
+            };
+            var config = new ConfigCollectionInstance<SimpleConfig>(values, configId.ClientId);
+
+
+            await target.UpdateConfigAsync(config);
+            var result = await target.GetCollectionAsync<SimpleConfig>(configId);
+            Assert.Equal(2, result.Count());
+            Assert.True(result.Any(a => a.IntProperty == testValue));
+            Assert.True(result.Any(a => a.IntProperty == testValue2));
+
+
+        }
+
+        [Fact]
+        public async Task CanSaveAndRetriveCollectionWithTypeAsync()
+        {
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
+            const int testValue = 23;
+            const int testValue2 = 24;
+            var values = new[]
+            {
+                new SimpleConfig { IntProperty = testValue },
+                new SimpleConfig { IntProperty = testValue2 }
+            };
+            var config = new ConfigCollectionInstance<SimpleConfig>(values, configId.ClientId);
+
+
+            await target.UpdateConfigAsync(config);
+            var result = (IEnumerable<SimpleConfig>)(await target.GetCollectionAsync(typeof(SimpleConfig), configId));
+            Assert.Equal(2, result.Count());
+            Assert.True(result.Any(a => a.IntProperty == testValue));
+            Assert.True(result.Any(a => a.IntProperty == testValue2));
+        }
     }
 }

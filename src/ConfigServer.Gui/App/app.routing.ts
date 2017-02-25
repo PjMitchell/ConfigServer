@@ -2,7 +2,7 @@
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home';
 import { ClientOverviewComponent } from './components/clientOverview';
-import { ClientConfigComponent } from './components/clientConfig';
+import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { CreateClientComponent } from './components/createClient';
 
 import { EditClientComponent } from './components/editClient';
@@ -13,7 +13,7 @@ const appRoutes: Routes = [
     { path: 'createClient', component: CreateClientComponent },
     { path: 'editClient/:clientId', component: EditClientComponent },
     { path: 'client/:clientId', component: ClientOverviewComponent },
-    { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigComponent }
+    { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigShellComponent }
 ];
 
 export const appRoutingProviders: any[] = [

@@ -6,11 +6,11 @@ namespace ConfigServer.Core.Tests
 {
     public class ConfigurationDateTimePropertyBuilderTests
     {
-        private readonly ConfigurationModelBuilder<DateTimeTestClass> target;
+        private readonly ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet> target;
 
         public ConfigurationDateTimePropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<DateTimeTestClass>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet>(new ConfigurationModel<DateTimeTestClass, TestConfigSet>(nameof(TestConfigSet.DateTime), c=> c.DateTime, (set, c) => set.DateTime = c));
         }
 
         [Fact]
@@ -75,6 +75,11 @@ namespace ConfigServer.Core.Tests
         private ConfigurationPrimitivePropertyModel GetDateTimeProperty(ConfigurationModel def)
         {
             return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(DateTimeTestClass.DateTimeProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<DateTimeTestClass> DateTime { get; set; }
         }
 
         private class DateTimeTestClass

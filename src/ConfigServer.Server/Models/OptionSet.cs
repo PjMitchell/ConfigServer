@@ -24,6 +24,8 @@ namespace ConfigServer.Server
             this.keySelector = keySelector;
         }
 
+        internal OptionSet(IEnumerable input, Func<TOption, string> keySelector, Func<TOption, string> descriptionSelector) : this((IEnumerable<TOption>)input, keySelector, descriptionSelector) { }
+
         /// <summary>
         /// Gets the element that has the specified key in the set.
         /// </summary>
@@ -67,7 +69,7 @@ namespace ConfigServer.Server
         /// Returns an enumerator that iterates through the set
         /// </summary>
         /// <returns>An enumerator that iterates through the set</returns>
-        public IEnumerator<KeyValuePair<string, TOption>> GetEnumerator() => source.GetEnumerator();
+        public IEnumerator<TOption> GetEnumerator() => source.Values.GetEnumerator();
 
         /// <summary>
         /// Gets the option associated with the specified key.
@@ -147,6 +149,13 @@ namespace ConfigServer.Server
                 return OptionKeyInSet((TOption)option);
             return false;
         }
+
+        /// <summary>
+        /// Gets Key from Option
+        /// </summary>
+        /// <param name="option">Option being Queried</param>
+        /// <returns>Key from Option</returns>
+        public string GetKeyFromOption(object option) => keySelector((TOption)option);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();        
 

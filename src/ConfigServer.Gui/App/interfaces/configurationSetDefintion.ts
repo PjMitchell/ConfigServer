@@ -8,6 +8,7 @@
 export interface ConfigurationModelPayload {
     name: string;
     description: string;
+    isOption: boolean;
     property: Dictionary<ConfigurationPropertyPayload>;
 }
 

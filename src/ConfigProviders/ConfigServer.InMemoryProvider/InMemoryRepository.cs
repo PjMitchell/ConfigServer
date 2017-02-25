@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace ConfigServer.InMemoryProvider
 {
@@ -50,14 +51,38 @@ namespace ConfigServer.InMemoryProvider
         /// <summary>
         /// Gets Configuration
         /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be retrieved</typeparam>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
         /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
         /// <returns>ConfigInstance of the type requested</returns>
-        public Task<ConfigInstance<TConfig>> GetAsync<TConfig>(ConfigurationIdentity id) where TConfig : class, new()
+        public Task<ConfigInstance<TConfiguration>> GetAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
         {
-            var tcs = new TaskCompletionSource<ConfigInstance<TConfig>>();
-            tcs.SetResult(Get<TConfig>(id));
+            var tcs = new TaskCompletionSource<ConfigInstance<TConfiguration>>();
+            tcs.SetResult(Get<TConfiguration>(id));
             return tcs.Task;
+        }
+
+        /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <typeparam name="TConfiguration">Type of configuration to be retrieved</typeparam>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public Task<IEnumerable<TConfiguration>> GetCollectionAsync<TConfiguration>(ConfigurationIdentity id) where TConfiguration : class, new()
+        {
+            var item = (IEnumerable<TConfiguration>)Get(typeof(TConfiguration), id).GetConfiguration();
+            return Task.FromResult(item);
+        }
+
+        /// <summary>
+        /// Gets Collection Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be retrieved</param>
+        /// <param name="id">Identity of Configuration requested i.e which client requested the configuration</param>
+        /// <returns>Enumerable of the type requested</returns>
+        public Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
+        {
+            var item = (IEnumerable)Get(type, id).GetConfiguration();
+            return Task.FromResult(item);
         }
 
         /// <summary>
@@ -88,6 +113,8 @@ namespace ConfigServer.InMemoryProvider
             tcs.SetResult(true);
             return tcs.Task;
         }
+
+
 
         private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
@@ -124,6 +151,7 @@ namespace ConfigServer.InMemoryProvider
             clientStore.Add(client.ClientId, client);
             innerStore.Add(client.ClientId, new Dictionary<Type, ConfigInstance>());
         }
+
 
     }
 }

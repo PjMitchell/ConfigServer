@@ -1,5 +1,4 @@
-﻿using ConfigServer.Core;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 
 namespace ConfigServer.Sample.mvc.Models
@@ -7,7 +6,7 @@ namespace ConfigServer.Sample.mvc.Models
     public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
-
+        OptionSet<OptionFromConfigSet> Options { get; set; }
         Config<SampleConfig> SampleConfig { get; set; }
 
         protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
@@ -28,8 +27,11 @@ namespace ConfigServer.Sample.mvc.Models
             configBuilder.PropertyWithMulitpleOptions(p => p.MoarOptions, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
                 .WithDescription("Is a multi select option");
             configBuilder.Collection(p=> p.ListOfConfigs);
-
-
+            configBuilder.PropertyWithConfigurationSetOptions(p => p.OptionFromConfigSet, (SampleConfigSet set) => set.Options)
+                .WithDescription("Options from the option set");
+            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet set) => set.Options)
+                .WithDescription("Multiple Options from the option set");
+            var optionBuilder = modelBuilder.Options(s => s.Options, o => o.Id, o => o.Description, "Options", "Options for sample config");
         }
     }
 }

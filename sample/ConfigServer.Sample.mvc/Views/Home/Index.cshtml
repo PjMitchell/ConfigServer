@@ -1,28 +1,43 @@
-﻿@model ConfigServer.Sample.mvc.Models.SampleConfig
+﻿@model ConfigServer.Sample.mvc.Controllers.ConfigViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 <div>
     <a href="/Config/Manager">Editor</a>
-    <p>@Model.Name</p>
-    <p>@Model.IsLlamaFarmer</p>
-    <p>@Model.LlamaCapacity</p>
-    <p>@Model.StartDate</p>
-    <p>@Model.Decimal</p>
-    <p>@Model.Choice</p>
-    <p>@Model.Option.Id : @Model.Option.Description</p>
+    <p>@Model.Config.Name</p>
+    <p>@Model.Config.IsLlamaFarmer</p>
+    <p>@Model.Config.LlamaCapacity</p>
+    <p>@Model.Config.StartDate</p>
+    <p>@Model.Config.Decimal</p>
+    <p>@Model.Config.Choice</p>
+    <p>@Model.Config.Option.Id : @Model.Config.Option.Description</p>
     <h3>Options</h3>
-    @foreach(var option in Model.MoarOptions)
+    @foreach(var option in Model.Config.MoarOptions)
+    {
+        <ul>
+            <li>@option.Description</li>
+        </ul>
+    }
+
+    <p>@Model.Config.OptionFromConfigSet.Id : @Model.Config.OptionFromConfigSet.Description</p>
+    <h3>External Options</h3>
+    @foreach (var option in Model.Config.MoarOptionFromConfigSet)
     {
         <ul>
             <li>@option.Description</li>
         </ul>
     }
     <h3>List</h3>
-    @foreach (var config in Model.ListOfConfigs)
+    @foreach (var config in Model.Config.ListOfConfigs)
     {
         <ul>
             <li>@config.Name : @config.Value</li>
         </ul>
+    }
+    <h3>Options In COnfig Set</h3>
+    @foreach (var option in Model.Options)
+    {
+        <p>@option.Description : @option.Value</p>
+
     }
 </div>

@@ -23,7 +23,16 @@ namespace ConfigServer.Sample.mvcApp2.Controllers
         public async Task<IActionResult> Index()
         {
             var config = await configProvider.BuildConfigAsync<SampleConfig>();
-            return View(config);
+            var options = await configProvider.BuildCollectionConfigAsync<OptionFromConfigSet>();
+
+            return View(new ConfigViewModel { Config = config, Options = options });
         }
+    }
+
+    public class ConfigViewModel
+    {
+        public SampleConfig Config { get; set; }
+        public IEnumerable<OptionFromConfigSet> Options { get; set; }
+
     }
 }

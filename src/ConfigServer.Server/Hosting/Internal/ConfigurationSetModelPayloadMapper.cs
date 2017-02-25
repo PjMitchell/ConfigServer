@@ -1,69 +1,83 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ConfigServer.Server
 {
     internal interface IConfigurationSetModelPayloadMapper
     {
-        ConfigurationSetModelPayload Map(ConfigurationSetModel model);
+        Task<ConfigurationSetModelPayload> Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity);
     }
 
     internal class ConfigurationSetModelPayloadMapper : IConfigurationSetModelPayloadMapper
     {
         private readonly IOptionSetFactory optionSetFactory;
         private readonly IPropertyTypeProvider propertyTypeProvider;
+        readonly IConfigurationSetService configurationSetService;
 
-        public ConfigurationSetModelPayloadMapper(IOptionSetFactory optionSetFactory, IPropertyTypeProvider propertyTypeProvider)
+        public ConfigurationSetModelPayloadMapper(IOptionSetFactory optionSetFactory, IConfigurationSetService configurationSetService, IPropertyTypeProvider propertyTypeProvider)
         {
             this.propertyTypeProvider = propertyTypeProvider;
             this.optionSetFactory = optionSetFactory;
+            this.configurationSetService = configurationSetService;
         }
 
-        public ConfigurationSetModelPayload Map(ConfigurationSetModel model)
+        public async Task<ConfigurationSetModelPayload> Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity)
         {
+            var configurationSets = await GetRequiredConfiguration(model, configIdentity);
             return new ConfigurationSetModelPayload
             {
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
-                Config = BuildConfigs(model.Configs)
+                Config = BuildConfigs(model.Configs, configIdentity, configurationSets)
             };
         }
 
-
-
-        private ConfigurationModelPayload Map(ConfigurationModel model)
+        private ConfigurationModelPayload Map(ConfigurationModel model, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationModelPayload
             {
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
-                Property = BuildProperties(model.ConfigurationProperties)
+                IsOption = model is ConfigurationOptionModel,
+                Property = BuildProperties(model.ConfigurationProperties,configIdentity,requiredConfigurationSets)
             };
         }
 
-        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs)
+        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
-            return configs.ToDictionary(c => c.Type.Name.ToLowerCamelCase(), Map);
+            var result = new Dictionary<string, ConfigurationModelPayload>();
+            foreach (var config in configs)
+            {
+                result.Add(config.Type.Name.ToLowerCamelCase(), Map(config, configIdentity, requiredConfigurationSets));
+            }
+            return result;
         }
 
-        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg)
+        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
-            return arg.ToDictionary(kvp => kvp.Key.ToLowerCamelCase(), kvp => BuildProperty(kvp.Value));
+            var result = new Dictionary<string, ConfigurationPropertyPayload>();
+            foreach (var config in arg)
+            {
+                result.Add(config.Key.ToLowerCamelCase(), BuildProperty(config.Value, configIdentity, requiredConfigurationSets));
+            }
+            return result;
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             switch (value)
             {
                 case ConfigurationPrimitivePropertyModel input:
                     return BuildProperty(input);
-                case ConfigurationPropertyWithOptionsModelDefinition input:
-                    return BuildProperty(input);
+                case IOptionPropertyDefinition input:
+                    return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 case ConfigurationCollectionPropertyDefinition input:
-                    return BuildProperty(input);
+                    return BuildProperty(input, configIdentity,requiredConfigurationSets);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
             }
@@ -84,9 +98,9 @@ namespace ConfigServer.Server
             };
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyWithOptionsModelDefinition value)
+        private ConfigurationPropertyPayload BuildProperty(IOptionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
-            var optionSet = optionSetFactory.Build(value);
+            var optionSet = optionSetFactory.Build(value, configIdentity, requiredConfigurationSets);
             return new ConfigurationPropertyPayload
             {
                 PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
@@ -96,7 +110,8 @@ namespace ConfigServer.Server
                 Options = optionSet.OptionSelections.ToDictionary(k=> k.Key, v=> v.DisplayValue)
             };
         }
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value)
+
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationPropertyPayload
             {
@@ -105,7 +120,7 @@ namespace ConfigServer.Server
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
                 KeyPropertyName = value?.KeyPropertyName?.ToLowerCamelCase(),
-                ChildProperty = BuildProperties(value.ConfigurationProperties)
+                ChildProperty = BuildProperties(value.ConfigurationProperties,configIdentity,requiredConfigurationSets)
             };
         }
 
@@ -121,6 +136,22 @@ namespace ConfigServer.Server
             {
                 yield return new KeyValuePair<int, string>((int)obj, obj.ToString());
             }
+        }
+
+        private async Task<IEnumerable<ConfigurationSet>> GetRequiredConfiguration(ConfigurationSetModel model, ConfigurationIdentity identity)
+        {
+            var requiredConfigurationSetTypes = model.GetDependencies()
+                .Select(s => s.ConfigurationSet)
+                .Distinct()
+                .ToArray();
+            var configurationSet = new ConfigurationSet[requiredConfigurationSetTypes.Length];
+            var i = 0;
+            foreach (var type in requiredConfigurationSetTypes)
+            {
+                configurationSet[i] = await configurationSetService.GetConfigurationSet(type, identity);
+                i++;
+            }
+            return configurationSet;
         }
     }
 }

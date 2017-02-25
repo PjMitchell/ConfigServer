@@ -6,11 +6,6 @@
     /// </summary>
     public class ConfigurationEnumPropertyBuilder : ConfigurationPropertyModelBuilder<ConfigurationEnumPropertyBuilder>
     {
-        /// <summary>
-        /// Initializes ConfigurationEnumPropertyBuilder for given ConfigurationPropertyModel
-        /// </summary>
-        /// <param name="model">ConfigurationPropertyModel to be modified by ConfigurationPropertyModelBuilder</param>
-        public ConfigurationEnumPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
-
+        internal ConfigurationEnumPropertyBuilder(ConfigurationPrimitivePropertyModel model) : base(model) { }
     }
 }

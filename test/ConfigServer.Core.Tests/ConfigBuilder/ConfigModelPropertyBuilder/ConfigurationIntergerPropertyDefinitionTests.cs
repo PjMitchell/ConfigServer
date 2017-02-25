@@ -5,11 +5,11 @@ namespace ConfigServer.Core.Tests
 {
     public class ConfigurationIntergerPropertyDefinitionTests
     {
-        private readonly ConfigurationModelBuilder<IntergerTestClass> target;
+        private readonly ConfigurationModelBuilder<IntergerTestClass, TestConfigSet> target;
 
         public ConfigurationIntergerPropertyDefinitionTests()
         {
-            target = new ConfigurationModelBuilder<IntergerTestClass>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<IntergerTestClass, TestConfigSet>(new ConfigurationModel<IntergerTestClass, TestConfigSet>(nameof(TestConfigSet.Integer), p=> p.Integer, (set, c) => set.Integer = c));
         }
 
         [Fact]
@@ -74,6 +74,11 @@ namespace ConfigServer.Core.Tests
         private ConfigurationPrimitivePropertyModel GetIntProperty(ConfigurationModel def)
         {
             return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(IntergerTestClass.IntProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<IntergerTestClass> Integer { get; set; }
         }
 
         private class IntergerTestClass

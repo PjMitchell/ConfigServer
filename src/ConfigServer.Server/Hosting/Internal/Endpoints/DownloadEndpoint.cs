@@ -55,7 +55,7 @@ namespace ConfigServer.Server
             var configModelResult = configurationSetResult.QueryResult.Configs.TryMatchPath(s => $"{s.Type.Name}{jsonExtension}", configurationSetResult.RemainingPath);
             if (!configModelResult.HasResult || configModelResult.RemainingPath.HasValue)
                 return null;
-            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = clientsResult.QueryResult.ClientId });
+            var config = await configRepository.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity(clientsResult.QueryResult.ClientId));
             return new FilePayload(config.GetConfiguration(), $"{configModelResult.QueryResult.Type.Name}{jsonExtension}");
         }
 
@@ -64,7 +64,7 @@ namespace ConfigServer.Server
             IDictionary<string, object> configurationSet = new ExpandoObject();
             foreach(var configModel in model.Configs)
             {
-                var config = await configRepository.GetAsync(configModel.Type, new ConfigurationIdentity { ClientId = clientId });
+                var config = await configRepository.GetAsync(configModel.Type, new ConfigurationIdentity(clientId));
                 configurationSet[configModel.Name] = config.GetConfiguration();
             }
             return configurationSet;

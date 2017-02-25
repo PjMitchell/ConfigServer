@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Generic;
 
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Client
@@ -44,6 +45,28 @@ namespace ConfigServer.Client
             return (TConfig)await BuildConfigAsync(typeof(TConfig));
         }
 
+        public Task<IEnumerable<TConfig>> BuildCollectionConfigAsync<TConfig>() where TConfig : class, new()
+        {
+            var type = typeof(TConfig);
+            ThrowIfConfigNotRegistered(type);
+            if (options.CacheOptions.IsDisabled)
+                return GetCollectionConfig<TConfig>();
+
+            return GetOrAddCollectionConfigFromCache<TConfig>();
+        }
+
+        private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>() where TConfig : class, new()
+        {
+            return cache.GetOrCreateAsync(BuildCacheKey(typeof(TConfig)), cacheEntry =>
+            {
+                if (options.CacheOptions.AbsoluteExpiration.HasValue)
+                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
+                if (options.CacheOptions.SlidingExpiration.HasValue)
+                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
+                return GetCollectionConfig<TConfig>();
+            });
+        }
+
         private Task<object> GetOrAddConfigFromCache(Type type)
         {
             return cache.GetOrCreateAsync(BuildCacheKey(type), cacheEntry =>
@@ -60,6 +83,12 @@ namespace ConfigServer.Client
         {
             var result = await GetConfig(type.Name);
             return JsonConvert.DeserializeObject(result, type, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+        }
+
+        private async Task<IEnumerable<TConfig>> GetCollectionConfig<TConfig>()
+        {
+            var result = await GetConfig(typeof(TConfig).Name);
+            return (IEnumerable<TConfig>)JsonConvert.DeserializeObject(result,typeof(List<TConfig>), new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
         }
 
         private async Task<string> GetConfig(string configName)
@@ -87,6 +116,8 @@ namespace ConfigServer.Client
         }
 
         private string BuildCacheKey(Type type) => cachePrefix + type.Name;
+
+
     }
 
 

@@ -6,11 +6,11 @@ namespace ConfigServer.Core.Tests
 {
     public class ConfigurationFloatPropertyBuilderTests
     {
-        private readonly ConfigurationModelBuilder<FloatTestClass> target;
+        private readonly ConfigurationModelBuilder<FloatTestClass, TestConfigSet> target;
 
         public ConfigurationFloatPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<FloatTestClass>(new ConfigurationModel(nameof(SimpleConfig), typeof(SimpleConfig)));
+            target = new ConfigurationModelBuilder<FloatTestClass, TestConfigSet>(new ConfigurationModel<FloatTestClass, TestConfigSet>(nameof(TestConfigSet.Float), c => c.Float, (set, c) => set.Float = c));
         }
 
         [Fact]
@@ -75,6 +75,11 @@ namespace ConfigServer.Core.Tests
         private ConfigurationPrimitivePropertyModel GetFloatProperty(ConfigurationModel def)
         {
             return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(FloatTestClass.FloatProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<FloatTestClass> Float { get; set; }
         }
 
         private class FloatTestClass

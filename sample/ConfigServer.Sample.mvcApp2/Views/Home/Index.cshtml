@@ -1,14 +1,20 @@
-﻿@model ConfigServer.Sample.mvcApp2.Models.SampleConfig
+﻿@model ConfigServer.Sample.mvcApp2.Controllers.ConfigViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 <div>
-        <p>@Model.Name</p>
-    <p>@Model.IsLlamaFarmer</p>
-    <p>@Model.LlamaCapacity</p>
-    <p>@Model.StartDate</p>
-    <p>@Model.Decimal</p>
-    <p>@Model.Choice</p>
-    <p>@Model.Option.Id : @Model.Option.Description</p>
+    <p>@Model.Config.Name</p>
+    <p>@Model.Config.IsLlamaFarmer</p>
+    <p>@Model.Config.LlamaCapacity</p>
+    <p>@Model.Config.StartDate</p>
+    <p>@Model.Config.Decimal</p>
+    <p>@Model.Config.Choice</p>
+    <p>@Model.Config.Option.Id : @Model.Config.Option.Description</p>
+
+    @foreach(var option in Model.Options)
+    {
+        <p>@option.Description : @option.Value</p>
+
+    }
 
 </div>

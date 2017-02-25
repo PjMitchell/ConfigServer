@@ -9,6 +9,10 @@
         public const string MatchesPattern = "Property: {0} does not match pattern({1})";
         public const string OptionNotFound = "Property: {0} does not match available option";
         public const string DuplicateKeys = "Property: {0} has duplicate keys in collection({1})";
+        public const string InvalidOptionType = "Configuration is not a collection of type:{0}";
+        public const string DuplicateOptionKeys = "Option: {0} has duplicate keys in collection({1})";
+
+
 
     }
 }

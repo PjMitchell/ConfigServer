@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ConfigServer.Server
+namespace ConfigServer.Core
 {
     /// <summary>
     /// Aids in the population of Configuration Collection
@@ -43,11 +43,8 @@ namespace ConfigServer.Server
         {
             if (collectionType == typeof(ICollection<TConfig>))
                 source = new List<TConfig>();
-            else
-            {
-                var constructor = collectionType.GetConstructor(Type.EmptyTypes);
-                source = (ICollection<TConfig>)constructor.Invoke(new object[0]);
-            }
+            else           
+                source = (ICollection<TConfig>)Activator.CreateInstance(collectionType);
         }
         /// <summary>
         /// Collection built by builder 

@@ -27,14 +27,14 @@ namespace ConfigServer.Server
 
         public async Task<ConfigInstance> GetConfigInstanceOrDefault(PathString path)
         {
-            var configSetIds = await configRepository.GetClientsAsync();
-            var configSetIdResult = configSetIds.TryMatchPath(c => c.ClientId, path);
-            if (!configSetIdResult.HasResult)
+            var clients = await configRepository.GetClientsAsync();
+            var clientResult = clients.TryMatchPath(c => c.ClientId, path);
+            if (!clientResult.HasResult)
                 return null;
-            var configModelResult = configModelCollection.TryMatchPath(s => s.Type.Name, configSetIdResult.RemainingPath);
+            var configModelResult = configModelCollection.TryMatchPath(s => s.Type.Name, clientResult.RemainingPath);
             if (!configModelResult.HasResult)
                 return null;
-            var config = await configurationService.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity { ClientId = configSetIdResult.QueryResult.ClientId });
+            var config = await configurationService.GetAsync(configModelResult.QueryResult.Type, new ConfigurationIdentity(clientResult.QueryResult.ClientId));
             return config;
         }
     }

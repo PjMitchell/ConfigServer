@@ -1,4 +1,6 @@
 ﻿using ConfigServer.InMemoryProvider;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,10 +22,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveAsync()
         {
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
-            };
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
@@ -36,10 +35,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveWithTypeAsync()
         {
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4"
-            };
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
             const int testValue = 23;
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
@@ -87,10 +83,7 @@ namespace ConfigServer.Core.Tests
         {
             var client = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4" };
 
-            var configId = new ConfigurationIdentity
-            {
-                ClientId = client.ClientId
-            };
+            var configId = new ConfigurationIdentity(client.ClientId);
             const int testValue = 23;
 
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
@@ -100,6 +93,50 @@ namespace ConfigServer.Core.Tests
             Assert.NotNull(result);
             Assert.Equal(client.ClientId, config.ClientId);
             Assert.Equal(0, result.Configuration.IntProperty);
+        }
+
+        [Fact]
+        public async Task CanSaveAndRetriveCollectionAsync()
+        {
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
+            const int testValue = 23;
+            const int testValue2 = 24;
+            var values = new[]
+            {
+                new SimpleConfig { IntProperty = testValue },
+                new SimpleConfig { IntProperty = testValue2 }
+            };
+            var config = new ConfigCollectionInstance<SimpleConfig>(values, configId.ClientId);
+
+
+            await target.UpdateConfigAsync(config);
+            var result = await target.GetCollectionAsync<SimpleConfig>(configId);
+            Assert.Equal(2, result.Count());
+            Assert.True(result.Any(a=> a.IntProperty == testValue));
+            Assert.True(result.Any(a => a.IntProperty == testValue2));
+
+
+        }
+
+        [Fact]
+        public async Task CanSaveAndRetriveCollectionWithTypeAsync()
+        {
+            var configId = new ConfigurationIdentity("3E37AC18-A00F-47A5-B84E-C79E0823F6D4");
+            const int testValue = 23;
+            const int testValue2 = 24;
+            var values = new[]
+            {
+                new SimpleConfig { IntProperty = testValue },
+                new SimpleConfig { IntProperty = testValue2 }
+            };
+            var config = new ConfigCollectionInstance<SimpleConfig>(values, configId.ClientId);
+
+
+            await target.UpdateConfigAsync(config);
+            var result = (IEnumerable<SimpleConfig>)(await target.GetCollectionAsync(typeof(SimpleConfig),configId));
+            Assert.Equal(2, result.Count());
+            Assert.True(result.Any(a => a.IntProperty == testValue));
+            Assert.True(result.Any(a => a.IntProperty == testValue2));
         }
     }
 }

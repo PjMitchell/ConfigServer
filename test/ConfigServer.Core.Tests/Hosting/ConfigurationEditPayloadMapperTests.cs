@@ -11,12 +11,14 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using ConfigServer.Core.Tests.TestModels;
+using Moq;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
     public class ConfigurationEditPayloadMapperTests
     {
         private IConfigurationEditPayloadMapper target;
+        private Mock<IConfigurationSetService> configurationSet;
         private ConfigurationSetModel definition;
         private SampleConfig sample;
         private JObject updatedObject;
@@ -27,8 +29,8 @@ namespace ConfigServer.Core.Tests.Hosting
 
         public ConfigurationEditPayloadMapperTests()
         {
-
-            target = new ConfigurationEditPayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider());
+            configurationSet = new Mock<IConfigurationSetService>();
+            target = new ConfigurationEditPayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();
             sample = new SampleConfig
             {
@@ -122,9 +124,9 @@ namespace ConfigServer.Core.Tests.Hosting
 
         #region MapToEdit
         [Fact]
-        public void UpdatesRegularValues()
+        public async Task UpdatesRegularValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId),updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId),updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Choice, result.Choice);
             Assert.Equal(updatedSample.IsLlamaFarmer, result.IsLlamaFarmer);
@@ -134,25 +136,25 @@ namespace ConfigServer.Core.Tests.Hosting
         }
 
         [Fact]
-        public void UpdatesOptionValues()
+        public async Task UpdatesOptionValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Option.Description, result.Option.Description);
         }
 
         [Fact]
-        public void UpdatesOptionsValues()
+        public async Task UpdatesOptionsValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.MoarOptions.Count, result.MoarOptions.Count);
             Assert.Equal(updatedSample.MoarOptions.Select(s=>s.Description), result.MoarOptions.Select(s => s.Description));
         }
         [Fact]
-        public void UpdatesListOfConfigsValues()
+        public async Task UpdatesListOfConfigsValues()
         {
-            var response = target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(1, result.ListOfConfigs.Count);
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);

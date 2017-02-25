@@ -13,6 +13,4 @@ namespace ConfigServer.Core
         /// <param name="type">Type not found in the config registry. </param>
         public InvalidConfigurationException(Type type) : base($"Could not find configuration of type {type.Name}") { }
     }
-
-    
 }

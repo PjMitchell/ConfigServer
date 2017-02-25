@@ -70,12 +70,19 @@ namespace ConfigServer.Server
         /// <param name="option">Option being Queried</param>
         /// <returns>Returns true if option has a key in the set, else false</returns>
         bool OptionKeyInSet(object option);
+
+        /// <summary>
+        /// Gets Key from Option
+        /// </summary>
+        /// <param name="option">Option being Queried</param>
+        /// <returns>Key from Option</returns>
+        string GetKeyFromOption(object option);
     }
 
     /// <summary>
     /// Collection of Options
     /// </summary>
-    public interface IOptionSet<TOption> : IReadOnlyDictionary<string, TOption>, IOptionSet
+    public interface IOptionSet<TOption> : IReadOnlyCollection<TOption>, IOptionSet
     {
 
         /// <summary>

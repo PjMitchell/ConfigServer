@@ -5,11 +5,11 @@ namespace ConfigServer.Core.Tests
 {
     public class ConfigurationStringPropertyBuilderTests
     {
-        private readonly ConfigurationModelBuilder<StringTestClass> target;
+        private readonly ConfigurationModelBuilder<StringTestClass, TestConfigSet> target;
 
         public ConfigurationStringPropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<StringTestClass>(new ConfigurationModel(nameof(StringTestClass), typeof(StringTestClass)));
+            target = new ConfigurationModelBuilder<StringTestClass, TestConfigSet>(new ConfigurationModel<StringTestClass, TestConfigSet>(nameof(TestConfigSet.String), c=> c.String, (set, c) => set.String = c));
         }
 
         [Fact]
@@ -74,6 +74,11 @@ namespace ConfigServer.Core.Tests
         private ConfigurationPrimitivePropertyModel GetStringProperty(ConfigurationModel def)
         {
             return (ConfigurationPrimitivePropertyModel)def.ConfigurationProperties[nameof(StringTestClass.StringProperty)];
+        }
+
+        private class TestConfigSet : ConfigurationSet<TestConfigSet>
+        {
+            public Config<StringTestClass> String { get; set; }
         }
 
         private class StringTestClass

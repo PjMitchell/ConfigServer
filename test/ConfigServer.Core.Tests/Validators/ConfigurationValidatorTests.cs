@@ -6,35 +6,40 @@ using Xunit;
 using System;
 using ConfigServer.Core.Tests.TestModels;
 using System.Collections.Generic;
+using Moq;
+using System.Threading.Tasks;
 
 namespace ConfigServer.Core.Tests.Validators
 {
     public class ConfigurationValidatorTests
     {
-        private readonly ConfigurationModelBuilder<SampleConfig> modelBuilder;
+        private readonly ConfigurationModelBuilder<SampleConfig, SampleConfigSet> modelBuilder;
         private readonly IConfigurationValidator target;
-
+        private readonly Mock<IConfigurationSetService> service;
+        private readonly ConfigurationIdentity configIdentity;
         public ConfigurationValidatorTests()
         {
-            modelBuilder = new ConfigurationModelBuilder<SampleConfig>(nameof(SampleConfig));
-            target = new ConfigurationValidator(new TestOptionSetFactory());
+            modelBuilder = new ConfigurationModelBuilder<SampleConfig, SampleConfigSet>(nameof(SampleConfigSet.SampleConfig), c=> c.SampleConfig);
+            configIdentity = new ConfigurationIdentity("TestId");
+            service = new Mock<IConfigurationSetService>();
+            target = new ConfigurationValidator(new TestOptionSetFactory(), service.Object);
         }
 
         [Fact]
-        public void FailsIfWrongType()
+        public async Task FailsIfWrongType()
         {
             var model = modelBuilder.Build();
-            var result = target.Validate(this, model);
+            var result = await target.Validate(this, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.InvalidConfigType, model.Type.FullName), result.Errors.Single());
         }
 
         [Fact]
-        public void FailsIfNull()
+        public async Task FailsIfNull()
         {
             var model = modelBuilder.Build();
-            var result = target.Validate(null, model);
+            var result = await target.Validate(null, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.InvalidConfigType, model.Type.FullName), result.Errors.Single());
@@ -42,7 +47,7 @@ namespace ConfigServer.Core.Tests.Validators
 
         #region Min Property Validation
         [Fact]
-        public void FailsIfLessthanMin_int()
+        public async Task FailsIfLessthanMin_int()
         {
             var min = 3;
             var sample = new SampleConfig
@@ -51,7 +56,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.LlamaCapacity).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.LessThanMin, nameof(SampleConfig.LlamaCapacity), min), result.Errors.Single());
@@ -59,7 +64,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMin_int()
+        public async Task SucceedsIfEqualToMin_int()
         {
             var min = 3;
             var sample = new SampleConfig
@@ -68,13 +73,13 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.LlamaCapacity).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
 
         [Fact]
-        public void FailsIfLessthanMin_decimal()
+        public async Task FailsIfLessthanMin_decimal()
         {
             var min = 3m;
             var sample = new SampleConfig
@@ -83,7 +88,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Decimal).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.LessThanMin, nameof(SampleConfig.Decimal), min), result.Errors.Single());
@@ -91,7 +96,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMin_decimal()
+        public async Task SucceedsIfEqualToMin_decimal()
         {
             var min = 3m;
             var sample = new SampleConfig
@@ -100,13 +105,13 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Decimal).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
 
         [Fact]
-        public void FailsIfLessthanMin_date()
+        public async Task FailsIfLessthanMin_date()
         {
             var min = new DateTime(2013, 10, 10);
             var sample = new SampleConfig
@@ -115,7 +120,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.StartDate).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.LessThanMin, nameof(SampleConfig.StartDate), min), result.Errors.Single());
@@ -123,7 +128,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMin_date()
+        public async Task SucceedsIfEqualToMin_date()
         {
             var min = new DateTime(2013, 10, 10);
             var sample = new SampleConfig
@@ -132,7 +137,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.StartDate).WithMinValue(min);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
@@ -140,7 +145,7 @@ namespace ConfigServer.Core.Tests.Validators
 
         #region Max Property Validation
         [Fact]
-        public void FailsIfGreaterThanMax_int()
+        public async Task FailsIfGreaterThanMax_int()
         {
             var max = 3;
             var sample = new SampleConfig
@@ -149,7 +154,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.LlamaCapacity).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.GreaterThanMax, nameof(SampleConfig.LlamaCapacity), max), result.Errors.Single());
@@ -157,7 +162,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMax_int()
+        public async Task SucceedsIfEqualToMax_int()
         {
             var max = 3;
             var sample = new SampleConfig
@@ -166,13 +171,13 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.LlamaCapacity).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
 
         [Fact]
-        public void FailsIfGreaterThanMax_decimal()
+        public async Task FailsIfGreaterThanMax_decimal()
         {
             var max = 3m;
             var sample = new SampleConfig
@@ -181,7 +186,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Decimal).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.GreaterThanMax, nameof(SampleConfig.Decimal), max), result.Errors.Single());
@@ -189,7 +194,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMax_decimal()
+        public async Task SucceedsIfEqualToMax_decimal()
         {
             var max = 3m;
             var sample = new SampleConfig
@@ -198,13 +203,13 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Decimal).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
 
         [Fact]
-        public void FailsIfGreaterThanMax_date()
+        public async Task FailsIfGreaterThanMax_date()
         {
             var max = new DateTime(2013, 10, 10);
             var sample = new SampleConfig
@@ -213,7 +218,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.StartDate).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.GreaterThanMax, nameof(SampleConfig.StartDate), max), result.Errors.Single());
@@ -221,7 +226,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToMax_date()
+        public async Task SucceedsIfEqualToMax_date()
         {
             var max = new DateTime(2013, 10, 10);
             var sample = new SampleConfig
@@ -230,14 +235,14 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.StartDate).WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
         #endregion
 
         [Fact]
-        public void FailsIfGreaterThanLength()
+        public async Task FailsIfGreaterThanLength()
         {
             var max = 3;
             var sample = new SampleConfig
@@ -246,7 +251,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Name).WithMaxLength(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.GreaterThanMaxLength, nameof(SampleConfig.Name), max), result.Errors.Single());
@@ -254,7 +259,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfEqualToLength()
+        public async Task SucceedsIfEqualToLength()
         {
             var max = 3;
             var sample = new SampleConfig
@@ -263,13 +268,13 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Name).WithMaxLength(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
 
         }
 
         [Fact]
-        public void FailsIfPatternDoesNotMatch()
+        public async Task FailsIfPatternDoesNotMatch()
         {
             var pattern = @"^\d{3}";
             var sample = new SampleConfig
@@ -278,7 +283,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Name).WithPattern(pattern);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.MatchesPattern, nameof(SampleConfig.Name), pattern), result.Errors.Single());
@@ -286,7 +291,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfPaternMatches()
+        public async Task SucceedsIfPaternMatches()
         {
             var pattern = @"^\d{3}";
             var sample = new SampleConfig
@@ -295,12 +300,12 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.Property(k => k.Name).WithPattern(pattern);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
         }
 
         [Fact]
-        public void FailsIfOptionNotAvailable()
+        public async Task FailsIfOptionNotAvailable()
         {
             var sample = new SampleConfig
             {
@@ -308,7 +313,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.PropertyWithOptions<SampleConfig,Option,OptionProvider>(p=> p.Option,provider => provider.GetOptions(),o=>o.Id, o=>o.Description);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.OptionNotFound, nameof(SampleConfig.Option)), result.Errors.Single());
@@ -316,7 +321,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfOptionFound()
+        public async Task SucceedsIfOptionFound()
         {
             var sample = new SampleConfig
             {
@@ -325,12 +330,12 @@ namespace ConfigServer.Core.Tests.Validators
             modelBuilder.PropertyWithOptions<SampleConfig, Option, OptionProvider>(p => p.Option, provider => provider.GetOptions(), o => o.Id, o => o.Description);
 
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
         }
 
         [Fact]
-        public void FailsIfOneOptionNotAvailable()
+        public async Task FailsIfOneOptionNotAvailable()
         {
             var sample = new SampleConfig
             {
@@ -342,7 +347,7 @@ namespace ConfigServer.Core.Tests.Validators
             };
             modelBuilder.PropertyWithMulitpleOptions<SampleConfig, Option, OptionProvider>(p => p.MoarOptions, provider => provider.GetOptions(), o => o.Id, o => o.Description);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.OptionNotFound, nameof(SampleConfig.MoarOptions)), result.Errors.Single());
@@ -350,7 +355,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfAllOptionsFound()
+        public async Task SucceedsIfAllOptionsFound()
         {
             var sample = new SampleConfig
             {
@@ -364,12 +369,12 @@ namespace ConfigServer.Core.Tests.Validators
             modelBuilder.PropertyWithMulitpleOptions<SampleConfig, Option, OptionProvider>(p => p.MoarOptions, provider => provider.GetOptions(), o => o.Id, o => o.Description);
 
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
         }
 
         [Fact]
-        public void FailsIfOneConfigsInCollectionIsInvalid()
+        public async Task FailsIfOneConfigsInCollectionIsInvalid()
         {
             var max = 4;
             var sample = new SampleConfig
@@ -384,7 +389,7 @@ namespace ConfigServer.Core.Tests.Validators
                 .Property(p => p.Value)
                 .WithMaxValue(max);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.GreaterThanMax, nameof(ListConfig.Value), max), result.Errors.Single());
@@ -392,7 +397,7 @@ namespace ConfigServer.Core.Tests.Validators
         }
 
         [Fact]
-        public void SucceedsIfAllConfigsInCollectionIsValid()
+        public async Task SucceedsIfAllConfigsInCollectionIsValid()
         {
             var sample = new SampleConfig
             {
@@ -406,12 +411,12 @@ namespace ConfigServer.Core.Tests.Validators
                 .Property(p => p.Value)
                 .WithMaxValue(4);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
         }
 
         [Fact]
-        public void FailsIfDuplicateKeysInCollection()
+        public async Task FailsIfDuplicateKeysInCollection()
         {
             var sample = new SampleConfig
             {
@@ -424,14 +429,14 @@ namespace ConfigServer.Core.Tests.Validators
             modelBuilder.Collection(p => p.ListOfConfigs)
                 .WithUniqueKey(p => p.Value);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Equal(1, result.Errors.Count());
             Assert.Equal(string.Format(ValidationStrings.DuplicateKeys, nameof(SampleConfig.ListOfConfigs), 2), result.Errors.Single());
         }
 
         [Fact]
-        public void SucceedsIfDuplicateKeysNotInCollection()
+        public async Task SucceedsIfDuplicateKeysNotInCollection()
         {
             var sample = new SampleConfig
             {
@@ -444,7 +449,7 @@ namespace ConfigServer.Core.Tests.Validators
             modelBuilder.Collection(p => p.ListOfConfigs)
                 .WithUniqueKey(p => p.Value);
             var model = modelBuilder.Build();
-            var result = target.Validate(sample, model);
+            var result = await target.Validate(sample, model, configIdentity);
             Assert.True(result.IsValid);
         }
     }

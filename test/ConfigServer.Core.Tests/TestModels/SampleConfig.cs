@@ -18,6 +18,7 @@ namespace ConfigServer.Sample.Models
         public Option Option { get; set; }
         public List<Option> MoarOptions { get; set; }
         public List<ListConfig> ListOfConfigs { get; set; }
+        public ExternalOption ExternalOption { get; set; }        
     }
 
 
@@ -29,6 +30,12 @@ namespace ConfigServer.Sample.Models
     }
 
     public class Option
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class ExternalOption
     {
         public int Id { get; set; }
         public string Description { get; set; }

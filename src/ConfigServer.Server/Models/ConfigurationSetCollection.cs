@@ -56,6 +56,34 @@ namespace ConfigServer.Server
         }
 
         /// <summary>
+        /// Gets definition for configuration set type
+        /// </summary>
+        /// <param name="type">configuration set type to be retrieved</param>
+        /// <returns>ConfigurationModel for selected configuration set type</returns>
+        public ConfigurationSetModel GetConfigSetDefinition(Type type)
+        {
+            return collection[type];
+        }
+
+        /// <summary>
+        /// Tries to get definition for configuration set type
+        /// </summary>
+        /// <param name="type">configuration set type to be retrieved</param>
+        /// <param name="result">ConfigurationModel for selected configuration set type</param>
+        /// <returns>True if found else false</returns>
+        public bool TryGetConfigSetDefinition(Type type, out ConfigurationSetModel result) => collection.TryGetValue(type, out result);
+
+        /// <summary>
+        /// Gets ConfigurationSet for config type
+        /// </summary>
+        /// <param name="type">configuration type to be queried</param>
+        /// <returns>ConfigurationSetModel for Configuration type</returns>
+        public ConfigurationSetModel GetConfigSetForConfig(Type type)
+        {
+            return collection.Values.Single(s=> s.ContainsConfig(type));
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the ConfigurationSetModels
         /// </summary>
         /// <returns>Enumerator for the ConfigurationSetCollection</returns>

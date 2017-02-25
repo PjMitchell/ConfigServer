@@ -14,6 +14,10 @@ namespace ConfigServer.Sample.mvcApp2.Models
         public bool IsLlamaFarmer { get; set; }
         public Choice Choice { get; set;}
         public Option Option { get; set; }
+        public List<Option> MoarOptions { get; set; }
+        public List<ListConfig> ListOfConfigs { get; set; }
+        public OptionFromConfigSet OptionFromConfigSet { get; set; }
+        public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
     }
 
 
@@ -29,5 +33,16 @@ namespace ConfigServer.Sample.mvcApp2.Models
         public int Id { get; set; }
         public string Description { get; set; }
     }
+    public class OptionFromConfigSet
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public double Value { get; set; }
+    }
 
+    public class ListConfig
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+    }
 }
