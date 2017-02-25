@@ -68,7 +68,7 @@ namespace ConfigServer.Server
                 input = await context.GetObjectFromJsonBodyOrDefaultAsync(ReflectionHelpers.BuildGenericType(typeof(IEnumerable<>), configInstance.ConfigType));
             else
                 input = await context.GetObjectFromJsonBodyOrDefaultAsync(configInstance.ConfigType);
-            var validationResult = confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
+            var validationResult = await confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {
                 configInstance.SetConfiguration(input);
@@ -87,7 +87,7 @@ namespace ConfigServer.Server
             var input = await context.GetJObjectFromJsonBodyAsync();
             var mappedConfigs = configurationSetUploadMapper.MapConfigurationSetUpload(input, configSetModel).ToArray();
             var identity = new ConfigurationIdentity(clientid);
-            var validationResult = ValidateConfigs(mappedConfigs, configSetModel, identity);
+            var validationResult = await ValidateConfigs(mappedConfigs, configSetModel, identity);
             if (validationResult.IsValid)
             {
                 foreach(var config in mappedConfigs)
@@ -105,10 +105,11 @@ namespace ConfigServer.Server
             }
         }
 
-        private ValidationResult ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, ConfigurationSetModel configSetModel, ConfigurationIdentity configIdentity)
+        private async Task<ValidationResult> ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, ConfigurationSetModel configSetModel, ConfigurationIdentity configIdentity)
         {
-            var validationResults = source.Select(kvp => confgiurationValidator.Validate(kvp.Value, configSetModel.Configs.Single(s => s.Name == kvp.Key), configIdentity));
-            return new ValidationResult(validationResults);
+            var validationResults = source.Select(async kvp =>await  confgiurationValidator.Validate(kvp.Value, configSetModel.Configs.Single(s => s.Name == kvp.Key), configIdentity)).ToArray();
+            await Task.WhenAll(validationResults);
+            return new ValidationResult(validationResults.Select(s=> s.Result));
         }
 
         private ConfigurationSetModel GetConfigurationSetForModel(ConfigInstance configInstance)

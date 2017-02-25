@@ -2,34 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ConfigServer.Server
 {
     internal interface IOptionSetFactory
     {
+
         /// <summary>
         /// Builds OptionSet for Definition
         /// </summary>
         /// <param name="definition">Definition used to build optionSet</param>
         /// <param name="configIdentity">Identity of Configuration instance being loaded</param>
-        /// <returns>OptionSet </returns>
-        IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity configIdentity);
-
-        /// <summary>
-        /// Builds OptionSet for Definition
-        /// </summary>
-        /// <param name="definition">Definition used to build optionSet</param>
         /// <param name="configurationSets">Configurations sets used to build optionSet</param>
         /// <returns>OptionSet </returns>
-        IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets);
-
-        /// <summary>
-        /// Builds OptionSet for Definition
-        /// </summary>
-        /// <param name="definition">Definition used to build optionSet</param>
-        /// <param name="configurationSet">Configuration set used to build optionSet</param>
-        /// <returns>OptionSet </returns>
-        IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet);
+        IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets);
 
         /// <summary>
         /// Gets Key from Object
@@ -37,7 +24,7 @@ namespace ConfigServer.Server
         /// <param name="value">object value</param>
         /// <param name="definition">Definition for option</param>
         /// <returns>Key for value</returns>
-        string GetKeyFromObject(object value, ConfigurationPropertyWithConfigSetOptionsModelDefinition definition);
+        string GetKeyFromObject(object value, IOptionPropertyDefinition definition);
     }
 
     internal class OptionSetFactory : IOptionSetFactory
@@ -51,24 +38,34 @@ namespace ConfigServer.Server
             this.registry = registry;
         }
 
-        public IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity configIdentity)
+        public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
-            return definition.BuildOptionSet(serviceProvider, configIdentity);
+            if (definition is ConfigurationPropertyWithConfigSetOptionsModelDefinition configSetOptionModelDefinition)
+                return Build(configSetOptionModelDefinition, configurationSets);
+            if (definition is ConfigurationPropertyWithOptionsModelDefinition configOptionModelDefinition)
+                return Build(configOptionModelDefinition, configIdentity);
+            throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
         }
 
-        public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
+        public string GetKeyFromObject(object value, IOptionPropertyDefinition definition)
+        {
+            if (definition is ConfigurationPropertyWithOptionsModelDefinition optionDefinition)
+                return optionDefinition.GetKeyFromObject(value);
+
+            var dependency = definition.GetDependencies().Single();
+            var optionModel = (ConfigurationOptionModel)registry.GetConfigSetDefinition(dependency.ConfigurationSet).Get(definition.PropertyType);
+            return optionModel.GetKeyFromObject(value);
+        }
+
+
+        private IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity configIdentity) => definition.BuildOptionSet(serviceProvider, configIdentity);
+
+        private IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
         {
             var configurationSet = configurationSets.Single(r => r.GetType() == definition.ConfigurationSetType);
             return Build(definition, configurationSet);
         }
 
-        public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
-
-        public string GetKeyFromObject(object value, ConfigurationPropertyWithConfigSetOptionsModelDefinition definition)
-        {
-            var dependency = definition.GetDependencies().Single();
-            var optionDefinition = (ConfigurationOptionModel)registry.GetConfigSetDefinition(dependency.ConfigurationSet).Get(definition.PropertyType);
-            return optionDefinition.GetKeyFromObject(value);
-        }
+        private IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
     }
 }

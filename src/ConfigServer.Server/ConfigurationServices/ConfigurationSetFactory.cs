@@ -86,48 +86,34 @@ namespace ConfigServer.Server
 
             switch (model)
             {
-                case ConfigurationPropertyWithMultipleOptionsModelDefinition optionsProperty:
-                    UpdateOptions(source, optionsProperty, configIdentity);
-                    break;
-                case ConfigurationPropertyWithOptionsModelDefinition optionProperty:
-                    UpdateOptions(source, optionProperty, configIdentity);
-                    break;
                 case ConfigurationCollectionPropertyDefinition collectionProperty:
                     UpdateOptions(source, collectionProperty, configurationSets, configIdentity);
                     break;
-                case ConfigurationPropertyWithConfigSetOptionsModelDefinition collectionProperty:
-                    UpdateOptions(source, collectionProperty, configurationSets, configIdentity);
+                case IMultipleOptionPropertyDefinition optionFromSetProperty:
+                    UpdateOptions(source, optionFromSetProperty, configurationSets, configIdentity);
+                    break;
+                case IOptionPropertyDefinition optionProperty:
+                    UpdateOptions(source, optionProperty, configurationSets, configIdentity);
                     break;
                 default:
                     break;
             }
         }
 
-        private void UpdateOptions(object source, ConfigurationPropertyWithConfigSetOptionsModelDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        private void UpdateOptions(object source, IOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
 
             var orignal = model.GetPropertyValue(source);
             if (orignal == null)
                 return;
-            var optionSet = optionSetFactory.Build(model, configurationSets);
+            var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
             optionSet.TryGetValue(orignal, out var actualValue);
             model.SetPropertyValue(source, actualValue);
         }
 
-        private void UpdateOptions(object source, ConfigurationPropertyWithOptionsModelDefinition model, ConfigurationIdentity configIdentity)
+        private void UpdateOptions(object source, IMultipleOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
-
-            var orignal = model.GetPropertyValue(source);
-            if (orignal == null)
-                return;
-            var optionSet = optionSetFactory.Build(model, configIdentity);
-            optionSet.TryGetValue(orignal, out var actualValue);
-            model.SetPropertyValue(source, actualValue);
-        }
-
-        private void UpdateOptions(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition model, ConfigurationIdentity configIdentity)
-        {
-            var optionSet = optionSetFactory.Build(model, configIdentity);
+            var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
             var collectionBuilder = model.GetCollectionBuilder();
             var items = model.GetPropertyValue(source) as IEnumerable;
             foreach (var item in items ?? Enumerable.Empty<object>())
@@ -135,7 +121,6 @@ namespace ConfigServer.Server
                 if (optionSet.TryGetValue(item, out var actualValue))
                     collectionBuilder.Add(actualValue);
             }
-
             model.SetPropertyValue(source, collectionBuilder.Collection);
         }
 

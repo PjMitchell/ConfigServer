@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal abstract class ConfigurationPropertyWithOptionsModelDefinition : ConfigurationPropertyModelBase
+    internal abstract class ConfigurationPropertyWithOptionsModelDefinition : ConfigurationPropertyModelBase, IOptionPropertyDefinition
     {
         protected ConfigurationPropertyWithOptionsModelDefinition(string propertyName, Type propertyType, Type propertyParentType, bool isMultiSelector) : base(propertyName, propertyType, propertyParentType)
         {

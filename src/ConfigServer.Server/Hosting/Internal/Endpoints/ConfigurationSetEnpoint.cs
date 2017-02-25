@@ -88,7 +88,7 @@ namespace ConfigServer.Server
                 var input = await context.GetJObjectFromJsonBodyAsync();
                 newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
             }
-            var validationResult = validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
+            var validationResult = await validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
             {
                 await configRepository.UpdateConfigAsync(newConfigInstance);

@@ -4,22 +4,22 @@ namespace ConfigServer.Server
 {
     internal interface IPropertyTypeProvider
     {
-        string GetPropertyType(ConfigurationPropertyModelBase propertyModel);
+        string GetPropertyType(IPropertyDefinition propertyModel);
     }
 
     internal class PropertyTypeProvider : IPropertyTypeProvider
     {
-        public string GetPropertyType(ConfigurationPropertyModelBase propertyModel)
+        public string GetPropertyType(IPropertyDefinition propertyModel)
         {
             switch (propertyModel)
             {
                 case ConfigurationPrimitivePropertyModel input:
                     return GetPropertyType(input);
-                case ConfigurationPropertyWithOptionsModelDefinition input:
-                    return GetPropertyType(input);
+                case IMultipleOptionPropertyDefinition input:
+                    return ConfigurationPropertyType.MultipleOption;
+                case IOptionPropertyDefinition input:
+                    return ConfigurationPropertyType.Option;
                 case ConfigurationCollectionPropertyDefinition input:
-                    return GetPropertyType(input);
-                case ConfigurationPropertyWithConfigSetOptionsModelDefinition input:
                     return GetPropertyType(input);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {propertyModel.GetType().Name}");
@@ -43,20 +43,10 @@ namespace ConfigServer.Server
             return ConfigurationPropertyType.Unacceptable;
         }
 
-        private string GetPropertyType(ConfigurationPropertyWithOptionsModelDefinition definition)
-        {
-            var multipleDefinition = definition as ConfigurationPropertyWithMultipleOptionsModelDefinition;
-            if (multipleDefinition != null)
-                return ConfigurationPropertyType.MultipleOption;
-            return ConfigurationPropertyType.Option;
-        }
-
         private string GetPropertyType(ConfigurationCollectionPropertyDefinition definition)
         {
             return ConfigurationPropertyType.Collection;
         }
-
-        private string GetPropertyType(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition) => ConfigurationPropertyType.Option;
 
         private static bool IsIntergerType(Type type)
         {

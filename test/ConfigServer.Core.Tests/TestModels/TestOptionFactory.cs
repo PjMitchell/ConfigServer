@@ -21,7 +21,16 @@ namespace ConfigServer.Core.Tests.TestModels
 
         public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
 
-        public string GetKeyFromObject(object value, ConfigurationPropertyWithConfigSetOptionsModelDefinition definition)
+        public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
+        {
+            if (definition is ConfigurationPropertyWithConfigSetOptionsModelDefinition configSetOptionModelDefinition)
+                return Build(configSetOptionModelDefinition, configurationSets);
+            if (definition is ConfigurationPropertyWithOptionsModelDefinition configOptionModelDefinition)
+                return Build(configOptionModelDefinition, configIdentity);
+            throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
+        }
+
+        public string GetKeyFromObject(object value, IOptionPropertyDefinition definition)
         {
             var dynamic = (dynamic)value;
             return dynamic.Id.ToString();

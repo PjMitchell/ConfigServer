@@ -57,7 +57,7 @@ namespace ConfigServer.Server
         }
     }
 
-    internal abstract class ConfigurationPropertyWithMultipleOptionsModelDefinition : ConfigurationPropertyWithOptionsModelDefinition
+    internal abstract class ConfigurationPropertyWithMultipleOptionsModelDefinition : ConfigurationPropertyWithOptionsModelDefinition, IMultipleOptionPropertyDefinition
     {
         protected ConfigurationPropertyWithMultipleOptionsModelDefinition(string propertyName, Type propertyType, Type propertyParentType) : base(propertyName, propertyType, propertyParentType, true)
         {

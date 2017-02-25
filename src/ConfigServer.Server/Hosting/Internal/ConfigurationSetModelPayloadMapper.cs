@@ -27,60 +27,57 @@ namespace ConfigServer.Server
 
         public async Task<ConfigurationSetModelPayload> Map(ConfigurationSetModel model, ConfigurationIdentity configIdentity)
         {
+            var configurationSets = await GetRequiredConfiguration(model, configIdentity);
             return new ConfigurationSetModelPayload
             {
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
-                Config = await BuildConfigs(model.Configs, configIdentity)
+                Config = BuildConfigs(model.Configs, configIdentity, configurationSets)
             };
         }
 
-
-
-        private async Task<ConfigurationModelPayload> Map(ConfigurationModel model, ConfigurationIdentity configIdentity)
+        private ConfigurationModelPayload Map(ConfigurationModel model, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationModelPayload
             {
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
                 IsOption = model is ConfigurationOptionModel,
-                Property = await BuildProperties(model.ConfigurationProperties,configIdentity)
+                Property = BuildProperties(model.ConfigurationProperties,configIdentity,requiredConfigurationSets)
             };
         }
 
-        private async Task<Dictionary<string, ConfigurationModelPayload>> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity)
+        private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var result = new Dictionary<string, ConfigurationModelPayload>();
             foreach (var config in configs)
             {
-                result.Add(config.Type.Name.ToLowerCamelCase(), await Map(config, configIdentity));
+                result.Add(config.Type.Name.ToLowerCamelCase(), Map(config, configIdentity, requiredConfigurationSets));
             }
             return result;
         }
 
-        private async Task<Dictionary<string, ConfigurationPropertyPayload>> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity)
+        private Dictionary<string, ConfigurationPropertyPayload> BuildProperties(Dictionary<string, ConfigurationPropertyModelBase> arg, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var result = new Dictionary<string, ConfigurationPropertyPayload>();
             foreach (var config in arg)
             {
-                result.Add(config.Key.ToLowerCamelCase(), await BuildProperty(config.Value, configIdentity));
+                result.Add(config.Key.ToLowerCamelCase(), BuildProperty(config.Value, configIdentity, requiredConfigurationSets));
             }
             return result;
         }
 
-        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyModelBase value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             switch (value)
             {
                 case ConfigurationPrimitivePropertyModel input:
                     return BuildProperty(input);
-                case ConfigurationPropertyWithOptionsModelDefinition input:
-                    return BuildProperty(input, configIdentity);
-                case ConfigurationPropertyWithConfigSetOptionsModelDefinition input:
-                    return await BuildProperty(input, configIdentity);
+                case IOptionPropertyDefinition input:
+                    return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 case ConfigurationCollectionPropertyDefinition input:
-                    return await BuildProperty(input,configIdentity);
+                    return BuildProperty(input, configIdentity,requiredConfigurationSets);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
             }
@@ -101,9 +98,9 @@ namespace ConfigServer.Server
             };
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationPropertyWithOptionsModelDefinition value, ConfigurationIdentity configIdentity)
+        private ConfigurationPropertyPayload BuildProperty(IOptionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
-            var optionSet = optionSetFactory.Build(value, configIdentity);
+            var optionSet = optionSetFactory.Build(value, configIdentity, requiredConfigurationSets);
             return new ConfigurationPropertyPayload
             {
                 PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
@@ -114,21 +111,7 @@ namespace ConfigServer.Server
             };
         }
 
-        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationPropertyWithConfigSetOptionsModelDefinition value, ConfigurationIdentity configIdentity)
-        {
-            var configurationSet = await configurationSetService.GetConfigurationSet(value.ConfigurationSetType, configIdentity);
-            var optionSet = optionSetFactory.Build(value, configurationSet);
-            return new ConfigurationPropertyPayload
-            {
-                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
-                PropertyDisplayName = value.PropertyDisplayName,
-                PropertyType = propertyTypeProvider.GetPropertyType(value),
-                PropertyDescription = value.PropertyDescription,
-                Options = optionSet.OptionSelections.ToDictionary(k => k.Key, v => v.DisplayValue)
-            };
-        }
-
-        private async Task<ConfigurationPropertyPayload> BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationPropertyPayload
             {
@@ -137,7 +120,7 @@ namespace ConfigServer.Server
                 PropertyType = ConfigurationPropertyType.Collection,
                 PropertyDescription = value.PropertyDescription,
                 KeyPropertyName = value?.KeyPropertyName?.ToLowerCamelCase(),
-                ChildProperty = await BuildProperties(value.ConfigurationProperties,configIdentity)
+                ChildProperty = BuildProperties(value.ConfigurationProperties,configIdentity,requiredConfigurationSets)
             };
         }
 
@@ -153,6 +136,22 @@ namespace ConfigServer.Server
             {
                 yield return new KeyValuePair<int, string>((int)obj, obj.ToString());
             }
+        }
+
+        private async Task<IEnumerable<ConfigurationSet>> GetRequiredConfiguration(ConfigurationSetModel model, ConfigurationIdentity identity)
+        {
+            var requiredConfigurationSetTypes = model.GetDependencies()
+                .Select(s => s.ConfigurationSet)
+                .Distinct()
+                .ToArray();
+            var configurationSet = new ConfigurationSet[requiredConfigurationSetTypes.Length];
+            var i = 0;
+            foreach (var type in requiredConfigurationSetTypes)
+            {
+                configurationSet[i] = await configurationSetService.GetConfigurationSet(type, identity);
+                i++;
+            }
+            return configurationSet;
         }
     }
 }

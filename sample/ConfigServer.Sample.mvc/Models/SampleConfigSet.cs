@@ -29,6 +29,8 @@ namespace ConfigServer.Sample.mvc.Models
             configBuilder.Collection(p=> p.ListOfConfigs);
             configBuilder.PropertyWithConfigurationSetOptions(p => p.OptionFromConfigSet, (SampleConfigSet set) => set.Options)
                 .WithDescription("Options from the option set");
+            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet set) => set.Options)
+                .WithDescription("Multiple Options from the option set");
             var optionBuilder = modelBuilder.Options(s => s.Options, o => o.Id, o => o.Description, "Options", "Options for sample config");
         }
     }

@@ -65,7 +65,8 @@ namespace ConfigServer.Gui
                     new ListConfig { Name = "Value One", Value = 1 },
                     new ListConfig { Name = "Value Two", Value = 2 }
                 },
-                OptionFromConfigSet = options1[1]
+                OptionFromConfigSet = options1[1],
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options1[0]}
             };
             var config2 = new SampleConfig
             {
@@ -77,7 +78,8 @@ namespace ConfigServer.Gui
                 IsLlamaFarmer = true,
                 Option = optionProvider.GetOptions().First(),
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
-                OptionFromConfigSet = options2[0]
+                OptionFromConfigSet = options2[0],
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options2[0], options2[1] }
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();

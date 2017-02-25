@@ -18,6 +18,15 @@
             <li>@option.Description</li>
         </ul>
     }
+
+    <p>@Model.Config.OptionFromConfigSet.Id : @Model.Config.OptionFromConfigSet.Description</p>
+    <h3>External Options</h3>
+    @foreach (var option in Model.Config.MoarOptionFromConfigSet)
+    {
+        <ul>
+            <li>@option.Description</li>
+        </ul>
+    }
     <h3>List</h3>
     @foreach (var config in Model.Config.ListOfConfigs)
     {

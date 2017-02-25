@@ -9,7 +9,7 @@ namespace ConfigServer.Server
     /// <summary>
     /// Represents the model of the configuration property that contains the information required to build, configure and validate the configuration property.
     /// </summary>
-    public abstract class ConfigurationPropertyModelBase
+    public abstract class ConfigurationPropertyModelBase : IPropertyDefinition
     {
         /// <summary>
         /// Initialize ConfigurationPropertyModel with property name

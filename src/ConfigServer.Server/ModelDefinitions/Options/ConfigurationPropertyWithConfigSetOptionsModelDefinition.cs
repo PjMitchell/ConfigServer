@@ -26,7 +26,7 @@ namespace ConfigServer.Server
 
     }
 
-    internal abstract class ConfigurationPropertyWithConfigSetOptionsModelDefinition : ConfigurationPropertyModelBase
+    internal abstract class ConfigurationPropertyWithConfigSetOptionsModelDefinition : ConfigurationPropertyModelBase, IOptionPropertyDefinition
     {
         public ConfigurationPropertyWithConfigSetOptionsModelDefinition(string propertyName,Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, optionType, propertyParentType)
         {

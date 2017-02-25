@@ -19,14 +19,16 @@ namespace ConfigServer.Sample.mvc.Models
         public List<Option> MoarOptions { get; set; }
         public List<ListConfig> ListOfConfigs { get; set; }
         public OptionFromConfigSet OptionFromConfigSet { get; set; }
+        public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
+
     }
 
 
     public enum Choice
     {
-        OptionOne =0,
-        OptionTwo =1,
-        OptionThree =3
+        OptionOne = 0,
+        OptionTwo = 1,
+        OptionThree = 3
     }
 
     public class Option

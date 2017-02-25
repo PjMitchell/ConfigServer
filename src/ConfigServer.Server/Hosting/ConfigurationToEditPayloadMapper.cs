@@ -87,9 +87,9 @@ namespace ConfigServer.Server
             switch (propertyType)
             {
                 case ConfigurationPropertyType.Option:
-                    return GetOptionPropertyValue(source, propertyModel);
+                    return GetOptionPropertyValue(source, (IOptionPropertyDefinition)propertyModel);
                 case ConfigurationPropertyType.MultipleOption:
-                    return GetPropertyValue(source, (ConfigurationPropertyWithMultipleOptionsModelDefinition)propertyModel);
+                    return GetPropertyValue(source, (IMultipleOptionPropertyDefinition)propertyModel);
                 case ConfigurationPropertyType.Collection:
                     return GetPropertyValue(source, (ConfigurationCollectionPropertyDefinition)propertyModel);
                 default:
@@ -98,26 +98,23 @@ namespace ConfigServer.Server
             }
         }
 
-        private object GetOptionPropertyValue(object source, ConfigurationPropertyModelBase propertyModel)
+        private object GetOptionPropertyValue(object source, IOptionPropertyDefinition propertyModel)
         {
             var value = propertyModel.GetPropertyValue(source);
             if (value == null)
                 return null;
-            if(propertyModel is ConfigurationPropertyWithOptionsModelDefinition optionModel)
-                return optionModel.GetKeyFromObject(value);
-            return optionSetFactory.GetKeyFromObject(value, (ConfigurationPropertyWithConfigSetOptionsModelDefinition)propertyModel);
+            return optionSetFactory.GetKeyFromObject(value, propertyModel);
         }
 
-        private object GetPropertyValue(object source, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel)
+        private object GetPropertyValue(object source, IMultipleOptionPropertyDefinition propertyModel)
         {
             var collection = propertyModel.GetPropertyValue(source) as IEnumerable ?? new List<object>();
             var result = new List<string>();
             foreach(var item in collection)
             {
-                var itemValue = propertyModel.GetKeyFromObject(item);
+                var itemValue = optionSetFactory.GetKeyFromObject(item, propertyModel);
                 result.Add(itemValue);
             }
-
             return result;
         }
 
@@ -173,9 +170,9 @@ namespace ConfigServer.Server
             switch (propertyType)
             {
                 case ConfigurationPropertyType.Option:
-                    return GetOptionConfigPropertyValueFromInput(source, propertyModel, configIdentity, requiredConfigurationSets);
+                    return GetOptionConfigPropertyValueFromInput(source, (IOptionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.MultipleOption:
-                    return GetConfigPropertyValueFromInput(source, (ConfigurationPropertyWithMultipleOptionsModelDefinition)propertyModel, configIdentity);
+                    return GetConfigPropertyValueFromInput(source, (IMultipleOptionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Collection:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 default:
@@ -190,23 +187,19 @@ namespace ConfigServer.Server
             return result;
         }
 
-        private object GetOptionConfigPropertyValueFromInput(JObject source, ConfigurationPropertyModelBase propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        private object GetOptionConfigPropertyValueFromInput(JObject source, IOptionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var key = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).ToObject<string>();
-            IOptionSet optionSet;
-            if(propertyModel is ConfigurationPropertyWithOptionsModelDefinition optionProperty)
-                optionSet = optionSetFactory.Build(optionProperty, configIdentity);
-            else
-                optionSet = optionSetFactory.Build((ConfigurationPropertyWithConfigSetOptionsModelDefinition)propertyModel, requiredConfigurationSets);
+            IOptionSet optionSet = optionSetFactory.Build(propertyModel, configIdentity, requiredConfigurationSets);
             object option = null;
             optionSet.TryGetValue(key, out option);
             return option;
         }
 
-        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyWithMultipleOptionsModelDefinition propertyModel, ConfigurationIdentity configIdentity)
+        private object GetConfigPropertyValueFromInput(JObject source, IMultipleOptionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
-            var optionSet = optionSetFactory.Build(propertyModel, configIdentity);
+            var optionSet = optionSetFactory.Build(propertyModel, configIdentity, requiredConfigurationSets);
             foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).Select(s => s.ToObject<string>()))
             {
                 object option = null;
