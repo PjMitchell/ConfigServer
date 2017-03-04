@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ConfigServer.Sample.mvc.Models
 {
     public class SampleConfig
     {
         public int LlamaCapacity { get; set; }
+        public int? SpareLlamaCapacity { get; set; }
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public decimal Decimal { get; set; }

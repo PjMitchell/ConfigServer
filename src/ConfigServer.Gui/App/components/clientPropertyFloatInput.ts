@@ -4,7 +4,9 @@ import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefi
 
 @Component({
     selector: 'float-input',
-    template: `<input [(ngModel)]="csConfig[csDefinition.propertyName]" step=\"0.00001\" type="number" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}">`
+    template: `
+    <input   [(ngModel)]="csConfig[csDefinition.propertyName]" step="0.00001" type="number" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
+`
 })
 export class ConfigurationPropertyFloatInputComponent {
     @Input()

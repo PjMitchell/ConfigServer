@@ -26,7 +26,10 @@ namespace ConfigServer.Sample.mvc.Models
                 .WithDescription("Is the capacity of llama")
                 .WithMinValue(0)
                 .WithMaxValue(50);
-
+            configBuilder.Property(p => p.SpareLlamaCapacity)
+                .WithDescription("Some spare capacity for LLamas")
+                .WithMaxValue(50);
+            
             configBuilder.Property(p => p.StartDate)
                 .WithMinValue(new DateTime(2013, 10, 10));
 

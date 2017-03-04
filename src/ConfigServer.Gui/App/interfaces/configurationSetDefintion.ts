@@ -29,6 +29,7 @@ export interface ConfigurationPropertyValidationDefinition {
     max: string;
     maxLength?: number;
     pattern: string;
+    isRequired: boolean;
 }
 
 export interface Dictionary<T> {

@@ -9,6 +9,7 @@ namespace ConfigServer.Sample.Models
     public class SampleConfig
     {
         public int LlamaCapacity { get; set; }
+        public int? SpareLlamaCapacity { get; set; }
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public decimal Decimal { get; set; }

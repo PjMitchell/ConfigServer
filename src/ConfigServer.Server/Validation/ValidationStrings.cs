@@ -1,18 +1,18 @@
-﻿namespace ConfigServer.Server.Validation
+﻿using System;
+
+namespace ConfigServer.Server.Validation
 {
     internal class ValidationStrings
     {
-        public const string InvalidConfigType = "Configuration is not of type:{0}";
-        public const string LessThanMin = "Property: {0} is less than min({1})";
-        public const string GreaterThanMax = "Property: {0} is greater than max({1})";
-        public const string GreaterThanMaxLength = "Property: {0} is greater than max length({1})";
-        public const string MatchesPattern = "Property: {0} does not match pattern({1})";
-        public const string OptionNotFound = "Property: {0} does not match available option";
-        public const string DuplicateKeys = "Property: {0} has duplicate keys in collection({1})";
-        public const string InvalidOptionType = "Configuration is not a collection of type:{0}";
-        public const string DuplicateOptionKeys = "Option: {0} has duplicate keys in collection({1})";
-
-
-
+        public static string InvalidConfigType(Type type) => $"Configuration is not of type:{type.FullName}";
+        public static string LessThanMin(string property, object min) => $"Property: {property} is less than min({min})";
+        public static string GreaterThanMax(string property, object max) => $"Property: {property} is greater than max({max})";
+        public static string GreaterThanMaxLength(string property, object maxLength)=> $"Property: {property} is greater than max length({maxLength})";
+        public static string MatchesPattern(string property, object pattern) => $"Property: {property} does not match pattern({pattern})";
+        public static string OptionNotFound(string property) => $"Property: {property} does not match available option";
+        public static string DuplicateKeys(string property, object key) => $"Property: {property} has duplicate keys in collection({key})";
+        public static string InvalidOptionType(Type type) => $"Configuration is not a collection of type:{type.FullName}";
+        public static string DuplicateOptionKeys(string property, object key) => $"Option: {property} has duplicate keys in collection({key})";
+        public static string RequiredPropertyNotFound(string property) => $"Property: {property} is required";
     }
 }

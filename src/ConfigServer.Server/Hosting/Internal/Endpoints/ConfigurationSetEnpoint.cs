@@ -78,15 +78,14 @@ namespace ConfigServer.Server
         {
             var model = GetConfigurationSetForModel(configInstance);
             ConfigInstance newConfigInstance;
-            if (configInstance.IsCollection)
+            try
             {
-                var input = await context.GetJArrayFromJsonBodyAsync();
-                newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+                newConfigInstance = await GetConfigInstance(context, configInstance, model);
             }
-            else
+            catch(ConfigModelParsingException ex)
             {
-                var input = await context.GetJObjectFromJsonBodyAsync();
-                newConfigInstance = await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+                await responseFactory.BuildInvalidRequestResponse(context,new []{ ex.Message});
+                return;
             }
             var validationResult = await validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
             if (validationResult.IsValid)
@@ -98,6 +97,20 @@ namespace ConfigServer.Server
             else
             {
                 await responseFactory.BuildInvalidRequestResponse(context, validationResult.Errors);
+            }
+        }
+
+        private async Task<ConfigInstance> GetConfigInstance(HttpContext context, ConfigInstance configInstance, ConfigurationSetModel model)
+        {
+            if (configInstance.IsCollection)
+            {
+                var input = await context.GetJArrayFromJsonBodyAsync();
+                return await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+            }
+            else
+            {
+                var input = await context.GetJObjectFromJsonBodyAsync();
+                return await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
             }
         }
 
