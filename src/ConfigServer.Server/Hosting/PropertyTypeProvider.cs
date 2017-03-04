@@ -36,7 +36,7 @@ namespace ConfigServer.Server
                 return ConfigurationPropertyType.String;
             if (definition.PropertyType == typeof(bool))
                 return ConfigurationPropertyType.Bool;
-            if (definition.PropertyType == typeof(DateTime))
+            if (definition.PropertyType == typeof(DateTime) || definition.PropertyType == typeof(DateTime?))
                 return ConfigurationPropertyType.DateTime;
             if (typeof(Enum).IsAssignableFrom(definition.PropertyType))
                 return ConfigurationPropertyType.Enum;
@@ -57,14 +57,25 @@ namespace ConfigServer.Server
                 || type == typeof(ushort)
                 || type == typeof(uint)
                 || type == typeof(long)
-                || type == typeof(ulong);
+                || type == typeof(ulong)
+                || type == typeof(int?)
+                || type == typeof(sbyte?)
+                || type == typeof(byte?)
+                || type == typeof(short?)
+                || type == typeof(ushort?)
+                || type == typeof(uint?)
+                || type == typeof(long?)
+                || type == typeof(ulong?);
         }
 
         private static bool IsFloatType(Type type)
         {
             return type == typeof(float)
                 || type == typeof(double)
-                || type == typeof(decimal);
+                || type == typeof(decimal)
+                || type == typeof(float?)
+                || type == typeof(double?)
+                || type == typeof(decimal?);
         }
     }
 

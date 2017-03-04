@@ -26,5 +26,10 @@ namespace ConfigServer.Server
         /// Regrex pattern a string property must match
         /// </summary>
         public string Pattern { get; set; }
+
+        /// <summary>
+        /// Is property Required
+        /// </summary>
+        public bool IsRequired { get; set; }
     }
 }

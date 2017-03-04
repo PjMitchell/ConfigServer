@@ -50,3 +50,9 @@ button {
     margin: 5px 0;
     border-bottom: 3px solid #ABB8FF;
 }
+
+.ng-invalid:not(form) {
+    border-color: #FF2221; 
+    border-width : 1px 1px 1px 5px;
+    border-style: solid;
+}

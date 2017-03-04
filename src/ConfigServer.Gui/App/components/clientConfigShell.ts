@@ -1,4 +1,6 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
 import { ConfigurationDataService } from '../dataservices/config-data.service';
@@ -17,17 +19,19 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
         </div>
         <div class="validationResult"></div>
         <div class="break"></div>
-        <div *ngIf="configModel && config">
-            <div [ngSwitch]="configurationModelType" >
-                <config-input *ngSwitchCase="'config'" [csModel]="configModel" [(csConfig)]="config" ></config-input>
-                <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [(csCollection)]="config"></config-option-input>
+        <form #configForm="ngForm">
+            <div *ngIf="configModel && config">
+                <div [ngSwitch]="configurationModelType" >
+                    <config-input *ngSwitchCase="'config'" [csModel]="configModel" [(csConfig)]="config" ></config-input>
+                    <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [(csCollection)]="config"></config-option-input>
+                </div>
             </div>
-        </div>
-        <div class="break"></div>
-        <div>
-            <button type="button" (click)="back()">Back</button>
-            <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" (click)="save()">Save</button>
-        </div>
+            <div class="break"></div>
+            <div>
+                <button type="button" (click)="back()">Back</button>
+                <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" (click)="save()">Save</button>
+            </div>
+        </form>
 `
 })
 export class ClientConfigShellComponent implements OnInit {
@@ -40,7 +44,6 @@ export class ClientConfigShellComponent implements OnInit {
     client: ConfigurationClient;
     configModel: ConfigurationModelPayload;
     configurationModelType: 'config'|'option';
-
     constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private route: ActivatedRoute, private router: Router) {
         
     }

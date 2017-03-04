@@ -94,9 +94,9 @@ namespace ConfigServer.Server
         /// <param name="model"></param>
         protected void ApplyDefaultPropertyDefinitions(ConfigurationModel model)
         {
-            foreach (PropertyInfo writeProperty in model.Type.GetProperties().Where(prop => prop.CanWrite))
+            foreach (var kvp in ConfigurationPropertyModelDefinitionFactory.GetDefaultConfigProperties(model.Type))
             {
-                model.ConfigurationProperties.Add(writeProperty.Name, ConfigurationPropertyModelDefinitionFactory.Build(writeProperty, model.Type));
+                model.ConfigurationProperties.Add(kvp.Key, kvp.Value);
             }
         }
     }

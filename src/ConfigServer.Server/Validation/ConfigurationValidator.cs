@@ -30,7 +30,7 @@ namespace ConfigServer.Server.Validation
                 return ValidateOption(target, optionModel, configIdentity, dependencies);
 
             if (target == null || target.GetType() != model.Type)
-                return new ValidationResult(string.Format(ValidationStrings.InvalidConfigType, model.Type.FullName));
+                return new ValidationResult(ValidationStrings.InvalidConfigType(model.Type));
             return ValidateProperties(target, model.ConfigurationProperties, configIdentity,dependencies);
         }
 
@@ -39,13 +39,13 @@ namespace ConfigServer.Server.Validation
             var results = new List<ValidationResult>();
             var options = target as IEnumerable;
             if (target == null)
-                return new ValidationResult(string.Format(ValidationStrings.InvalidOptionType, model.Type.FullName));
+                return new ValidationResult(ValidationStrings.InvalidOptionType(model.Type));
             var duplicateChecker = new HashSet<string>();
             foreach (var option in options)
             {
                 var key = model.GetKeyFromObject(option);
                 if (!duplicateChecker.Add(key))
-                    results.Add(new ValidationResult(string.Format(ValidationStrings.DuplicateOptionKeys, model.Name, key)));
+                    results.Add(new ValidationResult(ValidationStrings.DuplicateOptionKeys(model.Name, key)));
 
                 results.Add(ValidateProperties(option, model.ConfigurationProperties, configIdentity, configurationSets));
             }
@@ -78,15 +78,27 @@ namespace ConfigServer.Server.Validation
         {
             var errors = new List<string>();
             var propertyValue = propertyModel.GetPropertyValue(target);
+            if (propertyValue == null)
+            {
+                return propertyModel.ValidationRules.IsRequired
+                    ? new ValidationResult(ValidationStrings.RequiredPropertyNotFound(propertyModel.ConfigurationPropertyName))
+                    : ValidationResult.CreateValid();
+            }
             if (propertyModel.ValidationRules.Min != null && propertyModel.ValidationRules.Min.CompareTo(propertyValue) > 0)
-                errors.Add(string.Format(ValidationStrings.LessThanMin, propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Min));
+                errors.Add(ValidationStrings.LessThanMin(propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Min));
             if (propertyModel.ValidationRules.Max != null && propertyModel.ValidationRules.Max.CompareTo(propertyValue) < 0)
-                errors.Add(string.Format(ValidationStrings.GreaterThanMax, propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Max));
-            if (propertyModel.ValidationRules.MaxLength.HasValue && propertyValue is string && ((string)propertyValue).Length > propertyModel.ValidationRules.MaxLength)
-                errors.Add(string.Format(ValidationStrings.GreaterThanMaxLength, propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.MaxLength));
-            if (!string.IsNullOrWhiteSpace(propertyModel.ValidationRules.Pattern) && propertyValue is string && !Regex.IsMatch((string)propertyValue, propertyModel.ValidationRules.Pattern))
-                errors.Add(string.Format(ValidationStrings.MatchesPattern, propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Pattern));
+                errors.Add(ValidationStrings.GreaterThanMax(propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Max));
+            if (propertyValue is string stringProperty)
+                ValidateStringProperty(stringProperty, propertyModel, errors);
             return new ValidationResult(errors);
+        }
+
+        private void ValidateStringProperty(string target, ConfigurationPrimitivePropertyModel propertyModel, List<string> errors)
+        {
+            if (propertyModel.ValidationRules.MaxLength.HasValue && target.Length > propertyModel.ValidationRules.MaxLength)
+                errors.Add(ValidationStrings.GreaterThanMaxLength(propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.MaxLength));
+            if (!string.IsNullOrWhiteSpace(propertyModel.ValidationRules.Pattern) && !Regex.IsMatch(target, propertyModel.ValidationRules.Pattern))
+                errors.Add(ValidationStrings.MatchesPattern(propertyModel.ConfigurationPropertyName, propertyModel.ValidationRules.Pattern));
         }
 
         private ValidationResult ValidateProperty(object target, IOptionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
@@ -95,7 +107,7 @@ namespace ConfigServer.Server.Validation
             var propertyValue = propertyModel.GetPropertyValue(target);
             var options = optionSetFactory.Build(propertyModel, configIdentity, configurationSets);
             if (!options.OptionKeyInSet(propertyValue))
-                errors.Add(string.Format(ValidationStrings.OptionNotFound, propertyModel.ConfigurationPropertyName));
+                errors.Add(ValidationStrings.OptionNotFound(propertyModel.ConfigurationPropertyName));
             return new ValidationResult(errors);
         }
 
@@ -108,7 +120,7 @@ namespace ConfigServer.Server.Validation
             {
                 if (options.OptionKeyInSet(value))
                     continue;
-                errors.Add(string.Format(ValidationStrings.OptionNotFound, propertyModel.ConfigurationPropertyName));
+                errors.Add(ValidationStrings.OptionNotFound(propertyModel.ConfigurationPropertyName));
                 break;
             }
             return new ValidationResult(errors);
@@ -125,7 +137,7 @@ namespace ConfigServer.Server.Validation
                 {
                     var key = propertyModel.GetKeyFromMember(value);
                     if (!duplicateChecker.Add(key))
-                        results.Add(new ValidationResult(string.Format(ValidationStrings.DuplicateKeys, propertyModel.ConfigurationPropertyName, key)));
+                        results.Add(new ValidationResult(ValidationStrings.DuplicateKeys(propertyModel.ConfigurationPropertyName, key)));
                 }
                 results.Add(ValidateProperties(value, propertyModel.ConfigurationProperties, configIdentity,configurationSets));
             }

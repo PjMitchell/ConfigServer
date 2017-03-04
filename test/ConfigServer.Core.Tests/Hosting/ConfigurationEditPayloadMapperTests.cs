@@ -120,6 +120,8 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(0, listOfConfigs.Count());
             Assert.Equal(0, moarOptions.Count());
         }
+
+
         #endregion
 
         #region MapToEdit
@@ -160,6 +162,13 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);
             Assert.Equal(updatedSample.ListOfConfigs[0].Value, result.ListOfConfigs[0].Value);
 
+        }
+
+        [Fact]
+        public async Task ThrowsIfNonNullable()
+        {
+            updatedObject["llamaCapacity"].Replace(null);
+            var response = await Assert.ThrowsAsync<ConfigModelParsingException>(()=> target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition));
         }
         #endregion
     }

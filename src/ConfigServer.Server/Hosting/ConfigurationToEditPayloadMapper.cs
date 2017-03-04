@@ -183,6 +183,9 @@ namespace ConfigServer.Server
 
         private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyModelBase propertyModel)
         {
+            var propertyValue = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase());
+            if (propertyModel is ConfigurationPrimitivePropertyModel primativeModel && primativeModel.ValidationRules.IsRequired && propertyValue.Type == JTokenType.Null)
+                throw new ConfigModelParsingException($"{propertyModel.PropertyDisplayName} is Required");
             var result = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase())?.ToObject(propertyModel.PropertyType);
             return result;
         }
