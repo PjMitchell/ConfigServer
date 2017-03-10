@@ -8,9 +8,9 @@ namespace ConfigServer.Core.Tests.TestModels
 {
     internal class TestOptionSetFactory : IOptionSetFactory
     {
-        public IOptionSet Build(ConfigurationPropertyWithOptionsModelDefinition definition, ConfigurationIdentity identity)
+        public IOptionSet Build(ReadOnlyConfigurationOptionModel model, ConfigurationIdentity configIdentity)
         {
-            return new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description);
+            return model.BuildOptionSet(configIdentity, new OptionProvider());
         }
 
         public IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
@@ -25,10 +25,10 @@ namespace ConfigServer.Core.Tests.TestModels
         {
             if (definition is ConfigurationPropertyWithConfigSetOptionsModelDefinition configSetOptionModelDefinition)
                 return Build(configSetOptionModelDefinition, configurationSets);
-            if (definition is ConfigurationPropertyWithOptionsModelDefinition configOptionModelDefinition)
-                return Build(configOptionModelDefinition, configIdentity);
             throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
         }
+
+
 
         public string GetKeyFromObject(object value, IOptionPropertyDefinition definition)
         {

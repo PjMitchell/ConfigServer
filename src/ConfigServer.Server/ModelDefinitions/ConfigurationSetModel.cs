@@ -109,28 +109,14 @@ namespace ConfigServer.Server
         }
         public ConfigurationSetModel() : this(typeof(TConfigurationSet).Name, string.Empty) { }
 
-        /// <summary>
-        /// Gets or initializes a configuration option model by type
-        /// </summary>
-        /// <typeparam name="TOption">Configuration type of configuration model to be retrieved or initialized</typeparam>
-        /// <returns>Configuration model for type</returns>
-        public ConfigurationModel GetOrInitializeOption<TOption>(Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionSelector, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector) where TOption : class, new()
+        public ConfigurationModel GetOrInitializeOption(Type optionType, Func<ConfigurationOptionModel> modelFactory)
         {
-            var propertyInfo = ExpressionHelper.GetPropertyInfo(optionSelector);
-            var name = propertyInfo.Name;
-            var type = typeof(TOption);
             ConfigurationModel definition;
-            if (!configurationModels.TryGetValue(type, out definition))
+            if (!configurationModels.TryGetValue(optionType, out definition))
             {
-                var setter = (Action<TConfigurationSet, OptionSet<TOption>>)propertyInfo.SetMethod.CreateDelegate(typeof(Action<TConfigurationSet, OptionSet<TOption>>));
-                definition = new ConfigurationOptionModel<TOption, TConfigurationSet>(name, keySelector, descriptionSelector, optionSelector.Compile(), setter);
-                ApplyDefaultPropertyDefinitions(definition);
-                configurationModels.Add(type, definition);
+                definition = modelFactory();
+                configurationModels.Add(optionType, definition);
             }
-            if (definition.Name != name)
-                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when there is already a named config for that type ({definition.Name})");
-            if (!(definition is ConfigurationOptionModel<TOption, TConfigurationSet>))
-                throw new InvalidOperationException($"Tried to Get model:{name} of type:{type} when model is not setup as an option");
             return definition;
         }
 

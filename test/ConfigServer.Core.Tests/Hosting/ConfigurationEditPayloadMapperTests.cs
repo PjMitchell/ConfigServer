@@ -30,6 +30,9 @@ namespace ConfigServer.Core.Tests.Hosting
         public ConfigurationEditPayloadMapperTests()
         {
             configurationSet = new Mock<IConfigurationSetService>();
+            configurationSet.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
+                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
+                
             target = new ConfigurationEditPayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();
             sample = new SampleConfig

@@ -44,20 +44,29 @@ namespace ConfigServer.Server
             return (ConfigurationSet<TConfigSet>)result;
         }
 
-        private async Task BuildOptions(ConfigurationSet result, ConfigurationSetModel setDefinition,Type setType, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity identity)
+        private async Task BuildOptions(ConfigurationSet result, ConfigurationSetModel setDefinition,Type setType, IEnumerable<ConfigurationSet> configurationSets,  ConfigurationIdentity identity)
         {
             var configurationDependencies = configurationSets.Concat(new[] { result }).ToArray();
             foreach (var option in GetOptionsInOrder(setDefinition))
             {
-                var options = await configProvider.GetCollectionAsync(option.Type, identity);
+                IOptionSet optionSet;
+                if (option is ReadOnlyConfigurationOptionModel readonlyModel)
+                    optionSet = optionSetFactory.Build(readonlyModel, identity);
+                else 
+                    optionSet = await BuildOptionSetCollection(option, configurationDependencies, identity);
 
-                var optionSet = option.BuildOptionSet(options);
-                foreach(var item in optionSet.Values)
-                {
-                    UpdateOptions(item, option.ConfigurationProperties, configurationDependencies, identity);
-                }
                 option.SetConfigurationOnConfigurationSet(result, optionSet);
             }
+        }
+
+        private async Task<IOptionSet> BuildOptionSetCollection(ConfigurationOptionModel option, IEnumerable<ConfigurationSet> configurationDependencies, ConfigurationIdentity identity)
+        {
+            var options = await configProvider.GetCollectionAsync(option.Type, identity);
+            var optionSet = option.BuildOptionSet(options);
+            foreach (var item in optionSet.Values)
+                UpdateOptions(item, option.ConfigurationProperties, configurationDependencies, identity);
+
+            return optionSet;
         }
 
         private async Task BuildConfigurations(ConfigurationSet result, ConfigurationSetModel setDefinition, Type setType, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity identity)

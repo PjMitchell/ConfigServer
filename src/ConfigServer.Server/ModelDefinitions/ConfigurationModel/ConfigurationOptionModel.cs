@@ -14,7 +14,6 @@ namespace ConfigServer.Server
         public abstract IOptionSet BuildOptionSet(IEnumerable souce);
         public abstract string GetKeyFromObject(object value);
         public Type StoredType { get; protected set; }
-
     }
 
     internal class ConfigurationOptionModel<TOption, TConfigurationSet> : ConfigurationOptionModel where TConfigurationSet : ConfigurationSet where TOption : class, new()

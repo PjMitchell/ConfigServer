@@ -148,19 +148,23 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         private class TestConfiguationModule : ConfigurationSet<TestConfiguationModule>
         {
             public OptionSet<ExternalOption> Options { get; set; }
+            public OptionSet<Option> OptionsFromProvider { get; set; }
+
             public OptionSet<OptionDependentOnAnotherOption> OptionDependentOnAnotherOption { get; set; }
             public Config<SampleConfig> TestConfig { get; set; }
 
             protected override void OnModelCreation(ConfigurationSetModelBuilder<TestConfiguationModule> modelBuilder)
             {
-                modelBuilder.Options(set => set.Options, r => r.Id, r => r.Description);                
+                modelBuilder.Options(set => set.Options, r => r.Id, r => r.Description); 
+                modelBuilder.Options(set => set.OptionsFromProvider, r => r.Id, r => r.Description, (IOptionProvider provider) => provider.GetOptions());
+
                 var optionConfig = modelBuilder.Options(set => set.OptionDependentOnAnotherOption, r => r.Id, r => r)
                     .PropertyWithConfigurationSetOptions(r=> r.ExternalOption, (TestConfiguationModule option)=> option.Options);
 
                 var configBuilder = modelBuilder.Config(set => set.TestConfig);
                 configBuilder.PropertyWithConfigurationSetOptions(p => p.ExternalOption, (TestConfiguationModule provider) => provider.Options);
-                configBuilder.PropertyWithOptions(p => p.Option, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description);
-                configBuilder.PropertyWithMulitpleOptions(p => p.MoarOptions, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description);
+                configBuilder.PropertyWithConfigurationSetOptions(p => p.Option, (TestConfiguationModule provider) => provider.OptionsFromProvider);
+                configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (TestConfiguationModule provider) => provider.OptionsFromProvider);
             }
         }
 

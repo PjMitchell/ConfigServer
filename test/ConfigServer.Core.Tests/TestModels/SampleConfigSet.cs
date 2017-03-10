@@ -6,7 +6,7 @@ namespace ConfigServer.Sample.Models
     public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
-
+        public OptionSet<Option> Options { get; set; }
         public Config<SampleConfig> SampleConfig { get; set; }
 
         protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
@@ -22,13 +22,13 @@ namespace ConfigServer.Sample.Models
             configBuilder.Property(p => p.StartDate)
                 .WithMinValue(new DateTime(2013, 10, 10));
             configBuilder.Property(p => p.Name).WithMaxLength(250);
-            configBuilder.PropertyWithOptions(p => p.Option, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
+            configBuilder.PropertyWithConfigurationSetOptions(p => p.Option, (SampleConfigSet set) => set.Options)
                 .WithDescription("Is a selected option");
-            configBuilder.PropertyWithMulitpleOptions(p => p.MoarOptions, (IOptionProvider provider) => provider.GetOptions(), op => op.Id, op => op.Description)
+            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (SampleConfigSet set) => set.Options)
                 .WithDescription("Is a multi select option");
             configBuilder.Collection(p=> p.ListOfConfigs);
 
-
+            modelBuilder.Options(p => p.Options, op => op.Id, op => op.Description, (IOptionProvider provider) => provider.GetOptions());
         }
     }
 }

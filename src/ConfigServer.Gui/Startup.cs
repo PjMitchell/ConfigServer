@@ -59,6 +59,7 @@ namespace ConfigServer.Gui
                 StartDate = new DateTime(2013, 10, 10),
                 IsLlamaFarmer = false,
                 Option = optionProvider.GetOptions().First(),
+                OptionId = optionProvider.GetOptions().First().Id,
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
                 ListOfConfigs = new List<ListConfig>
                 {
@@ -66,6 +67,7 @@ namespace ConfigServer.Gui
                     new ListConfig { Name = "Value Two", Value = 2 }
                 },
                 OptionFromConfigSet = options1[1],
+                OptionFromConfigSetId = options1[0].Id,
                 MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options1[0]}
             };
             var config2 = new SampleConfig
@@ -77,8 +79,10 @@ namespace ConfigServer.Gui
                 Choice = Choice.OptionThree,
                 IsLlamaFarmer = true,
                 Option = optionProvider.GetOptions().First(),
+                OptionId = optionProvider.GetOptions().First().Id,
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
                 OptionFromConfigSet = options2[0],
+                OptionFromConfigSetId = options2[0].Id,
                 MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options2[0], options2[1] }
             };
             var serviceProvider = services.BuildServiceProvider();

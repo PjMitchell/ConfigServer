@@ -51,7 +51,7 @@ namespace ConfigServer.Server
         private Dictionary<string, ConfigurationModelPayload> BuildConfigs(IEnumerable<ConfigurationModel> configs, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var result = new Dictionary<string, ConfigurationModelPayload>();
-            foreach (var config in configs)
+            foreach (var config in configs.Where(w=> !w.IsReadOnly))
             {
                 result.Add(config.Type.Name.ToLowerCamelCase(), Map(config, configIdentity, requiredConfigurationSets));
             }

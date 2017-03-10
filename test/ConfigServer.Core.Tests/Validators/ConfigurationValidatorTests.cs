@@ -22,6 +22,8 @@ namespace ConfigServer.Core.Tests.Validators
             modelBuilder = new ConfigurationModelBuilder<SampleConfig, SampleConfigSet>(nameof(SampleConfigSet.SampleConfig), c=> c.SampleConfig);
             configIdentity = new ConfigurationIdentity("TestId");
             service = new Mock<IConfigurationSetService>();
+            service.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
+                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
             target = new ConfigurationValidator(new TestOptionSetFactory(), service.Object);
         }
 
@@ -342,7 +344,7 @@ namespace ConfigServer.Core.Tests.Validators
             {
                 Option = new Option { Id = 5, Description = "Option Four" }
             };
-            modelBuilder.PropertyWithOptions<SampleConfig,Option,OptionProvider>(p=> p.Option,provider => provider.GetOptions(),o=>o.Id, o=>o.Description);
+            modelBuilder.PropertyWithConfigurationSetOptions<SampleConfig,Option,SampleConfigSet>(p=> p.Option,provider => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
@@ -358,7 +360,7 @@ namespace ConfigServer.Core.Tests.Validators
             {
                 Option = OptionProvider.OptionOne
             };
-            modelBuilder.PropertyWithOptions<SampleConfig, Option, OptionProvider>(p => p.Option, provider => provider.GetOptions(), o => o.Id, o => o.Description);
+            modelBuilder.PropertyWithConfigurationSetOptions<SampleConfig, Option, SampleConfigSet>(p => p.Option, provider => provider.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
@@ -376,7 +378,7 @@ namespace ConfigServer.Core.Tests.Validators
                     OptionProvider.OptionOne
                 }
             };
-            modelBuilder.PropertyWithMulitpleOptions<SampleConfig, Option, OptionProvider>(p => p.MoarOptions, provider => provider.GetOptions(), o => o.Id, o => o.Description);
+            modelBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions,(SampleConfigSet provider) => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
@@ -397,7 +399,7 @@ namespace ConfigServer.Core.Tests.Validators
                 }
 
             };
-            modelBuilder.PropertyWithMulitpleOptions<SampleConfig, Option, OptionProvider>(p => p.MoarOptions, provider => provider.GetOptions(), o => o.Id, o => o.Description);
+            modelBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (SampleConfigSet provider) => provider.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
