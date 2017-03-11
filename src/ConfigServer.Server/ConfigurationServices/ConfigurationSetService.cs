@@ -64,8 +64,7 @@ namespace ConfigServer.Server
         {
             var setModel = registry.GetConfigSetForConfig(configurationtype);
             ClearCache(setModel.ConfigSetType, identity);
-            var model = setModel.Get(configurationtype) as ConfigurationOptionModel;
-            if (model != null)
+            if (setModel.Get(configurationtype) is ConfigurationOptionModel model)
             {
                 var dependencies = registry.SelectMany(s => s.Configs).Where(set => set.ConfigurationSetType != setModel.ConfigSetType && set.GetDependencies().Any(a => a.ConfigurationSet == setModel.ConfigSetType && a.PropertyPath == model.Name)).ToArray();
                 foreach (var dependency in dependencies)

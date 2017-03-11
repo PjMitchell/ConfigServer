@@ -21,6 +21,7 @@ namespace ConfigServer.Sample.mvc.Models
         public int OptionId { get; set; }
         public OptionFromConfigSet OptionFromConfigSet { get; set; }
         public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
+        public List<int> MoarOptionValues { get; set; }
     }
 
 

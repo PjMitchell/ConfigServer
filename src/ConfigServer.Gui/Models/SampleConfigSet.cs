@@ -51,6 +51,8 @@ namespace ConfigServer.Sample.mvc.Models
             configBuilder.PropertyWithMultipleOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet set) => set.Options)
                 .WithDescription("More options from the option set");
             configBuilder.PropertyWithOptionValue(p => p.OptionId, (SampleConfigSet set) => set.OptionFromProvider, option => option.Id);
+            configBuilder.PropertyWithMultipleOptionValues(p => p.MoarOptionValues, (SampleConfigSet set) => set.OptionFromProvider, option => option.Id);
+
 
             modelBuilder.Options(s => s.Options, o=> o.Id, o=> o.Description, "Options", "Options for sample config");
             modelBuilder.Options(s => s.OptionFromProvider, o => o.Id, o => o.Description , (IOptionProvider optionProvider) => optionProvider.GetOptions(), "Options", "Options for sample config");

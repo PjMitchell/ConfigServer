@@ -111,7 +111,8 @@ namespace ConfigServer.Server
 
         private void UpdateOptions(object source, IOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
-
+            if (model is ConfigurationPropertyWithOptionValueModelDefinition)
+                return; 
             var orignal = model.GetPropertyValue(source);
             if (orignal == null)
                 return;
@@ -121,6 +122,14 @@ namespace ConfigServer.Server
         }
 
         private void UpdateOptions(object source, IMultipleOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        {
+            if (model is ConfigurationPropertyWithMultipleOptionValuesModelDefinition valueModel)
+                UpdateMultipleOptions(source, valueModel, configurationSets, configIdentity);
+            else
+                UpdateMultipleOptions(source, model, configurationSets, configIdentity);
+        }
+
+        private void UpdateMultipleOptions(object source, IMultipleOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
             var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
             var collectionBuilder = model.GetCollectionBuilder();
@@ -132,6 +141,21 @@ namespace ConfigServer.Server
             }
             model.SetPropertyValue(source, collectionBuilder.Collection);
         }
+
+        private void UpdateMultipleOptions(object source, ConfigurationPropertyWithMultipleOptionValuesModelDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        {
+            var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
+            var collectionBuilder = model.GetCollectionBuilder();
+            var items = model.GetPropertyValue(source) as IEnumerable;
+            foreach (var item in items ?? Enumerable.Empty<object>())
+            {
+                if (optionSet.ContainsKey(item))
+                    collectionBuilder.Add(item);
+            }
+            model.SetPropertyValue(source, collectionBuilder.Collection);
+        }
+
+
 
         private void UpdateOptions(object source, ConfigurationCollectionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {

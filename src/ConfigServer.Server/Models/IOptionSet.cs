@@ -72,6 +72,13 @@ namespace ConfigServer.Server
         bool OptionKeyInSet(object option);
 
         /// <summary>
+        /// Determines if option has a key that is in the set
+        /// </summary>
+        /// <param name="option">key being Queried</param>
+        /// <returns>Returns true if key is in the set, else false</returns>
+        bool ContainsKey(object option);
+
+        /// <summary>
         /// Gets Key from Option
         /// </summary>
         /// <param name="option">Option being Queried</param>

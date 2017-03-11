@@ -18,6 +18,8 @@ namespace ConfigServer.Server
 
     interface IOptionPropertyDefinition : IPropertyDefinition
     {
+        Type ConfigurationSetType { get; }
+        IOptionSet GetOptionSet(object configurationSet);
     }
 
     interface IMultipleOptionPropertyDefinition : IOptionPropertyDefinition

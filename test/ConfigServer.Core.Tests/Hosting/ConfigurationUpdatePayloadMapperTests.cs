@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xunit;
 using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using ConfigServer.Core.Tests.TestModels;
 using Moq;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
-    public class ConfigurationEditPayloadMapperTests
+    public class ConfigurationUpdatePayloadMapperTests
     {
-        private IConfigurationEditPayloadMapper target;
+        private IConfigurationUpdatePayloadMapper target;
         private Mock<IConfigurationSetService> configurationSet;
         private ConfigurationSetModel definition;
         private SampleConfig sample;
@@ -27,13 +26,13 @@ namespace ConfigServer.Core.Tests.Hosting
         private const string clientId = "7aa7d5f0-90fb-420b-a906-d482428a0c44";
 
 
-        public ConfigurationEditPayloadMapperTests()
+        public ConfigurationUpdatePayloadMapperTests()
         {
             configurationSet = new Mock<IConfigurationSetService>();
             configurationSet.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
                 .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
-                
-            target = new ConfigurationEditPayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
+
+            target = new ConfigurationUpdatePayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();
             sample = new SampleConfig
             {
@@ -68,70 +67,17 @@ namespace ConfigServer.Core.Tests.Hosting
             updatedValue.LlamaCapacity = updatedSample.LlamaCapacity;
             updatedValue.Name = updatedSample.Name;
             updatedValue.Option = updatedSample.Option.Id;
-            updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s=> s.Id).ToList();
+            updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s => s.Id).ToList();
             updatedValue.ListOfConfigs = updatedSample.ListOfConfigs;
             var serilaisationSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             var json = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
             updatedObject = JObject.Parse(json);
         }
 
-        #region MapToEdit
-        [Fact]
-        public void MapsRegularValues()
-        {          
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
-            Assert.Equal(sample.Choice, response.Choice);
-            Assert.Equal(sample.IsLlamaFarmer, response.IsLlamaFarmer);
-            Assert.Equal(sample.Decimal, response.Decimal);
-            Assert.Equal(sample.LlamaCapacity, response.LlamaCapacity);
-            Assert.Equal(sample.Name, response.Name);
-        }
-
-        [Fact]
-        public void MapsOptionValues()
-        {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
-            Assert.Equal(sample.Option.Id.ToString(), response.Option);
-        }
-
-        [Fact]
-        public void MapsOptionsValues()
-        {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
-            var expected = sample.MoarOptions.Select(s => s.Id.ToString()).ToList();
-            Assert.Equal(expected, response.MoarOptions);
-        }
-
-        [Fact]
-        public void MapsListOfConfigsValues()
-        {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
-            var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
-            Assert.Equal(1, listOfConfigs.Count());
-            Assert.Equal(sample.ListOfConfigs[0].Name, listOfConfigs.First().Name);
-            Assert.Equal(sample.ListOfConfigs[0].Value, listOfConfigs.First().Value);
-
-        }
-
-        [Fact]
-        public void MapsNewObject()
-        {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig(), clientId), definition);
-            var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
-
-            var moarOptions = response.MoarOptions as IEnumerable<dynamic>;
-            Assert.Equal(0, listOfConfigs.Count());
-            Assert.Equal(0, moarOptions.Count());
-        }
-
-
-        #endregion
-
-        #region MapToEdit
         [Fact]
         public async Task UpdatesRegularValues()
         {
-            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId),updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Choice, result.Choice);
             Assert.Equal(updatedSample.IsLlamaFarmer, result.IsLlamaFarmer);
@@ -154,7 +100,7 @@ namespace ConfigServer.Core.Tests.Hosting
             var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.MoarOptions.Count, result.MoarOptions.Count);
-            Assert.Equal(updatedSample.MoarOptions.Select(s=>s.Description), result.MoarOptions.Select(s => s.Description));
+            Assert.Equal(updatedSample.MoarOptions.Select(s => s.Description), result.MoarOptions.Select(s => s.Description));
         }
         [Fact]
         public async Task UpdatesListOfConfigsValues()
@@ -171,8 +117,9 @@ namespace ConfigServer.Core.Tests.Hosting
         public async Task ThrowsIfNonNullable()
         {
             updatedObject["llamaCapacity"].Replace(null);
-            var response = await Assert.ThrowsAsync<ConfigModelParsingException>(()=> target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition));
+            var response = await Assert.ThrowsAsync<ConfigModelParsingException>(() => target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition));
         }
-        #endregion
+
     }
+
 }

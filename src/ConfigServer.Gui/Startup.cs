@@ -67,7 +67,8 @@ namespace ConfigServer.Gui
                     new ListConfig { Name = "Value Two", Value = 2 }
                 },
                 OptionFromConfigSet = options1[1],
-                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options1[0]}
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options1[0] },
+                MoarOptionValues = optionProvider.GetOptions().Select(s => s.Id).Where(w => w % 2 == 0).ToList()
             };
             var config2 = new SampleConfig
             {
@@ -81,7 +82,9 @@ namespace ConfigServer.Gui
                 OptionId = optionProvider.GetOptions().First().Id,
                 MoarOptions = optionProvider.GetOptions().Take(2).ToList(),
                 OptionFromConfigSet = options2[0],
-                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options2[0], options2[1] }
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet> { options2[0], options2[1] },
+                MoarOptionValues = new List<int> { optionProvider.GetOptions().First().Id }
+
             };
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();

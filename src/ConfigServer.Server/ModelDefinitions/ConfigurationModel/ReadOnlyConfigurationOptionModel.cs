@@ -66,6 +66,8 @@ namespace ConfigServer.Server
         {
             return BuildOptionSet(optionProvider(identity));
         }
+
+        public override object NewItemInstance() => new TOption();
     }
 
     internal class ReadOnlyConfigurationOptionModel<TOption, TConfigurationSet, TOptionProvider> : ReadOnlyConfigurationOptionModel where TConfigurationSet : ConfigurationSet where TOption : class, new()
@@ -83,6 +85,7 @@ namespace ConfigServer.Server
             this.optionSelector = optionSelector;
             this.configSetter = configSetter;
             this.optionProvider = optionProvider;
+            OptionProviderType = typeof(TOptionProvider);
             StoredType = typeof(List<TOption>);
         }
 
@@ -119,5 +122,7 @@ namespace ConfigServer.Server
         {
             return BuildOptionSet(optionProvider((TOptionProvider)optionSource, identity));
         }
+
+        public override object NewItemInstance() => new TOption();
     }
 }

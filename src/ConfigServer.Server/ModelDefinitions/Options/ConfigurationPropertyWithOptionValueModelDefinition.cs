@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationPropertyWithOptionValueModelDefinition<TConfigSet, TOption, TValue> : ConfigurationPropertyWithOptionModelDefinition
+    internal class ConfigurationPropertyWithOptionValueModelDefinition<TConfigSet, TOption, TValue> : ConfigurationPropertyWithOptionValueModelDefinition
     {
         readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
         readonly Func<TOption, TValue> valueSelector;
@@ -36,5 +36,18 @@ namespace ConfigServer.Server
                 inputValue = value;
             base.SetPropertyValue(config, inputValue);
         }
+    }
+
+    internal abstract class ConfigurationPropertyWithOptionValueModelDefinition : ConfigurationPropertyModelBase, IOptionPropertyDefinition
+    {
+        public ConfigurationPropertyWithOptionValueModelDefinition(string propertyName, Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, optionType, propertyParentType)
+        {
+            ConfigurationSetType = configurationSet;
+        }
+
+        public Type ConfigurationSetType { get; }
+
+        public abstract IOptionSet GetOptionSet(object configurationSet);
+
     }
 }

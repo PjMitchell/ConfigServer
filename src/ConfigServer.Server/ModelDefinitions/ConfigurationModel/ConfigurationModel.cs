@@ -93,6 +93,8 @@ namespace ConfigServer.Server
         /// Is configuration Readonly, generated from a provider external to configuration Server
         /// </summary>
         public bool IsReadOnly { get; protected set; }
+
+
     }
 
     internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet where TConfiguration : class, new()

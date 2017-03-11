@@ -50,9 +50,7 @@ namespace ConfigServer.Server
 
         public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
-            if (definition is ConfigurationPropertyWithOptionModelDefinition optionModelDefinition)
-                return Build(optionModelDefinition, configurationSets);
-            throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
+            return Build(definition, configurationSets);
         }
 
         public string GetKeyFromObject(object value, IOptionPropertyDefinition definition)
@@ -62,12 +60,12 @@ namespace ConfigServer.Server
             return optionModel.GetKeyFromObject(value);
         }
 
-        private IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
+        private IOptionSet Build(IOptionPropertyDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
         {
             var configurationSet = configurationSets.Single(r => r.GetType() == definition.ConfigurationSetType);
             return Build(definition, configurationSet);
         }
 
-        private IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
+        private IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
     }
 }
