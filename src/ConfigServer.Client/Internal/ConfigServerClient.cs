@@ -11,7 +11,7 @@ using System.Collections.Generic;
 [assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Client
 {
-    internal class ConfigServerClient : IConfigServerClient
+    internal class ConfigServerClient : IConfigServer
     {
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
@@ -27,32 +27,46 @@ namespace ConfigServer.Client
             this.options = options;
             if (memorycache == null && !options.CacheOptions.IsDisabled)
                 throw new ArgumentNullException(nameof(memorycache), "Caching is enabled, but IMemoryCache is not registered in service collection. Try adding \"services.AddMemoryCache()\" to startup file");
-            this.cache = memorycache;
+            cache = memorycache;
         }
 
-        public Task<object> BuildConfigAsync(Type type)
+        public async Task<object> GetConfigAsync(Type type)
         {
             ThrowIfConfigNotRegistered(type);
-            if(options.CacheOptions.IsDisabled)
-                return GetConfig(type);
-
-            return GetOrAddConfigFromCache(type);
+            return options.CacheOptions.IsDisabled
+                ? await GetConfigInternal(type).ConfigureAwait(false)
+                : await GetOrAddConfigFromCache(type).ConfigureAwait(false);            
 
         }
 
-        public async Task<TConfig> BuildConfigAsync<TConfig>() where TConfig : class, new()
+        public async Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
         {
-            return (TConfig)await BuildConfigAsync(typeof(TConfig));
+            return (TConfig)await GetConfigAsync(typeof(TConfig)).ConfigureAwait(false);
         }
 
-        public Task<IEnumerable<TConfig>> BuildCollectionConfigAsync<TConfig>() where TConfig : class, new()
+        public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
             var type = typeof(TConfig);
             ThrowIfConfigNotRegistered(type);
-            if (options.CacheOptions.IsDisabled)
-                return GetCollectionConfig<TConfig>();
 
-            return GetOrAddCollectionConfigFromCache<TConfig>();
+            return options.CacheOptions.IsDisabled
+                ? await GetCollectionConfigInternal<TConfig>().ConfigureAwait(false)
+                : await GetOrAddCollectionConfigFromCache<TConfig>().ConfigureAwait(false);
+        }
+
+        public TConfig GetConfig<TConfig>() where TConfig : class, new()
+        {
+            return GetConfigAsync<TConfig>().Result;
+        }
+
+        public IEnumerable<TConfig> GetCollectionConfig<TConfig>() where TConfig : class, new()
+        {
+            return GetCollectionConfigAsync<TConfig>().Result;
+        }
+
+        public object GetConfig(Type type)
+        {
+            return GetConfigAsync(type).Result;
         }
 
         private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>() where TConfig : class, new()
@@ -63,7 +77,7 @@ namespace ConfigServer.Client
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
                 if (options.CacheOptions.SlidingExpiration.HasValue)
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetCollectionConfig<TConfig>();
+                return GetCollectionConfigInternal<TConfig>();
             });
         }
 
@@ -75,17 +89,17 @@ namespace ConfigServer.Client
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
                 if (options.CacheOptions.SlidingExpiration.HasValue)
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetConfig(type);
+                return GetConfigInternal(type);
             });
         }
 
-        private async Task<object> GetConfig(Type type)
+        private async Task<object> GetConfigInternal(Type type)
         {
             var result = await GetConfig(type.Name);
             return JsonConvert.DeserializeObject(result, type, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
         }
 
-        private async Task<IEnumerable<TConfig>> GetCollectionConfig<TConfig>()
+        private async Task<IEnumerable<TConfig>> GetCollectionConfigInternal<TConfig>()
         {
             var result = await GetConfig(typeof(TConfig).Name);
             return (IEnumerable<TConfig>)JsonConvert.DeserializeObject(result,typeof(List<TConfig>), new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
@@ -116,7 +130,6 @@ namespace ConfigServer.Client
         }
 
         private string BuildCacheKey(Type type) => cachePrefix + type.Name;
-
 
     }
 

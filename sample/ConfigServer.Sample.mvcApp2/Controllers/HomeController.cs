@@ -12,9 +12,9 @@ namespace ConfigServer.Sample.mvcApp2.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IConfigServerClient configProvider;
+        private readonly IConfigServer configProvider;
 
-        public HomeController(IConfigServerClient configProvider)
+        public HomeController(IConfigServer configProvider)
         {
             this.configProvider = configProvider;
         }
@@ -22,8 +22,8 @@ namespace ConfigServer.Sample.mvcApp2.Controllers
         // GET: /<controller>/
         public async Task<IActionResult> Index()
         {
-            var config = await configProvider.BuildConfigAsync<SampleConfig>();
-            var options = await configProvider.BuildCollectionConfigAsync<OptionFromConfigSet>();
+            var config = await configProvider.GetConfigAsync<SampleConfig>();
+            var options = await configProvider.GetCollectionConfigAsync<OptionFromConfigSet>();
 
             return View(new ConfigViewModel { Config = config, Options = options });
         }

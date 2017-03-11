@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ConfigServer.Sample.mvc.Models;
+using ConfigServer.Core;
 
 namespace ConfigServer.Sample.mvc.Controllers
 {
@@ -12,10 +13,10 @@ namespace ConfigServer.Sample.mvc.Controllers
         private readonly SampleConfig config;
         private readonly IEnumerable<OptionFromConfigSet> options;
 
-        public HomeController(SampleConfig config, IEnumerable<OptionFromConfigSet> options)
+        public HomeController(IConfigServer configServer)
         {
-            this.config = config;
-            this.options = options;
+            config = configServer.GetConfig<SampleConfig>();
+            options = configServer.GetCollectionConfig<OptionFromConfigSet>();
         }
 
         public IActionResult Index()
