@@ -92,7 +92,10 @@ namespace ConfigServer.Server
             {
                 foreach(var config in mappedConfigs)
                 {
-                    var instance = await configRepository.GetAsync(config.Value.GetType(), identity);
+                    var type = config.Value.GetType();
+                    if (configSetModel.Get(type).IsReadOnly)
+                        continue;
+                    var instance = await configRepository.GetAsync(type, identity);
                     instance.SetConfiguration(config.Value);
                     await configRepository.UpdateConfigAsync(instance);
                     await eventService.Publish(new ConfigurationUpdatedEvent(instance));

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationPropertyWithConfigSetOptionsModelDefinition<TConfigSet, TOption> : ConfigurationPropertyWithConfigSetOptionsModelDefinition
+    internal class ConfigurationPropertyWithOptionModelDefinition<TConfigSet, TOption> : ConfigurationPropertyWithOptionModelDefinition
     {
         readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
         readonly string optionPath;
         readonly ConfigurationDependency[] dependency;
 
-        internal ConfigurationPropertyWithConfigSetOptionsModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TOption), propertyParentType)
+        internal ConfigurationPropertyWithOptionModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TOption), propertyParentType)
         {
             this.optionProvider = optionProvider;
             this.optionPath = optionPath;
@@ -26,9 +26,9 @@ namespace ConfigServer.Server
 
     }
 
-    internal abstract class ConfigurationPropertyWithConfigSetOptionsModelDefinition : ConfigurationPropertyModelBase, IOptionPropertyDefinition
+    internal abstract class ConfigurationPropertyWithOptionModelDefinition : ConfigurationPropertyModelBase, IOptionPropertyDefinition
     {
-        public ConfigurationPropertyWithConfigSetOptionsModelDefinition(string propertyName,Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, optionType, propertyParentType)
+        public ConfigurationPropertyWithOptionModelDefinition(string propertyName,Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, optionType, propertyParentType)
         {
             ConfigurationSetType = configurationSet;
         }

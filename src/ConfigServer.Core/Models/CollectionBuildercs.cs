@@ -19,19 +19,13 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="value">value to add to collection</param>
         public abstract void Add(object value);
-
-        /// <summary>
-        /// Creates a new Item for the collection
-        /// </summary>
-        /// <returns>Initialized Item</returns>
-        public abstract object IntializeNewItem();
     }
 
     /// <summary>
     /// Aids in the population of Configuration Collection
     /// </summary>
     /// <typeparam name="TConfig">Type of config in the collection</typeparam>
-    public class CollectionBuilder<TConfig> : CollectionBuilder where TConfig : new ()
+    public class CollectionBuilder<TConfig> : CollectionBuilder //where TConfig : new ()
     {
         private readonly ICollection<TConfig> source;
 
@@ -56,10 +50,5 @@ namespace ConfigServer.Core
         /// <param name="value">value to add to collection</param>
         public override void Add(object value) => source.Add((TConfig)value);
 
-        /// <summary>
-        /// Creates a new Item for the collection
-        /// </summary>
-        /// <returns>Initialized Item</returns>
-        public override object IntializeNewItem() => new TConfig();
     }
 }

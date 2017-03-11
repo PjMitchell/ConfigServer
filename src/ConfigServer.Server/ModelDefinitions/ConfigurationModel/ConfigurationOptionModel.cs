@@ -14,7 +14,7 @@ namespace ConfigServer.Server
         public abstract IOptionSet BuildOptionSet(IEnumerable souce);
         public abstract string GetKeyFromObject(object value);
         public Type StoredType { get; protected set; }
-
+        public abstract object NewItemInstance();
     }
 
     internal class ConfigurationOptionModel<TOption, TConfigurationSet> : ConfigurationOptionModel where TConfigurationSet : ConfigurationSet where TOption : class, new()
@@ -61,5 +61,7 @@ namespace ConfigServer.Server
         }
 
         public override string GetKeyFromObject(object value) => keySelector((TOption)value);
+
+        public override object NewItemInstance() => new TOption();
     }
 }

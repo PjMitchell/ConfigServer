@@ -19,7 +19,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         [Fact]
         public void CanBuildModelDefinition_Property()
         {
-            target.PropertyWithConfigurationSetOptions(x => x.Option, (TestConfiguationModule provider) => provider.Options);
+            target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options);
             var result = target.Build();
 
             Assert.True(result.ConfigurationProperties.ContainsKey(nameof(TestConfig.Option)));
@@ -33,7 +33,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var name = "A Name";
             var description = "A Discription";
 
-            target.PropertyWithConfigurationSetOptions(x => x.Option, (TestConfiguationModule provider) => provider.Options)
+            target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options)
                .WithDisplayName(name)
                 .WithDescription(description);
             var result = target.Build();
@@ -48,10 +48,10 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var name = "A Name";
             var description = "A Discription";
 
-            target.PropertyWithConfigurationSetOptions(x => x.Option, (TestConfiguationModule provider) => provider.Options)
+            target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options)
                 .WithDisplayName(name)
                 .WithDescription(description);
-            target.PropertyWithConfigurationSetOptions(x => x.Option, (TestConfiguationModule provider) => provider.Options);
+            target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options);
             var result = target.Build();
             var def = GetPropertyWithOption(result);
             Assert.Equal(null, def.PropertyDescription);
@@ -61,7 +61,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         [Fact]
         public void CanBuildModelDefinition_SetsDependency()
         {
-            target.PropertyWithConfigurationSetOptions(x => x.Option, (TestConfiguationModule provider) => provider.Options);
+            target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options);
             var result = target.Build();
             var def = GetPropertyWithOption(result);
             var dependency = def.GetDependencies().ToList();
@@ -70,9 +70,9 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             Assert.Equal(nameof(TestConfiguationModule.Options), dependency[0].PropertyPath);
         }
 
-        private ConfigurationPropertyWithConfigSetOptionsModelDefinition GetPropertyWithOption(ConfigurationModel def)
+        private ConfigurationPropertyWithOptionModelDefinition GetPropertyWithOption(ConfigurationModel def)
         {
-            return (ConfigurationPropertyWithConfigSetOptionsModelDefinition)def.ConfigurationProperties[nameof(TestConfig.Option)];
+            return (ConfigurationPropertyWithOptionModelDefinition)def.ConfigurationProperties[nameof(TestConfig.Option)];
         }
 
 

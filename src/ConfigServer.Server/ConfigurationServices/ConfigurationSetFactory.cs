@@ -44,20 +44,29 @@ namespace ConfigServer.Server
             return (ConfigurationSet<TConfigSet>)result;
         }
 
-        private async Task BuildOptions(ConfigurationSet result, ConfigurationSetModel setDefinition,Type setType, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity identity)
+        private async Task BuildOptions(ConfigurationSet result, ConfigurationSetModel setDefinition,Type setType, IEnumerable<ConfigurationSet> configurationSets,  ConfigurationIdentity identity)
         {
             var configurationDependencies = configurationSets.Concat(new[] { result }).ToArray();
             foreach (var option in GetOptionsInOrder(setDefinition))
             {
-                var options = await configProvider.GetCollectionAsync(option.Type, identity);
+                IOptionSet optionSet;
+                if (option is ReadOnlyConfigurationOptionModel readonlyModel)
+                    optionSet = optionSetFactory.Build(readonlyModel, identity);
+                else 
+                    optionSet = await BuildOptionSetCollection(option, configurationDependencies, identity);
 
-                var optionSet = option.BuildOptionSet(options);
-                foreach(var item in optionSet.Values)
-                {
-                    UpdateOptions(item, option.ConfigurationProperties, configurationDependencies, identity);
-                }
                 option.SetConfigurationOnConfigurationSet(result, optionSet);
             }
+        }
+
+        private async Task<IOptionSet> BuildOptionSetCollection(ConfigurationOptionModel option, IEnumerable<ConfigurationSet> configurationDependencies, ConfigurationIdentity identity)
+        {
+            var options = await configProvider.GetCollectionAsync(option.Type, identity);
+            var optionSet = option.BuildOptionSet(options);
+            foreach (var item in optionSet.Values)
+                UpdateOptions(item, option.ConfigurationProperties, configurationDependencies, identity);
+
+            return optionSet;
         }
 
         private async Task BuildConfigurations(ConfigurationSet result, ConfigurationSetModel setDefinition, Type setType, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity identity)
@@ -102,7 +111,8 @@ namespace ConfigServer.Server
 
         private void UpdateOptions(object source, IOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
-
+            if (model is ConfigurationPropertyWithOptionValueModelDefinition)
+                return; 
             var orignal = model.GetPropertyValue(source);
             if (orignal == null)
                 return;
@@ -112,6 +122,14 @@ namespace ConfigServer.Server
         }
 
         private void UpdateOptions(object source, IMultipleOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        {
+            if (model is ConfigurationPropertyWithMultipleOptionValuesModelDefinition valueModel)
+                UpdateMultipleOptions(source, valueModel, configurationSets, configIdentity);
+            else
+                UpdateMultipleOptions(source, model, configurationSets, configIdentity);
+        }
+
+        private void UpdateMultipleOptions(object source, IMultipleOptionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
             var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
             var collectionBuilder = model.GetCollectionBuilder();
@@ -123,6 +141,21 @@ namespace ConfigServer.Server
             }
             model.SetPropertyValue(source, collectionBuilder.Collection);
         }
+
+        private void UpdateMultipleOptions(object source, ConfigurationPropertyWithMultipleOptionValuesModelDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        {
+            var optionSet = optionSetFactory.Build(model, configIdentity, configurationSets);
+            var collectionBuilder = model.GetCollectionBuilder();
+            var items = model.GetPropertyValue(source) as IEnumerable;
+            foreach (var item in items ?? Enumerable.Empty<object>())
+            {
+                if (optionSet.ContainsKey(item))
+                    collectionBuilder.Add(item);
+            }
+            model.SetPropertyValue(source, collectionBuilder.Collection);
+        }
+
+
 
         private void UpdateOptions(object source, ConfigurationCollectionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {

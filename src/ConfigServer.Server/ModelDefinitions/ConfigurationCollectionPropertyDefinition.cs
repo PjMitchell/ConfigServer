@@ -42,6 +42,8 @@ namespace ConfigServer.Server
         /// <returns>Collection Builder for Property</returns>
         public abstract CollectionBuilder GetCollectionBuilder();
 
+        public abstract object NewItemInstance();
+
         /// <summary>
         /// Gets Key From Collection Item
         /// </summary>
@@ -72,5 +74,7 @@ namespace ConfigServer.Server
         /// </summary>
         /// <returns>Collection Builder for Property</returns>
         public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TConfig>(CollectionType);
+
+        public override object NewItemInstance() => new TConfig();
     }
 }

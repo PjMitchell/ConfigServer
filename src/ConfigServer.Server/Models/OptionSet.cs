@@ -64,7 +64,14 @@ namespace ConfigServer.Server
         /// <param name="key">The key to locate in the set</param>
         /// <returns>true if the set contains an element with the specified key; otherwise, false.</returns>
         public bool ContainsKey(string key) => source.ContainsKey(key);
-        
+
+        /// <summary>
+        /// Determines if option has a key that is in the set
+        /// </summary>
+        /// <param name="option">key being Queried</param>
+        /// <returns>Returns true if key is in the set, else false</returns>
+        public bool ContainsKey(object option) => option != null && ContainsKey(option.ToString());
+
         /// <summary>
         /// Returns an enumerator that iterates through the set
         /// </summary>
@@ -145,8 +152,8 @@ namespace ConfigServer.Server
         /// <returns>Returns true if option has a key in the set, else false</returns>
         public bool OptionKeyInSet(object option)
         {
-            if (option is TOption)
-                return OptionKeyInSet((TOption)option);
+            if (option is TOption o)
+                return OptionKeyInSet(o);
             return false;
         }
 

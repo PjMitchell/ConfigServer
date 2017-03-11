@@ -12,20 +12,23 @@ namespace ConfigServer.Server
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
-        readonly IConfigurationEditPayloadMapper configurationEditPayloadMapper;
+        readonly IConfigurationEditModelMapper configurationEditModelMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
         readonly IConfigurationValidator validator;
+        readonly IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper;
         readonly IEventService eventService;
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter,IConfigurationEditPayloadMapper configurationEditPayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService)
+
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
             this.modelPayloadMapper = modelPayloadMapper;
             this.configInstanceRouter = configInstanceRouter;
-            this.configurationEditPayloadMapper = configurationEditPayloadMapper;
+            this.configurationEditModelMapper = configurationEditModelMapper;
             this.configRepository = configRepository;
             this.validator = validator;
+            this.configurationUpdatePayloadMapper = configurationUpdatePayloadMapper;
             this.eventService = eventService;
         }
 
@@ -68,7 +71,7 @@ namespace ConfigServer.Server
         private Task HandleValueRequest(HttpContext context,ConfigInstance configInstance)
         {
             if(context.Request.Method == "GET")
-             return responseFactory.BuildResponse(context, configurationEditPayloadMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
+             return responseFactory.BuildResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
             if (context.Request.Method == "POST")
                 return HandleValuePostRequest(context, configInstance);
             throw new System.Exception("Only Get or Post methods expected");
@@ -105,12 +108,12 @@ namespace ConfigServer.Server
             if (configInstance.IsCollection)
             {
                 var input = await context.GetJArrayFromJsonBodyAsync();
-                return await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+                return await configurationUpdatePayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
             }
             else
             {
                 var input = await context.GetJObjectFromJsonBodyAsync();
-                return await configurationEditPayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
+                return await configurationUpdatePayloadMapper.UpdateConfigurationInstance(configInstance, input, model);
             }
         }
 
@@ -131,7 +134,9 @@ namespace ConfigServer.Server
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
-                Configs = model.Configs.Select(MapToSummary).ToList()
+                Configs = model.Configs.Where(w=> !w.IsReadOnly)
+                    .Select(MapToSummary)
+                    .ToList()
             };
         }
 

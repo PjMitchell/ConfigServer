@@ -106,19 +106,27 @@ namespace ConfigServer.Server.Validation
             var errors = new List<string>();
             var propertyValue = propertyModel.GetPropertyValue(target);
             var options = optionSetFactory.Build(propertyModel, configIdentity, configurationSets);
-            if (!options.OptionKeyInSet(propertyValue))
+            if(propertyModel is ConfigurationPropertyWithOptionValueModelDefinition valueModel)
+            {
+                if(!options.ContainsKey(propertyValue))
+                    errors.Add(ValidationStrings.OptionNotFound(propertyModel.ConfigurationPropertyName));
+            }            
+            else if (!options.OptionKeyInSet(propertyValue))
                 errors.Add(ValidationStrings.OptionNotFound(propertyModel.ConfigurationPropertyName));
             return new ValidationResult(errors);
         }
+
+
 
         private ValidationResult ValidateProperty(object target, IMultipleOptionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
             var errors = new List<string>();
             var propertyValue = propertyModel.GetPropertyValue(target) as IEnumerable;
             var options = optionSetFactory.Build(propertyModel, configIdentity, configurationSets);
+            var isOptionValue = propertyModel is ConfigurationPropertyWithMultipleOptionValuesModelDefinition;
             foreach (var value in propertyValue)
             {
-                if (options.OptionKeyInSet(value))
+                if ((isOptionValue && options.ContainsKey(value)) || (!isOptionValue && options.OptionKeyInSet(value)))
                     continue;
                 errors.Add(ValidationStrings.OptionNotFound(propertyModel.ConfigurationPropertyName));
                 break;
