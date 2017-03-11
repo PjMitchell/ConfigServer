@@ -27,7 +27,7 @@ namespace ConfigServer.Core.Tests
             var expected = 23;
             await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = expected }, configSetId));
             var localServer = new LocalConfigServerClient(repository,configSetId);
-            var config =await localServer.BuildConfigAsync<SimpleConfig>();
+            var config =await localServer.GetConfigAsync<SimpleConfig>();
             Assert.Equal(expected, config.IntProperty);
         }
 
@@ -37,7 +37,7 @@ namespace ConfigServer.Core.Tests
             var expected = 23;
             await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = expected },configSetId));
             var localServer = new LocalConfigServerClient(repository, configSetId);
-            var config = await localServer.BuildConfigAsync(typeof(SimpleConfig));
+            var config = await localServer.GetConfigAsync(typeof(SimpleConfig));
             var castedConfig = (SimpleConfig)config;
             Assert.Equal(expected, castedConfig.IntProperty);
         }

@@ -17,7 +17,6 @@ namespace ConfigServer.Core
         /// <returns>ConfigServer client builder for further configuration</returns>
         public static ConfigServerClientBuilder WithConfig<TConfig>(this ConfigServerClientBuilder source) where TConfig : class, new()
         {
-            source.ServiceCollection.Add(ServiceDescriptor.Transient(r => r.GetService<IConfigServerClient>().BuildConfigAsync<TConfig>().Result));
             source.ConfigurationRegistry.AddRegistration(ConfigurationRegistration.Build<TConfig>());
             return source;
         }
@@ -30,7 +29,6 @@ namespace ConfigServer.Core
         /// <returns>ConfigServer client builder for further configuration</returns>
         public static ConfigServerClientBuilder WithCollectionConfig<TConfig>(this ConfigServerClientBuilder source) where TConfig : class, new()
         {
-            source.ServiceCollection.Add(ServiceDescriptor.Transient(r => r.GetService<IConfigServerClient>().BuildCollectionConfigAsync<TConfig>().Result));
             source.ConfigurationRegistry.AddRegistration(ConfigurationRegistration.BuildCollection<TConfig>());
             return source;
         }

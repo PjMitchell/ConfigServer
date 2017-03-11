@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests.Client
 {
     public class ConfigServerClientTest
     {
-        private readonly IConfigServerClient target;
+        private readonly IConfigServer target;
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
@@ -35,7 +35,7 @@ namespace ConfigServer.Core.Tests.Client
         [Fact]
         public async Task BuildConfigAsync_ThrowsExceptionIfConfigNotInRegistry()
         {
-            await Assert.ThrowsAsync<InvalidConfigurationException>(() => target.BuildConfigAsync(typeof(WrongConfig)));
+            await Assert.ThrowsAsync<InvalidConfigurationException>(() => target.GetConfigAsync(typeof(WrongConfig)));
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace ConfigServer.Core.Tests.Client
         {
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(() => Task.FromResult(BuildResponse(new SimpleConfig())));
-            await target.BuildConfigAsync(typeof(SimpleConfig));
+            await target.GetConfigAsync(typeof(SimpleConfig));
             clientWrapper.Verify(r => r.GetAsync(It.Is<Uri>(u => Check(u))), Times.AtLeastOnce());
         }
 
@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests.Client
         {
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(() => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.NotFound)));
-            await Assert.ThrowsAsync<ConfigServerCommunicationException>(() => target.BuildConfigAsync(typeof(SimpleConfig)));
+            await Assert.ThrowsAsync<ConfigServerCommunicationException>(() => target.GetConfigAsync(typeof(SimpleConfig)));
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace ConfigServer.Core.Tests.Client
 
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(() => Task.FromResult(BuildResponse(config)));
-            var result = await target.BuildConfigAsync(typeof(SimpleConfig));
+            var result = await target.GetConfigAsync(typeof(SimpleConfig));
             var castResult = result as SimpleConfig;
             Assert.NotNull(castResult);
             Assert.Equal(config.IntProperty, castResult.IntProperty);
@@ -75,7 +75,7 @@ namespace ConfigServer.Core.Tests.Client
         [Fact]
         public async Task BuildConfigAsync_T_ThrowsExceptionIfConfigNotInRegistry()
         {
-            await Assert.ThrowsAsync<InvalidConfigurationException>(() => target.BuildConfigAsync<WrongConfig>());
+            await Assert.ThrowsAsync<InvalidConfigurationException>(() => target.GetConfigAsync<WrongConfig>());
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace ConfigServer.Core.Tests.Client
         {
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(()=> Task.FromResult(BuildResponse(new SimpleConfig())));
-            await target.BuildConfigAsync<SimpleConfig>();
+            await target.GetConfigAsync<SimpleConfig>();
             clientWrapper.Verify(r => r.GetAsync(It.Is<Uri>(u => Check(u))), Times.AtLeastOnce());
         }
 
@@ -92,7 +92,7 @@ namespace ConfigServer.Core.Tests.Client
         {
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(() => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.NotFound)));
-            await Assert.ThrowsAsync<ConfigServerCommunicationException>(() => target.BuildConfigAsync<SimpleConfig>());
+            await Assert.ThrowsAsync<ConfigServerCommunicationException>(() => target.GetConfigAsync<SimpleConfig>());
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace ConfigServer.Core.Tests.Client
 
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
                 .Returns(() => Task.FromResult(BuildResponse(config)));
-            var result = await target.BuildConfigAsync<SimpleConfig>();
+            var result = await target.GetConfigAsync<SimpleConfig>();
 
             Assert.Equal(config.IntProperty, result.IntProperty);
         }

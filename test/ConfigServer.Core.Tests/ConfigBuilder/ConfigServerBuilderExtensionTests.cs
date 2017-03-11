@@ -17,24 +17,6 @@ namespace ConfigServer.Core.Tests
         }
 
         [Fact]
-        public async Task CanSetUpSimpleInMemoryConfig()
-        {
-            var config = new SimpleConfig { IntProperty = 23 };
-            var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
-            serviceCollection.AddConfigServer()
-                .UseInMemoryProvider()
-                .UseLocalConfigServerClient(applicationId)
-                .WithConfig<SimpleConfig>();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var configRepo = serviceProvider.GetService<IConfigRepository>();
-            await configRepo.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(config,applicationId));
-            var configFromServer = serviceProvider.GetService<SimpleConfig>();
-            Assert.Equal(config.IntProperty, configFromServer.IntProperty);
-
-
-        }
-
-        [Fact]
         public void CanAddConfigRegistry()
         {
             var config = new SimpleConfig { IntProperty = 23 };

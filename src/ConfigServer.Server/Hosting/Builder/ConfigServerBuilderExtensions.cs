@@ -87,7 +87,7 @@ namespace ConfigServer.Server
         {
             var configurationCollection = new ConfigurationRegistry();
             var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
-            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServerClient>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), applicationId)));
+            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), applicationId)));
             return builder;
         }
 
