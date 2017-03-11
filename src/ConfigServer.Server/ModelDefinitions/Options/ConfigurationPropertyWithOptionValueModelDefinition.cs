@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationPropertyWithConfigSetOptionValueModelDefinition<TConfigSet, TOption, TValue> : ConfigurationPropertyWithConfigSetOptionsModelDefinition
+    internal class ConfigurationPropertyWithOptionValueModelDefinition<TConfigSet, TOption, TValue> : ConfigurationPropertyWithOptionModelDefinition
     {
         readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
         readonly Func<TOption, TValue> valueSelector;
@@ -11,7 +11,7 @@ namespace ConfigServer.Server
         readonly string optionPath;
         readonly ConfigurationDependency[] dependency;
 
-        internal ConfigurationPropertyWithConfigSetOptionValueModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, Func<TOption, TValue> valueSelector, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TValue), propertyParentType)
+        internal ConfigurationPropertyWithOptionValueModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, Func<TOption, TValue> valueSelector, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TValue), propertyParentType)
         {
             this.optionProvider = optionProvider;
             this.valueSelector = valueSelector;

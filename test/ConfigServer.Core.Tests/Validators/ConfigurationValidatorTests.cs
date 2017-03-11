@@ -344,7 +344,7 @@ namespace ConfigServer.Core.Tests.Validators
             {
                 Option = new Option { Id = 5, Description = "Option Four" }
             };
-            modelBuilder.PropertyWithConfigurationSetOptions<SampleConfig,Option,SampleConfigSet>(p=> p.Option,provider => provider.Options);
+            modelBuilder.PropertyWithOption(p=> p.Option,(SampleConfigSet provider) => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
@@ -360,7 +360,7 @@ namespace ConfigServer.Core.Tests.Validators
             {
                 Option = OptionProvider.OptionOne
             };
-            modelBuilder.PropertyWithConfigurationSetOptions<SampleConfig, Option, SampleConfigSet>(p => p.Option, provider => provider.Options);
+            modelBuilder.PropertyWithOption(p=> p.Option,(SampleConfigSet set) => set.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
@@ -378,7 +378,7 @@ namespace ConfigServer.Core.Tests.Validators
                     OptionProvider.OptionOne
                 }
             };
-            modelBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions,(SampleConfigSet provider) => provider.Options);
+            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptions,(SampleConfigSet provider) => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
@@ -399,7 +399,7 @@ namespace ConfigServer.Core.Tests.Validators
                 }
 
             };
-            modelBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (SampleConfigSet provider) => provider.Options);
+            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (SampleConfigSet provider) => provider.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);

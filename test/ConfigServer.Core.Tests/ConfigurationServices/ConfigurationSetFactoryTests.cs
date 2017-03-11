@@ -159,12 +159,12 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                 modelBuilder.Options(set => set.OptionsFromProvider, r => r.Id, r => r.Description, (IOptionProvider provider) => provider.GetOptions());
 
                 var optionConfig = modelBuilder.Options(set => set.OptionDependentOnAnotherOption, r => r.Id, r => r)
-                    .PropertyWithConfigurationSetOptions(r=> r.ExternalOption, (TestConfiguationModule option)=> option.Options);
+                    .PropertyWithOption(r=> r.ExternalOption, (TestConfiguationModule option)=> option.Options);
 
                 var configBuilder = modelBuilder.Config(set => set.TestConfig);
-                configBuilder.PropertyWithConfigurationSetOptions(p => p.ExternalOption, (TestConfiguationModule provider) => provider.Options);
-                configBuilder.PropertyWithConfigurationSetOptions(p => p.Option, (TestConfiguationModule provider) => provider.OptionsFromProvider);
-                configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (TestConfiguationModule provider) => provider.OptionsFromProvider);
+                configBuilder.PropertyWithOption(p => p.ExternalOption, (TestConfiguationModule provider) => provider.Options);
+                configBuilder.PropertyWithOption(p => p.Option, (TestConfiguationModule provider) => provider.OptionsFromProvider);
+                configBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (TestConfiguationModule provider) => provider.OptionsFromProvider);
             }
         }
 

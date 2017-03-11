@@ -6,13 +6,13 @@ namespace ConfigServer.Server
 {
 
 
-    internal class ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition<TConfigSet, TOption, TOptionCollection> : ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition where TOptionCollection : ICollection<TOption> where TOption : new()
+    internal class ConfigurationPropertyWithMultipleOptionsModelDefinition<TConfigSet, TOption, TOptionCollection> : ConfigurationPropertyWithMultipleOptionsModelDefinition where TOptionCollection : ICollection<TOption> where TOption : new()
     {
         readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
         readonly string optionPath;
         readonly ConfigurationDependency[] dependency;
 
-        internal ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TOption), propertyParentType)
+        internal ConfigurationPropertyWithMultipleOptionsModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TOption), propertyParentType)
         {
             this.optionProvider = optionProvider;
             this.optionPath = optionPath;
@@ -31,9 +31,9 @@ namespace ConfigServer.Server
 
     }
 
-    internal abstract class ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition : ConfigurationPropertyWithConfigSetOptionsModelDefinition, IMultipleOptionPropertyDefinition
+    internal abstract class ConfigurationPropertyWithMultipleOptionsModelDefinition : ConfigurationPropertyWithOptionModelDefinition, IMultipleOptionPropertyDefinition
     {
-        protected ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition(string propertyName, Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, configurationSet, optionType, propertyParentType)
+        protected ConfigurationPropertyWithMultipleOptionsModelDefinition(string propertyName, Type configurationSet, Type optionType, Type propertyParentType) : base(propertyName, configurationSet, optionType, propertyParentType)
         {
 
         }

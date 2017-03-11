@@ -36,22 +36,21 @@ namespace ConfigServer.Sample.mvc.Models
                 .WithMinValue(new DateTime(2013, 10, 10));
 
             configBuilder.Property(p => p.Name).WithMaxLength(250);
-            configBuilder.PropertyWithConfigurationSetOptions(p => p.Option, (SampleConfigSet set) => set.OptionFromProvider)
+            configBuilder.PropertyWithOption(p => p.Option, (SampleConfigSet set) => set.OptionFromProvider)
                 .WithDescription("Is a selected option");
 
-            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (SampleConfigSet set) => set.OptionFromProvider)
+            configBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (SampleConfigSet set) => set.OptionFromProvider)
                 .WithDescription("Is a multi select option");
 
             configBuilder.Collection(p=> p.ListOfConfigs)
                 .WithUniqueKey(x=>x.Name);
 
-            configBuilder.PropertyWithConfigurationSetOptions(p => p.OptionFromConfigSet, (SampleConfigSet set) => set.Options)
+            configBuilder.PropertyWithOption(p => p.OptionFromConfigSet, (SampleConfigSet set) => set.Options)
                 .WithDescription("Options from the option set");
 
-            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet set) => set.Options)
+            configBuilder.PropertyWithMultipleOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet set) => set.Options)
                 .WithDescription("More options from the option set");
-            configBuilder.PropertyWithConfigurationSetOptionValue(p => p.OptionFromConfigSetId, (SampleConfigSet set) => set.Options, option => option.Id);
-            configBuilder.PropertyWithConfigurationSetOptionValue(p => p.OptionId, (SampleConfigSet set) => set.OptionFromProvider, option => option.Id);
+            configBuilder.PropertyWithOptionValue(p => p.OptionId, (SampleConfigSet set) => set.OptionFromProvider, option => option.Id);
 
             modelBuilder.Options(s => s.Options, o=> o.Id, o=> o.Description, "Options", "Options for sample config");
             modelBuilder.Options(s => s.OptionFromProvider, o => o.Id, o => o.Description , (IOptionProvider optionProvider) => optionProvider.GetOptions(), "Options", "Options for sample config");

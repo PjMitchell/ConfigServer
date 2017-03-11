@@ -50,8 +50,8 @@ namespace ConfigServer.Server
 
         public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
-            if (definition is ConfigurationPropertyWithConfigSetOptionsModelDefinition configSetOptionModelDefinition)
-                return Build(configSetOptionModelDefinition, configurationSets);
+            if (definition is ConfigurationPropertyWithOptionModelDefinition optionModelDefinition)
+                return Build(optionModelDefinition, configurationSets);
             throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
         }
 
@@ -62,12 +62,12 @@ namespace ConfigServer.Server
             return optionModel.GetKeyFromObject(value);
         }
 
-        private IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
+        private IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
         {
             var configurationSet = configurationSets.Single(r => r.GetType() == definition.ConfigurationSetType);
             return Build(definition, configurationSet);
         }
 
-        private IOptionSet Build(ConfigurationPropertyWithConfigSetOptionsModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
+        private IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
     }
 }

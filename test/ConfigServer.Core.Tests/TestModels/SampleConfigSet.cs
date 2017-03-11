@@ -22,9 +22,9 @@ namespace ConfigServer.Sample.Models
             configBuilder.Property(p => p.StartDate)
                 .WithMinValue(new DateTime(2013, 10, 10));
             configBuilder.Property(p => p.Name).WithMaxLength(250);
-            configBuilder.PropertyWithConfigurationSetOptions(p => p.Option, (SampleConfigSet set) => set.Options)
+            configBuilder.PropertyWithOption(p => p.Option, (SampleConfigSet set) => set.Options)
                 .WithDescription("Is a selected option");
-            configBuilder.PropertyWithMultipleConfigurationSetOptions(p => p.MoarOptions, (SampleConfigSet set) => set.Options)
+            configBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (SampleConfigSet set) => set.Options)
                 .WithDescription("Is a multi select option");
             configBuilder.Collection(p=> p.ListOfConfigs);
 

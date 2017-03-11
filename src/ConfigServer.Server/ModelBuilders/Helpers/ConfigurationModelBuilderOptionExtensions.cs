@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 namespace ConfigServer.Server
 {
     /// <summary>
-    /// Property Option Builders For Configurations Set
+    /// Property Option Builders
     /// </summary>
-    public static class ConfigurationModelBuilderOptionFromConfigurationSetExtensions
+    public static class ConfigurationModelBuilderOptionExtensions
     {
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for property with option
@@ -20,13 +20,13 @@ namespace ConfigServer.Server
         /// <param name="expression">property selector</param>
         /// <param name="optionProvider">Options Selector</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        public static ConfigurationPropertyWithConfigSetOptionBuilder PropertyWithConfigurationSetOptions<TModel, TOption, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOption>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet
+        public static ConfigurationPropertyWithOptionBuilder PropertyWithOption<TModel, TOption, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOption>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet
         {
             var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
             var optionName = ExpressionHelper.GetPropertyNameFromExpression(optionProvider);
-            var model = new ConfigurationPropertyWithConfigSetOptionsModelDefinition<TConfigurationSet, TOption>(optionProvider.Compile(), optionName, propertyName, typeof(TModel));
+            var model = new ConfigurationPropertyWithOptionModelDefinition<TConfigurationSet, TOption>(optionProvider.Compile(), optionName, propertyName, typeof(TModel));
             source.ConfigurationProperties[propertyName] = model;
-            return new ConfigurationPropertyWithConfigSetOptionBuilder(model);
+            return new ConfigurationPropertyWithOptionBuilder(model);
         }
 
 
@@ -42,20 +42,20 @@ namespace ConfigServer.Server
         /// <param name="expression">property selector</param>
         /// <param name="optionProvider">Options Selector</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        public static ConfigurationPropertyWithConfigSetOptionBuilder PropertyWithMultipleConfigurationSetOptions<TModel, TOption, TOptionCollection, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOptionCollection>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet where TOption : new() where TOptionCollection : ICollection<TOption>
+        public static ConfigurationPropertyWithOptionBuilder PropertyWithMultipleOptions<TModel, TOption, TOptionCollection, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOptionCollection>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet where TOption : new() where TOptionCollection : ICollection<TOption>
         {
             var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
             var optionName = ExpressionHelper.GetPropertyNameFromExpression(optionProvider);
-            var model = new ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition<TConfigurationSet, TOption, TOptionCollection>(optionProvider.Compile(), optionName, propertyName, typeof(TModel));
+            var model = new ConfigurationPropertyWithMultipleOptionsModelDefinition<TConfigurationSet, TOption, TOptionCollection>(optionProvider.Compile(), optionName, propertyName, typeof(TModel));
             source.ConfigurationProperties[propertyName] = model;
-            return new ConfigurationPropertyWithConfigSetOptionBuilder(model);
+            return new ConfigurationPropertyWithOptionBuilder(model);
         }
     }
 
     /// <summary>
     /// Property Option Value Builders For Configurations Set
     /// </summary>
-    public static class ConfigurationModelBuilderOptionValueFromConfigurationSetExtensions
+    public static class ConfigurationModelBuilderOptionValueExtensions
     {
         /// <summary>
         /// Gets ConfigurationPropertyModelBuilder for property with option
@@ -70,13 +70,13 @@ namespace ConfigServer.Server
         /// <param name="optionProvider">Options Selector</param>
         /// <param name="keySelector">Value Selector</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        public static ConfigurationPropertyWithConfigSetOptionBuilder PropertyWithConfigurationSetOptionValue<TModel, TValue, TOption, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TValue>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider, Expression<Func<TOption, TValue>> keySelector) where TConfigurationSet : ConfigurationSet
+        public static ConfigurationPropertyWithOptionBuilder PropertyWithOptionValue<TModel, TValue, TOption, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TValue>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider, Expression<Func<TOption, TValue>> keySelector) where TConfigurationSet : ConfigurationSet
         {
             var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
             var optionName = ExpressionHelper.GetPropertyNameFromExpression(optionProvider);
-            var model = new ConfigurationPropertyWithConfigSetOptionValueModelDefinition<TConfigurationSet, TOption, TValue>(optionProvider.Compile(), keySelector.Compile(), optionName, propertyName, typeof(TModel));
+            var model = new ConfigurationPropertyWithOptionValueModelDefinition<TConfigurationSet, TOption, TValue>(optionProvider.Compile(), keySelector.Compile(), optionName, propertyName, typeof(TModel));
             source.ConfigurationProperties[propertyName] = model;
-            return new ConfigurationPropertyWithConfigSetOptionBuilder(model);
+            return new ConfigurationPropertyWithOptionBuilder(model);
         }
 
 
@@ -92,13 +92,13 @@ namespace ConfigServer.Server
         /// <param name="expression">property selector</param>
         /// <param name="optionProvider">Options Selector</param>
         /// <returns>ConfigurationPropertyWithOptionBuilder for selected property</returns>
-        //public static ConfigurationPropertyWithConfigSetOptionBuilder PropertyWithMultipleConfigurationSetOptions<TModel, TOption, TOptionCollection, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOptionCollection>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet where TOption : new() where TOptionCollection : ICollection<TOption>
+        //public static ConfigurationPropertyWithOptionBuilder PropertyWithMultipleOptions<TModel, TOption, TOptionCollection, TConfigurationSet>(this IModelWithProperties<TModel> source, Expression<Func<TModel, TOptionCollection>> expression, Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionProvider) where TConfigurationSet : ConfigurationSet where TOption : new() where TOptionCollection : ICollection<TOption>
         //{
         //    var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
         //    var optionName = ExpressionHelper.GetPropertyNameFromExpression(optionProvider);
         //    var model = new ConfigurationPropertyWithMultipleConfigSetOptionsModelDefinition<TConfigurationSet, TOption, TOptionCollection>(optionProvider.Compile(), optionName, propertyName, typeof(TModel));
         //    source.ConfigurationProperties[propertyName] = model;
-        //    return new ConfigurationPropertyWithConfigSetOptionBuilder(model);
+        //    return new ConfigurationPropertyWithOptionBuilder(model);
         //}
     }
 }
