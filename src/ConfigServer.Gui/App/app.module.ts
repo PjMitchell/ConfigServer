@@ -29,6 +29,8 @@ import { EditClientComponent } from './components/editClient';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
 import { ResourceOverviewComponent } from './components/resourceOverview';
+import { ResourceFileUploaderComponent } from './components/resourceFileUploader';
+
 
 
 
@@ -64,6 +66,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
+        ResourceFileUploaderComponent,
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,

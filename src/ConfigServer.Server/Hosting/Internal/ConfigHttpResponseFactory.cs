@@ -26,7 +26,7 @@ namespace ConfigServer.Server
         void BuildNoContentResponse(HttpContext context);
 
         void BuildStatusResponse(HttpContext context, int statusCode);
-        void BuildFileResponse(HttpContext context, Stream file, string fileName);
+        Task BuildFileResponse(HttpContext context, Stream file, string fileName);
 
         Task BuildJsonFileResponse(HttpContext context, object config, string fileName);
 
@@ -63,11 +63,12 @@ namespace ConfigServer.Server
             return context.Response.WriteAsync(body);
         }
 
-        public void BuildFileResponse(HttpContext context, Stream file, string fileName)
+        public Task BuildFileResponse(HttpContext context, Stream file, string fileName)
         {
             context.Response.ContentType = HttpContentType.Stream;
             context.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
-            context.Response.Body = file;
+            context.Response.RegisterForDispose(file);
+            return file.CopyToAsync(context.Response.Body);
         }
     }
 

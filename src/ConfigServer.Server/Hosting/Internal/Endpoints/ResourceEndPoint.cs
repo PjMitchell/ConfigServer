@@ -59,16 +59,17 @@ namespace ConfigServer.Server
                         if (!result.HasEntry)
                             httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
                         else
-                            httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
+                            await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
                         break;
                 }
                 case "POST":
                 {
+                        var file = context.Request.Form.Files.Single();
                     var uploadRequest = new UpdateResourceRequest
                     {
                         Name = pathParams[1],
                         Identity = clientIdentity,
-                        Content = context.Request.Body
+                        Content = file.OpenReadStream()
                     };
                     await resourceStore.UpdateResource(uploadRequest);
                     break;
