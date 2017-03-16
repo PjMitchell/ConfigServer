@@ -9,7 +9,7 @@ import { ConfigurationClient } from '../interfaces/client';
         <h2>Edit client</h2>
         <div *ngIf="client">
             <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
-            <div class="break">
+            <hr />
             </div>
             <div>
                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
