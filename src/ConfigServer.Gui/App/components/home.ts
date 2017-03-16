@@ -8,11 +8,11 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
 @Component({
     template: `
     <div class="container">
-    <h2>Clients</h2>
-    <button type="button" class="btn btn-default" (click)="createNew()">Create</button>
+    <button type="button" class="btn btn-primary" (click)="createNew()"><span class="glyphicon glyphicon-plus"></span> Add Client</button>
+    <hr />
     <div class="row">
         <div class="col-sm-6 col-md-4"  *ngFor="let group of clients">
-            <div class="thumbnail list-unstyled">
+            <div class="thumbnail">
                 <div><img class="img-responsive" src="Assets/img/config-monkey.jpeg" /></div>
                 <div class="category"></div>
                 <div class="caption">
