@@ -49,7 +49,7 @@ namespace ConfigServer.FileProvider
                 throw new ArgumentException($"{nameof(FileResourceRepositoryBuilderOptions.ResourceStorePath)} cannot be null or whitespace", nameof(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IResourceStore, FileResourceStore>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IFileResourceStorageConnector, FileResourceConnector>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IFileResourceStorageConnector, FileResourceStorageConnector>());
 
             return builder;
         }

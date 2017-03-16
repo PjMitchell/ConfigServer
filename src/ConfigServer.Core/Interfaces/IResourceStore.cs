@@ -29,5 +29,21 @@ namespace ConfigServer.Core
         /// <param name="request">Update request </param>
         /// <returns>A task that represents the asynchronous update operation.</returns>
         Task UpdateResource(UpdateResourceRequest request);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceIdentity"></param>
+        /// <param name="destinationIdentity"></param>
+        /// <returns></returns>
+        Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="identity"></param>
+        /// <returns></returns>
+        Task DeleteResources(string name, ConfigurationIdentity identity);
     }
 }

@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             var option = new FileResourceRepositoryBuilderOptions { ResourceStorePath = testdirectory };
 
-            target = new FileResourceStore(new FileResourceConnector(option));
+            target = new FileResourceStore(new FileResourceStorageConnector(option));
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
@@ -129,6 +129,58 @@ namespace ConfigServer.Core.Tests
 
         }
 
+        [Fact]
+        public async void CopyResources()
+        {
+            byte[] resource = new byte[128];
 
+            UpdateResourceRequest request = new UpdateResourceRequest()
+            {
+                Identity = configId,
+                Name = "Resource 128.png",
+                Content = new MemoryStream(resource)
+            };
+            await target.UpdateResource(request);
+
+            var client2 = new ConfigurationClient
+            {
+                ClientId = "3FEE5A18-A00F-4565-BEFE-C79E0823F6D4",
+                Name = "Client 2",
+                Description = "A description Client"
+            };
+
+            var configId2 = new ConfigurationIdentity(client2.ClientId);
+
+
+            await target.CopyResources(configId, configId2);
+
+
+            var result = await target.GetResourceCatalogue(configId2);
+
+            Assert.Equal(1, result.Count());
+            Assert.Equal(request.Name, result.First().Name);
+        }
+
+        [Fact]
+        public async void DeleteResources()
+        {
+            byte[] resource = new byte[128];
+
+            UpdateResourceRequest request = new UpdateResourceRequest()
+            {
+                Identity = configId,
+                Name = "Resource 128.png",
+                Content = new MemoryStream(resource)
+            };
+            await target.UpdateResource(request);
+
+            await target.DeleteResources(request.Name, configId);
+
+
+            var result = await target.GetResourceCatalogue(configId);
+
+            Assert.Equal(0, result.Where(f => f.Name == request.Name).Count());
+
+        }
     }
 }

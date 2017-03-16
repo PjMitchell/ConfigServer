@@ -33,5 +33,20 @@ namespace ConfigServer.FileProvider
         /// <returns></returns>
         Task<IEnumerable<string>> GetResourceCatalog(string instanceId);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceInstanceId"></param>
+        /// <param name="destinationInstanceId"></param>
+        /// <returns></returns>
+        Task CopyResourcesAsync(string sourceInstanceId, string destinationInstanceId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <param name="instanceId"></param>
+        /// <returns></returns>
+        Task DeleteResources(string resourceName, string instanceId);
     }
 }
