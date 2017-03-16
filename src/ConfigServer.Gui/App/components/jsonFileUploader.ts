@@ -6,8 +6,9 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
     template: `
     <div>
         <form #form>
+            <button type="button" class="btn btn-primary" (click)="upload()"> <span class="glyphicon glyphicon-cloud-upload"></span> </button> 
             <input type="file" #input name="upload" accept="application/json">
-            <button type="button" (click)="upload()">Upload</button> 
+            
         </form>
         <p>{{message}}</p>
     </div>

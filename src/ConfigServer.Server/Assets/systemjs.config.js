@@ -20,8 +20,11 @@
             '@angular/upgrade': 'npm:@angular/upgrade/bundles/upgrade.umd.js',
             // other libraries
             'rxjs': 'npm:rxjs',
-            'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api'
-
+            'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
+            'jquery': 'npm:jquery/dist/jquery.min.js',
+            'jquery-validation': 'npm:jquery-validation/dist/jquery.validate.js',
+            'jquery-validation-unobtrusive': 'npm:jquery-validation-unobtrusive/jquery.validate.unobtrusive.js',
+            'bootstrap': 'npm:bootstrap/dist/js/bootstrap.min.js'
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {

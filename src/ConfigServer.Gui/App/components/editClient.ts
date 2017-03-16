@@ -9,11 +9,11 @@ import { ConfigurationClient } from '../interfaces/client';
         <h2>Edit client</h2>
         <div *ngIf="client">
             <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
-            <div class="break">
+            <hr />
             </div>
             <div>
-               <button type="button" (click)="back()">Back</button>
-               <button type="button" [disabled]="isDisabled" (click)="save()">Save</button>
+               <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+               <button type="button" class="btn btn-success" [disabled]="isDisabled" (click)="save()">Save</button>
             </div>
         </div>
 `

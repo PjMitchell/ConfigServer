@@ -9,11 +9,10 @@ import { ConfigurationClient } from '../interfaces/client';
         <h2>Create client</h2>
         <div>
             <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
-            <div class="break">
-            </div>
+            <hr />
             <div>
-               <button type="button" (click)="back()">Back</button>
-               <button [disabled]="isDisabled" type="button" (click)="create()">Create</button>
+               <button type="button"  class="btn btn-primary"(click)="back()">Back</button>
+               <button [disabled]="isDisabled" type="button" class="btn btn-success" (click)="create()">Create</button>
             </div>
         </div>
 `

@@ -8,11 +8,13 @@ import { ConfigurationModelSummary } from '../interfaces/configurationSetSummary
     selector: 'config-overview',
     template: `
             <div class="item">
-                <h5>{{config.displayName}}</h5>
-                <p>{{config.description}}</p>
-                <button type="button" (click)="downloadConfig(configurationSetId,config.id)">Download</button>
+                <h4>{{config.displayName}}</h4>
+                <p>Description: {{config.description}}</p>
+                
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
-                <button type="button" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
+                <button type="button" class="btn btn-info" (click)="downloadConfig(configurationSetId,config.id)"><span class="glyphicon glyphicon-download-alt"></span></button>
+
+                <button type="button" class="btn btn-primary" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
             </div>
 `
 })

@@ -19,7 +19,7 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
         </div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
-        <button type="button" (click)="back()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="back()">Back</button>
 `
 })
 export class ClientOverviewComponent implements OnInit {

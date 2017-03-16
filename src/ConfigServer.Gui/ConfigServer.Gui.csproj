@@ -9,6 +9,9 @@
     <Content Remove="App\**\*.js;App\**\*.js.map" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wwwroot\Assets\img\config-monkey.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\ConfigServer.Server\ConfigServer.Server.csproj" />
     <ProjectReference Include="..\ConfigServer.Core\ConfigServer.Core.csproj" />
@@ -55,6 +58,9 @@
     <DotNetCliToolReference Include="BundlerMinifier.Core">
       <Version>2.2.301</Version>
     </DotNetCliToolReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\css\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
