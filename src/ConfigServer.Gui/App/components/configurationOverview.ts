@@ -10,8 +10,10 @@ import { ConfigurationModelSummary } from '../interfaces/configurationSetSummary
             <div class="item">
                 <h5>{{config.displayName}}</h5>
                 <p>{{config.description}}</p>
-                <button type="button" class="btn btn-info" (click)="downloadConfig(configurationSetId,config.id)">Download</button>
+                
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
+                <button type="button" class="btn btn-info" (click)="downloadConfig(configurationSetId,config.id)">Download</button>
+
                 <button type="button" class="btn btn-primary" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
             </div>
 `
