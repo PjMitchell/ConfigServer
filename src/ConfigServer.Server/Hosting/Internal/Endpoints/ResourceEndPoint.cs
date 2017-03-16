@@ -55,16 +55,16 @@ namespace ConfigServer.Server
             {
                 case "GET":
                 {
-                        var result = await resourceStore.GetResource(pathParams[1], clientIdentity);
-                        if (!result.HasEntry)
-                            httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
-                        else
-                            await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
-                        break;
+                    var result = await resourceStore.GetResource(pathParams[1], clientIdentity);
+                    if (!result.HasEntry)
+                        httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
+                    else
+                        await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
+                    break;
                 }
                 case "POST":
                 {
-                        var file = context.Request.Form.Files.Single();
+                    var file = context.Request.Form.Files.Single();
                     var uploadRequest = new UpdateResourceRequest
                     {
                         Name = pathParams[1],
@@ -74,6 +74,11 @@ namespace ConfigServer.Server
                     await resourceStore.UpdateResource(uploadRequest);
                     break;
                 }
+                case "DELETE":
+                {
+                    await resourceStore.DeleteResources(pathParams[1], clientIdentity);
+                    break;
+                }
                 default:
                 {
                     httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status405MethodNotAllowed);
@@ -81,7 +86,6 @@ namespace ConfigServer.Server
                 }
                     
             }
-
             return true;
         }
 

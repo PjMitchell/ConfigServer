@@ -5,8 +5,9 @@ import { ResourceDataService } from '../dataservices/resource-data.service';
     selector: 'resource-file-uploader',
     template: `
     <div>
-        <form #form action="/Resource/{{clientId}}/Text.txt" enctype="multipart/form-data" method="post">
+        <form #form>
             <input name="filename" type="text" [(ngModel)]="fileName">
+            <p *ngIf="!isValidFilename" style="color:red;">file name is not valid</p>
             <input type="file" #input name="upload">
             <button type="button" (click)="upload()">Upload</button> 
         </form>
@@ -22,10 +23,18 @@ export class ResourceFileUploaderComponent implements OnInit {
     input: IChildElement<HTMLInputElement>;
     @ViewChild('form')
     form: IChildElement<HTMLFormElement>;
-    fileName: string;
+    regrex = /^[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]+$/;
+    isValidFilename: boolean;
     constructor(private dataService: ResourceDataService) {
-        
     }
+
+    _fileName: string;
+    get fileName(): string { return this._fileName };
+    set fileName(inputValue: string) { 
+        this._fileName = inputValue
+        this.checkFileName();
+    }
+
 
     upload(): void {
         var files = this.input.nativeElement.files;
@@ -34,7 +43,11 @@ export class ResourceFileUploaderComponent implements OnInit {
             let data = new FormData()
             data.append('resource', files.item(0));
             this.dataService.uploadResource(this.clientId, this.fileName, data)
-                .then(() => this.form.nativeElement.reset());
+                .then(() => {
+                    this.form.nativeElement.reset();
+                    this.checkFileName();
+                    this.onUpload.emit();
+                });
                 
             }
         
@@ -42,6 +55,7 @@ export class ResourceFileUploaderComponent implements OnInit {
 
     ngOnInit(): void {
         this.input.nativeElement.addEventListener('change', () => this.onFileChange());
+        this.checkFileName()
     }
 
     onFileChange() {
@@ -52,5 +66,17 @@ export class ResourceFileUploaderComponent implements OnInit {
         } else {
             this.fileName = '';
         }
+
+        this.checkFileName();
+    }
+
+    checkFileName() {
+        var files = this.input.nativeElement.files;
+        if (files && files.length === 1) {
+            this.isValidFilename = this.regrex.test(this.fileName) && this.fileName && this.fileName.includes('.')
+        } else {
+            this.isValidFilename = true;
+        }
+
     }
 }

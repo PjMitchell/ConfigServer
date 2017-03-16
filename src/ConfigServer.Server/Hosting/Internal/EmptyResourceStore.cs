@@ -34,5 +34,10 @@ namespace ConfigServer.Server
         {
             return Task.FromResult(true);
         }
+
+        public Task CopyResources(IEnumerable<string> filesToCopy, ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
+        {
+            return Task.FromResult(true);
+        }
     }
 }

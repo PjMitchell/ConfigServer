@@ -104,6 +104,27 @@ namespace ConfigServer.FileProvider
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="filesToCopy"></param>
+        /// <param name="sourceInstanceId"></param>
+        /// <param name="destinationInstanceId"></param>
+        /// <returns></returns>
+        public Task CopyResourcesAsync(IEnumerable<string> filesToCopy, string sourceInstanceId, string destinationInstanceId)
+        {
+            var fileHashSet = new HashSet<string>(filesToCopy, StringComparer.OrdinalIgnoreCase);
+            var originPath = GetResourceSetFolder(sourceInstanceId);
+            var destinationPath = GetResourceSetFolder(destinationInstanceId);
+            foreach (var originFile in Directory.EnumerateFiles(originPath.FullName).Where(filesToCopy.Contains))
+            {
+                string destinationFile = Path.Combine(destinationPath.FullName, Path.GetFileName(originFile));
+
+                File.Copy(originFile, destinationFile);
+            }
+            return Task.FromResult(true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="resourceName"></param>
         /// <param name="instanceId"></param>
         /// <returns></returns>
@@ -114,5 +135,6 @@ namespace ConfigServer.FileProvider
             File.Delete(fileToDelete);
             return Task.FromResult(true);
         }
+
     }
 }

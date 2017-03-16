@@ -19,7 +19,7 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
                 <p>{{client.description}}</p>
         </div>
 
-        <resource-overview  [csClientId]="clientId" [csResources]="resources"></resource-overview>
+        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)"></resource-overview>
  
         <h3>ConfigurationSets</h3>
         <div class="break">
@@ -49,7 +49,10 @@ export class ClientOverviewComponent implements OnInit {
                 .then(returnedResources => this.resources = returnedResources);
         });
     }
-
+    onResourcesChanged() {
+        this.resourceDataService.getClientResourceInfo(this.clientId)
+            .then(returnedResources => this.resources = returnedResources);
+    }
     back() {
         this.router.navigate(['/']);
     }

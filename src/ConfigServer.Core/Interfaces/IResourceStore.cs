@@ -31,19 +31,28 @@ namespace ConfigServer.Core
         Task UpdateResource(UpdateResourceRequest request);
 
         /// <summary>
-        /// 
+        /// Copies all files between two identities
         /// </summary>
-        /// <param name="sourceIdentity"></param>
-        /// <param name="destinationIdentity"></param>
-        /// <returns></returns>
+        /// <param name="sourceIdentity">source identity to be copied</param>
+        /// <param name="destinationIdentity">target identity</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
         Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity);
 
         /// <summary>
-        /// 
+        /// Copies files between two identities
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="identity"></param>
-        /// <returns></returns>
+        /// <param name="filesToCopy">Files to be copied</param>
+        /// <param name="sourceIdentity">source identity to be copied</param>
+        /// <param name="destinationIdentity">target identity</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
+        Task CopyResources(IEnumerable<string> filesToCopy, ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity);
+
+        /// <summary>
+        /// Deletes file for client
+        /// </summary>
+        /// <param name="name">Name of file to be seleted</param>
+        /// <param name="identity">Configuration identity being modified</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
         Task DeleteResources(string name, ConfigurationIdentity identity);
     }
 }

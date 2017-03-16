@@ -1,8 +1,5 @@
 ﻿using ConfigServer.Core;
-using System;
-using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
@@ -12,7 +9,7 @@ namespace ConfigServer.FileProvider
     /// <summary>
     /// 
     /// </summary>
-    public class FileResourceStore : IResourceStore
+    internal class FileResourceStore : IResourceStore
     {
         private IFileResourceStorageConnector fileResourceConnector;
 
@@ -90,6 +87,11 @@ namespace ConfigServer.FileProvider
         public async Task DeleteResources(string name, ConfigurationIdentity identity)
         {
             await fileResourceConnector.DeleteResources(name, identity.ClientId);
+        }
+
+        public Task CopyResources(IEnumerable<string> filesToCopy, ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
+        {
+            return fileResourceConnector.CopyResourcesAsync(filesToCopy, sourceIdentity.ClientId, destinationIdentity.ClientId);
         }
     }
 }

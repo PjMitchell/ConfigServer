@@ -23,6 +23,13 @@ export class ResourceDataService {
             .catch(this.handleError);
     }
 
+    deleteResource(clientId: string, fileName: string): Promise<IHttpRequestResult> {
+        return this.http.delete(this.resourceUrl + '/' + clientId + '/' + fileName)
+            .toPromise()
+            .then(response => this.handlePostSuccess(response))
+            .catch(this.handleError);
+    }
+
     private handlePostSuccess(response: Response) {
         return {
             suceeded: true

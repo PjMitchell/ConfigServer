@@ -44,6 +44,15 @@ namespace ConfigServer.FileProvider
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="filesToCopy"></param>
+        /// <param name="sourceInstanceId"></param>
+        /// <param name="destinationInstanceId"></param>
+        /// <returns></returns>
+        Task CopyResourcesAsync(IEnumerable<string> filesToCopy, string sourceInstanceId, string destinationInstanceId);
+        
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="resourceName"></param>
         /// <param name="instanceId"></param>
         /// <returns></returns>
