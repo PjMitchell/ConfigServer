@@ -8,8 +8,8 @@ import { ConfigurationModelSummary } from '../interfaces/configurationSetSummary
     selector: 'config-overview',
     template: `
             <div class="item">
-                <h5>{{config.displayName}}</h5>
-                <p>{{config.description}}</p>
+                <h4>{{config.displayName}}</h4>
+                <p>Description: {{config.description}}</p>
                 
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
                 <button type="button" class="btn btn-info" (click)="downloadConfig(configurationSetId,config.id)">Download</button>
