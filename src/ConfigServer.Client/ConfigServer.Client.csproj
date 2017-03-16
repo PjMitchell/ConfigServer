@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <Description>Client for ConfigServer.</Description>
-    <VersionPrefix>1.0.0-beta4</VersionPrefix>
+    <VersionPrefix>1.0.0-beta6</VersionPrefix>
     <Authors>Peter Mitchell</Authors>
     <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
