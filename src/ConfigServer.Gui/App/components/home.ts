@@ -6,20 +6,30 @@ import { Router } from '@angular/router';
 
 @Component({
     template: `
-        <h2>Clients</h2>
-        <button type="button" class="btn btn-success" (click)="createNew()">Create</button>
-        <div class="break"></div>
-        <div class="group" *ngFor="let group of clients">
-            <h3>{{group.key}}</h3>
-            <div class="item" *ngFor="let client of group.items">
-                <h3>{{client.name}}</h3>
-                <p>Id: {{client.clientId}}</p>
-                <p>{{client.enviroment}}</p>
-                <p>{{client.description}}</p>
-                <button type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
-                <button type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
+    <div class="container">
+    <h2>Clients</h2>
+    <button type="button" class="btn btn-default" (click)="createNew()">Create</button>
+    <div class="row">
+        <div class="col-sm-6 col-md-4"  *ngFor="let group of clients">
+            <div class="thumbnail list-unstyled">
+                <div><img class="img-responsive" src="Assets/img/config-monkey.jpeg" /></div>
+                <div class="category"></div>
+                <div class="caption">
+                    <h3>{{group.key}}</h3>
+                    <span *ngFor="let client of group.items">
+                        {{client.name}}; 
+                    </span>
+                    <hr />
+                    <p>
+                        <button type="button" class="btn btn-primary" (click)="editGroupClients(group.key)">
+                            Edit
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
+    </div>
+</div>
 `
 })
 export class HomeComponent implements OnInit {
