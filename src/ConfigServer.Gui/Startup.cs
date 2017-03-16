@@ -40,7 +40,8 @@ namespace ConfigServer.Gui
             // Add framework services.
             services.AddConfigServer()
                 .UseConfigSet<SampleConfigSet>()
-                .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath +"/FileStore/Configs" });
+                .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath +"/FileStore/Configs" })
+                .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = Env.ContentRootPath + "/FileStore/Resources" });
             services.AddTransient<IOptionProvider, OptionProvider>();
             var options1 = new List<OptionFromConfigSet>
             {
