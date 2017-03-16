@@ -7,7 +7,6 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
-    <div class="container">
     <button type="button" class="btn btn-primary" (click)="createNew()"><span class="glyphicon glyphicon-plus"></span> Add Client</button>
     <hr />
     <div class="row">
@@ -30,7 +29,6 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
             </div>
         </div>
     </div>
-</div>
 `
 })
 export class HomeComponent implements OnInit {
