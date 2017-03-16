@@ -15,6 +15,7 @@ namespace ConfigServer.FileProvider
             folderPath = options.ConfigStorePath;
         }
 
+
         public Task<string> GetClientRegistryFileAsync()
         {
             return Task.FromResult(GetClientStore());

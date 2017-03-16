@@ -20,8 +20,8 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="name">Name of resource</param>
         /// <param name="identity">Configuration identity being queryied</param>
-        /// <returns>Resource request</returns>
-        Task<ResourceEntryRequest> GetResource(string name, ConfigurationIdentity identity);
+        /// <returns>Resource response</returns>
+        Task<UpdateResourceResponse> GetResource(string name, ConfigurationIdentity identity);
 
         /// <summary>
         /// Updates resource
