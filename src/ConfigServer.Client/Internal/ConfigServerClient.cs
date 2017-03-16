@@ -3,15 +3,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
-
-[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Client
 {
-    internal class ConfigServerClient : IConfigServer
+    /// <summary>
+    /// Config Server Client
+    /// </summary>
+    public class ConfigServerClient : IConfigServer
     {
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
@@ -19,7 +19,13 @@ namespace ConfigServer.Client
         private readonly IMemoryCache cache;
         private const string cachePrefix = "ConfigServer_";
 
-
+        /// <summary>
+        /// Constructs new Config Server Client
+        /// </summary>
+        /// <param name="client">HttpClient Wrapper</param>
+        /// <param name="memorycache">Memory cache</param>
+        /// <param name="collection">Configuration Registry</param>
+        /// <param name="options">ConfigServerClientOptions</param>
         public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, ConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
@@ -30,6 +36,11 @@ namespace ConfigServer.Client
             cache = memorycache;
         }
 
+        /// <summary>
+        /// Builds Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be build</param>
+        /// <returns>Configuration of specified type</returns>
         public async Task<object> GetConfigAsync(Type type)
         {
             ThrowIfConfigNotRegistered(type);
@@ -39,11 +50,21 @@ namespace ConfigServer.Client
 
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public async Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
         {
             return (TConfig)await GetConfigAsync(typeof(TConfig)).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
             var type = typeof(TConfig);
@@ -54,16 +75,31 @@ namespace ConfigServer.Client
                 : await GetOrAddCollectionConfigFromCache<TConfig>().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Gets Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>Configuration of specified type</returns>
         public TConfig GetConfig<TConfig>() where TConfig : class, new()
         {
             return GetConfigAsync<TConfig>().Result;
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public IEnumerable<TConfig> GetCollectionConfig<TConfig>() where TConfig : class, new()
         {
             return GetCollectionConfigAsync<TConfig>().Result;
         }
 
+        /// <summary>
+        /// Builds Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be build</param>
+        /// <returns>Configuration of specified type</returns>
         public object GetConfig(Type type)
         {
             return GetConfigAsync(type).Result;
