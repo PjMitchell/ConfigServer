@@ -24,5 +24,15 @@ namespace ConfigServer.Server
         {
             return Task.FromResult(true);
         }
+
+        public Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task DeleteResources(string name, ConfigurationIdentity identity)
+        {
+            return Task.FromResult(true);
+        }
     }
 }
