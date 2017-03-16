@@ -18,14 +18,8 @@ namespace ConfigServer.Server
         private static async Task HandleEndPoint(IEndpoint endpoint, HttpContext context, Func<Task> next, ConfigServerOptions options)
         {
             if (!endpoint.IsAuthorizated(context, options))
-            {
-                await next.Invoke();
                 return;
-            }
-
             var result = await endpoint.TryHandle(context);
-            if (!result)
-                await next.Invoke();
         }
     }
 }
