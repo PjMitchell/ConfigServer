@@ -36,6 +36,8 @@ import { ConfigurationClientDataService } from './dataservices/client-data.servi
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
+import { ResourceDataService } from './dataservices/resource-data.service';
+
 
 
 @NgModule({
@@ -68,7 +70,7 @@ import { UploadDataService } from './dataservices/upload-data.service';
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService, UploadDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService]
 })
 
 export class AppModule { }
