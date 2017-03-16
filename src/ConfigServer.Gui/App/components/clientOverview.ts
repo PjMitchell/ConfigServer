@@ -1,8 +1,12 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
+import { ResourceDataService } from '../dataservices/resource-data.service';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/client';
+import { ResourceInfo } from '../interfaces/resourceInfo';
+
 import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
 
 
@@ -14,6 +18,9 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
                 <p>{{client.enviroment}}</p>
                 <p>{{client.description}}</p>
         </div>
+
+        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)"></resource-overview>
+ 
         <h3>ConfigurationSets</h3>
         <div class="break">
         </div>
@@ -26,7 +33,8 @@ export class ClientOverviewComponent implements OnInit {
     client: ConfigurationClient;
     clientId: string;
     configurationSets: ConfigurationSetSummary[];
-    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private route: ActivatedRoute, private router: Router) {
+    resources: ResourceInfo[];
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private resourceDataService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
 
     }
 
@@ -37,9 +45,14 @@ export class ClientOverviewComponent implements OnInit {
                 .then(returnedClient => this.client = returnedClient);
             this.configSetDataService.getConfigurationSets()
                 .then(returnedConfigSet => this.configurationSets = returnedConfigSet);
+            this.resourceDataService.getClientResourceInfo(this.clientId)
+                .then(returnedResources => this.resources = returnedResources);
         });
     }
-
+    onResourcesChanged() {
+        this.resourceDataService.getClientResourceInfo(this.clientId)
+            .then(returnedResources => this.resources = returnedResources);
+    }
     back() {
         this.router.navigate(['/']);
     }

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using ConfigServer.Core;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Server;
-using ConfigServer.InMemoryProvider;
+using ConfigServer.FileProvider;
 using ConfigServer.Gui.Models;
 
 namespace ConfigServer.Gui
@@ -25,8 +25,10 @@ namespace ConfigServer.Gui
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            Env = env;
         }
 
+        public IHostingEnvironment Env { get; }
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -38,7 +40,8 @@ namespace ConfigServer.Gui
             // Add framework services.
             services.AddConfigServer()
                 .UseConfigSet<SampleConfigSet>()
-                .UseInMemoryProvider();
+                .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath +"/FileStore/Configs" })
+                .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = Env.ContentRootPath + "/FileStore/Resources" });
             services.AddTransient<IOptionProvider, OptionProvider>();
             var options1 = new List<OptionFromConfigSet>
             {
