@@ -56,6 +56,9 @@
       <Version>2.2.301</Version>
     </DotNetCliToolReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\css\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>

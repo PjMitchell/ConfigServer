@@ -15,7 +15,7 @@ gulp.task('BuildUi', function () {
     return tsResult.js.pipe(gulp.dest('wwwroot/Assets/app'));
 });
 
-gulp.task('BuildPackageAssets', ['BuildTsAssets', 'CopyWwwRootAssets'])
+gulp.task('BuildPackageAssets', ['BuildTsAssets', 'CopyWwwRootAssets', 'CopyNPMAssets'])
 
 gulp.task('BuildTsAssets', function () {
     var tsProject = tsc.createProject('./App/tsconfig.json');
@@ -29,4 +29,9 @@ gulp.task('CopyWwwRootAssets', function () {
     
     return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/systemjs.config.js'])
     .pipe(gulp.dest('../ConfigServer.Server/Assets'));
+});
+
+gulp.task('CopyNPMAssets', function () {
+    return gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css'])
+        .pipe(gulp.dest('./wwwroot/Assets/css'));
 });
