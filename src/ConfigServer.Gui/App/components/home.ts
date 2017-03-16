@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
     template: `
         <h2>Clients</h2>
-        <button type="button" class="btn btn-default" (click)="createNew()">Create</button>
+        <button type="button" class="btn btn-success" (click)="createNew()">Create</button>
         <div class="break"></div>
         <div class="group" *ngFor="let group of clients">
             <h3>{{group.key}}</h3>
@@ -16,8 +16,8 @@ import { Router } from '@angular/router';
                 <p>Id: {{client.clientId}}</p>
                 <p>{{client.enviroment}}</p>
                 <p>{{client.description}}</p>
-                <button type="button" (click)="goToClient(client.clientId)">Manage configurations</button>
-                <button type="button" (click)="editClient(client.clientId)">Edit client</button>
+                <button type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
+                <button type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
             </div>
         </div>
 `

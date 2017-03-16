@@ -9,7 +9,7 @@ import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefi
     <tr>
         <th *ngFor="let p of csDefinition.childProperty | toIterator">{{p.propertyDisplayName}}</th>
         <th>
-            <button type="button" (click)="add()">Add</button>
+            <button type="button" class="btn btn-success" (click)="add()">Add</button>
         </th>
     </tr>
     <tr *ngFor="let item of collection;let i= index">
@@ -18,7 +18,7 @@ import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefi
                 </config-property-item>
         </td>
         <th>
-            <button type="button" (click)="remove(item)">remove</button>
+            <button type="button" class="btn btn-danger" (click)="remove(item)">remove</button>
         </th>
     </tr>
 </table>

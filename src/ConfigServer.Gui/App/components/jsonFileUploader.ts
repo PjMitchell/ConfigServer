@@ -7,7 +7,7 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
     <div>
         <form #form>
             <input type="file" #input name="upload" accept="application/json">
-            <button type="button" (click)="upload()">Upload</button> 
+            <button type="button" class="btn btn-primary" (click)="upload()">Upload</button> 
         </form>
         <p>{{message}}</p>
     </div>

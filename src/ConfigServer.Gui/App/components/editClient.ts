@@ -12,8 +12,8 @@ import { ConfigurationClient } from '../interfaces/client';
             <div class="break">
             </div>
             <div>
-               <button type="button" (click)="back()">Back</button>
-               <button type="button" [disabled]="isDisabled" (click)="save()">Save</button>
+               <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+               <button type="button" class="btn btn-success" [disabled]="isDisabled" (click)="save()">Save</button>
             </div>
         </div>
 `
