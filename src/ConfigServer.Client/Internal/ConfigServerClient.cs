@@ -36,6 +36,11 @@ namespace ConfigServer.Client
             cache = memorycache;
         }
 
+        /// <summary>
+        /// Builds Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be build</param>
+        /// <returns>Configuration of specified type</returns>
         public async Task<object> GetConfigAsync(Type type)
         {
             ThrowIfConfigNotRegistered(type);
@@ -45,11 +50,21 @@ namespace ConfigServer.Client
 
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public async Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
         {
             return (TConfig)await GetConfigAsync(typeof(TConfig)).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
             var type = typeof(TConfig);
@@ -60,16 +75,31 @@ namespace ConfigServer.Client
                 : await GetOrAddCollectionConfigFromCache<TConfig>().ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Gets Configuration
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>Configuration of specified type</returns>
         public TConfig GetConfig<TConfig>() where TConfig : class, new()
         {
             return GetConfigAsync<TConfig>().Result;
         }
 
+        /// <summary>
+        /// Gets Configuration that is a collection
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
+        /// <returns>IEnumerable of configuration of specified type</returns>
         public IEnumerable<TConfig> GetCollectionConfig<TConfig>() where TConfig : class, new()
         {
             return GetCollectionConfigAsync<TConfig>().Result;
         }
 
+        /// <summary>
+        /// Builds Configuration
+        /// </summary>
+        /// <param name="type">Type of configuration to be build</param>
+        /// <returns>Configuration of specified type</returns>
         public object GetConfig(Type type)
         {
             return GetConfigAsync(type).Result;
