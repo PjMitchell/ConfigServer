@@ -58,6 +58,7 @@
     </DotNetCliToolReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="wwwroot\Assets\css\" />
     <Folder Include="FileStore\Configs\" />
     <Folder Include="FileStore\Resources\" />
   </ItemGroup>

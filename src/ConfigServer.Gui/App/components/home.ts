@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
     template: `
         <h2>Clients</h2>
-        <button type="button" (click)="createNew()">Create</button>
+        <button type="button" class="btn btn-default" (click)="createNew()">Create</button>
         <div class="break"></div>
         <div class="group" *ngFor="let group of clients">
             <h3>{{group.key}}</h3>

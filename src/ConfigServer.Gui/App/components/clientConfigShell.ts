@@ -28,7 +28,7 @@ import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../inte
             </div>
             <div class="break"></div>
             <div>
-                <button type="button" (click)="back()">Back</button>
+                <button type="button" class="btn btn-default" (click)="back()">Back</button>
                 <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" (click)="save()">Save</button>
             </div>
         </form>
