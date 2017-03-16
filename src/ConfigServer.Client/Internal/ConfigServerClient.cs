@@ -3,15 +3,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
-
-[assembly: InternalsVisibleTo("ConfigServer.Core.Tests")]
 namespace ConfigServer.Client
 {
-    internal class ConfigServerClient : IConfigServer
+    /// <summary>
+    /// Config Server Client
+    /// </summary>
+    public class ConfigServerClient : IConfigServer
     {
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
@@ -19,7 +19,13 @@ namespace ConfigServer.Client
         private readonly IMemoryCache cache;
         private const string cachePrefix = "ConfigServer_";
 
-
+        /// <summary>
+        /// Constructs new Config Server Client
+        /// </summary>
+        /// <param name="client">HttpClient Wrapper</param>
+        /// <param name="memorycache">Memory cache</param>
+        /// <param name="collection">Configuration Registry</param>
+        /// <param name="options">ConfigServerClientOptions</param>
         public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, ConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
