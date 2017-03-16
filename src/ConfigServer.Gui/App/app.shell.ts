@@ -13,6 +13,10 @@
             </ul>
             </div>
         </nav>
-        <router-outlet></router-outlet>`
+        <div class="container">
+            <router-outlet></router-outlet>
+        </div>
+         
+`
 })
 export class AppShell { }

@@ -7,7 +7,6 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
-        <div class="container">
             <h3>Group: {{group.key}}</h3>
             <hr />
             <div class="row">
@@ -22,7 +21,6 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
                     </div>
                 </div>
             </div>
-        </div>
 `
 })
 export class EditGroupClientsComponent {
