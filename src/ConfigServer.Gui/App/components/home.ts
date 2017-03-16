@@ -3,6 +3,7 @@ import { ConfigurationClientDataService } from '../dataservices/client-data.serv
 import { ConfigurationClient } from '../interfaces/client';
 import { Group } from '../interfaces/configurationSetDefintion';
 import { Router } from '@angular/router';
+import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
@@ -21,7 +22,7 @@ import { Router } from '@angular/router';
                     </span>
                     <hr />
                     <p>
-                        <button type="button" class="btn btn-primary" (click)="editGroupClients(group.key)">
+                        <button type="button" class="btn btn-primary" (click)="editGroupClients(group)">
                             Edit
                         </button>
                     </p>
@@ -35,7 +36,7 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
     clients: Group<string, ConfigurationClient>[];
 
-    constructor(private clientDataService: ConfigurationClientDataService, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private router: Router, private groupTransitService: GroupTransitService) {
 
     }
 
@@ -44,12 +45,13 @@ export class HomeComponent implements OnInit {
             .then(returnedClients => this.mapClients(returnedClients));
     }
 
-    goToClient(clientId: string) {
-        this.router.navigate(['/client', clientId]);
-    }
-
     createNew() {
         this.router.navigate(['/createClient']);
+    }
+
+    editGroupClients(selectedGroup: Group<string, ConfigurationClient>) {
+        this.groupTransitService.selectedGroup = selectedGroup;
+        this.router.navigate(['/editGroupClients']);
     }
 
     mapClients(value: ConfigurationClient[]): void {
@@ -72,9 +74,5 @@ export class HomeComponent implements OnInit {
             items.push({ 'key': key, 'items': val });
         }
         this.clients = items
-    }
-
-    editClient(clientId: string) {
-        this.router.navigate(['/editClient', clientId]);
     }
 }

@@ -31,6 +31,7 @@ import { ConfigurationSetComponent } from './components/configurationSetOverview
 import { ResourceOverviewComponent } from './components/resourceOverview';
 import { ResourceFileUploaderComponent } from './components/resourceFileUploader';
 
+import { EditGroupClientsComponent } from './components/editGroupClients';
 
 
 
@@ -41,6 +42,7 @@ import { ConfigurationSetDataService } from './dataservices/configset-data.servi
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { ResourceDataService } from './dataservices/resource-data.service';
+import { GroupTransitService } from './dataservices/group-transit.service';
 
 
 
@@ -66,6 +68,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
+        EditGroupClientsComponent,
         ResourceFileUploaderComponent,
         CreateClientComponent,
         EditClientInputComponent,
@@ -76,7 +79,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, GroupTransitService, UploadDataService]
 })
 
 export class AppModule { }
