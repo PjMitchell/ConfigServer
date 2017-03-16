@@ -42,13 +42,43 @@ namespace ConfigServer.Server
                 httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
                 return true;
             }
+            var clientIdentity = new ConfigurationIdentity(client.ClientId);
             if (pathParams.Length == 1)
             {
-                var clientResourceCatalogue = await resourceStore.GetResourceCatalogue(new ConfigurationIdentity(client.ClientId));
+                var clientResourceCatalogue = await resourceStore.GetResourceCatalogue(clientIdentity);
                 await httpResponseFactory.BuildResponse(context, clientResourceCatalogue);
                 return true;
             }
 
+            switch (context.Request.Method)
+            {
+                case "GET":
+                {
+                        var result = await resourceStore.GetResource(pathParams[1], clientIdentity);
+                        if (!result.HasEntry)
+                            httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
+                        else
+                            httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
+                        break;
+                }
+                case "POST":
+                {
+                    var uploadRequest = new UpdateResourceRequest
+                    {
+                        Name = pathParams[1],
+                        Identity = clientIdentity,
+                        Content = context.Request.Body
+                    };
+                    await resourceStore.UpdateResource(uploadRequest);
+                    break;
+                }
+                default:
+                {
+                    httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status405MethodNotAllowed);
+                    break;
+                }
+                    
+            }
 
             return true;
         }
