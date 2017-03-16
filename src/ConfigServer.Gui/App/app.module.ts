@@ -28,6 +28,8 @@ import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
+import { ResourceOverviewComponent } from './components/resourceOverview';
+
 
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
@@ -36,6 +38,8 @@ import { ConfigurationClientDataService } from './dataservices/client-data.servi
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
+import { ResourceDataService } from './dataservices/resource-data.service';
+
 
 
 @NgModule({
@@ -64,11 +68,12 @@ import { UploadDataService } from './dataservices/upload-data.service';
         EditClientInputComponent,
         EditClientComponent,
         JsonFileUploaderComponent,
+        ResourceOverviewComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService, UploadDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService]
 })
 
 export class AppModule { }
