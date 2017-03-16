@@ -24,6 +24,8 @@ namespace ConfigServer.Server
         {
             source.AddMemoryCache();
             source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
+            source.Add(ServiceDescriptor.Transient<IResourceStore, EmptyResourceStore>());
+
             source.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationEditModelMapper, ConfigurationEditModelMapper>());
             source.Add(ServiceDescriptor.Transient<IConfigurationUpdatePayloadMapper, ConfigurationUpdatePayloadMapper>());

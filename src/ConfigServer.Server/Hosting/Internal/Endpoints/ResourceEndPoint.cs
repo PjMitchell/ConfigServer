@@ -17,6 +17,7 @@ namespace ConfigServer.Server
         {
             this.configRepository = configRepository;
             this.resourceStore = resourceStore;
+            this.httpResponseFactory = httpResponseFactory;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -31,12 +32,12 @@ namespace ConfigServer.Server
             // /{id}
             // /{id}/{resource}
             var pathParams = context.Request.Path.HasValue
-                ? context.Request.Path.Value.Split('/')
+                ? context.Request.Path.Value.Split('/').Where(w => !string.IsNullOrWhiteSpace(w)).ToArray()
                 : new string[0];
             if (pathParams.Length == 0 || pathParams.Length > 2)
                 return false;
             var clients = await configRepository.GetClientsAsync();
-            var client = clients.SingleOrDefault(s => s.Name.Equals(pathParams[0], StringComparison.OrdinalIgnoreCase));
+            var client = clients.SingleOrDefault(s => s.ClientId.Equals(pathParams[0], StringComparison.OrdinalIgnoreCase));
             if(client == null)
             {
                 httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
