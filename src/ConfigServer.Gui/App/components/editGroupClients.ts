@@ -7,15 +7,22 @@ import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
-            <h3>{{group.Key}}</h3>
-            <div class="item" *ngFor="let client of group.items">
-                <h3>{{client.name}}</h3>
-                <p>Id: {{client.clientId}}</p>
-                <p>{{client.enviroment}}</p>
-                <p>{{client.description}}</p>
-                <button type="button" (click)="goToClient(client.clientId)">Manage configurations</button>
-                <button type="button" (click)="editClient(client.clientId)">Edit client</button>
+        <div class="container">
+            <h3>Group: {{group.key}}</h3>
+            <hr />
+            <div class="row">
+                <div class="col-sm-6 col-md-4"  *ngFor="let client of group.items">
+                    <div  class="thumbnail">
+                        <h3>{{client.name}}</h3>
+                        <p>Id: {{client.clientId}}</p>
+                        <p>{{client.enviroment}}</p>
+                        <p>{{client.description}}</p>
+                        <button type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
+                        <button type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
+                    </div>
+                </div>
             </div>
+        </div>
 `
 })
 export class EditGroupClientsComponent {
