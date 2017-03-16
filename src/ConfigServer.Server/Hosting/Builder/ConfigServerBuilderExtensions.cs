@@ -41,6 +41,8 @@ namespace ConfigServer.Server
             source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
             source.Add(ServiceDescriptor.Transient<DownloadEndpoint, DownloadEndpoint>());
             source.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
+            source.Add(ServiceDescriptor.Transient<ResourceEndpoint, ResourceEndpoint>());
+
 
             source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
             source.Add(ServiceDescriptor.Transient<IConfigurationSetFactory, ConfigurationSetFactory>());
@@ -112,6 +114,8 @@ namespace ConfigServer.Server
             app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
             app.Map(HostPaths.Download, client => client.UseEndpoint<DownloadEndpoint>(options));
             app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
+            app.Map(HostPaths.Resource, client => client.UseEndpoint<ResourceEndpoint>(options));
+
 
 
             app.UseEndpoint<ConfigEnpoint>(options);
