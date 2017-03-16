@@ -28,6 +28,7 @@ import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
+import { EditGroupClientsComponent } from './components/editGroupClients';
 
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
@@ -36,6 +37,7 @@ import { ConfigurationClientDataService } from './dataservices/client-data.servi
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
+import { GroupTransitService } from './dataservices/group-transit.service';
 
 
 @NgModule({
@@ -60,6 +62,7 @@ import { UploadDataService } from './dataservices/upload-data.service';
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
+        EditGroupClientsComponent,
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,
@@ -68,7 +71,7 @@ import { UploadDataService } from './dataservices/upload-data.service';
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService, UploadDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ConfigurationDataService, GroupTransitService, UploadDataService]
 })
 
 export class AppModule { }
