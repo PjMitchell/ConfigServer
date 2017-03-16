@@ -20,7 +20,7 @@ namespace ConfigServer.FileProvider
         /// 
         /// </summary>
         /// <param name="fileResourceConnector"></param>
-        public FileResourceStore( IFileResourceStorageConnector fileResourceConnector)
+        public FileResourceStore(IFileResourceStorageConnector fileResourceConnector)
         {
             this.fileResourceConnector = fileResourceConnector;
         }
@@ -32,7 +32,8 @@ namespace ConfigServer.FileProvider
             return new UpdateResourceResponse()
             {
                 Name = name,
-                Content = new MemoryStream(buffer)
+                Content = new MemoryStream(buffer),
+                HasEntry = buffer.Length == 0 ? false : true
             };
         }
 

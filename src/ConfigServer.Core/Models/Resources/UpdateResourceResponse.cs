@@ -19,5 +19,10 @@ namespace ConfigServer.Core
         /// Resource content
         /// </summary>
         public Stream Content { get; set; }
+
+        /// <summary>
+        /// True if entry exists
+        /// </summary>
+        public bool HasEntry { get; set; }
     }
 }

@@ -10,9 +10,9 @@ namespace ConfigServer.Server
 {
     internal class EmptyResourceStore : IResourceStore
     {
-        public Task<ResourceEntryRequest> GetResource(string name, ConfigurationIdentity identity)
+        public Task<UpdateResourceResponse> GetResource(string name, ConfigurationIdentity identity)
         {
-            return Task.FromResult(new ResourceEntryRequest());
+            return Task.FromResult(new UpdateResourceResponse());
         }
 
         public Task<IEnumerable<ResourceEntryInfo>> GetResourceCatalogue(ConfigurationIdentity identity)
