@@ -28,6 +28,8 @@ import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
+import { ResourceOverviewComponent } from './components/resourceOverview';
+
 
 
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
@@ -66,6 +68,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         EditClientInputComponent,
         EditClientComponent,
         JsonFileUploaderComponent,
+        ResourceOverviewComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe
     ],
