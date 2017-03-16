@@ -6,12 +6,13 @@ import { UploadDataService } from '../dataservices/upload-data.service';
     selector: 'configSet-overview',
     template: `
         <div class="group">
-            <h4>{{configurationSet.name}}</h4>
-            <p>{{configurationSet.description}}</p>
+            <h3>{{configurationSet.name}}</h3>
+            <p>Description: {{configurationSet.description}}</p>
             
+            <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfigSet($event)"></json-file-uploader> 
             <button type="button" class="btn btn-primary" (click)="downloadConfigSet(configurationSet.configurationSetId)">Download</button>
-            <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfigSet($event)"></json-file-uploader>            
-            <h4>Configurations</h4>
+            
+            <h3>Configurations</h3>
             <config-overview *ngFor="let config of configurationSet.configs" [csConfig]="config" [csClientId]="clientId" [csConfigurationSetId]="configurationSet.configurationSetId">
             </config-overview>
         </div>

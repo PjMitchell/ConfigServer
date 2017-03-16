@@ -1,6 +1,6 @@
 body {
     margin: 5px 20px;
-    color: #404040;
+    color: #646982;
     background: #eeeeee;
     font-size: 16px;
     font-family: Arial;
@@ -24,18 +24,18 @@ button {
 }
 
 .break {
-    height:1px;
-    border-bottom: 3px solid #ABB8FF;
-    clear:both;
-    margin-bottom:5px;
+    height: 1px;
+    border-bottom: 3px solid #646982;
+    clear: both;
+    margin-bottom: 5px;
 }
 
 .item {
-    display:inline-block;
-    border: 1px solid #ABB8FF;
+    display: inline-block;
+    border: 1px solid #646982;
     margin: 4px;
     padding: 3px;
-    max-width:400px
+    max-width: 400px
 }
 
 .configProperty{
@@ -46,11 +46,11 @@ button {
 
 .group {
     margin: 5px 0;
-    border-bottom: 3px solid #ABB8FF;
+    border-bottom: 3px solid #646982;
 }
 
 .ng-invalid:not(form) {
-    border-color: #FF2221; 
-    border-width : 1px 1px 1px 5px;
+    border-color: #f03241;
+    border-width: 1px 1px 1px 5px;
     border-style: solid;
 }
