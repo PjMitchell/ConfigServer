@@ -9,10 +9,13 @@ namespace ConfigServer.Server
     {
         private readonly IConfigProvider configProvider;
         private readonly ConfigurationIdentity applicationId;
-        public LocalConfigServerClient(IConfigProvider configProvider, string applicationId)
+        private readonly IResourceStore resourceStore;
+        private readonly Uri pathToConfigServer;
+        public LocalConfigServerClient(IConfigProvider configProvider,IResourceStore resourceStore, string applicationId, Uri pathToConfigServer)
         {
             this.configProvider = configProvider;
             this.applicationId = new ConfigurationIdentity(applicationId);
+            this.resourceStore = resourceStore;
         }
 
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
@@ -47,6 +50,21 @@ namespace ConfigServer.Server
         public object GetConfig(Type type)
         {
             return GetConfigAsync(type).Result;
+        }
+
+        public async Task<ResourceEntry> GetResourceAsync(string name)
+        {
+            return await resourceStore.GetResource(name, applicationId).ConfigureAwait(false);
+        }
+
+        public ResourceEntry GetResource(string name)
+        {
+            return GetResourceAsync(name).Result;
+        }
+
+        public Uri GetResourceUri(string name)
+        {
+            return new Uri(pathToConfigServer, $"Resource/{applicationId}/{name}");
         }
     }
 }

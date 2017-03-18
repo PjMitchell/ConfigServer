@@ -28,11 +28,11 @@ namespace ConfigServer.FileProvider
         /// <param name="name"></param>
         /// <param name="identity"></param>
         /// <returns></returns>
-        public async Task<UpdateResourceResponse> GetResource(string name, ConfigurationIdentity identity)
+        public async Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
         {
             var buffer = await fileResourceConnector.GetResourceAsync(name, identity.ClientId);
 
-            return new UpdateResourceResponse()
+            return new ResourceEntry()
             {
                 Name = name,
                 Content = new MemoryStream(buffer),
