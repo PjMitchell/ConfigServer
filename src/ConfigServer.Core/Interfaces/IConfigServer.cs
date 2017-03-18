@@ -50,5 +50,26 @@ namespace ConfigServer.Core
         /// <param name="type">Type of configuration to be build</param>
         /// <returns>Configuration of specified type</returns>
         object GetConfig(Type type);
+
+        /// <summary>
+        /// Gets resource file
+        /// </summary>
+        /// <param name="name">Name of resource</param>
+        /// <returns>Resource response</returns>
+        Task<ResourceEntry> GetResourceAsync(string name);
+
+        /// <summary>
+        /// Gets resource file
+        /// </summary>
+        /// <param name="name">Name of resource</param>
+        /// <returns>Resource response</returns>
+        ResourceEntry GetResource(string name);
+
+        /// <summary>
+        /// Get resource uri
+        /// </summary>
+        /// <param name="name">Name of resource</param>
+        /// <returns>Resource uri</returns>
+        Uri GetResourceUri(string name);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using ConfigServer.Core;
 using ConfigServer.Server.Validation;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using System.IO;
+using System;
 using System.Reflection;
 
 namespace ConfigServer.Server
@@ -86,12 +85,13 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="source">The IServiceCollection to add local ConfigServer client to</param>
         /// <param name="applicationId">Identifier for application requesting the configuration</param>
+        /// <param name="configServeruri">Identifier for application requesting the configuration</param>
         /// <returns>ConfigServer client builder for further configuration of client</returns>
-        public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, string applicationId)
+        public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, string applicationId, Uri configServeruri)
         {
             var configurationCollection = new ConfigurationRegistry();
             var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
-            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), applicationId)));
+            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), r.GetService<IResourceStore>(), applicationId, configServeruri)));
             return builder;
         }
 

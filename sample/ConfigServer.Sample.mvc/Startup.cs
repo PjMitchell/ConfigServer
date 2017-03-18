@@ -4,17 +4,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ConfigServer.InMemoryProvider;
 using ConfigServer.Sample.mvc.Models;
 using ConfigServer.Core;
 using ConfigServer.Server;
+using ConfigServer.FileProvider;
 using System.Linq;
 using System.Collections.Generic;
+using ConfigServer.Client.ResourceServer;
 
 namespace ConfigServer.Sample.mvc
 {
     public class Startup
     {
+        private readonly IHostingEnvironment enviroment;
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
@@ -23,6 +25,7 @@ namespace ConfigServer.Sample.mvc
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            enviroment = env;
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -36,8 +39,9 @@ namespace ConfigServer.Sample.mvc
             services.AddMvc();
             services.AddConfigServer()
                 .UseConfigSet<SampleConfigSet>()
-                .UseInMemoryProvider()
-                .UseLocalConfigServerClient(applicationId)
+                .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = enviroment.ContentRootPath + "/Store/Configs" })
+                .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = enviroment.ContentRootPath + "/Store/Resources" })
+                .UseLocalConfigServerClient(applicationId, new Uri("http://localhost:58201/Config"))
                 .WithConfig<SampleConfig>()
                 .WithCollectionConfig<OptionFromConfigSet>();
 
@@ -116,6 +120,7 @@ namespace ConfigServer.Sample.mvc
                 ServerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
                 ManagerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false } 
             }));
+            app.Map("/Resource", innerApp => innerApp.UseResourceServer());
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

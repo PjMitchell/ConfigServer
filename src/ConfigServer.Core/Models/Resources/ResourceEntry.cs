@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace ConfigServer.Core
 {
     /// <summary>
     /// Represents a Resource entry request
     /// </summary>
-    public class ResourceEntryRequest
+    public class ResourceEntry
     {
         /// <summary>
         /// Was requested entry found
