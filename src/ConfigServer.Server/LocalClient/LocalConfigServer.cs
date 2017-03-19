@@ -16,6 +16,7 @@ namespace ConfigServer.Server
             this.configProvider = configProvider;
             this.applicationId = new ConfigurationIdentity(applicationId);
             this.resourceStore = resourceStore;
+            this.pathToConfigServer = pathToConfigServer;
         }
 
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
