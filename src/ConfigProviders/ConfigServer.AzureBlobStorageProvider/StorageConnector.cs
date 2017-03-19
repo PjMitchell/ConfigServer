@@ -41,25 +41,18 @@ namespace ConfigServer.AzureBlobStorageProvider
         private async Task<string> GetFileAsync(string location)
         {
             var containerRef = client.GetContainerReference(container);
-            ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
-            using (var stream = new MemoryStream())
-            {
-                await entry.DownloadToStreamAsync(stream);
-                var streamReader = new StreamReader(stream);
-                return await streamReader.ReadToEndAsync();
-            }
+            var entry = containerRef.GetBlockBlobReference(location);
+            var exists = await entry.ExistsAsync();
+            if (!exists)
+                return string.Empty;
+            return await entry.DownloadTextAsync();
         }
 
         private async Task SetFileAsync(string location, string value)
         {
             var containerRef = client.GetContainerReference(container);
-            ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
-            using (var stream = new MemoryStream())
-            {
-                var streamReader = new StreamWriter(stream);
-                await streamReader.WriteAsync(value);
-                await entry.UploadFromStreamAsync(stream);
-            }
+            var entry = containerRef.GetBlockBlobReference(location);
+            await entry.UploadTextAsync(value);
         }
 
         private string GetConfigPath(string configId, string clientId) => $"{clientId}/{configId}.json";

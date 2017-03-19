@@ -35,7 +35,16 @@ export class ClientOverviewComponent implements OnInit {
     configurationSets: ConfigurationSetSummary[];
     resources: ResourceInfo[];
     constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private resourceDataService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
-
+        this.clientId = '';
+        this.client = {
+            clientId: '',
+            name: 'Loading...',
+            enviroment: '',
+            description: '',
+            group: ''
+        }
+        this.configurationSets = new Array<ConfigurationSetSummary>()
+        this.resources = new Array<ResourceInfo>()
     }
 
     ngOnInit(): void {

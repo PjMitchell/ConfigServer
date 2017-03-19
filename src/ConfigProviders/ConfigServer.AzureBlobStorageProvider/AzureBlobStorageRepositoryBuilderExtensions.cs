@@ -18,7 +18,7 @@ namespace ConfigServer.AzureBlobStorageProvider
         /// <param name="builder">ConfigServerBuilder to add AzureBlobStorageRepository to</param>
         /// <param name="options">Options for AzureBlobStorageRepository</param>
         /// <returns>ConfigServer builder for further configuration</returns>
-        public static ConfigServerBuilder UseFileConfigProvider(this ConfigServerBuilder builder, AzureBlobStorageRepositoryBuilderOptions options)
+        public static ConfigServerBuilder UseAzureBlobStorageConfigProvider(this ConfigServerBuilder builder, AzureBlobStorageRepositoryBuilderOptions options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
@@ -35,6 +35,21 @@ namespace ConfigServer.AzureBlobStorageProvider
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
             return builder;
-        }        
+        }
+
+        /// <summary>
+        /// Uses FileResourceRepository as IConfigRepository  
+        /// </summary>
+        /// <param name="builder">ConfigServerBuilder to add FileResourceRepository to</param>
+        /// <param name="options">Options for FileResourceRepository</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder UseAzureBlobStorageResourceProvider(this ConfigServerBuilder builder, AzureBlobStorageResourceStoreOptions options)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IResourceStore, AzureBlobStorageResourceStore>());
+            return builder;
+        }
     }
 }
