@@ -10,7 +10,6 @@ import { ConfigurationClient } from '../interfaces/client';
         <div *ngIf="client">
             <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
             <hr />
-            </div>
             <div>
                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
                <button type="button" class="btn btn-success" [disabled]="isDisabled" (click)="save()">Save</button>

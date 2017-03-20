@@ -8,7 +8,6 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
         <form #form>
             <button type="button" class="btn btn-primary" (click)="upload()"> <span class="glyphicon glyphicon-cloud-upload"></span> </button> 
             <input type="file" #input name="upload" accept="application/json">
-            
         </form>
         <p>{{message}}</p>
     </div>

@@ -6,10 +6,10 @@ import { ResourceDataService } from '../dataservices/resource-data.service';
     template: `
     <div>
         <form #form>
+            <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon glyphicon-cloud-upload"></span></button>             
             <input name="filename" type="text" [(ngModel)]="fileName">
             <p *ngIf="!isValidFilename" style="color:red;">file name is not valid</p>
             <input type="file" #input name="upload">
-            <button type="button" (click)="upload()">Upload</button> 
         </form>
     </div>
 `
