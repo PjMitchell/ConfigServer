@@ -10,8 +10,8 @@ import { ResourceDataService } from '../dataservices/resource-data.service';
         <div>
         <div *ngFor="let resource of resources" style="float:left;margin:5px;" >
             <p>{{resource.name}}</p>
-            <button type="button" (click)="downloadResource(resource.name)">Download</button>
-            <button type="button" (click)="delete(resource.name)">Delete</button>
+            <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon glyphicon-download-alt"></span></button>
+            <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
         </div>
         <div style="clear:both;">

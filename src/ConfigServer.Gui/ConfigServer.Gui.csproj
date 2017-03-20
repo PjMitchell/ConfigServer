@@ -9,6 +9,9 @@
     <Content Remove="App\**\*.js;App\**\*.js.map" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wwwroot\Assets\img\config-monkey.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
     <ProjectReference Include="..\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\ConfigServer.Server\ConfigServer.Server.csproj" />
@@ -58,6 +61,7 @@
     </DotNetCliToolReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="wwwroot\Assets\css\" />
     <Folder Include="FileStore\Configs\" />
     <Folder Include="FileStore\Resources\" />
   </ItemGroup>

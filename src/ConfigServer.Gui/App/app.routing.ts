@@ -4,6 +4,7 @@ import { HomeComponent } from './components/home';
 import { ClientOverviewComponent } from './components/clientOverview';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { CreateClientComponent } from './components/createClient';
+import { EditGroupClientsComponent } from './components/editGroupClients';
 
 import { EditClientComponent } from './components/editClient';
 
@@ -13,7 +14,8 @@ const appRoutes: Routes = [
     { path: 'createClient', component: CreateClientComponent },
     { path: 'editClient/:clientId', component: EditClientComponent },
     { path: 'client/:clientId', component: ClientOverviewComponent },
-    { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigShellComponent }
+    { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigShellComponent },
+    { path: 'editGroupClients', component: EditGroupClientsComponent }
 ];
 
 export const appRoutingProviders: any[] = [

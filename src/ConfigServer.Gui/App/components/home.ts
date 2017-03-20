@@ -3,29 +3,38 @@ import { ConfigurationClientDataService } from '../dataservices/client-data.serv
 import { ConfigurationClient } from '../interfaces/client';
 import { Group } from '../interfaces/configurationSetDefintion';
 import { Router } from '@angular/router';
+import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
-        <h2>Clients</h2>
-        <button type="button" (click)="createNew()">Create</button>
-        <div class="break"></div>
-        <div class="group" *ngFor="let group of clients">
-            <h3>{{group.key}}</h3>
-            <div class="item" *ngFor="let client of group.items">
-                <h3>{{client.name}}</h3>
-                <p>Id: {{client.clientId}}</p>
-                <p>{{client.enviroment}}</p>
-                <p>{{client.description}}</p>
-                <button type="button" (click)="goToClient(client.clientId)">Manage configurations</button>
-                <button type="button" (click)="editClient(client.clientId)">Edit client</button>
+    <button type="button" class="btn btn-primary" (click)="createNew()"><span class="glyphicon glyphicon-plus"></span> Add Client</button>
+    <hr />
+    <div class="row">
+        <div class="col-sm-6 col-md-4"  *ngFor="let group of clients">
+            <div class="thumbnail">
+                <div><img class="img-responsive" src="Assets/img/config-monkey.jpeg" /></div>
+                <div class="category"></div>
+                <div class="caption">
+                    <h3>{{group.key}}</h3>
+                    <span *ngFor="let client of group.items">
+                        {{client.name}}; 
+                    </span>
+                    <hr />
+                    <p>
+                        <button type="button" class="btn btn-primary" (click)="editGroupClients(group)">
+                            Edit
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
+    </div>
 `
 })
 export class HomeComponent implements OnInit {
     clients: Group<string, ConfigurationClient>[];
 
-    constructor(private clientDataService: ConfigurationClientDataService, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private router: Router, private groupTransitService: GroupTransitService) {
 
     }
 
@@ -34,12 +43,13 @@ export class HomeComponent implements OnInit {
             .then(returnedClients => this.mapClients(returnedClients));
     }
 
-    goToClient(clientId: string) {
-        this.router.navigate(['/client', clientId]);
-    }
-
     createNew() {
         this.router.navigate(['/createClient']);
+    }
+
+    editGroupClients(selectedGroup: Group<string, ConfigurationClient>) {
+        this.groupTransitService.selectedGroup = selectedGroup;
+        this.router.navigate(['/editGroupClients']);
     }
 
     mapClients(value: ConfigurationClient[]): void {
@@ -62,9 +72,5 @@ export class HomeComponent implements OnInit {
             items.push({ 'key': key, 'items': val });
         }
         this.clients = items
-    }
-
-    editClient(clientId: string) {
-        this.router.navigate(['/editClient', clientId]);
     }
 }
