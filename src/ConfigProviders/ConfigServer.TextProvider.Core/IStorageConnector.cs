@@ -36,5 +36,18 @@ namespace ConfigServer.TextProvider.Core
         /// <param name="value">new value</param>
         /// <returns>Task from operation</returns>
         Task SetClientRegistryFileAsync(string value);
+
+        /// <summary>
+        /// Gets Client Group Registry File from storage
+        /// </summary>
+        /// <returns>Registry File from storage</returns>
+        Task<string> GetClientGroupRegistryFileAsync();
+
+        /// <summary>
+        /// Set Client Group Registry File in storage
+        /// </summary>
+        /// <param name="value">new value</param>
+        /// <returns>Task from operation</returns>
+        Task SetClientGroupRegistryFileAsync(string value);
     }
 }

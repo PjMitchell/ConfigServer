@@ -15,11 +15,12 @@ namespace ConfigServer.Server
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
+        readonly IConfigClientRepository configClientRepository;
         readonly IConfigurationValidator validator;
         readonly IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper;
         readonly IEventService eventService;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService)
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService, IConfigClientRepository configClientRepository)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -30,6 +31,7 @@ namespace ConfigServer.Server
             this.validator = validator;
             this.configurationUpdatePayloadMapper = configurationUpdatePayloadMapper;
             this.eventService = eventService;
+            this.configClientRepository = configClientRepository;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -48,7 +50,7 @@ namespace ConfigServer.Server
             PathString remainingPath;
             if (routePath.StartsWithSegments("/Model", out remainingPath))
             {
-                var clients = await configRepository.GetClientsAsync();
+                var clients = await configClientRepository.GetClientsAsync();
                 var clientResult = clients.TryMatchPath(c => c.ClientId, remainingPath);
                 if (!clientResult.HasResult)
                     return false;

@@ -13,6 +13,8 @@ namespace ConfigServer.Core.Tests
     public class FileConfigRepositoryTests : IDisposable
     {
         private readonly IConfigRepository target;
+        private readonly IConfigClientRepository clientTarget;
+
         private readonly string testdirectory;
         private readonly ConfigurationClient client; 
         private readonly ConfigurationIdentity configId;
@@ -23,6 +25,7 @@ namespace ConfigServer.Core.Tests
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             var option = new FileConfigRespositoryBuilderOptions { ConfigStorePath = testdirectory };
             target = new TextStorageConfigurationRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())),new FileStorageConnector(option),option);
+            clientTarget = new TextStorageConfigurationClientRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())), new FileStorageConnector(option), option);
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
@@ -30,7 +33,7 @@ namespace ConfigServer.Core.Tests
                 Description = "A description Client"
             };
             configId = new ConfigurationIdentity(client.ClientId);
-            target.UpdateClientAsync(client).Wait();
+            clientTarget.UpdateClientAsync(client).Wait();
         }
 
         public void Dispose()
@@ -76,8 +79,8 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndGetClientsAsync()
         {
-            await target.UpdateClientAsync(client);
-            var result = (await target.GetClientsAsync()).ToList();
+            await clientTarget.UpdateClientAsync(client);
+            var result = (await clientTarget.GetClientsAsync()).ToList();
             Assert.Equal(1, result.Count);
             Assert.Equal(client.ClientId, result[0].ClientId);
             Assert.Equal(client.Name, result[0].Name);
@@ -89,10 +92,10 @@ namespace ConfigServer.Core.Tests
         public async Task CanUpdateClientAsync()
         {
             var clientUpdated = new ConfigurationClient { ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4", Name = "Client 1", Description = "Client Description" };
-            await target.UpdateClientAsync(client);
-            await target.UpdateClientAsync(clientUpdated);
+            await clientTarget.UpdateClientAsync(client);
+            await clientTarget.UpdateClientAsync(clientUpdated);
 
-            var result = (await target.GetClientsAsync()).ToList();
+            var result = (await clientTarget.GetClientsAsync()).ToList();
             Assert.Equal(1, result.Count);
             Assert.Equal(client.ClientId, result[0].ClientId);
             Assert.Equal(clientUpdated.Name, result[0].Name);
@@ -106,7 +109,7 @@ namespace ConfigServer.Core.Tests
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = testValue }, configId.ClientId);
 
 
-            await target.UpdateClientAsync(client);
+            await clientTarget.UpdateClientAsync(client);
             var result = await target.GetAsync<SimpleConfig>(configId);
             Assert.NotNull(result);
             Assert.Equal(client.ClientId, config.ClientId);

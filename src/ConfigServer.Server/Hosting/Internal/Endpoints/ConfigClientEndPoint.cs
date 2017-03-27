@@ -7,13 +7,13 @@ namespace ConfigServer.Server
 {
     internal class ConfigClientEndPoint : IEndpoint
     {
-        readonly IConfigRepository configRepository;
+        readonly IConfigClientRepository configClientRepository;
         readonly IConfigHttpResponseFactory responseFactory;
 
-        public ConfigClientEndPoint(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory)
+        public ConfigClientEndPoint(IConfigClientRepository configClientRepository, IConfigHttpResponseFactory responseFactory)
         {
             this.responseFactory = responseFactory;
-            this.configRepository = configRepository;
+            this.configClientRepository = configClientRepository;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -24,7 +24,7 @@ namespace ConfigServer.Server
         public async Task<bool> TryHandle(HttpContext context)
         {
             var routePath = context.Request.Path;
-            var configSetIds = await configRepository.GetClientsAsync();
+            var configSetIds = await configClientRepository.GetClientsAsync();
             if (string.IsNullOrWhiteSpace(routePath))
             {
                 if(!(context.Request.Method == "GET" || context.Request.Method == "POST"))
@@ -46,7 +46,7 @@ namespace ConfigServer.Server
         private async Task HandlePost(HttpContext context)
         {
             var data = await context.GetObjectFromJsonBodyAsync<ConfigurationClientPayload>();
-            await configRepository.UpdateClientAsync(Map(data));
+            await configClientRepository.UpdateClientAsync(Map(data));
             responseFactory.BuildNoContentResponse(context);
         }
 

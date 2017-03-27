@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ConfigServer.FileProvider
 {
@@ -9,6 +10,7 @@ namespace ConfigServer.FileProvider
     {
         readonly string folderPath;
         const string indexFile = "clientIndex.json";
+        const string groupFile = "clientGroupIndex.json";
 
         public FileStorageConnector(FileConfigRespositoryBuilderOptions options)
         {
@@ -18,7 +20,7 @@ namespace ConfigServer.FileProvider
 
         public Task<string> GetClientRegistryFileAsync()
         {
-            return Task.FromResult(GetClientStore());
+            return Task.FromResult(GetStore(indexFile));
         }
 
         public Task<string> GetConfigFileAsync(string configId, string instanceId)
@@ -28,16 +30,26 @@ namespace ConfigServer.FileProvider
 
         public Task SetClientRegistryFileAsync(string value)
         {
-            var path = $"{GetFileStore().FullName}/{indexFile}";
-            File.WriteAllText(path, value);
-            return Task.FromResult(true);
+            return SetRegistryFileAsynx(value, indexFile);
         }
+
+
 
         public Task SetConfigFileAsync(string configId, string instanceId, string value)
         {
             var configPath = GetConfigPath(configId, instanceId);
             File.WriteAllText(configPath, value);
             return Task.FromResult(true);
+        }
+
+        public Task<string> GetClientGroupRegistryFileAsync()
+        {
+            return Task.FromResult(GetStore(groupFile));
+        }
+
+        public Task SetClientGroupRegistryFileAsync(string value)
+        {
+            return SetRegistryFileAsynx(value, groupFile);
         }
 
         private string GetConfigFile(string configId, string instanceId)
@@ -50,13 +62,20 @@ namespace ConfigServer.FileProvider
                 return string.Empty;
         }
 
-        private string GetClientStore()
+        private string GetStore(string storeFile)
         {
-            var path = $"{GetFileStore().FullName}/{indexFile}";
+            var path = $"{GetFileStore().FullName}/{storeFile}";
             if (!File.Exists(path))
                 return string.Empty;
 
             return File.ReadAllText(path);
+        }
+
+        private Task SetRegistryFileAsynx(string file, string storeFileLocation)
+        {
+            var path = $"{GetFileStore().FullName}/{storeFileLocation}";
+            File.WriteAllText(path, file);
+            return Task.FromResult(true);
         }
 
         private DirectoryInfo GetFileStore()
@@ -75,5 +94,7 @@ namespace ConfigServer.FileProvider
             var configSetFolder = GetConfigSetFolder(clientId);
             return $"{configSetFolder.FullName}/{configId}.json";
         }
+
+
     }
 }

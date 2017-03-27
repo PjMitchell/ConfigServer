@@ -16,8 +16,9 @@ namespace ConfigServer.Server
         readonly IConfigurationValidator confgiurationValidator;
         readonly IConfigurationSetUploadMapper configurationSetUploadMapper;
         readonly IEventService eventService;
+        readonly IConfigClientRepository configClientRepository;
 
-        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService)
+        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigClientRepository configClientRepository)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -26,6 +27,7 @@ namespace ConfigServer.Server
             this.confgiurationValidator = confgiurationValidator;
             this.configurationSetUploadMapper = configurationSetUploadMapper;
             this.eventService = eventService;
+            this.configClientRepository = configClientRepository;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -49,7 +51,7 @@ namespace ConfigServer.Server
             }
             if (routePath.StartsWithSegments("/ConfigurationSet", out remainingPath))
             {
-                var clients = await configRepository.GetClientsAsync();
+                var clients = await configClientRepository.GetClientsAsync();
                 var clientsResult = clients.TryMatchPath(c => c.ClientId, remainingPath);
                 if (!clientsResult.HasResult)
                     return false;
