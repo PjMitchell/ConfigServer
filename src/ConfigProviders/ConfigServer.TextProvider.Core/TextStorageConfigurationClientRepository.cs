@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ConfigServer.Core.Models;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
@@ -34,9 +33,10 @@ namespace ConfigServer.TextProvider.Core
         /// Get all Client Groups in store
         /// </summary>
         /// <returns>Available Client Groups</returns>
-        public Task<IEnumerable<ConfigurationClientGroup>> GetClientGroupsAsync()
+        public async Task<IEnumerable<ConfigurationClientGroup>> GetClientGroupsAsync()
         {
-            throw new NotImplementedException();
+            var json = await storageConnector.GetClientGroupRegistryFileAsync();
+            return JsonConvert.DeserializeObject<List<ConfigurationClientGroup>>(json, jsonSerializerSettings) ?? Enumerable.Empty<ConfigurationClientGroup>();
         }
 
         /// <summary>
@@ -67,15 +67,24 @@ namespace ConfigServer.TextProvider.Core
         /// </summary>
         /// <param name="clientGroup">Updated Client Group details</param>
         /// <returns>A task that represents the asynchronous update operation.</returns>
-        public Task UpdateClientGroupAsync(ConfigurationClientGroup clientGroup)
+        public async Task UpdateClientGroupAsync(ConfigurationClientGroup clientGroup)
         {
-            throw new NotImplementedException();
+            var groups = await GetClientGroupsAsync();
+            var clientLookup = groups.ToDictionary(k => k.GroupId);
+            clientLookup[clientGroup.GroupId] = clientGroup;
+            await SaveGroups(clientLookup.Values);
         }
 
         private async Task SaveClients(ICollection<ConfigurationClient> clients)
         {
             var json = JsonConvert.SerializeObject(clients, jsonSerializerSettings);
             await storageConnector.SetClientRegistryFileAsync(json);
+        }
+
+        private async Task SaveGroups(ICollection<ConfigurationClientGroup> clients)
+        {
+            var json = JsonConvert.SerializeObject(clients, jsonSerializerSettings);
+            await storageConnector.SetClientGroupRegistryFileAsync(json);
         }
     }
 }

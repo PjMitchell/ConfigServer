@@ -1,4 +1,4 @@
-﻿using ConfigServer.Core.Models;
+﻿using ConfigServer.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;

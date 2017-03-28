@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
-using ConfigServer.Core.Models;
 
 namespace ConfigServer.InMemoryProvider
 {

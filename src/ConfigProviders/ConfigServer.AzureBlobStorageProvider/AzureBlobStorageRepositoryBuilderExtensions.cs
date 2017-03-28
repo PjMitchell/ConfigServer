@@ -34,6 +34,7 @@ namespace ConfigServer.AzureBlobStorageProvider
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, StorageConnector>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigClientRepository, TextStorageConfigurationClientRepository>());
             return builder;
         }
 

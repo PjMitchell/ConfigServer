@@ -31,9 +31,7 @@ namespace ConfigServer.Server
         {
             // /{id}
             // /{id}/{resource}
-            var pathParams = context.Request.Path.HasValue
-                ? context.Request.Path.Value.Split('/').Where(w => !string.IsNullOrWhiteSpace(w)).ToArray()
-                : new string[0];
+            var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 2)
                 return false;
             var clients = await configClientRepository.GetClientsAsync();

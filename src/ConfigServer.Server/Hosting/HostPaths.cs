@@ -8,6 +8,8 @@
         public const string Download = "/Download";
         public const string Upload = "/Upload";
         public const string Resource = "/Resource";
+        public const string Group = "/ClientGroup";
+
 
 
 

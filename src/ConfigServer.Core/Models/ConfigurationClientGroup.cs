@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConfigServer.Core.Models
+namespace ConfigServer.Core
 {
     /// <summary>
     /// Represents a client group
