@@ -12,16 +12,16 @@ import { ConfigurationInputComponent } from './components/clientConfigurationInp
 import { OptionInputComponent } from './components/clientOptionInput';
 
 import { ConfigurationPropertyComponent } from './components/configProperty';
-import { ConfigurationPropertyInputComponent } from './components/clientPropertyInput';
-import { ConfigurationPropertyIntergerInputComponent } from './components/clientPropertyIntergerInput';
-import { ConfigurationPropertyFloatInputComponent } from './components/clientPropertyFloatInput';
-import { ConfigurationPropertyBoolInputComponent } from './components/clientPropertyBoolInput';
-import { ConfigurationPropertyDateInputComponent } from './components/clientPropertyDateInput';
-import { ConfigurationPropertyStringInputComponent } from './components/clientPropertyStringInput';
-import { ConfigurationPropertyEnumInputComponent } from './components/clientPropertyEnumInput';
-import { ConfigurationPropertyOptionInputComponent } from './components/clientPropertyOptionInput';
-import { ConfigurationPropertyMultipleOptionInputComponent } from './components/clientPropertyMultipleOptionInput';
-import { ConfigurationPropertyCollectionInputComponent } from './components/clientPropertyCollectionInput';
+import { ConfigurationPropertyInputComponent } from './components/propertyInputs/clientPropertyInput';
+import { ConfigurationPropertyIntergerInputComponent } from './components/propertyInputs/clientPropertyIntergerInput';
+import { ConfigurationPropertyFloatInputComponent } from './components/propertyInputs/clientPropertyFloatInput';
+import { ConfigurationPropertyBoolInputComponent } from './components/propertyInputs/clientPropertyBoolInput';
+import { ConfigurationPropertyDateInputComponent } from './components/propertyInputs/clientPropertyDateInput';
+import { ConfigurationPropertyStringInputComponent } from './components/propertyInputs/clientPropertyStringInput';
+import { ConfigurationPropertyEnumInputComponent } from './components/propertyInputs/clientPropertyEnumInput';
+import { ConfigurationPropertyOptionInputComponent } from './components/propertyInputs/clientPropertyOptionInput';
+import { ConfigurationPropertyMultipleOptionInputComponent } from './components/propertyInputs/clientPropertyMultipleOptionInput';
+import { ConfigurationPropertyCollectionInputComponent } from './components/propertyInputs/clientPropertyCollectionInput';
 import { JsonFileUploaderComponent } from './components/jsonFileUploader';
 import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
@@ -31,7 +31,7 @@ import { ConfigurationSetComponent } from './components/configurationSetOverview
 import { ResourceOverviewComponent } from './components/resourceOverview';
 import { ResourceFileUploaderComponent } from './components/resourceFileUploader';
 
-import { EditGroupClientsComponent } from './components/editGroupClients';
+import { GroupClientsComponent } from './components/groupClients';
 
 
 
@@ -68,7 +68,7 @@ import { GroupTransitService } from './dataservices/group-transit.service';
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
-        EditGroupClientsComponent,
+        GroupClientsComponent,
         ResourceFileUploaderComponent,
         CreateClientComponent,
         EditClientInputComponent,

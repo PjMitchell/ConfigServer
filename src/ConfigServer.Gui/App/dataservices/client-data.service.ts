@@ -1,6 +1,6 @@
 ﻿import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()

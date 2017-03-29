@@ -1,14 +1,18 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
+
 import { Router, ActivatedRoute,  } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
+import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+
 
 
 @Component({
     template: `
         <h2>Edit client</h2>
-        <div *ngIf="client">
-            <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
+        <div *ngIf="client && groups">
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups"></edit-client-input>
             <hr />
             <div>
                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
@@ -20,10 +24,10 @@ import { ConfigurationClient } from '../interfaces/client';
 export class EditClientComponent implements OnInit {
     client: ConfigurationClient;
     clients: ConfigurationClient[];
-
+    groups: ConfigurationClientGroup[];
     clientId: string;
     isDisabled: boolean;
-    constructor(private clientDataService: ConfigurationClientDataService, private route: ActivatedRoute, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private route: ActivatedRoute, private router: Router) {
     }
 
     ngOnInit() {
@@ -32,6 +36,7 @@ export class EditClientComponent implements OnInit {
             this.clientDataService.getClients()
                 .then(returnedClient => this.onAllClientsReturned(returnedClient));
         });
+        this.clientGroupDataService.getClientGroups().then(grp => {this.groups = grp;})
     }
 
     onAllClientsReturned(returnedClients: ConfigurationClient[]) {

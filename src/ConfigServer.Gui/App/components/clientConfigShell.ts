@@ -6,7 +6,7 @@ import { ConfigurationSetDataService } from '../dataservices/configset-data.serv
 import { ConfigurationDataService } from '../dataservices/config-data.service';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
 import { ConfigurationModelPayload, ConfigurationSetModelPayload } from '../interfaces/configurationSetDefintion';
 
 

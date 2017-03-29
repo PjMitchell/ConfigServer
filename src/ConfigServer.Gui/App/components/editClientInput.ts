@@ -1,5 +1,7 @@
 ﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
+import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+
 
 
 @Component({
@@ -12,6 +14,9 @@ import { ConfigurationClient } from '../interfaces/client';
     <datalist id="groups">
         <option *ngFor="let existingGroup of existingGroups" value="{{existingGroup}}">
     </datalist>
+    <select class="form-control" [(ngModel)]="csClient.group">
+        <option *ngFor="let p of csExistingGroups" [value]="p.groupId">{{p.name}}</option>
+    </select>
     <h4>Enviroment:</h4>
     <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments">
     <datalist id="enviroments">
@@ -28,7 +33,8 @@ export class EditClientInputComponent {
     csClient: ConfigurationClient;
     @Output()
     csClientChange: EventEmitter<ConfigurationClient> = new EventEmitter<ConfigurationClient>();
-    existingGroups: string[]
+    @Input()
+    csExistingGroups: ConfigurationClientGroup[]
     existingEnviroments: string[]
     
     private _csAllClient : ConfigurationClient[]
@@ -37,12 +43,11 @@ export class EditClientInputComponent {
         this._csAllClient = value;
         if (value) {
             this.existingEnviroments = this.toDistinct(value.map(item => item.enviroment));
-            this.existingGroups = this.toDistinct(value.map(item => item.group));
-
         }
     };
+
     constructor() {
-        this.existingGroups = new Array<string>();
+        this.csExistingGroups = new Array<ConfigurationClientGroup>();
         this.existingEnviroments = new Array<string>();
     }
 
