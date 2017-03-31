@@ -9,7 +9,7 @@ gulp.task('BuildUi', ['CleanUi'], function () {
     return tsResult.js.pipe(gulp.dest('wwwroot/Assets/app'));
 });
 
-gulp.task('BuildPackageAssets', ['CleanPackageAssets','BuildTsAssets', 'CopyWwwRootAssets'])
+gulp.task('BuildPackageAssets', ['BuildTsAssets', 'CopyWwwRootAssets'])
 
 gulp.task('BuildTsAssets', function () {
     var tsProject = tsc.createProject('./App/tsconfig.json');
