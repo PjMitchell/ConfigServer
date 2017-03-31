@@ -36,6 +36,7 @@ namespace ConfigServer.Gui
         {
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             var application2Id = "6A302E7D-05E9-4188-9612-4A2920E5C1AE";
+            var groupId = "6C3E9253-8DB9-4C7D-AAFC-12391CB7B1C8";
             services.AddMvc();
             // Add framework services.
             services.AddConfigServer()
@@ -92,8 +93,9 @@ namespace ConfigServer.Gui
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
             var configClientRepo = serviceProvider.GetService<IConfigClientRepository>();
-            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId,  Name = "Mvc App Live", Group="My app",  Enviroment="Live",  Description = "Embeded Application" }).Wait();
-            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App Test", Group = "My app", Enviroment = "UAT", Description = "Second Application" }).Wait();
+            configClientRepo.UpdateClientGroupAsync(new ConfigurationClientGroup { GroupId = groupId, Name = "My Apps" });
+            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId,  Name = "Mvc App Live", Group= groupId,  Enviroment="Live",  Description = "Embeded Application" }).Wait();
+            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App Test", Group = groupId, Enviroment = "UAT", Description = "Second Application" }).Wait();
             configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options1, applicationId)).Wait();
             configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options2, application2Id)).Wait();
             configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config, applicationId)).Wait();
@@ -109,7 +111,15 @@ namespace ConfigServer.Gui
             app.UseDeveloperExceptionPage();
             app.UseBrowserLink();
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store";
+                    context.Context.Response.Headers["Pragma"] = "no-cache";
+                    context.Context.Response.Headers["Expires"] = "-1";
+                }
+            });
 
             app.UseMvc(routes =>
             {

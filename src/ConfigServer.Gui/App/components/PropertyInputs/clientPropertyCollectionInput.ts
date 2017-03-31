@@ -1,5 +1,5 @@
 ﻿import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefintion';
+import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
 
 
 @Component({

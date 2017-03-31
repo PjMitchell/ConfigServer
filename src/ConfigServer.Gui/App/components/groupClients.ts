@@ -8,7 +8,7 @@ import { Router,ActivatedRoute } from '@angular/router';
 @Component({
     template: `
             <h3>Group: {{group.name}}</h3>
-            <h4>Id: {{group.groupId}}</h3>
+            <h4>Id: {{group.groupId}}</h4>
             <hr />
             <div class="row">
                 <div class="col-sm-6 col-md-4"  *ngFor="let client of clients">
@@ -22,6 +22,7 @@ import { Router,ActivatedRoute } from '@angular/router';
                     </div>
                 </div>
             </div>
+            <button type="button" class="btn btn-primary" (click)="back()">Back</button>
 `
 })
 export class GroupClientsComponent  implements OnInit{
@@ -63,5 +64,9 @@ export class GroupClientsComponent  implements OnInit{
 
     editClient(clientId: string) {
         this.router.navigate(['/editClient', clientId]);
+    }
+
+    back() {
+        this.router.navigate(['/']);
     }
 }

@@ -18,12 +18,13 @@ import { Router } from '@angular/router';
                     <h3>{{group.name}}</h3>
                     <p>{{group.groupId}}</p>
                     <hr />
-                    <button type="button" class="btn btn-primary" (click)="editGroupClients(group)">Edit</button>
+                    <button type="button" class="btn btn-primary" (click)="manageGroupClients(group)">Manage</button>
+                    <button type="button" class="btn btn-primary" (click)="editGroup(group)">Edit</button>
                 </div>
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-primary" (click)="editClientsWithNoGroup()">Edit clients with not in group</button>
+    <button type="button" class="btn btn-primary" (click)="manageClientsWithNoGroup()">Manage clients with not in group</button>
 `
 })
 export class HomeComponent implements OnInit {
@@ -41,10 +42,19 @@ export class HomeComponent implements OnInit {
     createNewClient() {
         this.router.navigate(['/createClient']);
     }
-    editClientsWithNoGroup() {
+
+    createNewGroup() {
+        this.router.navigate(['/createClientGroup']);
+    }
+
+    editGroup(selectedGroup: ConfigurationClientGroup) {
+        this.router.navigate(['/editClientGroup', selectedGroup.groupId]);
+    }
+
+    manageClientsWithNoGroup() {
         this.router.navigate(['/group']);
     }
-    editGroupClients(selectedGroup: ConfigurationClientGroup) {
+    manageGroupClients(selectedGroup: ConfigurationClientGroup) {
         this.router.navigate(['/group', selectedGroup.groupId]);
     }
 }

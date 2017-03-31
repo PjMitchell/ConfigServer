@@ -7,24 +7,28 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
 @Component({
     selector: 'edit-client-input',
     template: `
-    <h4>Name:</h4>
-    <input [(ngModel)]="csClient.name" type="text">
-    <h4>Group:</h4>
-    <input [(ngModel)]="csClient.group" type="text" list="groups">
-    <datalist id="groups">
-        <option *ngFor="let existingGroup of existingGroups" value="{{existingGroup}}">
-    </datalist>
-    <select class="form-control" [(ngModel)]="csClient.group">
-        <option *ngFor="let p of csExistingGroups" [value]="p.groupId">{{p.name}}</option>
-    </select>
-    <h4>Enviroment:</h4>
-    <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments">
-    <datalist id="enviroments">
-        <option *ngFor="let existingEnviroment of existingEnviroments" value="{{existingEnviroment}}">
-    </datalist>
-    <h4>Description:</h4>
-    <input [(ngModel)]="csClient.description" type="text">
-
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <h4>Name:</h4>
+            <input [(ngModel)]="csClient.name" type="text">
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <h4>Group:</h4>
+            <select class="form-control" [(ngModel)]="csClient.group">
+                <option *ngFor="let p of csExistingGroups" [value]="p.groupId">{{p.name}}</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <h4>Enviroment:</h4>
+            <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments">
+            <datalist id="enviroments">
+                <option *ngFor="let existingEnviroment of existingEnviroments" value="{{existingEnviroment}}">
+            </datalist>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <h4>Description:</h4>
+            <input [(ngModel)]="csClient.description" type="text">
+        </div>
 `
 
 })

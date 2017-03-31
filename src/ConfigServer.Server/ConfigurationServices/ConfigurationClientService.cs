@@ -62,12 +62,12 @@ namespace ConfigServer.Server
 
         public void HandleClientGroupUpdated(string groupId)
         {
-            memoryCache.CreateEntry(clientGroupCache);
+            memoryCache.Remove(clientGroupCache);
         }
 
         public void HandleClientUpdated(string groupId)
         {
-            memoryCache.CreateEntry(clientCache);
+            memoryCache.Remove(clientCache);
         }
 
         private Task<Dictionary<string, ConfigurationClient>> GetClientLookup()
@@ -81,7 +81,7 @@ namespace ConfigServer.Server
 
         private Task<Dictionary<string, ConfigurationClientGroup>> GetClientGroupLookup()
         {
-            return memoryCache.GetOrCreateAsync(clientCache, async entry =>
+            return memoryCache.GetOrCreateAsync(clientGroupCache, async entry =>
             {
                 var clientGroups = await clientRepo.GetClientGroupsAsync();
                 return clientGroups.ToDictionary(k => k.GroupId, StringComparer.OrdinalIgnoreCase);

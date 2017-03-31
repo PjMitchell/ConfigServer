@@ -10,8 +10,7 @@ import { ClientOverviewComponent } from './components/clientOverview';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { ConfigurationInputComponent } from './components/clientConfigurationInput';
 import { OptionInputComponent } from './components/clientOptionInput';
-
-import { ConfigurationPropertyComponent } from './components/configProperty';
+import { ConfigurationPropertyComponent } from './components/propertyInputs/configProperty';
 import { ConfigurationPropertyInputComponent } from './components/propertyInputs/clientPropertyInput';
 import { ConfigurationPropertyIntergerInputComponent } from './components/propertyInputs/clientPropertyIntergerInput';
 import { ConfigurationPropertyFloatInputComponent } from './components/propertyInputs/clientPropertyFloatInput';
@@ -26,6 +25,9 @@ import { JsonFileUploaderComponent } from './components/jsonFileUploader';
 import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientComponent } from './components/editClient';
+import { CreateClientGroupComponent } from './components/createClientGroup';
+import { EditClientGroupInputComponent } from './components/editClientGroupInput';
+import { EditClientGroupComponent } from './components/editClientGroup';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
 import { ResourceOverviewComponent } from './components/resourceOverview';
@@ -38,11 +40,12 @@ import { GroupClientsComponent } from './components/groupClients';
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
 
 import { ConfigurationClientDataService } from './dataservices/client-data.service';
+import { ConfigurationClientGroupDataService } from './dataservices/clientGroup-data.service';
+
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { ResourceDataService } from './dataservices/resource-data.service';
-import { GroupTransitService } from './dataservices/group-transit.service';
 
 
 
@@ -73,13 +76,16 @@ import { GroupTransitService } from './dataservices/group-transit.service';
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,
+        CreateClientGroupComponent,
+        EditClientGroupInputComponent,
+        EditClientGroupComponent,
         JsonFileUploaderComponent,
         ResourceOverviewComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, GroupTransitService, UploadDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService, ConfigurationClientGroupDataService]
 })
 
 export class AppModule { }

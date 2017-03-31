@@ -63,6 +63,10 @@ export class ClientOverviewComponent implements OnInit {
             .then(returnedResources => this.resources = returnedResources);
     }
     back() {
-        this.router.navigate(['/']);
+        if (this.client.group) {
+            this.router.navigate(['/group', this.client.group]);
+        } else {
+            this.router.navigate(['/group']);
+        }
     }
 }

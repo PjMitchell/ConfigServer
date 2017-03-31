@@ -1,6 +1,6 @@
 ﻿import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { ConfigurationPropertyPayload } from '../interfaces/configurationSetDefintion';
-import { IChildElement } from '../interfaces/htmlInterfaces';
+import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
+import { IChildElement } from '../../interfaces/htmlInterfaces';
 
 @Component({
     selector: 'date-input',

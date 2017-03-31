@@ -35,6 +35,7 @@ namespace ConfigServer.Sample.mvc
         {
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             var application2Id = "6A302E7D-05E9-4188-9612-4A2920E5C1AE";
+            var groupId = "6C3E9253-8DB9-4C7D-AAFC-12391CB7B1C8";
             // Add framework services.
             services.AddMvc();
             services.AddConfigServer()
@@ -90,8 +91,9 @@ namespace ConfigServer.Sample.mvc
             var serviceProvider = services.BuildServiceProvider();
             var configRepo = serviceProvider.GetService<IConfigRepository>();
             var configClientRepo = serviceProvider.GetService<IConfigClientRepository>();
-            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId, Name = "Mvc App", Description = "Embeded Application" }).Wait();
-            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id, Name = "Mvc App 2", Description = "Second Application" }).Wait();
+            configClientRepo.UpdateClientGroupAsync(new ConfigurationClientGroup { GroupId = groupId, Name = "My Apps" }).Wait();
+            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = applicationId, Group = groupId, Name = "Mvc App", Description = "Embeded Application" }).Wait();
+            configClientRepo.UpdateClientAsync(new ConfigurationClient { ClientId = application2Id,Group= groupId, Name = "Mvc App 2", Description = "Second Application" }).Wait();
             configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options1, applicationId)).Wait();
             configRepo.UpdateConfigAsync(new ConfigCollectionInstance<OptionFromConfigSet>(options2, application2Id)).Wait();
             configRepo.UpdateConfigAsync(new ConfigInstance<SampleConfig>(config, applicationId)).Wait();
