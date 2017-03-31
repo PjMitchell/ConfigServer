@@ -11,6 +11,8 @@ namespace ConfigServer.AzureBlobStorageProvider
         private readonly CloudBlobClient client;
         private readonly string container;
         const string indexFile = "clientIndex.json";
+        const string indexGroupFile = "clientGroupIndex.json";
+
 
         public StorageConnector(AzureBlobStorageRepositoryBuilderOptions options)
         {
@@ -38,6 +40,16 @@ namespace ConfigServer.AzureBlobStorageProvider
             return SetFileAsync(GetConfigPath(configId, instanceId), value);
         }
 
+        public Task<string> GetClientGroupRegistryFileAsync()
+        {
+            return GetFileAsync(indexGroupFile);
+        }
+
+        public Task SetClientGroupRegistryFileAsync(string value)
+        {
+            return SetFileAsync(indexGroupFile, value);
+        }
+
         private async Task<string> GetFileAsync(string location)
         {
             var containerRef = client.GetContainerReference(container);
@@ -56,5 +68,7 @@ namespace ConfigServer.AzureBlobStorageProvider
         }
 
         private string GetConfigPath(string configId, string clientId) => $"{clientId}/{configId}.json";
+
+
     }
 }

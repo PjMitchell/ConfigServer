@@ -1,76 +1,60 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { ConfigurationClientDataService } from '../dataservices/client-data.service';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup-data.service';
+import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 import { Group } from '../interfaces/configurationSetDefintion';
 import { Router } from '@angular/router';
-import { GroupTransitService } from '../dataservices/group-transit.service';
 
 @Component({
     template: `
-    <button type="button" class="btn btn-primary" (click)="createNew()"><span class="glyphicon glyphicon-plus"></span> Add Client</button>
+    <button type="button" class="btn btn-primary" (click)="createNewClient()"><span class="glyphicon glyphicon-plus"></span> Add Client</button>
+    <button type="button" class="btn btn-primary" (click)="createNewGroup()"><span class="glyphicon glyphicon-plus"></span> Add Group</button>
     <hr />
     <div class="row">
-        <div class="col-sm-6 col-md-4"  *ngFor="let group of clients">
+        <div class="col-sm-6 col-md-4"  *ngFor="let group of groups">
             <div class="thumbnail">
-                <div><img class="img-responsive" src="Assets/img/config-monkey.jpeg" /></div>
+                <div><img class="img-responsive" src="group.imagePath" /></div>
                 <div class="category"></div>
                 <div class="caption">
-                    <h3>{{group.key}}</h3>
-                    <span *ngFor="let client of group.items">
-                        {{client.name}}; 
-                    </span>
+                    <h3>{{group.name}}</h3>
+                    <p>{{group.groupId}}</p>
                     <hr />
-                    <p>
-                        <button type="button" class="btn btn-primary" (click)="editGroupClients(group)">
-                            Edit
-                        </button>
-                    </p>
+                    <button type="button" class="btn btn-primary" (click)="manageGroupClients(group)">Manage</button>
+                    <button type="button" class="btn btn-primary" (click)="editGroup(group)">Edit</button>
                 </div>
             </div>
         </div>
     </div>
+    <button type="button" class="btn btn-primary" (click)="manageClientsWithNoGroup()">Manage clients with not in group</button>
 `
 })
 export class HomeComponent implements OnInit {
-    clients: Group<string, ConfigurationClient>[];
+    groups: ConfigurationClientGroup[];
 
-    constructor(private clientDataService: ConfigurationClientDataService, private router: Router, private groupTransitService: GroupTransitService) {
-
+    constructor(private clientDataService: ConfigurationClientGroupDataService, private router: Router) {
+        this.groups = new Array<ConfigurationClientGroup>();
     }
 
     ngOnInit(): void {
-        this.clientDataService.getClients()
-            .then(returnedClients => this.mapClients(returnedClients));
+        this.clientDataService.getClientGroups()
+            .then(returnedClientGroups => { this.groups = returnedClientGroups});
     }
 
-    createNew() {
+    createNewClient() {
         this.router.navigate(['/createClient']);
     }
 
-    editGroupClients(selectedGroup: Group<string, ConfigurationClient>) {
-        this.groupTransitService.selectedGroup = selectedGroup;
-        this.router.navigate(['/editGroupClients']);
+    createNewGroup() {
+        this.router.navigate(['/createClientGroup']);
     }
 
-    mapClients(value: ConfigurationClient[]): void {
-        var grouping = new Array<ConfigurationClient[]>();
-        value.forEach((item) => {
-            var group: ConfigurationClient[] = grouping[item.group];
-            if (!group)
-                group = new Array<ConfigurationClient>();
+    editGroup(selectedGroup: ConfigurationClientGroup) {
+        this.router.navigate(['/editClientGroup', selectedGroup.groupId]);
+    }
 
-            group.push(item);
-            grouping[item.group] = group
-        });
-        var keys = Object.keys(grouping);
-        var items = new Array<Group<string, ConfigurationClient>>()
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var val: ConfigurationClient[] = grouping[key];
-            if (key == 'null')
-                key = '';
-            items.push({ 'key': key, 'items': val });
-        }
-        this.clients = items
+    manageClientsWithNoGroup() {
+        this.router.navigate(['/group']);
+    }
+    manageGroupClients(selectedGroup: ConfigurationClientGroup) {
+        this.router.navigate(['/group', selectedGroup.groupId]);
     }
 }

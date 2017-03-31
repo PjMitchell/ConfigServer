@@ -31,6 +31,9 @@ namespace ConfigServer.Server
         Task BuildJsonFileResponse(HttpContext context, object config, string fileName);
 
         Task BuildInvalidRequestResponse(HttpContext context, IEnumerable<string> errors);
+        void BuildNotFoundStatusResponse(HttpContext context);
+
+        void BuildMethodNotAcceptedStatusResponse(HttpContext context);
     }
 
     internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
@@ -41,6 +44,11 @@ namespace ConfigServer.Server
         {
             context.Response.StatusCode = statusCode;
         }
+
+        public void BuildNotFoundStatusResponse(HttpContext context) => BuildStatusResponse(context, 404);
+
+        public void BuildMethodNotAcceptedStatusResponse(HttpContext context) => BuildStatusResponse(context, 405);
+
 
         public Task BuildResponse(HttpContext context, object config)
         {

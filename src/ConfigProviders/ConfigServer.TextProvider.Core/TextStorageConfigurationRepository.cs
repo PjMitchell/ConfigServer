@@ -30,18 +30,7 @@ namespace ConfigServer.TextProvider.Core
             this.storageConnector = storageConnector;
         }
 
-        /// <summary>
-        /// Creates or updates client details in store
-        /// </summary>
-        /// <param name="client">Updated Client detsils</param>
-        /// <returns>A task that represents the asynchronous update operation.</returns>
-        public async Task UpdateClientAsync(ConfigurationClient client)
-        {
-            var clients = await GetClientsAsync();
-            var clientLookup = clients.ToDictionary(k => k.ClientId);
-            clientLookup[client.ClientId] = client;
-            await SaveClients(clientLookup.Values);
-        }
+
 
         /// <summary>
         /// Gets Configuration
@@ -109,15 +98,7 @@ namespace ConfigServer.TextProvider.Core
             return (IEnumerable)Activator.CreateInstance(configType);
         }
 
-        /// <summary>
-        /// Get all Client in store
-        /// </summary>
-        /// <returns>Available Client</returns>
-        public async Task<IEnumerable<ConfigurationClient>> GetClientsAsync()
-        {
-            var json = await storageConnector.GetClientRegistryFileAsync();
-            return JsonConvert.DeserializeObject<List<ConfigurationClient>>(json, jsonSerializerSettings)?? Enumerable.Empty<ConfigurationClient>();
-        }
+
 
         /// <summary>
         /// Saves changes to configuration
@@ -136,13 +117,6 @@ namespace ConfigServer.TextProvider.Core
         private string GetCacheKey(string configId, string clientId) => $"{clientId}_{configId}";
 
         private string GetCollectionConfigCacheKey(string configId, string clientId) => $"Collection_{clientId}_{configId}";
-
-
-        private async Task SaveClients(ICollection<ConfigurationClient> clients)
-        {
-            var json = JsonConvert.SerializeObject(clients, jsonSerializerSettings);
-            await storageConnector.SetClientRegistryFileAsync(json);
-        }
 
         private static Type BuildGenericType(Type genericType, params Type[] typeArgs)
         {

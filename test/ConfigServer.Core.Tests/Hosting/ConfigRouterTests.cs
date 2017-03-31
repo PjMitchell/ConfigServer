@@ -13,7 +13,7 @@ namespace ConfigServer.Core.Tests.Hosting
     public class ConfigRouterTests
     {
         private readonly ConfigEnpoint target;
-        private readonly Mock<IConfigRepository> repository;
+        private readonly Mock<IConfigClientRepository> repository;
         private readonly Mock<IConfigurationService> configurationService;
         private readonly Mock<IConfigHttpResponseFactory> responseFactory;
         private readonly ConfigurationSetRegistry configSetConfig;
@@ -27,7 +27,7 @@ namespace ConfigServer.Core.Tests.Hosting
             {
                 new ConfigurationClient { ClientId = " AplicationId-1" }
             };
-            repository = new Mock<IConfigRepository>();
+            repository = new Mock<IConfigClientRepository>();
             repository.Setup(s => s.GetClientsAsync())
                 .ReturnsAsync(clients);
 

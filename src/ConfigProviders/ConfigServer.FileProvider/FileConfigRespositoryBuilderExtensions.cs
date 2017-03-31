@@ -30,6 +30,7 @@ namespace ConfigServer.FileProvider
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton<ITextStorageSetting>(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigClientRepository, TextStorageConfigurationClientRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, FileStorageConnector>());
 

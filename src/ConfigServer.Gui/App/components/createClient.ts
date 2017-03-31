@@ -1,14 +1,18 @@
 ﻿import { Component } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup-data.service';
+
 import { Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
+import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+
 
 
 @Component({
     template: `
         <h2>Create client</h2>
         <div>
-            <edit-client-input [csAllClient]="clients" [(csClient)]="client"></edit-client-input>
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups"></edit-client-input>
             <hr />
             <div>
                <button type="button"  class="btn btn-primary"(click)="back()">Back</button>
@@ -20,8 +24,9 @@ import { ConfigurationClient } from '../interfaces/client';
 export class CreateClientComponent {
     client: ConfigurationClient;
     clients: ConfigurationClient[];
+    groups: ConfigurationClientGroup[];
     isDisabled: boolean;
-    constructor(private clientDataService: ConfigurationClientDataService, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private router: Router) {
         this.client = {
             clientId: '',
             name: '',
@@ -34,6 +39,7 @@ export class CreateClientComponent {
     ngOnInit() {
        this.clientDataService.getClients()
             .then(returnedClient => this.onAllClientsReturned(returnedClient));
+       this.clientGroupDataService.getClientGroups().then(grp => {this.groups = grp;})
     }
 
     onAllClientsReturned(returnedClients: ConfigurationClient[]) {

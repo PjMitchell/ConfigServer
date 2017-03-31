@@ -14,11 +14,11 @@ namespace ConfigServer.Server
 
     internal class ConfigInstanceRouter : IConfigInstanceRouter
     {
-        private IConfigRepository configRepository;
+        private IConfigClientRepository configRepository;
         private readonly IEnumerable<ConfigurationModel> configModelCollection;
         private IConfigurationService configurationService;
 
-        public ConfigInstanceRouter(IConfigRepository configRepository,IConfigurationService configurationService, ConfigurationSetRegistry configCollection)
+        public ConfigInstanceRouter(IConfigClientRepository configRepository,IConfigurationService configurationService, ConfigurationSetRegistry configCollection)
         {
             this.configRepository = configRepository;
             this.configModelCollection = configCollection.SelectMany(s => s.Configs).ToList();

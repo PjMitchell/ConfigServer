@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
 using ConfigServer.TextProvider.Core;
+using System;
 
 namespace ConfigServer.AzureTableStorageProvider
 {
@@ -9,6 +10,8 @@ namespace ConfigServer.AzureTableStorageProvider
         private readonly CloudTableClient client;
         private readonly string table;
         private const string clientRegistry = "clientRegistry";
+        private const string clientGroupRegistry = "clientGroupRegistry";
+
 
         public StorageConnector(AzureTableStorageRepositoryBuilderOptions options)
         {
@@ -34,6 +37,16 @@ namespace ConfigServer.AzureTableStorageProvider
         public Task SetClientRegistryFileAsync(string value)
         {
             return SetFileAsync(clientRegistry, clientRegistry, value);
+        }
+
+        public Task<string> GetClientGroupRegistryFileAsync()
+        {
+            return GetFileAsync(clientGroupRegistry, clientGroupRegistry);
+        }
+
+        public Task SetClientGroupRegistryFileAsync(string value)
+        {
+            return SetFileAsync(clientGroupRegistry, clientGroupRegistry, value);
         }
 
         private async Task<string> GetFileAsync(string partition, string rowId)

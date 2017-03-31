@@ -4,7 +4,7 @@ import { ConfigurationSetDataService } from '../dataservices/configset-data.serv
 import { ResourceDataService } from '../dataservices/resource-data.service';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/client';
+import { ConfigurationClient } from '../interfaces/configurationClient';
 import { ResourceInfo } from '../interfaces/resourceInfo';
 
 import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
@@ -63,6 +63,10 @@ export class ClientOverviewComponent implements OnInit {
             .then(returnedResources => this.resources = returnedResources);
     }
     back() {
-        this.router.navigate(['/']);
+        if (this.client.group) {
+            this.router.navigate(['/group', this.client.group]);
+        } else {
+            this.router.navigate(['/group']);
+        }
     }
 }

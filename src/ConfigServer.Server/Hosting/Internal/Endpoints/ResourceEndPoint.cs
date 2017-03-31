@@ -10,12 +10,12 @@ namespace ConfigServer.Server
 {
     internal class ResourceEndpoint : IEndpoint
     {
-        private readonly IConfigRepository configRepository;
+        private readonly IConfigClientRepository configClientRepository;
         private readonly IResourceStore resourceStore;
         private readonly IConfigHttpResponseFactory httpResponseFactory;
-        public ResourceEndpoint(IConfigRepository configRepository, IResourceStore resourceStore, IConfigHttpResponseFactory httpResponseFactory)
+        public ResourceEndpoint(IConfigClientRepository configClientRepository, IResourceStore resourceStore, IConfigHttpResponseFactory httpResponseFactory)
         {
-            this.configRepository = configRepository;
+            this.configClientRepository = configClientRepository;
             this.resourceStore = resourceStore;
             this.httpResponseFactory = httpResponseFactory;
         }
@@ -31,12 +31,10 @@ namespace ConfigServer.Server
         {
             // /{id}
             // /{id}/{resource}
-            var pathParams = context.Request.Path.HasValue
-                ? context.Request.Path.Value.Split('/').Where(w => !string.IsNullOrWhiteSpace(w)).ToArray()
-                : new string[0];
+            var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 2)
                 return false;
-            var clients = await configRepository.GetClientsAsync();
+            var clients = await configClientRepository.GetClientsAsync();
             var client = clients.SingleOrDefault(s => s.ClientId.Equals(pathParams[0], StringComparison.OrdinalIgnoreCase));
             if(client == null)
             {

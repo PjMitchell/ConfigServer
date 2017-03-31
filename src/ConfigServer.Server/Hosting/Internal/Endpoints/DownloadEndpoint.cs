@@ -11,13 +11,15 @@ namespace ConfigServer.Server
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigRepository configRepository;
+        readonly IConfigClientRepository configClientRepository;
         const string jsonExtension = ".json";
 
-        public DownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigRepository configRepository)
+        public DownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigClientRepository configClientRepository)
         {
             this.configRepository = configRepository;
             this.configCollection = configCollection;
             this.responseFactory = responseFactory;
+            this.configClientRepository = configClientRepository;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -39,7 +41,7 @@ namespace ConfigServer.Server
             // clientId/ConfigSet.json
             // clientId/ConfigSet/Config.json
 
-            var clients = await configRepository.GetClientsAsync();
+            var clients = await configClientRepository.GetClientsAsync();
             var clientsResult = clients.TryMatchPath(c => c.ClientId, path);
             if (!clientsResult.HasResult)
                 return null;

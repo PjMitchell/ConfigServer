@@ -7,13 +7,17 @@ namespace ConfigServer.Server
 {
     internal class ConfigClientEndPoint : IEndpoint
     {
-        readonly IConfigRepository configRepository;
+        readonly IConfigClientRepository configClientRepository;
         readonly IConfigHttpResponseFactory responseFactory;
+        readonly IConfigurationClientService configurationClientService;
+        readonly IEventService eventService;
 
-        public ConfigClientEndPoint(IConfigRepository configRepository, IConfigHttpResponseFactory responseFactory)
+        public ConfigClientEndPoint(IConfigurationClientService configurationClientService, IConfigClientRepository configClientRepository, IConfigHttpResponseFactory responseFactory, IEventService eventService)
         {
             this.responseFactory = responseFactory;
-            this.configRepository = configRepository;
+            this.configClientRepository = configClientRepository;
+            this.configurationClientService = configurationClientService;
+            this.eventService = eventService;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -23,19 +27,23 @@ namespace ConfigServer.Server
 
         public async Task<bool> TryHandle(HttpContext context)
         {
+            // GET Gets All
+            // POST Update Client
+            // /{ClientId} GET
+            
             var routePath = context.Request.Path;
-            var configSetIds = await configRepository.GetClientsAsync();
+            var configClients = await configurationClientService.GetClients();
             if (string.IsNullOrWhiteSpace(routePath))
             {
                 if(!(context.Request.Method == "GET" || context.Request.Method == "POST"))
                     return false;
                 if(context.Request.Method == "GET")
-                    await responseFactory.BuildResponse(context, configSetIds);
+                    await responseFactory.BuildResponse(context, configClients);
                 if (context.Request.Method == "POST")
                     await HandlePost(context);
                 return true;
             }
-            var queryResult = configSetIds.TryMatchPath(c => c.ClientId, routePath);
+            var queryResult = configClients.TryMatchPath(c => c.ClientId, routePath);
             if (!queryResult.HasResult)
                 return false;
             await responseFactory.BuildResponse(context, queryResult.QueryResult);
@@ -46,7 +54,9 @@ namespace ConfigServer.Server
         private async Task HandlePost(HttpContext context)
         {
             var data = await context.GetObjectFromJsonBodyAsync<ConfigurationClientPayload>();
-            await configRepository.UpdateClientAsync(Map(data));
+            var client = Map(data);
+            await configClientRepository.UpdateClientAsync(client);
+            await eventService.Publish(new ConfigurationClientUpdatedEvent(client.ClientId));
             responseFactory.BuildNoContentResponse(context);
         }
 

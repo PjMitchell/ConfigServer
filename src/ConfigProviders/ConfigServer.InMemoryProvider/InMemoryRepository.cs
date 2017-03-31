@@ -10,9 +10,10 @@ namespace ConfigServer.InMemoryProvider
     /// <summary>
     /// In memory implementation of IConfigRepository
     /// </summary>
-    public class InMemoryRepository : IConfigRepository
+    public class InMemoryRepository : IConfigRepository, IConfigClientRepository
     {
         private readonly Dictionary<string, ConfigurationClient> clientStore;
+        private readonly Dictionary<string, ConfigurationClientGroup> clientGroupStore;
         private readonly Dictionary<string, Dictionary<Type, ConfigInstance>> innerStore;
         
         /// <summary>
@@ -21,6 +22,7 @@ namespace ConfigServer.InMemoryProvider
         public InMemoryRepository()
         {
             clientStore = new Dictionary<string, ConfigurationClient>();
+            clientGroupStore = new Dictionary<string, ConfigurationClientGroup>();
             innerStore = new Dictionary<string, Dictionary<Type, ConfigInstance>>();
         }
 
@@ -114,7 +116,26 @@ namespace ConfigServer.InMemoryProvider
             return tcs.Task;
         }
 
+        /// <summary>
+        /// Get all Client Groups in store
+        /// </summary>
+        /// <returns>Available Client Groups</returns>
+        public Task<IEnumerable<ConfigurationClientGroup>> GetClientGroupsAsync()
+        {
+            var results = clientGroupStore.Values;
+            return Task.FromResult<IEnumerable<ConfigurationClientGroup>>(results);
+        }
 
+        /// <summary>
+        /// Creates or updates client group details in store
+        /// </summary>
+        /// <param name="clientGroup">Updated Client Group details</param>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
+        public Task UpdateClientGroupAsync(ConfigurationClientGroup clientGroup)
+        {
+            clientGroupStore[clientGroup.GroupId] = clientGroup;
+            return Task.FromResult(true);
+        }
 
         private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
