@@ -6,7 +6,11 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="wwwroot\Assets\css\**" />
     <Content Remove="App\**\*.js;App\**\*.js.map" />
+    <Content Remove="wwwroot\Assets\css\**" />
+    <EmbeddedResource Remove="wwwroot\Assets\css\**" />
+    <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="wwwroot\Assets\img\config-monkey.jpeg" />
@@ -61,7 +65,6 @@
     </DotNetCliToolReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\Assets\css\" />
     <Folder Include="FileStore\Configs\" />
     <Folder Include="FileStore\Resources\" />
   </ItemGroup>

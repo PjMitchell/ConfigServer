@@ -5,7 +5,8 @@ var gulp = require("gulp"),
     rimraf = require("rimraf"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
-    uglify = require("gulp-uglify");
+    uglify = require("gulp-uglify"),
+    clean = require('gulp-clean');
 
 var paths = {
     webroot: "./wwwroot/"
@@ -43,3 +44,13 @@ gulp.task("min:css", function () {
 });
 
 gulp.task("min", ["min:js", "min:css"]);
+
+gulp.task('CleanConfigs', function () {
+    return gulp.src('./FileStore/*')
+        .pipe(clean());
+});
+
+gulp.task('CopySeedData', ['CleanConfigs'], function () {
+    return gulp.src(['./SeedData/**/*.*'])
+        .pipe(gulp.dest('./FileStore'));
+});
