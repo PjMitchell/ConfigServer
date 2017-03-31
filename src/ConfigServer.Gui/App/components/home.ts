@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
     <div class="row">
         <div class="col-sm-6 col-md-4"  *ngFor="let group of groups">
             <div class="thumbnail">
-                <div><img class="img-responsive" src="group.imagePath" /></div>
+                <div *ngIf="group.imagePath"><img class="img-responsive" src="Resource/ClientGroupImages/{{group.imagePath}}" /></div>
                 <div class="category"></div>
                 <div class="caption">
                     <h3>{{group.name}}</h3>
@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-primary" (click)="manageClientsWithNoGroup()">Manage clients with not in group</button>
+    <button type="button" class="btn btn-primary" (click)="manageClientsWithNoGroup()">Manage clients not in group</button>
 `
 })
 export class HomeComponent implements OnInit {
