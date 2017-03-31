@@ -10,12 +10,13 @@ namespace ConfigServer.Server
 {
     internal class ResourceEndpoint : IEndpoint
     {
-        private readonly IConfigClientRepository configClientRepository;
+        private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;
         private readonly IConfigHttpResponseFactory httpResponseFactory;
-        public ResourceEndpoint(IConfigClientRepository configClientRepository, IResourceStore resourceStore, IConfigHttpResponseFactory httpResponseFactory)
+        private const string clientGroupImagePath = "ClientGroupImages";
+        public ResourceEndpoint(IConfigurationClientService configClientService, IResourceStore resourceStore, IConfigHttpResponseFactory httpResponseFactory)
         {
-            this.configClientRepository = configClientRepository;
+            this.configClientService = configClientService;
             this.resourceStore = resourceStore;
             this.httpResponseFactory = httpResponseFactory;
         }
@@ -34,14 +35,13 @@ namespace ConfigServer.Server
             var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 2)
                 return false;
-            var clients = await configClientRepository.GetClientsAsync();
-            var client = clients.SingleOrDefault(s => s.ClientId.Equals(pathParams[0], StringComparison.OrdinalIgnoreCase));
-            if(client == null)
+
+            var clientIdentity = await GetIdentityFromPathOrDefault(pathParams[0]);
+            if (clientIdentity == null)
             {
                 httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
                 return true;
             }
-            var clientIdentity = new ConfigurationIdentity(client.ClientId);
             if (pathParams.Length == 1)
             {
                 var clientResourceCatalogue = await resourceStore.GetResourceCatalogue(clientIdentity);
@@ -87,6 +87,13 @@ namespace ConfigServer.Server
             return true;
         }
 
-        
+        private async Task<ConfigurationIdentity> GetIdentityFromPathOrDefault(string pathParam)
+        {
+            if (string.Equals(pathParam, clientGroupImagePath, StringComparison.OrdinalIgnoreCase))
+                return new ConfigurationIdentity(clientGroupImagePath);
+            var client = await configClientService.GetClientOrDefault(pathParam);            
+            var clientIdentity = new ConfigurationIdentity(client.ClientId);
+            return clientIdentity;
+        }
     }
 }
