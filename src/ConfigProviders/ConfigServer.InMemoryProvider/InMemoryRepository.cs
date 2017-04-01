@@ -139,11 +139,11 @@ namespace ConfigServer.InMemoryProvider
 
         private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
-            var innerDic = innerStore[id.ClientId];
+            var innerDic = innerStore[id.Client.ClientId];
             ConfigInstance config;
             if (!innerDic.TryGetValue(type, out config))
             {
-                config = ConfigFactory.CreateGenericInstance(type, id.ClientId);
+                config = ConfigFactory.CreateGenericInstance(type, id.Client);
             }
 
             return config;
@@ -161,10 +161,10 @@ namespace ConfigServer.InMemoryProvider
 
         private void SaveChanges(ConfigInstance config)
         {
-            if (!innerStore.ContainsKey(config.ClientId))
-                innerStore.Add(config.ClientId, new Dictionary<Type, ConfigInstance>());
+            if (!innerStore.ContainsKey(config.ConfigurationIdentity.Client.ClientId))
+                innerStore.Add(config.ConfigurationIdentity.Client.ClientId, new Dictionary<Type, ConfigInstance>());
 
-            innerStore[config.ClientId][config.ConfigType] = config;
+            innerStore[config.ConfigurationIdentity.Client.ClientId][config.ConfigType] = config;
         }
 
         private void CreateConfigSet(ConfigurationClient client)

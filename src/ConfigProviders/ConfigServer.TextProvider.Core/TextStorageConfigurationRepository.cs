@@ -41,11 +41,11 @@ namespace ConfigServer.TextProvider.Core
         public async Task<ConfigInstance> GetAsync(Type type, ConfigurationIdentity id)
         {
             var configId = type.Name;
-            var configPath = GetCacheKey(configId, id.ClientId);
-            var result = ConfigFactory.CreateGenericInstance(type, id.ClientId);
+            var configPath = GetCacheKey(configId, id.Client.ClientId);
+            var result = ConfigFactory.CreateGenericInstance(type, id.Client);
             var json = await memoryCache.GetOrCreateAsync(cachePrefix + configPath, e => {
                 e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                return storageConnector.GetConfigFileAsync(type.Name, id.ClientId);
+                return storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
             });
 
             if (!string.IsNullOrWhiteSpace(json))
@@ -86,11 +86,11 @@ namespace ConfigServer.TextProvider.Core
         public async Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
         {
             var configId = type.Name;
-            var configPath = GetCollectionConfigCacheKey(configId, id.ClientId);
+            var configPath = GetCollectionConfigCacheKey(configId, id.Client.ClientId);
 
             var json = await memoryCache.GetOrCreateAsync(cachePrefix + configPath, e => {
                 e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                return storageConnector.GetConfigFileAsync(type.Name, id.ClientId);
+                return storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
             });
             var configType = BuildGenericType(typeof(List<>), type);
             if (!string.IsNullOrWhiteSpace(json))
@@ -108,9 +108,9 @@ namespace ConfigServer.TextProvider.Core
         public async Task UpdateConfigAsync(ConfigInstance config)
         {
             var configId = config.ConfigType.Name;
-            var configPath = GetCacheKey(configId, config.ClientId);
+            var configPath = GetCacheKey(configId, config.ConfigurationIdentity.Client.ClientId);
             var configText = JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings);
-            await storageConnector.SetConfigFileAsync(configId, config.ClientId,configText);
+            await storageConnector.SetConfigFileAsync(configId, config.ConfigurationIdentity.Client.ClientId, configText);
             memoryCache.Set<string>(cachePrefix + configPath, configText, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));            
         }
 

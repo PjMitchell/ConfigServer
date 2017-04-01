@@ -29,7 +29,7 @@ namespace ConfigServer.Core.Tests
                 Name = "Client 1",
                 Description = "A description Client"
             };
-            configId = new ConfigurationIdentity(client.ClientId);
+            configId = new ConfigurationIdentity(client);
         }
 
         public void Dispose()
@@ -149,7 +149,7 @@ namespace ConfigServer.Core.Tests
                 Description = "A description Client"
             };
 
-            var configId2 = new ConfigurationIdentity(client2.ClientId);
+            var configId2 = new ConfigurationIdentity(client2);
 
 
             await target.CopyResources(configId, configId2);

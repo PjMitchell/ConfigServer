@@ -11,15 +11,15 @@ namespace ConfigServer.Core
         /// Creates Instance of a generic ConfigInstance
         /// </summary>
         /// <param name="type">Type for generic ConfigInstance</param>
-        /// <param name="clientId"></param>
+        /// <param name="client">Configuration Client</param>
         /// <returns></returns>
-        public static ConfigInstance CreateGenericInstance(Type type, string clientId)
+        public static ConfigInstance CreateGenericInstance(Type type, ConfigurationClient client)
         {
             var config = typeof(ConfigInstance<>);
             Type[] typeArgs = { type };
             var configType = config.MakeGenericType(typeArgs);
             var result = (ConfigInstance)Activator.CreateInstance(configType);
-            result.ClientId = clientId;
+            result.ConfigurationIdentity = new ConfigurationIdentity(client);
             return result;
         }
     }

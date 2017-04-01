@@ -23,7 +23,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private JObject updatedObject;
         private SampleConfig updatedSample;
 
-        private const string clientId = "7aa7d5f0-90fb-420b-a906-d482428a0c44";
+        private readonly ConfigurationIdentity clientId = new ConfigurationIdentity(new ConfigurationClient("7aa7d5f0-90fb-420b-a906-d482428a0c44"));
 
 
         public ConfigurationUpdatePayloadMapperTests()

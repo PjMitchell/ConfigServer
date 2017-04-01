@@ -24,10 +24,10 @@ namespace ConfigServer.Core
         /// </summary>
         /// <param name="type">type of config</param>
         /// <param name="isCollection">is instance a collection</param>
-        /// <param name="clientId">Client Id</param>
-        protected ConfigInstance(Type type, bool isCollection, string clientId) : this(type, isCollection)
+        /// <param name="configurationIdentity">Configuration Identity</param>
+        protected ConfigInstance(Type type, bool isCollection, ConfigurationIdentity configurationIdentity) : this(type, isCollection)
         {
-            ClientId = clientId;
+            ConfigurationIdentity = configurationIdentity;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ConfigServer.Core
         /// <summary>
         /// Client Id for configuration
         /// </summary>
-        public string ClientId { get; set; }
+        public ConfigurationIdentity ConfigurationIdentity { get; set; }
 
         /// <summary>
         /// Gets configuration as object

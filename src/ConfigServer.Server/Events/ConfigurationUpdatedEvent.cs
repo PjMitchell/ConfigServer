@@ -10,7 +10,9 @@ namespace ConfigServer.Server
             ConfigurationType = configurationType;
             Identity = identity;
         }
-        public ConfigurationUpdatedEvent(ConfigInstance instance) : this(instance.ConfigType, new ConfigurationIdentity(instance.ClientId)) { }
+
+        public ConfigurationUpdatedEvent(ConfigInstance instance) : this(instance.ConfigType, instance.ConfigurationIdentity) { }
+
         public Type ConfigurationType { get; }
         public ConfigurationIdentity Identity { get; }
     }

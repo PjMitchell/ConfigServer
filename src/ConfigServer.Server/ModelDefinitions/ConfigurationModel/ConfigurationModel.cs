@@ -121,7 +121,7 @@ namespace ConfigServer.Server
         {
             var castConfigurationSet = (TConfigurationSet)configurationSet;
             var config = configSelector(castConfigurationSet).GetConfig();
-            return new ConfigInstance<TConfiguration>((TConfiguration)config, castConfigurationSet.Instance.ClientId); 
+            return new ConfigInstance<TConfiguration>((TConfiguration)config, castConfigurationSet.Instance); 
         }
     }
 }

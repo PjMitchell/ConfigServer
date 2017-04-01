@@ -90,9 +90,9 @@ namespace ConfigServer.Server
         private async Task<ConfigurationIdentity> GetIdentityFromPathOrDefault(string pathParam)
         {
             if (string.Equals(pathParam, clientGroupImagePath, StringComparison.OrdinalIgnoreCase))
-                return new ConfigurationIdentity(clientGroupImagePath);
+                return new ConfigurationIdentity(new ConfigurationClient(clientGroupImagePath));
             var client = await configClientService.GetClientOrDefault(pathParam);            
-            var clientIdentity = new ConfigurationIdentity(client.ClientId);
+            var clientIdentity = new ConfigurationIdentity(client);
             return clientIdentity;
         }
     }

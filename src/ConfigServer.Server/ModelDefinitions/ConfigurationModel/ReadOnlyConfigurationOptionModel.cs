@@ -52,7 +52,7 @@ namespace ConfigServer.Server
         {
             var castConfigurationSet = (TConfigurationSet)configurationSet;
             var config = optionSelector(castConfigurationSet);
-            return new ConfigCollectionInstance<TOption>(config, castConfigurationSet.Instance.ClientId);
+            return new ConfigCollectionInstance<TOption>(config, castConfigurationSet.Instance);
         }
 
         public override void SetConfigurationOnConfigurationSet(object configurationSet, object value)
@@ -108,7 +108,7 @@ namespace ConfigServer.Server
         {
             var castConfigurationSet = (TConfigurationSet)configurationSet;
             var config = optionSelector(castConfigurationSet);
-            return new ConfigCollectionInstance<TOption>(config, castConfigurationSet.Instance.ClientId);
+            return new ConfigCollectionInstance<TOption>(config, castConfigurationSet.Instance);
         }
 
         public override void SetConfigurationOnConfigurationSet(object configurationSet, object value)

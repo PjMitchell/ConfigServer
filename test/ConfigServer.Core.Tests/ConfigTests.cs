@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void ConfigDefaultName_IsGenericClassName()
         {
-            var config = new ConfigInstance<SimpleConfig>(clientId);
+            var config = new ConfigInstance<SimpleConfig>(new ConfigurationIdentity(new ConfigurationClient(clientId)));
             Assert.Equal("SimpleConfig", config.Name);
         }
 

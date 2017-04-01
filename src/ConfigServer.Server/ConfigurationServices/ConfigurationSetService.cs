@@ -58,7 +58,7 @@ namespace ConfigServer.Server
             return await factory.BuildConfigSet(type, identity, requiredConfigurationSet);
         }
 
-        private string GetKey(Type type, ConfigurationIdentity identity) => $"{type.Name}_{identity.ClientId}";
+        private string GetKey(Type type, ConfigurationIdentity identity) => $"{type.Name}_{identity.Client.ClientId}";
 
         private void ClearConfig(Type configurationtype, ConfigurationIdentity identity)
         {

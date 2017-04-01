@@ -31,6 +31,6 @@ POST: Sets Config from editor model
 /\{clientId}/\{Configuration Set}/\{Config name}.json GET: gets configuration file
 
 ### Upload ~/Upload
-/ConfigurationSet/\{clientId}/\{Config name} POST: Uploads configuration set file
+/ConfigurationSet/\{clientId}/\{Configuration Set} POST: Uploads configuration set file
 
-/Configuration/\{clientId}/\{Configuration Set}/\{Config name} POST: Uploads configuration file
+/Configuration/\{clientId}/\{Config name} POST: Uploads configuration file
