@@ -43,8 +43,14 @@ namespace ConfigServer.Server
 
         public static string[] ToPathParams(this HttpContext context)
         {
-            var pathParams = context.Request.Path.HasValue
-                ? context.Request.Path.Value.Split('/').Where(w => !string.IsNullOrWhiteSpace(w)).ToArray()
+            var pathParams = context.Request.Path.ToPathParams();
+            return pathParams;
+        }
+
+        public static string[] ToPathParams(this PathString path)
+        {
+            var pathParams = path.HasValue
+                ? path.Value.Split('/').Where(w => !string.IsNullOrWhiteSpace(w)).ToArray()
                 : new string[0];
             return pathParams;
         }

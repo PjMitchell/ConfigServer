@@ -27,7 +27,7 @@ namespace ConfigServer.Server
         public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JContainer newEditPayload, ConfigurationSetModel model)
         {
             var configModel = model.Configs.Single(s => s.Type == original.ConfigType);
-            var identity = new ConfigurationIdentity(original.ClientId);
+            var identity = original.ConfigurationIdentity;
             var configurationSets = await GetRequiredConfiguration(model, identity);
             var newConfig = UpdateObject(original, newEditPayload, configModel, identity, configurationSets);
             original.SetConfiguration(newConfig);

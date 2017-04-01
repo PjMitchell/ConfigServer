@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
 using ConfigServer.Server.Validation;
+using System;
 
 namespace ConfigServer.Server
 {
@@ -15,12 +16,12 @@ namespace ConfigServer.Server
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
-        readonly IConfigClientRepository configClientRepository;
+        readonly IConfigurationClientService configClientService;
         readonly IConfigurationValidator validator;
         readonly IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper;
         readonly IEventService eventService;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService, IConfigClientRepository configClientRepository)
+        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService, IConfigurationClientService configClientService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -31,7 +32,7 @@ namespace ConfigServer.Server
             this.validator = validator;
             this.configurationUpdatePayloadMapper = configurationUpdatePayloadMapper;
             this.eventService = eventService;
-            this.configClientRepository = configClientRepository;
+            this.configClientService = configClientService;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -41,27 +42,36 @@ namespace ConfigServer.Server
 
         public async Task<bool> TryHandle(HttpContext context)
         {
-            var routePath = context.Request.Path;
-            if (string.IsNullOrWhiteSpace(routePath))
+            // GET: Gets all configuration set summaries
+            // Model/{ Client Id}/{ Configuration Set}
+            // GET: Model for configuration set
+            // Model/{ Client Id}/{ config name}
+            // GET: Gets Config model for editor
+            // POST: Sets Config from editor model
+            var pathParams = context.ToPathParams();
+
+            if (pathParams.Length == 0)
             {
                 await responseFactory.BuildResponse(context, GetConfigurationSetSummaries());
                 return true;
             }
-            PathString remainingPath;
-            if (routePath.StartsWithSegments("/Model", out remainingPath))
+            if (pathParams.Length != 3)
+                return false;
+
+            if (pathParams[0].Equals("Model", StringComparison.OrdinalIgnoreCase))
             {
-                var clients = await configClientRepository.GetClientsAsync();
-                var clientResult = clients.TryMatchPath(c => c.ClientId, remainingPath);
-                if (!clientResult.HasResult)
+                var client = await configClientService.GetClientOrDefault(pathParams[1]);
+                if (client == null)
                     return false;
-                var queryResult = configCollection.TryMatchPath(c => c.ConfigSetType.Name, clientResult.RemainingPath);
-                if (queryResult.HasResult)
-                    await responseFactory.BuildResponse(context, await modelPayloadMapper.Map(queryResult.QueryResult, new ConfigurationIdentity(clientResult.QueryResult.ClientId)));
-                return queryResult.HasResult;
+                var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
+                if (configSet == null)
+                    return false;
+                await responseFactory.BuildResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client)));
+                return true;
             }
-            if (routePath.StartsWithSegments("/Value", out remainingPath))
+            if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
             {
-                var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(remainingPath);
+                var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(pathParams[1],pathParams[2]);
                 if (configInstance == null || !(context.Request.Method == "GET" || context.Request.Method == "POST"))
                     return false;
                 await HandleValueRequest(context, configInstance); 
@@ -92,7 +102,7 @@ namespace ConfigServer.Server
                 await responseFactory.BuildInvalidRequestResponse(context,new []{ ex.Message});
                 return;
             }
-            var validationResult = await validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
+            var validationResult = await validator.Validate(newConfigInstance.GetConfiguration(), model.Get(configInstance.ConfigType), configInstance.ConfigurationIdentity);
             if (validationResult.IsValid)
             {
                 await configRepository.UpdateConfigAsync(newConfigInstance);

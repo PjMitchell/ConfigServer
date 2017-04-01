@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
 
         public ConfigurationSetFactoryTests()
         {
-            identity = new ConfigurationIdentity("fbce468f-0950-4b5f-a7e1-8e24e746bb91");
+            identity = new ConfigurationIdentity(new ConfigurationClient("fbce468f-0950-4b5f-a7e1-8e24e746bb91"));
             registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(new TestConfiguationModule().BuildConfigurationSetModel());
             defaultOptions = new List<ExternalOption>
@@ -44,7 +44,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                 LlamaCapacity = 23,
                 ExternalOption = defaultOptions[0]                
             };
-            var instance = new ConfigInstance<SampleConfig>(defaultConfig, identity.ClientId);
+            var instance = new ConfigInstance<SampleConfig>(defaultConfig, identity);
             mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
                .Returns(() => Task.FromResult<ConfigInstance>(instance));
             target = new ConfigurationSetFactory(mockConfigProvider.Object, new TestOptionSetFactory(), registry);
@@ -103,7 +103,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                 LlamaCapacity = 23,
                 ExternalOption = new ExternalOption { Id = defaultOptions[0].Id, Description = "Not this one" }
             };
-            var instance = new ConfigInstance<SampleConfig>(config, identity.ClientId);
+            var instance = new ConfigInstance<SampleConfig>(config, identity);
             mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
                    .Returns(() => Task.FromResult<ConfigInstance>(instance));
 
@@ -126,7 +126,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                     OptionProvider.OptionTwo
                 }
             };
-            var instance = new ConfigInstance<SampleConfig>(config, identity.ClientId);
+            var instance = new ConfigInstance<SampleConfig>(config, identity);
             mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
                    .Returns(() => Task.FromResult<ConfigInstance>(instance));
             var configSet = (TestConfiguationModule)await target.BuildConfigSet(typeof(TestConfiguationModule), identity);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
 using ConfigServer.Server.Validation;
 using System.Collections.Generic;
+using System;
 
 namespace ConfigServer.Server
 {
@@ -16,9 +17,9 @@ namespace ConfigServer.Server
         readonly IConfigurationValidator confgiurationValidator;
         readonly IConfigurationSetUploadMapper configurationSetUploadMapper;
         readonly IEventService eventService;
-        readonly IConfigClientRepository configClientRepository;
+        readonly IConfigurationClientService configClientService;
 
-        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigClientRepository configClientRepository)
+        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigurationClientService configClientService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -27,7 +28,7 @@ namespace ConfigServer.Server
             this.confgiurationValidator = confgiurationValidator;
             this.configurationSetUploadMapper = configurationSetUploadMapper;
             this.eventService = eventService;
-            this.configClientRepository = configClientRepository;
+            this.configClientService = configClientService;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -37,28 +38,30 @@ namespace ConfigServer.Server
 
         public async Task<bool> TryHandle(HttpContext context)
         {
-            var routePath = context.Request.Path;
-            if (context.Request.Method != "POST")
+            // /ConfigurationSet/{clientId}/{Configuration Set}
+            // POST: Uploads configuration set file
+            // /Configuration/{clientId}/{Config name}
+            // POST: Uploads configuration file
+            var pathParams = context.ToPathParams();
+            if (context.Request.Method != "POST" || pathParams.Length != 3)
                 return false;
-            PathString remainingPath;
-            if (routePath.StartsWithSegments("/Configuration", out remainingPath))
+            var client = await configClientService.GetClientOrDefault(pathParams[1]);
+            if (client == null)
+                return false;
+            if (pathParams[0].Equals("Configuration", StringComparison.OrdinalIgnoreCase))
             {
-                var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(remainingPath);
+                var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(client, pathParams[2]);
                 if (configInstance == null)
                     return false;
                 await HandleUploadRequest(context, configInstance);
                 return true;
             }
-            if (routePath.StartsWithSegments("/ConfigurationSet", out remainingPath))
+            if (pathParams[0].Equals("ConfigurationSet", StringComparison.OrdinalIgnoreCase))
             {
-                var clients = await configClientRepository.GetClientsAsync();
-                var clientsResult = clients.TryMatchPath(c => c.ClientId, remainingPath);
-                if (!clientsResult.HasResult)
+                var configSet = configCollection.SingleOrDefault(c=>pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
+                if (configSet == null)
                     return false;
-                var configSetResult = configCollection.TryMatchPath(c=> c.ConfigSetType.Name,clientsResult.RemainingPath);
-                if (!configSetResult.HasResult)
-                    return false;
-                await HandleUploadRequest(context, clientsResult.QueryResult.ClientId, configSetResult.QueryResult);
+                await HandleUploadRequest(context, client, configSet);
                 return true;
             }
             return false;
@@ -70,7 +73,7 @@ namespace ConfigServer.Server
                 input = await context.GetObjectFromJsonBodyOrDefaultAsync(ReflectionHelpers.BuildGenericType(typeof(IEnumerable<>), configInstance.ConfigType));
             else
                 input = await context.GetObjectFromJsonBodyOrDefaultAsync(configInstance.ConfigType);
-            var validationResult = await confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), new ConfigurationIdentity(configInstance.ClientId));
+            var validationResult = await confgiurationValidator.Validate(input, GetConfigurationSetForModel(configInstance).Configs.Single(s=> s.Type == configInstance.ConfigType), configInstance.ConfigurationIdentity);
             if (validationResult.IsValid)
             {
                 configInstance.SetConfiguration(input);
@@ -84,11 +87,11 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task HandleUploadRequest(HttpContext context,string clientid, ConfigurationSetModel configSetModel)
+        private async Task HandleUploadRequest(HttpContext context,ConfigurationClient client, ConfigurationSetModel configSetModel)
         {
             var input = await context.GetJObjectFromJsonBodyAsync();
             var mappedConfigs = configurationSetUploadMapper.MapConfigurationSetUpload(input, configSetModel).ToArray();
-            var identity = new ConfigurationIdentity(clientid);
+            var identity = new ConfigurationIdentity(client);
             var validationResult = await ValidateConfigs(mappedConfigs, configSetModel, identity);
             if (validationResult.IsValid)
             {

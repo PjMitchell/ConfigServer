@@ -43,7 +43,7 @@ namespace ConfigServer.AzureBlobStorageProvider
         {
             using(var stream = await sourceBlob.OpenReadAsync())
             {
-                var location = GetResourcePath(destinationIdentity.ClientId, TrimFolderPath(sourceBlob.Name));
+                var location = GetResourcePath(destinationIdentity.Client.ClientId, TrimFolderPath(sourceBlob.Name));
                 await SetFileAsync(location, stream);
             }
         }
@@ -51,14 +51,14 @@ namespace ConfigServer.AzureBlobStorageProvider
         public async Task DeleteResources(string name, ConfigurationIdentity identity)
         {
             var containerRef = client.GetContainerReference(container);
-            var location = GetResourcePath(identity.ClientId, name);
+            var location = GetResourcePath(identity.Client.ClientId, name);
             ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
             await entry.DeleteIfExistsAsync();
         }
 
         public async Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
         {
-            var location = GetResourcePath(identity.ClientId, name);
+            var location = GetResourcePath(identity.Client.ClientId, name);
             var containerRef = client.GetContainerReference(container);
             var entry = containerRef.GetBlockBlobReference(location);
             var exists = await entry.ExistsAsync();
@@ -83,13 +83,13 @@ namespace ConfigServer.AzureBlobStorageProvider
 
         public Task UpdateResource(UpdateResourceRequest request)
         {
-            var location = GetResourcePath(request.Identity.ClientId, request.Name);
+            var location = GetResourcePath(request.Identity.Client.ClientId, request.Name);
             return SetFileAsync(location, request.Content);
         }
 
         private async Task<IEnumerable<CloudBlob>> GetResources(CloudBlobContainer containerRef,ConfigurationIdentity identity)
         {
-            var prefix = $"{identity.ClientId}/";
+            var prefix = $"{identity.Client.ClientId}/";
             BlobContinuationToken continuationToken = null;
             var results = new List<IListBlobItem>();
             do

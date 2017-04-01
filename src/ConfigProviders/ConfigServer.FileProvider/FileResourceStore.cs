@@ -30,7 +30,7 @@ namespace ConfigServer.FileProvider
         /// <returns></returns>
         public async Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
         {
-            var buffer = await fileResourceConnector.GetResourceAsync(name, identity.ClientId);
+            var buffer = await fileResourceConnector.GetResourceAsync(name, identity.Client.ClientId);
 
             return new ResourceEntry()
             {
@@ -47,7 +47,7 @@ namespace ConfigServer.FileProvider
         /// <returns></returns>
         public async Task<IEnumerable<ResourceEntryInfo>> GetResourceCatalogue(ConfigurationIdentity identity)
         {
-            var entries = await fileResourceConnector.GetResourceCatalog(identity.ClientId);
+            var entries = await fileResourceConnector.GetResourceCatalog(identity.Client.ClientId);
 
             return entries.Select(e => new ResourceEntryInfo()
             {
@@ -64,7 +64,7 @@ namespace ConfigServer.FileProvider
         {
             MemoryStream stream = new MemoryStream();
             await request.Content.CopyToAsync(stream);
-            await fileResourceConnector.SetResourceAsync(request.Name, stream.ToArray(), request.Identity.ClientId);
+            await fileResourceConnector.SetResourceAsync(request.Name, stream.ToArray(), request.Identity.Client.ClientId);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace ConfigServer.FileProvider
         /// <returns></returns>
         public async Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
         {
-            await fileResourceConnector.CopyResourcesAsync(sourceIdentity.ClientId, destinationIdentity.ClientId);
+            await fileResourceConnector.CopyResourcesAsync(sourceIdentity.Client.ClientId, destinationIdentity.Client.ClientId);
         }
 
         /// <summary>
@@ -86,12 +86,12 @@ namespace ConfigServer.FileProvider
         /// <returns></returns>
         public async Task DeleteResources(string name, ConfigurationIdentity identity)
         {
-            await fileResourceConnector.DeleteResources(name, identity.ClientId);
+            await fileResourceConnector.DeleteResources(name, identity.Client.ClientId);
         }
 
         public Task CopyResources(IEnumerable<string> filesToCopy, ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
         {
-            return fileResourceConnector.CopyResourcesAsync(filesToCopy, sourceIdentity.ClientId, destinationIdentity.ClientId);
+            return fileResourceConnector.CopyResourcesAsync(filesToCopy, sourceIdentity.Client.ClientId, destinationIdentity.Client.ClientId);
         }
     }
 }

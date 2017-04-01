@@ -7,22 +7,17 @@
     public class ConfigurationIdentity
     {
         /// <summary>
-        /// Initialize new ConfigurationIdentity with client id
+        /// Initialize new ConfigurationIdentity with ConfigurationClient
         /// </summary>
-        public ConfigurationIdentity(string clientId)
+        public ConfigurationIdentity(ConfigurationClient clientId)
         {
-            ClientId = clientId;
+            Client = clientId;
         }
 
         /// <summary>
-        /// ClientId for configuration
+        /// Client for configuration
         /// </summary>
-        public string ClientId { get; }
-
-        /// <summary>
-        /// Empty Instance
-        /// </summary>
-        public static readonly ConfigurationIdentity Empty = new ConfigurationIdentity(string.Empty);
+        public ConfigurationClient Client { get; }
 
         /// <summary>
         /// Determines whether this instance and another specified System.String object have the same value.
@@ -32,13 +27,13 @@
         public override bool Equals(object obj)
         {
             var identity = obj as ConfigurationIdentity;
-            return identity != null && ClientId.Equals(identity.ClientId);
+            return identity != null && Client.Equals(identity.Client);
         }
 
         /// <summary>
         /// Returns the hash code for this string.
         /// </summary>
         /// <returns> A 32-bit signed integer hash code.</returns>
-        public override int GetHashCode() => ClientId.GetHashCode();
+        public override int GetHashCode() => Client.GetHashCode();
     }
 }

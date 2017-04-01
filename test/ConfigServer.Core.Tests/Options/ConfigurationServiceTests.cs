@@ -17,7 +17,7 @@ namespace ConfigServer.Core.Tests.Options
             var registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(new SampleConfigSet().BuildConfigurationSetModel());
             configurationSetService = new Mock<IConfigurationSetService>();
-            identity = new ConfigurationIdentity(clientId);
+            identity = new ConfigurationIdentity(new ConfigurationClient(clientId));
             target = new ConfigurationService(configurationSetService.Object, registry);
         }
 
