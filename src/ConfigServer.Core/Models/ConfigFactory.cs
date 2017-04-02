@@ -29,7 +29,6 @@ namespace ConfigServer.Core
         /// Creates Instance of a generic collection ConfigInstance
         /// </summary>
         /// <param name="type">Type for generic ConfigInstance</param>
-        /// <param name="configs">Configurations</param>
         /// <param name="client">Configuration Client</param>
         /// <returns></returns>
         public static ConfigInstance CreateGenericCollectionInstance(Type type, ConfigurationClient client)

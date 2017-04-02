@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/configurationClient';
 import { ResourceInfo } from '../interfaces/resourceInfo';
 
+import { ConfigurationClientSetting } from '../interfaces/configurationClientSetting';
 import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
 
 
@@ -41,7 +42,8 @@ export class ClientOverviewComponent implements OnInit {
             name: 'Loading...',
             enviroment: '',
             description: '',
-            group: ''
+            group: '',
+            settings: new Array<ConfigurationClientSetting>()
         }
         this.configurationSets = new Array<ConfigurationSetSummary>()
         this.resources = new Array<ResourceInfo>()

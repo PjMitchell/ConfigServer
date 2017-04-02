@@ -24,6 +24,8 @@ import { ConfigurationPropertyCollectionInputComponent } from './components/prop
 import { JsonFileUploaderComponent } from './components/jsonFileUploader';
 import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
+import { EditClientSettingInputComponent } from './components/configClientSettingInput';
+
 import { EditClientComponent } from './components/editClient';
 import { CreateClientGroupComponent } from './components/createClientGroup';
 import { EditClientGroupInputComponent } from './components/editClientGroupInput';
@@ -60,6 +62,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ClientConfigShellComponent,
         ConfigurationInputComponent,
         OptionInputComponent,
+        EditClientSettingInputComponent,
         ConfigurationPropertyComponent,
         ConfigurationPropertyInputComponent,
         ConfigurationPropertyIntergerInputComponent,

@@ -29,6 +29,8 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
             <h4>Description:</h4>
             <input [(ngModel)]="csClient.description" type="text">
         </div>
+    </div>
+    <edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>
 `
 
 })
@@ -37,6 +39,15 @@ export class EditClientInputComponent {
     csClient: ConfigurationClient;
     @Output()
     csClientChange: EventEmitter<ConfigurationClient> = new EventEmitter<ConfigurationClient>();
+    private _csIsValid: boolean;
+    @Input()
+    get csIsValid(): boolean { return this._csIsValid; };
+    set csIsValid(value: boolean) {
+        this._csIsValid = value;
+        this.csIsValidChange.emit(value);
+    }
+    @Output()
+    csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input()
     csExistingGroups: ConfigurationClientGroup[]
     existingEnviroments: string[]

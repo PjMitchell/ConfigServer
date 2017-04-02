@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConfigServer.Server
 {
@@ -38,7 +40,7 @@ namespace ConfigServer.Server
                 if(!(context.Request.Method == "GET" || context.Request.Method == "POST"))
                     return false;
                 if(context.Request.Method == "GET")
-                    await responseFactory.BuildResponse(context, configClients);
+                    await responseFactory.BuildResponse(context, configClients.Select(Map));
                 if (context.Request.Method == "POST")
                     await HandlePost(context);
                 return true;
@@ -46,7 +48,7 @@ namespace ConfigServer.Server
             var queryResult = configClients.TryMatchPath(c => c.ClientId, routePath);
             if (!queryResult.HasResult)
                 return false;
-            await responseFactory.BuildResponse(context, queryResult.QueryResult);
+            await responseFactory.BuildResponse(context,Map(queryResult.QueryResult));
 
             return true;
         }
@@ -62,7 +64,7 @@ namespace ConfigServer.Server
 
         private ConfigurationClient Map(ConfigurationClientPayload payload)
         {
-            return new ConfigurationClient
+            var result = new ConfigurationClient
             {
                 ClientId = string.IsNullOrWhiteSpace(payload.ClientId) ? Guid.NewGuid().ToString() : payload.ClientId,
                 Name = payload.Name,
@@ -70,16 +72,25 @@ namespace ConfigServer.Server
                 Group = payload.Group,
                 Enviroment = payload.Enviroment
             };
+            foreach (var setting in payload.Settings)
+                result.Settings.Add(setting.Key, setting);
+            return result;
+
         }
 
-        private class ConfigurationClientPayload
+        private ConfigurationClientPayload Map(ConfigurationClient payload)
         {
-            public string ClientId { get; set; }
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public string Group { get; set; }
-            public string Enviroment { get; set; }
-        }
+            var result = new ConfigurationClientPayload
+            {
+                ClientId = payload.ClientId,
+                Name = payload.Name,
+                Description = payload.Description,
+                Group = payload.Group,
+                Enviroment = payload.Enviroment,
+                Settings = new List<ConfigurationClientSetting>(payload.Settings.Values)
+            };
+            return result;
 
+        }
     }
 }

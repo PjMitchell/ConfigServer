@@ -4,6 +4,8 @@ import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup
 
 import { Router } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/configurationClient';
+import { ConfigurationClientSetting } from '../interfaces/configurationClientSetting';
+
 import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 
@@ -12,11 +14,11 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
     template: `
         <h2>Create client</h2>
         <div>
-            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups"></edit-client-input>
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [(csIsValid)]="isValid"></edit-client-input>
             <hr />
             <div>
                <button type="button"  class="btn btn-primary"(click)="back()">Back</button>
-               <button [disabled]="isDisabled" type="button" class="btn btn-success" (click)="create()">Create</button>
+               <button [disabled]="isDisabled || !isValid" type="button" class="btn btn-success" (click)="create()">Create</button>
             </div>
         </div>
 `
@@ -25,14 +27,16 @@ export class CreateClientComponent {
     client: ConfigurationClient;
     clients: ConfigurationClient[];
     groups: ConfigurationClientGroup[];
-    isDisabled: boolean;
+    isValid: boolean = true;
+    isDisabled: boolean = false;
     constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private router: Router) {
         this.client = {
             clientId: '',
             name: '',
             group: '',
             enviroment: '',
-            description: ''
+            description: '',
+            settings: new Array<ConfigurationClientSetting>()
         };
     }
 

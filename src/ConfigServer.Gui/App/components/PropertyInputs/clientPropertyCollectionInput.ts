@@ -17,9 +17,9 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
             <config-property-item [csDefinition]="itemProperty" [(csConfig)]="collection[i]">
                 </config-property-item>
         </td>
-        <th>
+        <td>
             <button type="button" class="btn btn-danger" (click)="remove(item)">remove</button>
-        </th>
+        </td>
     </tr>
 </table>
 `
