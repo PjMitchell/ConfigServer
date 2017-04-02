@@ -12,11 +12,11 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
     template: `
         <h2>Edit client</h2>
         <div *ngIf="client && groups">
-            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups"></edit-client-input>
+            <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [(csIsValid)]="isValid"></edit-client-input>
             <hr />
             <div>
                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
-               <button type="button" class="btn btn-success" [disabled]="isDisabled" (click)="save()">Save</button>
+               <button type="button" class="btn btn-success" [disabled]="isDisabled || !isValid" (click)="save()">Save</button>
             </div>
         </div>
 `
@@ -26,7 +26,8 @@ export class EditClientComponent implements OnInit {
     clients: ConfigurationClient[];
     groups: ConfigurationClientGroup[];
     clientId: string;
-    isDisabled: boolean;
+    isDisabled: boolean = false;
+    isValid: boolean = true;
     constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private route: ActivatedRoute, private router: Router) {
     }
 

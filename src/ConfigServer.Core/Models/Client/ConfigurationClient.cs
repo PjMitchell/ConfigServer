@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConfigServer.Core
 {
@@ -22,9 +23,10 @@ namespace ConfigServer.Core
         public ConfigurationClient(string clientId)
         {
             ClientId = clientId;
+            Settings = new Dictionary<string, ConfigurationClientSetting>(StringComparer.OrdinalIgnoreCase);
         }
-        
-        
+
+
         /// <summary>
         /// Identifier for Client
         /// </summary>
@@ -49,6 +51,12 @@ namespace ConfigServer.Core
         /// Description of client
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Settings for client
+        /// </summary>
+        public Dictionary<string, ConfigurationClientSetting> Settings { get; }
+
 
         /// <summary>
         /// Determines whether this instance and another specified object have the same value.
