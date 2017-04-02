@@ -91,16 +91,21 @@ namespace ConfigServer.Server
         {
             var input = await context.GetJObjectFromJsonBodyAsync();
             var mappedConfigs = configurationSetUploadMapper.MapConfigurationSetUpload(input, configSetModel).ToArray();
+            var propertyModelLookup = configSetModel.Configs.ToDictionary(k => k.Name, StringComparer.OrdinalIgnoreCase);
             var identity = new ConfigurationIdentity(client);
-            var validationResult = await ValidateConfigs(mappedConfigs, configSetModel, identity);
+            var validationResult = await ValidateConfigs(mappedConfigs, propertyModelLookup, identity);
             if (validationResult.IsValid)
             {
                 foreach(var config in mappedConfigs)
                 {
-                    var type = config.Value.GetType();
-                    if (configSetModel.Get(type).IsReadOnly)
+                    var model = propertyModelLookup[config.Key];
+                    if (model.IsReadOnly)
                         continue;
-                    var instance = await configRepository.GetAsync(type, identity);
+                    ConfigInstance instance;
+                    if(model is ConfigurationOptionModel)
+                        instance = ConfigFactory.CreateGenericCollectionInstance(model.Type, identity.Client);
+                    else
+                        instance = ConfigFactory.CreateGenericInstance(model.Type, identity.Client);
                     instance.SetConfiguration(config.Value);
                     await configRepository.UpdateConfigAsync(instance);
                     await eventService.Publish(new ConfigurationUpdatedEvent(instance));
@@ -113,9 +118,9 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task<ValidationResult> ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, ConfigurationSetModel configSetModel, ConfigurationIdentity configIdentity)
+        private async Task<ValidationResult> ValidateConfigs(IEnumerable<KeyValuePair<string,object>> source, Dictionary<string, ConfigurationModel> configSetModelLookup, ConfigurationIdentity configIdentity)
         {
-            var validationResults = source.Select(async kvp =>await  confgiurationValidator.Validate(kvp.Value, configSetModel.Configs.Single(s => s.Name == kvp.Key), configIdentity)).ToArray();
+            var validationResults = source.Select(async kvp =>await  confgiurationValidator.Validate(kvp.Value, configSetModelLookup[kvp.Key], configIdentity)).ToArray();
             await Task.WhenAll(validationResults);
             return new ValidationResult(validationResults.Select(s=> s.Result));
         }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConfigServer.Server
 {
@@ -14,13 +15,20 @@ namespace ConfigServer.Server
     {
         public IEnumerable<KeyValuePair<string, object>> MapConfigurationSetUpload(JObject upload, ConfigurationSetModel model)
         {
-            foreach(var item in model.Configs)
+            foreach (var item in model.Configs.Where(w => !w.IsReadOnly))
             {
                 if (!upload.TryGetValue(item.Name,StringComparison.OrdinalIgnoreCase, out var configJToken))
                     continue;
-                var config = ToObjectOrDefault(configJToken,item.Type);
+                var config = ToObjectOrDefault(configJToken, item);
                 yield return new KeyValuePair<string, object>(item.Name, config);
             }
+        }
+
+        private object ToObjectOrDefault(JToken token, ConfigurationModel model)
+        {
+            if (model is ConfigurationOptionModel option)
+                return ToObjectOrDefault(token, option.StoredType);
+            return ToObjectOrDefault(token, model.Type);
         }
 
         private object ToObjectOrDefault(JToken token, Type type)
@@ -37,5 +45,6 @@ namespace ConfigServer.Server
             });
             return failed ? null : result;
         }
+
     }
 }

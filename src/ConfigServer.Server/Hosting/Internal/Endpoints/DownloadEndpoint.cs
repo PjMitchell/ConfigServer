@@ -12,13 +12,13 @@ namespace ConfigServer.Server
     {
         readonly IConfigHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
-        readonly IConfigRepository configRepository;
+        readonly IConfigurationSetService configurationSetService;
         readonly IConfigurationClientService configClientService;
         const string jsonExtension = ".json";
 
-        public DownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationClientService configClientService)
+        public DownloadEndpoint(IConfigHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
         {
-            this.configRepository = configRepository;
+            this.configurationSetService = configurationSetService;
             this.configCollection = configCollection;
             this.responseFactory = responseFactory;
             this.configClientService = configClientService;
@@ -59,28 +59,28 @@ namespace ConfigServer.Server
             }
             if (pathParams.Length == 3)
             {
-                var configurationSet = configCollection.SingleOrDefault(s => pathParams[1].Equals(s.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
-                if (configurationSet == null)
+                var configurationSetModel = configCollection.SingleOrDefault(s => pathParams[1].Equals(s.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
+                if (configurationSetModel == null)
                     return null;
 
-                var configModel = configurationSet.Configs.SingleOrDefault(s => pathParams[2].Equals($"{s.Type.Name}{jsonExtension}", StringComparison.OrdinalIgnoreCase));
+                var configModel = configurationSetModel.Configs.SingleOrDefault(s => pathParams[2].Equals($"{s.Type.Name}{jsonExtension}", StringComparison.OrdinalIgnoreCase));
                 if (configModel == null)
                     return null;
-                var config = await configRepository.GetAsync(configModel.Type, new ConfigurationIdentity(client));
-                return new FilePayload(config.GetConfiguration(), $"{configModel.Type.Name}{jsonExtension}");
+                var configurationSet = await configurationSetService.GetConfigurationSet(configurationSetModel.ConfigSetType, new ConfigurationIdentity(client));
+                return new FilePayload(configModel.GetConfigurationFromConfigurationSet(configurationSet), $"{configModel.Type.Name}{jsonExtension}");
             }
             return null;
         }
 
         private async Task<object> GetConfigurationSet(ConfigurationSetModel model, ConfigurationClient client)
         {
-            IDictionary<string, object> configurationSet = new ExpandoObject();
+            IDictionary<string, object> result = new ExpandoObject();
+            var configurationSet = await configurationSetService.GetConfigurationSet(model.ConfigSetType, new ConfigurationIdentity(client));
             foreach(var configModel in model.Configs)
             {
-                var config = await configRepository.GetAsync(configModel.Type, new ConfigurationIdentity(client));
-                configurationSet[configModel.Name] = config.GetConfiguration();
+                result[configModel.Name] = configModel.GetConfigurationFromConfigurationSet(configurationSet);
             }
-            return configurationSet;
+            return result;
         }
 
         private class FilePayload
