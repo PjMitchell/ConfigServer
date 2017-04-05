@@ -1,14 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="../../common.props" />
   <PropertyGroup>
     <Description>Handling of application configuration storage and management across multiple instances.</Description>
-    <VersionPrefix>1.0.0-beta6</VersionPrefix>
-    <Authors>Peter Mitchell</Authors>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.Core</AssemblyName>
-    <PackageLicenseUrl>https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>git://github.com/PjMitchell/ConfigServer</RepositoryUrl>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>

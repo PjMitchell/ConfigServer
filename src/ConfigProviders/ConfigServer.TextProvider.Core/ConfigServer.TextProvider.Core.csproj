@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="../../../common.props" />
   <PropertyGroup>
     <Description>Common Configuration repository that uses a storage connector that returns and accepts json string</Description>
-    <Authors>Peter Mitchell</Authors>
     <TargetFramework>netstandard1.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.TextProvider.Core</AssemblyName>
-    <PackageLicenseUrl>https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>git://github.com/PjMitchell/ConfigServer</RepositoryUrl>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
