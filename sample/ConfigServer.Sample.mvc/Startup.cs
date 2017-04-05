@@ -10,7 +10,7 @@ using ConfigServer.Server;
 using ConfigServer.FileProvider;
 using System.Linq;
 using System.Collections.Generic;
-using ConfigServer.Client.ResourceServer;
+using ConfigServer.Client.Builder;
 
 namespace ConfigServer.Sample.mvc
 {

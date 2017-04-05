@@ -1,14 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="../../common.props" />
   <PropertyGroup>
     <Description>Client for ConfigServer.</Description>
-    <VersionPrefix>1.0.0-beta6</VersionPrefix>
-    <Authors>Peter Mitchell</Authors>
     <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.Client</AssemblyName>
-    <PackageLicenseUrl>https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>git://github.com/PjMitchell/ConfigServer</RepositoryUrl>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>

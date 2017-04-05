@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Linq;
 
-namespace ConfigServer.Client.ResourceServer
+namespace ConfigServer.Client.Builder
 {
     /// <summary>
     /// Extension for wiring up Resource server

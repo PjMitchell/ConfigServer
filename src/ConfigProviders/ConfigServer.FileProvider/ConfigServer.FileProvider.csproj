@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="../../../common.props" />
   <PropertyGroup>
     <Description>File storage implementation for the configurations repository</Description>
-    <Authors>Peter Mitchell</Authors>
     <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.FileProvider</AssemblyName>
-    <PackageLicenseUrl>https://github.com/PjMitchell/ConfigServer/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>git://github.com/PjMitchell/ConfigServer</RepositoryUrl>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>

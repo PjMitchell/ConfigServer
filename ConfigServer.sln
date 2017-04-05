@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5473CDED-F05D-4D3E-898F-61113F316D13}"
 EndProject
@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
+		common.props = common.props
 		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
@@ -45,7 +46,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.AzureTableStor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigServer.TextProvider.Core", "src\ConfigProviders\ConfigServer.TextProvider.Core\ConfigServer.TextProvider.Core.csproj", "{66A6E6D4-ED94-483C-9E9B-73AE19BF0CA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigServer.Client.ResourceServer", "src\ConfigServer.Client.ResourceServer\ConfigServer.Client.ResourceServer.csproj", "{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.Client.Builder", "src\ConfigServer.Client.Builder\ConfigServer.Client.Builder.csproj", "{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -201,18 +202,18 @@ Global
 		{66A6E6D4-ED94-483C-9E9B-73AE19BF0CA8}.Release|x64.Build.0 = Release|Any CPU
 		{66A6E6D4-ED94-483C-9E9B-73AE19BF0CA8}.Release|x86.ActiveCfg = Release|Any CPU
 		{66A6E6D4-ED94-483C-9E9B-73AE19BF0CA8}.Release|x86.Build.0 = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|x64.Build.0 = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Debug|x86.Build.0 = Debug|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|x64.ActiveCfg = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|x64.Build.0 = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|x86.ActiveCfg = Release|Any CPU
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4}.Release|x86.Build.0 = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|x64.Build.0 = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Debug|x86.Build.0 = Debug|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|x64.ActiveCfg = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|x64.Build.0 = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -231,6 +232,6 @@ Global
 		{CCA8A574-77A6-4BD1-AC51-91090460BEBF} = {3B5D2BB9-AE98-4C7E-8108-0E1E9E647E4A}
 		{77692ECF-FC62-43D2-BFA4-05322CE7BC0F} = {3B5D2BB9-AE98-4C7E-8108-0E1E9E647E4A}
 		{66A6E6D4-ED94-483C-9E9B-73AE19BF0CA8} = {3B5D2BB9-AE98-4C7E-8108-0E1E9E647E4A}
-		{8BBB52F2-D4F8-43EA-89E8-8060B6FD87E4} = {5473CDED-F05D-4D3E-898F-61113F316D13}
+		{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9} = {5473CDED-F05D-4D3E-898F-61113F316D13}
 	EndGlobalSection
 EndGlobal

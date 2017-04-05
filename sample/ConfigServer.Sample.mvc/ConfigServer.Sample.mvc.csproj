@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj" />
     <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
-    <ProjectReference Include="..\..\src\ConfigServer.Client.ResourceServer\ConfigServer.Client.ResourceServer.csproj" />
+    <ProjectReference Include="..\..\src\ConfigServer.Client.Builder\ConfigServer.Client.Builder.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Server\ConfigServer.Server.csproj" />
     <ProjectReference Include="..\..\src\ConfigServer.Core\ConfigServer.Core.csproj" />
   </ItemGroup>
@@ -25,34 +25,34 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Hosting">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc">
-      <Version>1.1.0</Version>
+      <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Console">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink.Loader">
       <Version>14.1.0</Version>
