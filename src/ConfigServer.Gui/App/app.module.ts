@@ -34,6 +34,7 @@ import { ConfigurationOverviewComponent } from './components/configurationOvervi
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
 import { ResourceOverviewComponent } from './components/resourceOverview';
 import { ResourceFileUploaderComponent } from './components/resourceFileUploader';
+import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
 
 import { GroupClientsComponent } from './components/groupClients';
 
@@ -76,6 +77,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ConfigurationPropertyCollectionInputComponent,
         GroupClientsComponent,
         ResourceFileUploaderComponent,
+        GroupImageFileUploaderComponent,
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,

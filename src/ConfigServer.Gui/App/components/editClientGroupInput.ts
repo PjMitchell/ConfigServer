@@ -13,10 +13,7 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
             <h4>Name:</h4>
             <input [(ngModel)]="csClientGroup.name" type="text">
             <div *ngIf="csClientGroup.imagePath" class="thumbnail"><img class="img-responsive" src="Resource/ClientGroupImages/{{csClientGroup.imagePath}}" /></div>
-            <form #form>
-                <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon glyphicon-cloud-upload"></span></button>             
-                <input type="file" #input name="upload" accept="image/*">
-            </form>
+            <group-image-file-uploader (onUpload)="onImageUploaded($event)"></group-image-file-uploader>
         </div>
         <div class="col-sm-3 col-md-2" *ngFor="let image of images" (click)="onImageClick(image)">
             <img class="img-responsive" src="Resource/ClientGroupImages/{{image.name}}" />
@@ -34,6 +31,7 @@ export class EditClientGroupInputComponent implements OnInit {
     input: IChildElement<HTMLInputElement>;
     @ViewChild('form')
     form: IChildElement<HTMLFormElement>;
+    fileName : string;
     static imagePath = 'ClientGroupImages'; 
     constructor(private resourceDataService: ResourceDataService) {
         this.images = new Array<ResourceInfo>();
@@ -49,23 +47,12 @@ export class EditClientGroupInputComponent implements OnInit {
         this.csClientGroup.imagePath = image.name;
     }
 
-    upload() {
-        var files = this.input.nativeElement.files;
-        if (files && files.length === 1) {
-            let fileToUpload = files.item(0);
-            let data = new FormData()
-            data.append('resource', files.item(0));
-            this.resourceDataService.uploadResource(EditClientGroupInputComponent.imagePath, fileToUpload.name, data)
-                .then(() => {
-                    this.form.nativeElement.reset();
-                    this.csClientGroup.imagePath = fileToUpload.name;
-                    this.updateImages();
-                });
-        }
-    }
-
     updateImages() {
         this.resourceDataService.getClientResourceInfo(EditClientGroupInputComponent.imagePath)
             .then(info => this.images = info)
+    }
+    onImageUploaded(fileName: string) {
+        this.csClientGroup.imagePath = fileName;
+        this.updateImages();
     }
 }
