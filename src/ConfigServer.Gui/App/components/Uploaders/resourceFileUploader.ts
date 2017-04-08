@@ -1,15 +1,24 @@
 ﻿import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
-import { IChildElement } from '../interfaces/htmlInterfaces';
-import { ResourceDataService } from '../dataservices/resource-data.service';
+import { IChildElement } from '../../interfaces/htmlInterfaces';
+import { ResourceDataService } from '../../dataservices/resource-data.service';
 @Component({
     selector: 'resource-file-uploader',
     template: `
     <div>
         <form #form>
-            <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon glyphicon-cloud-upload"></span></button>             
-            <input name="filename" type="text" [(ngModel)]="fileName">
-            <p *ngIf="!isValidFilename" style="color:red;">file name is not valid</p>
-            <input type="file" #input name="upload">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <div class="fileUpload btn btn-primary">
+                        <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
+                        <input type="file" #input name="upload" class="upload" (change)="fileChanged()">          
+                    </div>   
+                </span>
+                <input name="filename" class="form-control" type="text" [(ngModel)]="fileName">
+                <span class="input-group-btn">             
+                    <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></button>
+                </span>
+            </div>
+            <p *ngIf="!isValidFilename" style="color:red;">file name is not valid</p>   
         </form>
     </div>
 `
@@ -54,11 +63,10 @@ export class ResourceFileUploaderComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.input.nativeElement.addEventListener('change', () => this.onFileChange());
         this.checkFileName()
     }
 
-    onFileChange() {
+    fileChanged() {
         var files = this.input.nativeElement.files;
         if (files && files.length === 1) {
             let fileToUpload = files.item(0);

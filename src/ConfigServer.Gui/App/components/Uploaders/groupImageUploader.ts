@@ -7,15 +7,19 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
     selector: 'group-image-file-uploader',
     template: `
         <form #form>
-            <div class="btn-group fileUploadGroup">
-            <div class="fileUpload btn btn-primary">
-                <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
-                <input type="file" #input name="upload" accept="image/*" class="upload" (change)="fileChanged()">           
-            </div> 
-            <div class="btn btn-primary btn-text" (click)="onFileNameClicked()">
-                <span>{{fileName}}</span>                    
-            </div>               
-            <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></button>
+            <div class="input-group">
+            <span class="input-group-btn">
+                <div class="fileUpload btn btn-primary">
+                    <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
+                    <input type="file" #input name="upload" accept="image/*" class="upload" (change)="fileChanged()">           
+                </div> 
+            </span>
+            <span class="input-group-addon centerStrech" (click)="onFileNameClicked()">
+                {{fileName}}                 
+            </span>  
+            <span class="input-group-btn">             
+                <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></button>
+            </span>  
             </div>
         </form>
 `

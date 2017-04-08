@@ -74,22 +74,10 @@ button {
     opacity: 0;
     filter: alpha(opacity=0);
 }
-.btn-text {
-    background: #eeeeee;
-    color: #000;
-    cursor: default;
-    flex: auto;
+.centerStrech {
+    width: 100%;
 }
 
-.btn-text:hover {
-    background: #eeeeee;
-    color: #000;
-    cursor: default;
-}
 .glyphicon-btn {
     line-height: inherit;
-}
-
-.fileUploadGroup {
-    display: flex;
 }
