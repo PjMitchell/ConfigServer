@@ -11,7 +11,7 @@ import { Router,ActivatedRoute } from '@angular/router';
                 <div class="col-sm-6 col-md-4">
                     <div *ngIf="group.imagePath"><img class="img-responsive" src="Resource/ClientGroupImages/{{group.imagePath}}" /></div>
                 </div>
-                <div class="col-sm-6 col-md-4">
+                <div class="col-sm-6 col-md-8">
                     <h3>Group: {{group.name}}</h3>
                     <h4>Id: {{group.groupId}}</h4>
                 </div>

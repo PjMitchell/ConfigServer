@@ -18,8 +18,8 @@ import { Router } from '@angular/router';
                     <h3>{{group.name}}</h3>
                     <p>{{group.groupId}}</p>
                     <hr />
-                    <button type="button" class="btn btn-primary" (click)="manageGroupClients(group)">Manage</button>
-                    <button type="button" class="btn btn-primary" (click)="editGroup(group)">Edit</button>
+                    <button type="button" class="btn btn-primary" (click)="manageGroupClients(group)">Manage group</button>
+                    <button type="button" class="btn btn-primary" (click)="editGroup(group)">Edit group</button>
                 </div>
             </div>
         </div>

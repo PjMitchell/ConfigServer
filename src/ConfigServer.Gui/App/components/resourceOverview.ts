@@ -7,18 +7,17 @@ import { ResourceDataService } from '../dataservices/resource-data.service';
         <h3>Resources</h3>
         <div class="break">
         </div>
-        <div>
-        <div *ngFor="let resource of resources" style="float:left;margin:5px;" >
-            <p>{{resource.name}}</p>
-            <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon glyphicon-download-alt"></span></button>
-            <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon glyphicon-trash"></span></button>
+        <div class="row">
+            <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
+                <p>{{resource.name}}</p>
+                <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
+                <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+            </div>
         </div>
-        </div>
-        <div style="clear:both;">
-        </div>
-        <resource-file-uploader [csClientId]="clientId" (onUpload)="onfileUploaded($event)"> </resource-file-uploader>
-
-        
+        <hr />
+        <div class="row">        
+            <resource-file-uploader [csClientId]="clientId" (onUpload)="onfileUploaded($event)" class="col-sm-6 col-md-4"> </resource-file-uploader>
+        </div>        
 `
 })
 export class ResourceOverviewComponent {

@@ -4,7 +4,7 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
 
 @Component({
     selector: 'string-input',
-    template: `<input [(ngModel)]="csConfig[csDefinition.propertyName]" type="text" pattern="{{csDefinition.validationDefinition.pattern}}" maxlength="{{csDefinition.validationDefinition.maxLength}}">`
+    template: `<input class="form-control" [(ngModel)]="csConfig[csDefinition.propertyName]" type="text" pattern="{{csDefinition.validationDefinition.pattern}}" maxlength="{{csDefinition.validationDefinition.maxLength}}">`
 })
 export class ConfigurationPropertyStringInputComponent {
     @Input()

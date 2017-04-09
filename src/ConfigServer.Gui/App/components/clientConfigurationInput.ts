@@ -4,8 +4,10 @@ import { ConfigurationModelPayload } from '../interfaces/configurationSetDefinti
 @Component({
     selector: 'config-input',
     template: `
+        <div class="row">
             <config-property class="configProperty" *ngFor="let item of csModel.property | toIterator" [csDefinition]="item" [(csConfig)]="csConfig" >
             </config-property>
+        </div>
 `
 })
 export class ConfigurationInputComponent {

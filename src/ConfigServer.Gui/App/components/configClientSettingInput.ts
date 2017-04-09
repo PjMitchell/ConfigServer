@@ -7,26 +7,28 @@ import { ConfigurationClientSetting } from '../interfaces/configurationClientSet
     selector: 'edit-clientsetting-input',
     template: `
     <div class="row">
-        <table>
-            <tr>
-                <th>Key</th>
-                <th>Value</th>
-                <th>
-                    <button type="button" class="btn btn-success" (click)="add()">Add</button>
-                </th>
-            </tr>
-            <tr *ngFor="let item of csSettings">
-                <td>
-                    <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()">
-                </td>
-                <td>
-                    <input [(ngModel)]="item.value" type="text" >
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger" (click)="remove(item)">remove</button>
-                </td>
-            </tr>
-        </table>
+        <div class="col-sm-12 col-md-6">
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th class="column-btn">
+                        <button type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
+                    </th>
+                </tr>
+                <tr *ngFor="let item of csSettings">
+                    <td>
+                        <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()" class="form-control">
+                    </td>
+                    <td>
+                        <input [(ngModel)]="item.value" type="text"  class="form-control">
+                    </td>
+                    <td class="column-btn">
+                        <button type="button" class="btn btn-danger" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <h4 class="errorMessage" *ngIf="!csIsValid">Duplicate Keys</h4>
     <div>
 `

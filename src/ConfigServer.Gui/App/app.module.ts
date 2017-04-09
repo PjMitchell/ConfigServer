@@ -21,7 +21,7 @@ import { ConfigurationPropertyEnumInputComponent } from './components/propertyIn
 import { ConfigurationPropertyOptionInputComponent } from './components/propertyInputs/clientPropertyOptionInput';
 import { ConfigurationPropertyMultipleOptionInputComponent } from './components/propertyInputs/clientPropertyMultipleOptionInput';
 import { ConfigurationPropertyCollectionInputComponent } from './components/propertyInputs/clientPropertyCollectionInput';
-import { JsonFileUploaderComponent } from './components/jsonFileUploader';
+
 import { CreateClientComponent } from './components/createClient';
 import { EditClientInputComponent } from './components/editClientInput';
 import { EditClientSettingInputComponent } from './components/configClientSettingInput';
@@ -33,8 +33,9 @@ import { EditClientGroupComponent } from './components/editClientGroup';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
 import { ResourceOverviewComponent } from './components/resourceOverview';
-import { ResourceFileUploaderComponent } from './components/resourceFileUploader';
-
+import { ResourceFileUploaderComponent } from './components/uploaders/resourceFileUploader';
+import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
+import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
 import { GroupClientsComponent } from './components/groupClients';
 
 
@@ -76,6 +77,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ConfigurationPropertyCollectionInputComponent,
         GroupClientsComponent,
         ResourceFileUploaderComponent,
+        GroupImageFileUploaderComponent,
         CreateClientComponent,
         EditClientInputComponent,
         EditClientComponent,

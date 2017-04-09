@@ -10,7 +10,7 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <h4>Name:</h4>
-            <input [(ngModel)]="csClient.name" type="text">
+            <input [(ngModel)]="csClient.name" type="text" class="form-control">
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Group:</h4>
@@ -20,16 +20,17 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Enviroment:</h4>
-            <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments">
+            <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments" class="form-control">
             <datalist id="enviroments">
                 <option *ngFor="let existingEnviroment of existingEnviroments" value="{{existingEnviroment}}">
             </datalist>
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Description:</h4>
-            <input [(ngModel)]="csClient.description" type="text">
+            <input [(ngModel)]="csClient.description" type="text" class="form-control">
         </div>
     </div>
+    <hr/>
     <edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>
 `
 
