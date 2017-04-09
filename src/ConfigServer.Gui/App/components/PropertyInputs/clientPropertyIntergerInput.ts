@@ -5,7 +5,7 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
 @Component({
     selector: 'interger-input',
     template: `
-    <input name="{{csDefinition.propertyName}}" [(ngModel)]="csConfig[csDefinition.propertyName]" type="number" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
+    <input class="form-control" name="{{csDefinition.propertyName}}" [(ngModel)]="csConfig[csDefinition.propertyName]" type="number" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
 `
 })
 export class ConfigurationPropertyIntergerInputComponent {

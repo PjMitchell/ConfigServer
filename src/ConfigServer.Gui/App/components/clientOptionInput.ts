@@ -7,8 +7,8 @@ import { ConfigurationModelPayload } from '../interfaces/configurationSetDefinti
         <table>
             <tr>
                 <th *ngFor="let p of csModel.property | toIterator">{{p.propertyDisplayName}}</th>
-                <th>
-                    <button type="button" class="btn btn-success" (click)="add()">Add</button>
+                <th class="column-btn">
+                    <button type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
                 </th>
             </tr>
             <tr *ngFor="let item of csCollection;let i= index">
@@ -16,9 +16,9 @@ import { ConfigurationModelPayload } from '../interfaces/configurationSetDefinti
                     <config-property-item [csDefinition]="itemProperty" [(csConfig)]="csCollection[i]">
                         </config-property-item>
                 </td>
-                <th>
-                    <button type="button" class="btn btn-danger" (click)="remove(item)">remove</button>
-                </th>
+                <td class="column-btn">
+                    <button type="button" class="btn btn-danger" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                </td>
             </tr>
         </table>
 `

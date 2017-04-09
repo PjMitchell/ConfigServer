@@ -5,7 +5,7 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
 @Component({
     selector: 'multiple-option-input',
     template: `
-    <select multiple [(ngModel)]="csConfig[csDefinition.propertyName]">
+    <select class="form-control" multiple [(ngModel)]="csConfig[csDefinition.propertyName]">
         <option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</option>
     </select>
 `

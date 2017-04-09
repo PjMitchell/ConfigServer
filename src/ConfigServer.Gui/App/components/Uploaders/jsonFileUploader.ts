@@ -13,7 +13,7 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
                         <input type="file" #input name="upload" accept="image/*" class="upload" (change)="fileChanged()">           
                     </div> 
                 </span>
-                <span class="input-group-addon centerStrech" (click)="onFileNameClicked()">
+                <span class="input-group-addon upload-text" (click)="onFileNameClicked()">
                     {{fileName}}                 
                 </span>  
                 <span class="input-group-btn">             

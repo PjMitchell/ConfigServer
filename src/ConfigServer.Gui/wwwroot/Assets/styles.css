@@ -38,12 +38,6 @@ button {
     max-width: 400px
 }
 
-.configProperty{
-    display:inline-block;
-    margin:5px;
-    vertical-align:top;
-}
-
 .group {
     margin: 5px 0;
     border-bottom: 3px solid #646982;
@@ -74,10 +68,24 @@ button {
     opacity: 0;
     filter: alpha(opacity=0);
 }
-.centerStrech {
+.upload-text {
     width: 100%;
+    cursor: pointer;
 }
 
 .glyphicon-btn {
     line-height: inherit;
+}
+
+td {
+    padding-top: 3px;
+    padding-right: 3px;
+}
+
+table {
+    width: 100%;
+}
+
+.column-btn {
+    width: 45px;
 }

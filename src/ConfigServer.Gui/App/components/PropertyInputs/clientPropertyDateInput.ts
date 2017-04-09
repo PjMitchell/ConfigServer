@@ -5,7 +5,7 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
 @Component({
     selector: 'date-input',
     template: `
-    <input  type="date" #input value="{{inputDate | date:'yyyy-MM-dd'}}" min="{{csDefinition.validationDefinition.min | date:'yyyy-MM-dd'}}" max="{{csDefinition.validationDefinition.max | date:'yyyy-MM-dd'}}" (blur)="onBlur()" required="{{csDefinition.validationDefinition.isRequired}}">`
+    <input class="form-control"  type="date" #input value="{{inputDate | date:'yyyy-MM-dd'}}" min="{{csDefinition.validationDefinition.min | date:'yyyy-MM-dd'}}" max="{{csDefinition.validationDefinition.max | date:'yyyy-MM-dd'}}" (blur)="onBlur()" required="{{csDefinition.validationDefinition.isRequired}}">`
 })
 export class ConfigurationPropertyDateInputComponent implements OnInit {
     @Input()

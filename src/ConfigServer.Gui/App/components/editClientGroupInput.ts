@@ -11,8 +11,9 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <h4>Name:</h4>
-            <input [(ngModel)]="csClientGroup.name" type="text">
+            <input [(ngModel)]="csClientGroup.name" type="text" class="form-control">
             <div *ngIf="csClientGroup.imagePath" class="thumbnail"><img class="img-responsive" src="Resource/ClientGroupImages/{{csClientGroup.imagePath}}" /></div>
+            <h4>Upload image:</h4>
             <group-image-file-uploader (onUpload)="onImageUploaded($event)"></group-image-file-uploader>
         </div>
         <div class="col-sm-3 col-md-2" *ngFor="let image of images" (click)="onImageClick(image)">
