@@ -1,5 +1,5 @@
 ﻿import { Component } from '@angular/core';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup-data.service';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
 
 import { Router } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/configurationClient';
