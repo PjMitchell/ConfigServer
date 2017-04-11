@@ -13,6 +13,21 @@
     <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyBoolInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyCollectionInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyDateInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyEnumInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyFloatInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyIntergerInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyMultipleOptionInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyOptionInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\clientPropertyStringInput.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\configProperty.js" />
+    <Content Include="wwwroot\Assets\app\components\propertyinputs2\index.js" />
+    <Content Include="wwwroot\Assets\app\components\uploaders2\groupImageUploader.js" />
+    <Content Include="wwwroot\Assets\app\components\uploaders2\jsonFileUploader.js" />
+    <Content Include="wwwroot\Assets\app\components\uploaders2\resourceFileUploader.js" />
     <Content Include="wwwroot\Assets\img\config-monkey.jpeg" />
   </ItemGroup>
   <ItemGroup>
