@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup-data.service';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
 
 import { Router, ActivatedRoute,  } from '@angular/router';
 import { ConfigurationClient } from '../interfaces/configurationClient';

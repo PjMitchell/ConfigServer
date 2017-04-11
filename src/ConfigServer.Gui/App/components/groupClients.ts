@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientGroup-data.service';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
 import { ConfigurationClient } from '../interfaces/configurationClient';
 import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 import { Group } from '../interfaces/configurationSetDefintion';
