@@ -13,24 +13,6 @@
     <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyBoolInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyCollectionInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyDateInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyEnumInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyFloatInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyIntergerInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyMultipleOptionInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyOptionInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\clientPropertyStringInput.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\configProperty.js" />
-    <Content Include="wwwroot\Assets\app\components\propertyinputs\index.js" />
-    <Content Include="wwwroot\Assets\app\components\uploaders\groupImageUploader.js" />
-    <Content Include="wwwroot\Assets\app\components\uploaders\jsonFileUploader.js" />
-    <Content Include="wwwroot\Assets\app\components\uploaders\resourceFileUploader.js" />
-    <Content Include="wwwroot\Assets\img\config-monkey.jpeg" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
     <ProjectReference Include="..\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\ConfigServer.Server\ConfigServer.Server.csproj" />
@@ -82,6 +64,7 @@
   <ItemGroup>
     <Folder Include="FileStore\Configs\" />
     <Folder Include="FileStore\Resources\" />
+    <Folder Include="wwwroot\Assets\img\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
