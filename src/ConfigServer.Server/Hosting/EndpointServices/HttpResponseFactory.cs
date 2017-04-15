@@ -7,21 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace ConfigServer.Server
 {
     /// <summary>
     /// Serializes config object then adds it to http context response
     /// </summary>
-    internal interface IConfigHttpResponseFactory
+    internal interface IHttpResponseFactory
     {
-        /// <summary>
-        /// Builds config object then adds it to http context 
-        /// </summary>
-        /// <param name="context">HttpContext of request</param>
-        /// <param name="config">ConfigInstance to be serialized</param>
-        /// <returns>A task that represents the asynchronous build operation.</returns>
-        Task BuildResponse(HttpContext context, object config);
+
+        Task BuildJsonResponse(HttpContext context, object payload);
 
         void BuildNoContentResponse(HttpContext context);
 
@@ -34,9 +28,11 @@ namespace ConfigServer.Server
         void BuildNotFoundStatusResponse(HttpContext context);
 
         void BuildMethodNotAcceptedStatusResponse(HttpContext context);
+
+        Task BuildResponseFromCommandResult(HttpContext context, CommandResult result);
     }
 
-    internal class ConfigHttpResponseFactory : IConfigHttpResponseFactory
+    internal class HttpResponseFactory : IHttpResponseFactory
     {
         public void BuildNoContentResponse(HttpContext context) => BuildStatusResponse(context, 204);
 
@@ -50,10 +46,10 @@ namespace ConfigServer.Server
         public void BuildMethodNotAcceptedStatusResponse(HttpContext context) => BuildStatusResponse(context, 405);
 
 
-        public Task BuildResponse(HttpContext context, object config)
+        public Task BuildJsonResponse(HttpContext context, object payload)
         {
             context.Response.ContentType = HttpContentType.Json;
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(config, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+            return context.Response.WriteAsync(JsonConvert.SerializeObject(payload, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         }
 
         public Task BuildJsonFileResponse(HttpContext context, object config,string fileName)
@@ -77,6 +73,15 @@ namespace ConfigServer.Server
             context.Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
             context.Response.RegisterForDispose(file);
             return file.CopyToAsync(context.Response.Body);
+        }
+
+        public Task BuildResponseFromCommandResult(HttpContext context, CommandResult result)
+        {
+            if (!result.IsSuccessful)
+                return BuildInvalidRequestResponse(context, new[] { result.ErrorMessage });
+
+            BuildNoContentResponse(context);
+            return Task.FromResult(true);
         }
     }
 

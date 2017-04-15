@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http.Features;
 using System.Security.Claims;
 using System.Threading;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace ConfigServer.Core.Hosting
 {
@@ -16,6 +18,8 @@ namespace ConfigServer.Core.Hosting
         {
             Request = new TestHttpRequest(path);
         }
+
+ 
 
         public override AuthenticationManager Authentication { get { throw new NotImplementedException(); } }
 
@@ -52,9 +56,11 @@ namespace ConfigServer.Core.Hosting
         public TestHttpRequest(string path)
         {
             Path = path;
+            Method = "GET";
+            Body = new MemoryStream();
         }
 
-        public override Stream Body { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override Stream Body { get; set; }
 
         public override long? ContentLength { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
@@ -74,7 +80,7 @@ namespace ConfigServer.Core.Hosting
 
         public override bool IsHttps { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
-        public override string Method { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override string Method { get; set; }
 
         public override PathString Path { get; set; }
 
@@ -149,6 +155,39 @@ namespace ConfigServer.Core.Hosting
         public override void Redirect(string location, bool permanent)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class TestHttpContextBuilder
+    {
+        private readonly TestHttpContext source;
+
+        private TestHttpContextBuilder(string path)
+        {
+            source = new TestHttpContext(path);
+        }
+
+        public HttpContext TestContext => source;
+
+        public static TestHttpContextBuilder CreateForPath(string path) => new TestHttpContextBuilder(path);
+
+        public TestHttpContextBuilder WithMethod(string method)
+        {
+            source.Request.Method = method;
+            return this;
+        }
+        public TestHttpContextBuilder WithPost() => WithMethod("POST");
+
+        public TestHttpContextBuilder WithJsonBody<TData>(TData data)
+        {
+            var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(json);
+            writer.Flush();
+            stream.Position = 0;
+            source.Request.Body = stream;
+            return this;
         }
     }
 }

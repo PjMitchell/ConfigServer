@@ -6,9 +6,9 @@ namespace ConfigServer.Server
     internal class ConfigEnpoint : IEndpoint
     {
         readonly IConfigInstanceRouter router;
-        readonly IConfigHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory responseFactory;
 
-        public ConfigEnpoint(IConfigInstanceRouter router, IConfigHttpResponseFactory responseFactory)
+        public ConfigEnpoint(IConfigInstanceRouter router, IHttpResponseFactory responseFactory)
         {
             this.responseFactory = responseFactory;
             this.router = router;
@@ -19,7 +19,7 @@ namespace ConfigServer.Server
             var config = await router.GetConfigInstanceOrDefault(context.Request.Path);
             if (config == null)
                 return false;
-            await responseFactory.BuildResponse(context, config.GetConfiguration());
+            await responseFactory.BuildJsonResponse(context, config.GetConfiguration());
             return true;
         }
 

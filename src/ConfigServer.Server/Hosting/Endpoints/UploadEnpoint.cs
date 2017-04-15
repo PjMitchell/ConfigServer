@@ -10,7 +10,7 @@ namespace ConfigServer.Server
 {
     internal class UploadEnpoint : IEndpoint
     {
-        readonly IConfigHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
@@ -19,7 +19,7 @@ namespace ConfigServer.Server
         readonly IEventService eventService;
         readonly IConfigurationClientService configClientService;
 
-        public UploadEnpoint(IConfigHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigurationClientService configClientService)
+        public UploadEnpoint(IHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigurationClientService configClientService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;

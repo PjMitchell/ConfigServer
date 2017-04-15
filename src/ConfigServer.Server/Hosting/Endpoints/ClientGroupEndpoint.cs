@@ -10,19 +10,17 @@ namespace ConfigServer.Server
     internal class ClientGroupEndpoint : IEndpoint
     {
         private readonly IConfigurationClientService configurationClientService;
-        private readonly IConfigHttpResponseFactory factory;
-        private readonly IConfigClientRepository configurationClientRepository;
-        private readonly IEventService eventService;
+        private readonly IHttpResponseFactory factory;
+        private readonly ICommandBus commandBus;
         private const string noGroupPath = "None";
         private const string groupClientsPath = "Clients";
 
 
-        public ClientGroupEndpoint(IConfigurationClientService configurationClientService, IConfigClientRepository configurationClientRepository, IConfigHttpResponseFactory factory, IEventService eventService)
+        public ClientGroupEndpoint(IConfigurationClientService configurationClientService, IHttpResponseFactory factory, ICommandBus commandBus)
         {
             this.configurationClientService = configurationClientService;
-            this.configurationClientRepository = configurationClientRepository;
             this.factory = factory;
-            this.eventService = eventService;
+            this.commandBus = commandBus;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -58,7 +56,7 @@ namespace ConfigServer.Server
             switch (context.Request.Method)
             {
                 case "GET":
-                    await factory.BuildResponse(context, await configurationClientService.GetGroups());
+                    await factory.BuildJsonResponse(context,await configurationClientService.GetGroups());
                     break;
                 case "POST":
                     await HandleGroupSaveRequest(context);
@@ -79,18 +77,15 @@ namespace ConfigServer.Server
                 await factory.BuildInvalidRequestResponse(context, new[] { "Client group not valid" });
                 return;
             }
-            if (string.IsNullOrWhiteSpace(group.GroupId))
-                group.GroupId = Guid.NewGuid().ToString();
-            await configurationClientRepository.UpdateClientGroupAsync(group);
-            await eventService.Publish(new ConfigurationClientGroupUpdatedEvent(group.GroupId));
-            factory.BuildNoContentResponse(context);
+            var result = await commandBus.SubmitAsync(new CreateUpdateClientGroupCommand(group));
+            await factory.BuildResponseFromCommandResult(context,result);
         }
 
         private async Task<bool> HandleGroupPath(HttpContext context, string groupId)
         {
             var group = await configurationClientService.GetClientGroupOrDefault(groupId);
             if (group != null)
-                await factory.BuildResponse(context, group);
+                await factory.BuildJsonResponse(context, group);
             else
                 factory.BuildNotFoundStatusResponse(context);
             return true;
@@ -109,7 +104,7 @@ namespace ConfigServer.Server
             {
                 clients = (await configurationClientService.GetClients()).Where(c => string.Equals(groupId, c.Group, StringComparison.OrdinalIgnoreCase));
             }
-            await factory.BuildResponse(context, clients);
+            await factory.BuildJsonResponse(context, clients);
             return true;
         }
 

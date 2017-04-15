@@ -10,11 +10,11 @@ namespace ConfigServer.Server
     internal class ConfigClientEndPoint : IEndpoint
     {
         readonly IConfigClientRepository configClientRepository;
-        readonly IConfigHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory responseFactory;
         readonly IConfigurationClientService configurationClientService;
         readonly IEventService eventService;
 
-        public ConfigClientEndPoint(IConfigurationClientService configurationClientService, IConfigClientRepository configClientRepository, IConfigHttpResponseFactory responseFactory, IEventService eventService)
+        public ConfigClientEndPoint(IConfigurationClientService configurationClientService, IConfigClientRepository configClientRepository, IHttpResponseFactory responseFactory, IEventService eventService)
         {
             this.responseFactory = responseFactory;
             this.configClientRepository = configClientRepository;
@@ -40,7 +40,7 @@ namespace ConfigServer.Server
                 if(!(context.Request.Method == "GET" || context.Request.Method == "POST"))
                     return false;
                 if(context.Request.Method == "GET")
-                    await responseFactory.BuildResponse(context, configClients.Select(Map));
+                    await responseFactory.BuildJsonResponse(context, configClients.Select(Map));
                 if (context.Request.Method == "POST")
                     await HandlePost(context);
                 return true;
@@ -48,7 +48,7 @@ namespace ConfigServer.Server
             var queryResult = configClients.TryMatchPath(c => c.ClientId, routePath);
             if (!queryResult.HasResult)
                 return false;
-            await responseFactory.BuildResponse(context,Map(queryResult.QueryResult));
+            await responseFactory.BuildJsonResponse(context,Map(queryResult.QueryResult));
 
             return true;
         }

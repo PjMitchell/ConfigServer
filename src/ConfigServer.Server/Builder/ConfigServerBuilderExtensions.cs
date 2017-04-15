@@ -1,5 +1,4 @@
 ﻿using ConfigServer.Core;
-using ConfigServer.Server.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -21,41 +20,7 @@ namespace ConfigServer.Server
         /// <returns>ConfigServer builder for further configuration</returns>
         public static ConfigServerBuilder AddConfigServer(this IServiceCollection source)
         {
-            source.AddMemoryCache();
-            source.Add(ServiceDescriptor.Transient<IConfigHttpResponseFactory, ConfigHttpResponseFactory>());
-            source.Add(ServiceDescriptor.Transient<IResourceStore, EmptyResourceStore>());
-
-            source.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationEditModelMapper, ConfigurationEditModelMapper>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationUpdatePayloadMapper, ConfigurationUpdatePayloadMapper>());
-
-            source.Add(ServiceDescriptor.Transient<IPropertyTypeProvider, PropertyTypeProvider>());
-
-            source.Add(ServiceDescriptor.Transient<IConfigInstanceRouter, ConfigInstanceRouter>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationSetService, ConfigurationSetService>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationClientService, ConfigurationClientService>());
-
-
-            source.Add(ServiceDescriptor.Transient<ConfigurationSetEnpoint, ConfigurationSetEnpoint>());
-            source.Add(ServiceDescriptor.Transient<ConfigClientEndPoint, ConfigClientEndPoint>());
-            source.Add(ServiceDescriptor.Transient<ConfigManagerEndpoint, ConfigManagerEndpoint>());
-            source.Add(ServiceDescriptor.Transient<ConfigEnpoint, ConfigEnpoint>());
-            source.Add(ServiceDescriptor.Transient<DownloadEndpoint, DownloadEndpoint>());
-            source.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
-            source.Add(ServiceDescriptor.Transient<ResourceEndpoint, ResourceEndpoint>());
-            source.Add(ServiceDescriptor.Transient<ClientGroupEndpoint, ClientGroupEndpoint>());
-                        
-            source.Add(ServiceDescriptor.Transient<IOptionSetFactory, OptionSetFactory>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationSetFactory, ConfigurationSetFactory>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationValidator, ConfigurationValidator>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>());
-            source.Add(ServiceDescriptor.Transient<IConfigurationService, ConfigurationService>());
-            source.Add(ServiceDescriptor.Transient<IEventService, EventService>());
-            source.Add(ServiceDescriptor.Transient<IEventHandler<ConfigurationUpdatedEvent>, ConfigurationUpdatedEventHandler>());
-            source.Add(ServiceDescriptor.Transient<IEventHandler<ConfigurationClientGroupUpdatedEvent>, ConfigurationClientGroupUpdatedEventHandler>());
-            source.Add(ServiceDescriptor.Transient<IEventHandler<ConfigurationClientUpdatedEvent>, ConfigurationClientUpdatedEventHandler>());
-
-
+            source.AddConfigServerServices();
             return new ConfigServerBuilder(source);
         }
 
@@ -125,11 +90,6 @@ namespace ConfigServer.Server
             app.UseEndpoint<ConfigEnpoint>(options);
             
             return app;
-        }
-
-        private static IApplicationBuilder UseEndpoint<TEndpoint>(this IApplicationBuilder app, ConfigServerOptions options) where TEndpoint : IEndpoint
-        {
-            return app.Use((context, next) => ConfigServerHost.HandleEndPoint<TEndpoint>(context, next, options));
         }
     }
 }

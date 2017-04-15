@@ -12,9 +12,9 @@ namespace ConfigServer.Server
     {
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;
-        private readonly IConfigHttpResponseFactory httpResponseFactory;
+        private readonly IHttpResponseFactory httpResponseFactory;
         private const string clientGroupImagePath = "ClientGroupImages";
-        public ResourceEndpoint(IConfigurationClientService configClientService, IResourceStore resourceStore, IConfigHttpResponseFactory httpResponseFactory)
+        public ResourceEndpoint(IConfigurationClientService configClientService, IResourceStore resourceStore, IHttpResponseFactory httpResponseFactory)
         {
             this.configClientService = configClientService;
             this.resourceStore = resourceStore;
@@ -45,7 +45,7 @@ namespace ConfigServer.Server
             if (pathParams.Length == 1)
             {
                 var clientResourceCatalogue = await resourceStore.GetResourceCatalogue(clientIdentity);
-                await httpResponseFactory.BuildResponse(context, clientResourceCatalogue);
+                await httpResponseFactory.BuildJsonResponse(context, clientResourceCatalogue);
                 return true;
             }
 

@@ -10,7 +10,7 @@ namespace ConfigServer.Server
 {
     internal class ConfigurationSetEnpoint : IEndpoint
     {
-        readonly IConfigHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory responseFactory;
         readonly ConfigurationSetRegistry configCollection;
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
@@ -21,7 +21,7 @@ namespace ConfigServer.Server
         readonly IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper;
         readonly IEventService eventService;
 
-        public ConfigurationSetEnpoint(IConfigHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService, IConfigurationClientService configClientService)
+        public ConfigurationSetEnpoint(IHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator validator, IEventService eventService, IConfigurationClientService configClientService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;
@@ -52,7 +52,7 @@ namespace ConfigServer.Server
 
             if (pathParams.Length == 0)
             {
-                await responseFactory.BuildResponse(context, GetConfigurationSetSummaries());
+                await responseFactory.BuildJsonResponse(context, GetConfigurationSetSummaries());
                 return true;
             }
             if (pathParams.Length != 3)
@@ -66,7 +66,7 @@ namespace ConfigServer.Server
                 var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
                 if (configSet == null)
                     return false;
-                await responseFactory.BuildResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client)));
+                await responseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client)));
                 return true;
             }
             if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
@@ -83,7 +83,7 @@ namespace ConfigServer.Server
         private Task HandleValueRequest(HttpContext context,ConfigInstance configInstance)
         {
             if(context.Request.Method == "GET")
-             return responseFactory.BuildResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
+             return responseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
             if (context.Request.Method == "POST")
                 return HandleValuePostRequest(context, configInstance);
             throw new System.Exception("Only Get or Post methods expected");
