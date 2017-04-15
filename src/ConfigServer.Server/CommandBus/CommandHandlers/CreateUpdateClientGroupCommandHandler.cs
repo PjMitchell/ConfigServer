@@ -20,6 +20,9 @@ namespace ConfigServer.Server
 
         public async Task<CommandResult> Handle(CreateUpdateClientGroupCommand command)
         {
+            if (command.ClientGroup == null)
+                return CommandResult.Failure("Invalid client group");
+            
             var group = command.ClientGroup;
             if (string.IsNullOrWhiteSpace(group.GroupId))
                 group.GroupId = Guid.NewGuid().ToString();

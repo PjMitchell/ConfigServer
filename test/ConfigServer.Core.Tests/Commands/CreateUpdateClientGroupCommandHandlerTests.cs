@@ -52,5 +52,16 @@ namespace ConfigServer.Core.Tests.Commands
             Assert.NotNull(result);
             Assert.True(result.IsSuccessful);
         }
+
+        [Fact]
+        public async Task Handle_Handle_ReturnsFailedIfGroupNull()
+        {
+            var command = new CreateUpdateClientGroupCommand(null);
+            var result = await target.Handle(command);
+            Assert.NotNull(result);
+            Assert.False(result.IsSuccessful);
+        }
+
+        
     }
 }

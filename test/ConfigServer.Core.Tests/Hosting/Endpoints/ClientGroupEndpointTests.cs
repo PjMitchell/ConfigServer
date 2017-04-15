@@ -194,19 +194,5 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             factory.Verify(f => f.BuildResponseFromCommandResult(context, commandResult));
 
         }
-
-        [Fact]
-        public async Task Post_ReturnsInvalidRequest_IfNoBody()
-        {
-            var group = new ConfigurationClientGroup { GroupId = groupId };
-
-            var context = TestHttpContextBuilder.CreateForPath("/")
-                .WithPost()
-                .TestContext;
-
-            var result = await target.TryHandle(context);
-            Assert.True(result);
-            factory.Verify(f => f.BuildInvalidRequestResponse(context, It.IsAny<IEnumerable<string>>()));
-        }
     }
 }

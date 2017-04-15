@@ -72,11 +72,6 @@ namespace ConfigServer.Server
         private async Task HandleGroupSaveRequest(HttpContext context)
         {
             var group = await context.GetObjectFromJsonBodyAsync<ConfigurationClientGroup>();
-            if(group == null)
-            {
-                await factory.BuildInvalidRequestResponse(context, new[] { "Client group not valid" });
-                return;
-            }
             var result = await commandBus.SubmitAsync(new CreateUpdateClientGroupCommand(group));
             await factory.BuildResponseFromCommandResult(context,result);
         }

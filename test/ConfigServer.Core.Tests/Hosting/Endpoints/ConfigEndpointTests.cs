@@ -11,7 +11,7 @@ using System;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
-    public class ConfigRouterTests
+    public class ConfigEndpointTests
     {
         private readonly ConfigEnpoint target;
         private readonly Mock<IConfigurationClientService> repository;
@@ -21,7 +21,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private readonly List<ConfigurationClient> clients;
         private readonly ConfigInstance<SimpleConfig> defaultConfig;
 
-        public ConfigRouterTests()
+        public ConfigEndpointTests()
         {
             
             clients = new List<ConfigurationClient>
