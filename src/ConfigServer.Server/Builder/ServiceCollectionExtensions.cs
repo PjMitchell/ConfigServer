@@ -51,7 +51,9 @@ namespace ConfigServer.Server
         {
             collection.Add(ServiceDescriptor.Transient<ICommandBus, CommandBus>());
             collection.Add(ServiceDescriptor.Transient<ICommandHandler<CreateUpdateClientGroupCommand>, CreateUpdateClientGroupCommandHandler>());
-            
+            collection.Add(ServiceDescriptor.Transient<ICommandHandler<CreateUpdateClientCommand>, CreateUpdateClientCommandHandler>());
+            collection.Add(ServiceDescriptor.Transient<ICommandHandler<UpdateConfigurationFromEditorCommand>, UpdateConfigurationFromEditorCommandHandler>());
+
             return collection;
         }
 

@@ -8,7 +8,7 @@ namespace ConfigServer.Server
     /// <summary>
     /// Registry of ConfigurationSets
     /// </summary>
-    public class ConfigurationSetRegistry : IEnumerable<ConfigurationSetModel>
+    public class ConfigurationSetRegistry : IConfigurationSetRegistry
     {
         private readonly Dictionary<Type, ConfigurationSetModel> collection;
 

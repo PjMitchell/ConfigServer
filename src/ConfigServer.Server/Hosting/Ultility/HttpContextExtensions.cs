@@ -17,13 +17,6 @@ namespace ConfigServer.Server
             return result;
         }
 
-        public static async Task<JArray> GetJArrayFromJsonBodyAsync(this HttpContext source)
-        {
-            var json = await source.ReadBodyTextAsync();
-            var result = JArray.Parse(json);
-            return result;
-        }
-
         public static async Task<T> GetObjectFromJsonBodyAsync<T>(this HttpContext source)
         {
             var json = await source.ReadBodyTextAsync();
@@ -46,7 +39,7 @@ namespace ConfigServer.Server
             return failed? null: result;
         }
 
-        private static Task<string> ReadBodyTextAsync(this HttpContext source)
+        public static Task<string> ReadBodyTextAsync(this HttpContext source)
         {
             var body = source.Request.Body;
             return new StreamReader(body).ReadToEndAsync();

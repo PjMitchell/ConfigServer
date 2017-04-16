@@ -181,9 +181,14 @@ namespace ConfigServer.Core.Hosting
         public TestHttpContextBuilder WithJsonBody<TData>(TData data)
         {
             var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return WithStringBody(json);
+        }
+
+        public TestHttpContextBuilder WithStringBody(string data)
+        {
             var stream = new MemoryStream();
             var writer = new StreamWriter(stream);
-            writer.Write(json);
+            writer.Write(data);
             writer.Flush();
             stream.Position = 0;
             source.Request.Body = stream;

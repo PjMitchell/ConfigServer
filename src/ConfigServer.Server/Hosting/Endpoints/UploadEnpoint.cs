@@ -11,7 +11,7 @@ namespace ConfigServer.Server
     internal class UploadEnpoint : IEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
-        readonly ConfigurationSetRegistry configCollection;
+        readonly IConfigurationSetRegistry configCollection;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigRepository configRepository;
         readonly IConfigurationValidator confgiurationValidator;
@@ -19,7 +19,7 @@ namespace ConfigServer.Server
         readonly IEventService eventService;
         readonly IConfigurationClientService configClientService;
 
-        public UploadEnpoint(IHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, ConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigurationClientService configClientService)
+        public UploadEnpoint(IHttpResponseFactory responseFactory, IConfigInstanceRouter configInstanceRouter, IConfigurationSetRegistry configCollection, IConfigRepository configRepository, IConfigurationValidator confgiurationValidator, IConfigurationSetUploadMapper configurationSetUploadMapper, IEventService eventService, IConfigurationClientService configClientService)
         {
             this.responseFactory = responseFactory;
             this.configCollection = configCollection;

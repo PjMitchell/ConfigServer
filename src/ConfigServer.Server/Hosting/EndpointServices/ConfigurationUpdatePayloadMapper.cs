@@ -8,7 +8,7 @@ namespace ConfigServer.Server
 {
     internal interface IConfigurationUpdatePayloadMapper
     {
-        Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JContainer newEditPayload, ConfigurationSetModel model);
+        Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, string newEditPayload, ConfigurationSetModel model);
     }
 
     internal class ConfigurationUpdatePayloadMapper : IConfigurationUpdatePayloadMapper
@@ -24,7 +24,7 @@ namespace ConfigServer.Server
             this.configurationSetService = configurationSetService;
         }
 
-        public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, JContainer newEditPayload, ConfigurationSetModel model)
+        public async Task<ConfigInstance> UpdateConfigurationInstance(ConfigInstance original, string newEditPayload, ConfigurationSetModel model)
         {
             var configModel = model.Configs.Single(s => s.Type == original.ConfigType);
             var identity = original.ConfigurationIdentity;
@@ -34,12 +34,12 @@ namespace ConfigServer.Server
             return original;
         }
 
-        private object UpdateObject(ConfigInstance original, JContainer newEditPayload, ConfigurationModel model, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        private object UpdateObject(ConfigInstance original, string newEditPayload, ConfigurationModel model, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             if (original is ConfigCollectionInstance collection)
-                return UpdateObject(collection, (JArray)newEditPayload, (ConfigurationOptionModel)model, configIdentity, requiredConfigurationSets);
+                return UpdateObject(collection, JArray.Parse(newEditPayload), (ConfigurationOptionModel)model, configIdentity, requiredConfigurationSets);
             else
-                return UpdateObject(original.ConstructNewConfiguration(), (JObject)newEditPayload, model.ConfigurationProperties, configIdentity, requiredConfigurationSets);
+                return UpdateObject(original.ConstructNewConfiguration(), JObject.Parse(newEditPayload), model.ConfigurationProperties, configIdentity, requiredConfigurationSets);
         }
 
         private object UpdateObject(ConfigCollectionInstance target, JArray source, ConfigurationOptionModel optionModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
