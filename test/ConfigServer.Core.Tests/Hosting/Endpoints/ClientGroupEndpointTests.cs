@@ -1,5 +1,4 @@
-﻿using ConfigServer.Core.Hosting;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System;

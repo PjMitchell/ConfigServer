@@ -1,11 +1,9 @@
-﻿using ConfigServer.Core.Hosting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Server;
-using System.Runtime.CompilerServices;
 using System.Linq;
 using System;
 

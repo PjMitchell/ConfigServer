@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
@@ -55,7 +53,7 @@ namespace ConfigServer.Server
                 {
                     var result = await resourceStore.GetResource(pathParams[1], clientIdentity);
                     if (!result.HasEntry)
-                        httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
+                        httpResponseFactory.BuildNotFoundStatusResponse(context);
                     else
                         await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
                     break;
@@ -70,16 +68,18 @@ namespace ConfigServer.Server
                         Content = file.OpenReadStream()
                     };
                     await resourceStore.UpdateResource(uploadRequest);
+                    httpResponseFactory.BuildNoContentResponse(context);
                     break;
                 }
                 case "DELETE":
                 {
                     await resourceStore.DeleteResources(pathParams[1], clientIdentity);
+                    httpResponseFactory.BuildNoContentResponse(context);
                     break;
                 }
                 default:
                 {
-                    httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status405MethodNotAllowed);
+                    httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                     break;
                 }
                     
