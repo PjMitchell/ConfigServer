@@ -11,12 +11,12 @@ namespace ConfigServer.Server
     internal class DownloadEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
-        readonly ConfigurationSetRegistry configCollection;
+        readonly IConfigurationSetRegistry configCollection;
         readonly IConfigurationSetService configurationSetService;
         readonly IConfigurationClientService configClientService;
         const string jsonExtension = ".json";
 
-        public DownloadEndpoint(IHttpResponseFactory responseFactory, ConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
+        public DownloadEndpoint(IHttpResponseFactory responseFactory, IConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
         {
             this.configurationSetService = configurationSetService;
             this.configCollection = configCollection;
