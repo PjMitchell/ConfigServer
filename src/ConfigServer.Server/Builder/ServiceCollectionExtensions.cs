@@ -53,7 +53,9 @@ namespace ConfigServer.Server
             collection.Add(ServiceDescriptor.Transient<ICommandHandler<CreateUpdateClientGroupCommand>, CreateUpdateClientGroupCommandHandler>());
             collection.Add(ServiceDescriptor.Transient<ICommandHandler<CreateUpdateClientCommand>, CreateUpdateClientCommandHandler>());
             collection.Add(ServiceDescriptor.Transient<ICommandHandler<UpdateConfigurationFromEditorCommand>, UpdateConfigurationFromEditorCommandHandler>());
-
+            collection.Add(ServiceDescriptor.Transient<ICommandHandler<UpdateConfigurationFromJsonUploadCommand>, UpdateConfigurationFromJsonUploadCommandHandler>());
+            collection.Add(ServiceDescriptor.Transient<ICommandHandler<UpdateConfigurationSetFromJsonUploadCommand>, UpdateConfigurationSetFromJsonUploadCommandHandler>());
+            
             return collection;
         }
 

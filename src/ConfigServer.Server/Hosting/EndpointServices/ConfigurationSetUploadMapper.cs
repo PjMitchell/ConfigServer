@@ -8,16 +8,17 @@ namespace ConfigServer.Server
 {
     internal interface IConfigurationSetUploadMapper
     {
-        IEnumerable<KeyValuePair<string,object>> MapConfigurationSetUpload(JObject upload, ConfigurationSetModel model);
+        IEnumerable<KeyValuePair<string,object>> MapConfigurationSetUpload(string upload, ConfigurationSetModel model);
     }
 
     internal class ConfigurationSetUploadMapper : IConfigurationSetUploadMapper
     {
-        public IEnumerable<KeyValuePair<string, object>> MapConfigurationSetUpload(JObject upload, ConfigurationSetModel model)
+        public IEnumerable<KeyValuePair<string, object>> MapConfigurationSetUpload(string upload, ConfigurationSetModel model)
         {
+            var jObject = JObject.Parse(upload); 
             foreach (var item in model.Configs.Where(w => !w.IsReadOnly))
             {
-                if (!upload.TryGetValue(item.Name,StringComparison.OrdinalIgnoreCase, out var configJToken))
+                if (!jObject.TryGetValue(item.Name,StringComparison.OrdinalIgnoreCase, out var configJToken))
                     continue;
                 var config = ToObjectOrDefault(configJToken, item);
                 yield return new KeyValuePair<string, object>(item.Name, config);

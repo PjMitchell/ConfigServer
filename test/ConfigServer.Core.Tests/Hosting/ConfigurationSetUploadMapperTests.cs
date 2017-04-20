@@ -31,8 +31,8 @@ namespace ConfigServer.Core.Tests.Hosting
             var jsonTwo = JsonConvert.SerializeObject(configSet.ConfigTwo.Value);
 
             var json = $"{{\"ConfigOne\":{jsonOne},\"ConfigTwo\":{jsonTwo}}}";
-            var jObject = JObject.Parse(json);
-            var result = target.MapConfigurationSetUpload(jObject, model).ToDictionary(k=>k.Key, v=>v.Value);
+           
+            var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k=>k.Key, v=>v.Value);
             Assert.Equal(2, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
@@ -53,8 +53,7 @@ namespace ConfigServer.Core.Tests.Hosting
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne},\"ConfigTwo\":{jsonOne}}}";
 
-            var jObject = JObject.Parse(json);
-            var result = target.MapConfigurationSetUpload(jObject, model).ToDictionary(k => k.Key, v => v.Value);
+            var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k => k.Key, v => v.Value);
             Assert.Equal(2, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
@@ -73,9 +72,8 @@ namespace ConfigServer.Core.Tests.Hosting
             };
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne}}}";
-
-            var jObject = JObject.Parse(json);
-            var result = target.MapConfigurationSetUpload(jObject, model).ToDictionary(k => k.Key, v => v.Value);
+            
+            var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k => k.Key, v => v.Value);
             Assert.Equal(1, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
@@ -93,8 +91,7 @@ namespace ConfigServer.Core.Tests.Hosting
             var jsonOne = JsonConvert.SerializeObject(configSet.ConfigOne.Value);
             var json = $"{{\"ConfigOne\":{jsonOne},\"Meta\":{jsonOne}}}";
 
-            var jObject = JObject.Parse(json);
-            var result = target.MapConfigurationSetUpload(jObject, model).ToDictionary(k => k.Key, v => v.Value);
+            var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k => k.Key, v => v.Value);
             Assert.Equal(1, result.Count);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
