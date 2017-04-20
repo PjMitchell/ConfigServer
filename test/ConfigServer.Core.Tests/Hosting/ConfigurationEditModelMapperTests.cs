@@ -1,5 +1,4 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -7,10 +6,10 @@ using System.Linq;
 using Newtonsoft.Json;
 using Xunit;
 using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
-using ConfigServer.Core.Tests.TestModels;
 using Moq;
+using ConfigServer.Sample.Models;
+using ConfigServer.Core.Tests.TestModels;
 
 namespace ConfigServer.Core.Tests.Hosting
 {

@@ -3,17 +3,17 @@ using ConfigServer.Gui.Models;
 using ConfigServer.Server;
 using System;
 
-namespace ConfigServer.Sample.mvc.Models
+namespace ConfigServer.Gui.Models
 {
     public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {
         public SampleConfigSet() : base("Core Configuration Set", "Only Configuration Set in the app") {}
 
-        OptionSet<OptionFromConfigSet> Options { get; set; }
-        OptionSet<Option> OptionFromProvider { get; set; }
+        public OptionSet<OptionFromConfigSet> Options { get; set; }
+        public OptionSet<Option> OptionFromProvider { get; set; }
 
 
-        Config<SampleConfig> SampleConfig { get; set; }
+        public Config<SampleConfig> SampleConfig { get; set; }
 
         protected override void OnModelCreation(ConfigurationSetModelBuilder<SampleConfigSet> modelBuilder)
         {

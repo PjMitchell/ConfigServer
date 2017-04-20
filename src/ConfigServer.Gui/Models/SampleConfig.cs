@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConfigServer.Sample.mvc.Models
+namespace ConfigServer.Gui.Models
 {
     public class SampleConfig
     {

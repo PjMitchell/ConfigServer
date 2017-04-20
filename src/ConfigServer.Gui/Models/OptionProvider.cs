@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConfigServer.Sample.mvc.Models
+namespace ConfigServer.Gui.Models
 {
     public interface IOptionProvider
     {

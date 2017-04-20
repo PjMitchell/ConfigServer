@@ -20,7 +20,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private Mock<IConfigurationSetService> configurationSet;
         private ConfigurationSetModel definition;
         private SampleConfig sample;
-        private JObject updatedObject;
+        private string objectJson;
         private SampleConfig updatedSample;
 
         private readonly ConfigurationIdentity clientId = new ConfigurationIdentity(new ConfigurationClient("7aa7d5f0-90fb-420b-a906-d482428a0c44"));
@@ -70,14 +70,13 @@ namespace ConfigServer.Core.Tests.Hosting
             updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s => s.Id).ToList();
             updatedValue.ListOfConfigs = updatedSample.ListOfConfigs;
             var serilaisationSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-            var json = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
-            updatedObject = JObject.Parse(json);
+            objectJson = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
         }
 
         [Fact]
         public async Task UpdatesRegularValues()
         {
-            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Choice, result.Choice);
             Assert.Equal(updatedSample.IsLlamaFarmer, result.IsLlamaFarmer);
@@ -89,7 +88,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task UpdatesOptionValues()
         {
-            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.Option.Description, result.Option.Description);
         }
@@ -97,7 +96,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task UpdatesOptionsValues()
         {
-            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(updatedSample.MoarOptions.Count, result.MoarOptions.Count);
             Assert.Equal(updatedSample.MoarOptions.Select(s => s.Description), result.MoarOptions.Select(s => s.Description));
@@ -105,7 +104,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task UpdatesListOfConfigsValues()
         {
-            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition);
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
             var result = (SampleConfig)response.GetConfiguration();
             Assert.Equal(1, result.ListOfConfigs.Count);
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);
@@ -116,8 +115,10 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public async Task ThrowsIfNonNullable()
         {
+            var updatedObject = JObject.Parse(objectJson);
             updatedObject["llamaCapacity"].Replace(null);
-            var response = await Assert.ThrowsAsync<ConfigModelParsingException>(() => target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject, definition));
+
+            var response = await Assert.ThrowsAsync<ConfigModelParsingException>(() => target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), updatedObject.ToString(), definition));
         }
 
     }
