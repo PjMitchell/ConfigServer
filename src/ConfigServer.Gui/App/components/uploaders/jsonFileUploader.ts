@@ -10,7 +10,7 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
                 <span class="input-group-btn">
                     <div class="fileUpload btn btn-primary">
                         <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
-                        <input type="file" #input name="upload" accept="image/*" class="upload" (change)="fileChanged()">           
+                        <input type="file" #input name="upload" accept=".json" class="upload" (change)="fileChanged()">           
                     </div> 
                 </span>
                 <span class="input-group-addon upload-text" (click)="onFileNameClicked()">
