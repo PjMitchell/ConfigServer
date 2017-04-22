@@ -86,6 +86,8 @@ namespace ConfigServer.Server
             app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
             app.Map(HostPaths.Resource, client => client.UseEndpoint<ResourceEndpoint>(options));
             app.Map(HostPaths.Group, client => client.UseEndpoint<ClientGroupEndpoint>(options));
+            app.Map(HostPaths.Guid, client => client.UseEndpoint<GuidGeneratorEndpointcs>(options));
+
 
             app.UseEndpoint<ConfigEnpoint>(options);
             

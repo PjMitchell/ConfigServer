@@ -18,7 +18,7 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
             <hr />
             <div>
                <button type="button"  class="btn btn-primary"(click)="back()">Back</button>
-               <button [disabled]="isDisabled || !isValid" type="button" class="btn btn-success" (click)="create()">Create</button>
+               <button id="save-btn" [disabled]="isDisabled || !isValid" type="button" class="btn btn-success" (click)="create()">Create</button>
             </div>
         </div>
 `

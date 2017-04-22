@@ -38,8 +38,6 @@ import { GroupImageFileUploaderComponent } from './components/uploaders/groupIma
 import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
 import { GroupClientsComponent } from './components/groupClients';
 
-
-
 import { ObjectToIteratorPipe, ObjectToKeyValuePairsPipe } from './pipes/objectToIterable';
 
 import { ConfigurationClientDataService } from './dataservices/client-data.service';
@@ -49,7 +47,7 @@ import { ConfigurationSetDataService } from './dataservices/configset-data.servi
 import { ConfigurationDataService } from './dataservices/config-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { ResourceDataService } from './dataservices/resource-data.service';
-
+import { GuidGenerator } from './dataservices/guid-generator';
 
 
 @NgModule({
@@ -90,7 +88,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
         ObjectToKeyValuePairsPipe
     ],
     bootstrap: [AppShell],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService, ConfigurationClientGroupDataService]
+    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService, ConfigurationClientGroupDataService, GuidGenerator]
 })
 
 export class AppModule { }

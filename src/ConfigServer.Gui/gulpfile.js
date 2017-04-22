@@ -43,3 +43,15 @@ gulp.task('CopySeedData', ['CleanConfigs'], function () {
     return gulp.src(['./SeedData/**/*.*'])
         .pipe(gulp.dest('./FileStore'));
 });
+
+gulp.task('BuildE2E', function () {
+    var tsProject = tsc.createProject('./E2eTests/tsconfig.json');
+    var tsResult = tsProject.src()
+                .pipe(tsProject());
+
+    return tsResult.js.pipe(gulp.dest('E2eTests'));
+});
+gulp.task('Watch', function () {
+    gulp.watch('./E2eTests/**/*.ts', ['BuildE2E']);
+    gulp.watch('./App/**/*.ts', ['BuildTsAssets']);
+});
