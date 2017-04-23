@@ -4,7 +4,7 @@ import { Constants } from '../constants';
 export class CreateGroupPage {
 
     getPage(id: string): void {
-        browser.get(Constants.path('/createClientGroup/' + id));
+        browser.get(Constants.angularPath('/createClientGroup/' + id));
     }
 
     clickImage(name: string) {

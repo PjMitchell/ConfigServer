@@ -4,7 +4,7 @@ import { Constants } from '../constants';
 export class EditGroupPage {
 
     getPage(id : string) {
-        browser.get(Constants.path('/editClientGroup/' + id));
+        browser.get(Constants.angularPath('/editClientGroup/' + id));
     }
 
     clickImage(name: string) {
