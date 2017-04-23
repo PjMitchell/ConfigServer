@@ -23,7 +23,7 @@ describe('Given I am on the homepage', () => {
         });
         it('Clicking save returns to home', () => {
             editpage.save();
-            expect(browser.getCurrentUrl()).toEqual(Constants.path('/'));
+            expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/'));
         });
         it('I can update name', (done) => {
             var input = 'New Name';

@@ -15,25 +15,25 @@ describe('Given I am on the homepage', () => {
     })
     it('when I click Add Client I navigate to the create client', () => {
         homepage.clickAddClientButton();
-        expect(browser.getCurrentUrl()).toEqual(Constants.path('/createClient'));
+        expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/createClient'));
     });
     it('when I click Add Group I navigate to the create client', () => {
         homepage.clickAddGroupButton();
-        expect(browser.getCurrentUrl()).toEqual(Constants.path('/createClientGroup'));
+        expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/createClientGroup'));
     });
 
     it('when I click Edit Group I navigate to the edit client group page for that group', () => {
         homepage.clickEditGroupButton(Constants.defaultGroupId);
-        expect(browser.getCurrentUrl()).toEqual(Constants.path('/editClientGroup/' + Constants.defaultGroupId));
+        expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/editClientGroup/' + Constants.defaultGroupId));
     });
 
     it('when I click manage Group I navigate to the manage client group page for that group', () => {
         homepage.clickManageGroupButton(Constants.defaultGroupId);
-        expect(browser.getCurrentUrl()).toEqual(Constants.path('/group/' + Constants.defaultGroupId));
+        expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/group/' + Constants.defaultGroupId));
     });
 
     it('when I click manage Group I navigate to the mange client group page for no client', () => {
         homepage.clickManageClientsWithoutGroupButton();
-        expect(browser.getCurrentUrl()).toEqual(Constants.path('/group'));
+        expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/group'));
     });
 });

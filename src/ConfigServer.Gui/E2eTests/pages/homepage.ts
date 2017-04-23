@@ -4,7 +4,7 @@ import { Constants } from '../constants';
 export class HomePage {
 
     getPage(): void {
-        browser.get(Constants.path('/'));
+        browser.get(Constants.angularPath('/'));
     }
     
     clickAddClientButton() {
