@@ -20,7 +20,7 @@ export class EditGroupPage {
         return el.clear().then(() => el.sendKeys(input));
     }
 
-    public ave() {
+    public save() {
         element(by.id('save-btn')).click();
     }
 }
