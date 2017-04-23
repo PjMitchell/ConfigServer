@@ -13,9 +13,10 @@ gulp.task('BuildUi', ['CleanUi'], function () {
 gulp.task('BuildPackageAssets', ['BuildTsAssets', 'CopyWwwRootAssets'])
 
 gulp.task('BuildTsAssets', function () {
-    var tsProject = tsc.createProject('./App/tsconfig.json');
-    var tsResult = tsProject.src()
-        .pipe(tsProject());
+    var tscProject = tsc.createProject('./App/tsconfig.json');
+    var tsResult = gulp.src('./App/**/*.ts')
+        .pipe(tscProject(tsc.reporter.longReporter()))
+        .on('error', function () { process.exit(1) });
 
     return tsResult.js.pipe(gulp.dest('../ConfigServer.Server/Assets/app'));
 });
@@ -46,10 +47,10 @@ gulp.task('CopySeedData', ['CleanConfigs'], function () {
 });
 
 gulp.task('BuildE2E', function () {
-    var tsProject = tsc.createProject('./E2eTests/tsconfig.json');
-    var tsResult = tsProject.src()
-                .pipe(tsProject());
-
+    var tscProject = tsc.createProject('./E2eTests/tsconfig.json');
+    var tsResult = gulp.src('./E2eTests/**/*.ts')
+        .pipe(tscProject(tsc.reporter.longReporter()))
+        .on('error', function () { process.exit(1) });
     return tsResult.js.pipe(gulp.dest('E2eTests'));
 });
 
