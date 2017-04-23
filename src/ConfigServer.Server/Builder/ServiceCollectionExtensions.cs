@@ -44,6 +44,7 @@ namespace ConfigServer.Server
             collection.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
             collection.Add(ServiceDescriptor.Transient<ResourceEndpoint, ResourceEndpoint>());
             collection.Add(ServiceDescriptor.Transient<ClientGroupEndpoint, ClientGroupEndpoint>());
+            collection.Add(ServiceDescriptor.Transient<GuidGeneratorEndpointcs, GuidGeneratorEndpointcs>());
             return collection;
         }
 

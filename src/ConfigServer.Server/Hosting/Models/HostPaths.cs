@@ -9,6 +9,8 @@
         public const string Upload = "/Upload";
         public const string Resource = "/Resource";
         public const string Group = "/ClientGroup";
+        public const string Guid = "/GenerateGuid";
+
 
 
 
