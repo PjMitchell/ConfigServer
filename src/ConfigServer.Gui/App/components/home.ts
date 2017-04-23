@@ -1,8 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-import { Group } from '../interfaces/configurationSetDefintion';
 import { Router } from '@angular/router';
+import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     template: `
@@ -25,36 +24,36 @@ import { Router } from '@angular/router';
         </div>
     </div>
     <button id="manage-group-btn" type="button" class="btn btn-primary" (click)="manageClientsWithNoGroup()">Manage clients not in group</button>
-`
+`,
 })
 export class HomeComponent implements OnInit {
-    groups: ConfigurationClientGroup[];
+    public groups: IConfigurationClientGroup[];
 
     constructor(private clientDataService: ConfigurationClientGroupDataService, private router: Router) {
-        this.groups = new Array<ConfigurationClientGroup>();
+        this.groups = new Array<IConfigurationClientGroup>();
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.clientDataService.getClientGroups()
-            .then(returnedClientGroups => { this.groups = returnedClientGroups});
+            .then((returnedClientGroups) => { this.groups = returnedClientGroups; });
     }
 
-    createNewClient() {
+    public createNewClient() {
         this.router.navigate(['/createClient']);
     }
 
-    createNewGroup() {
+    public createNewGroup() {
         this.router.navigate(['/createClientGroup']);
     }
 
-    editGroup(selectedGroup: ConfigurationClientGroup) {
+    public editGroup(selectedGroup: IConfigurationClientGroup) {
         this.router.navigate(['/editClientGroup', selectedGroup.groupId]);
     }
 
-    manageClientsWithNoGroup() {
+    public manageClientsWithNoGroup() {
         this.router.navigate(['/group']);
     }
-    manageGroupClients(selectedGroup: ConfigurationClientGroup) {
+    public manageGroupClients(selectedGroup: IConfigurationClientGroup) {
         this.router.navigate(['/group', selectedGroup.groupId]);
     }
 }

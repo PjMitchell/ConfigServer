@@ -1,6 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
-
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
 
 @Component({
     selector: 'multiple-option-input',
@@ -8,13 +7,13 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
     <select class="form-control" multiple [(ngModel)]="csConfig[csDefinition.propertyName]">
         <option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</option>
     </select>
-`
+`,
 })
 export class ConfigurationPropertyMultipleOptionInputComponent {
     @Input()
-    csDefinition: ConfigurationPropertyPayload;
+    public csDefinition: IConfigurationPropertyPayload;
     @Input()
-    csConfig: any;
+    public csConfig: any;
     @Output()
-    csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
 }

@@ -1,18 +1,18 @@
-﻿import { HomePage } from '../pages/homepage';
-import { Constants } from '../constants'
-import { browser, element, by } from 'protractor'
+﻿import { browser, by, element } from 'protractor';
+import { Constants } from '../constants';
+import { HomePage } from '../pages/homepage';
 
 describe('Given I am on the homepage', () => {
-    var homepage = new HomePage();
+    const homepage = new HomePage();
     beforeEach(() => {
         homepage.getPage();
     });
     it('Group panel displays correctly', () => {
-        var groupPanel = homepage.groupPanelsById(Constants.defaultGroupId);
+        const groupPanel = homepage.groupPanelsById(Constants.defaultGroupId);
         expect(groupPanel.element(by.className('home-group-img')).getAttribute('src')).toEqual(Constants.path('/Resource/ClientGroupImages/testimage.JPG'));
         expect(groupPanel.element(by.className('home-group-name')).getText()).toEqual('My Apps');
         expect(groupPanel.element(by.className('home-group-id')).getText()).toEqual(Constants.defaultGroupId);
-    })
+    });
     it('when I click Add Client I navigate to the create client', () => {
         homepage.clickAddClientButton();
         expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/createClient'));

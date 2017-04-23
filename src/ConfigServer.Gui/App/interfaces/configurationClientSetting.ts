@@ -1,4 +1,4 @@
-﻿export interface ConfigurationClientSetting {
+﻿export interface IConfigurationClientSetting {
     key: string;
     value: string;
 }

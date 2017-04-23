@@ -1,11 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
 import { GuidGenerator } from '../dataservices/guid-generator';
-import { Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-
-
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     template: `
@@ -19,35 +17,35 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
                <button id="save-btn" [disabled]="isDisabled" type="button" class="btn btn-success" (click)="create()">Create</button>
             </div>
         </div>
-`
+`,
 })
 export class CreateClientGroupComponent implements OnInit {
-    group: ConfigurationClientGroup;
-    isDisabled: boolean;
+    public group: IConfigurationClientGroup;
+    public isDisabled: boolean;
     constructor(private clientGroupDataService: ConfigurationClientGroupDataService, private guidGenerator: GuidGenerator, private router: Router) {
         this.group = {
             groupId: '',
             name: '',
-            imagePath: ''
+            imagePath: '',
         };
     }
 
-    ngOnInit() {
-        this.isDisabled == true;
+    public ngOnInit() {
+        this.isDisabled = true;
         this.guidGenerator.getGuid()
-            .then(s => {
+            .then((s) => {
                 this.group.groupId = s;
                 this.isDisabled = false;
-            })
+            });
     }
 
-    create(): void {
-        this.isDisabled;
+    public create(): void {
+        this.isDisabled = true;
         this.clientGroupDataService.postClientGroup(this.group)
             .then(() => this.back());
     }
 
-    back() {
+    public back() {
         this.router.navigate(['/']);
     }
 }

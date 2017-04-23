@@ -1,5 +1,6 @@
 ﻿var gulp = require('gulp'),
     tsc = require('gulp-typescript'),
+    tslint = require('gulp-tslint'),
     clean = require('gulp-clean');
 gulp.task('BuildUi', ['CleanUi'], function () {
     var tsProject = tsc.createProject('./App/tsconfig.json');
@@ -51,6 +52,13 @@ gulp.task('BuildE2E', function () {
 
     return tsResult.js.pipe(gulp.dest('E2eTests'));
 });
+
+gulp.task('TsLint', function () {
+    gulp.src(['./E2eTests/**/*.ts', './App/**/*.ts'])
+        .pipe(tslint())
+        .pipe(tslint.report({ summarizeFailureOutput: true }))
+});
+
 gulp.task('Watch', function () {
     gulp.watch('./E2eTests/**/*.ts', ['BuildE2E']);
     gulp.watch('./App/**/*.ts', ['BuildTsAssets']);

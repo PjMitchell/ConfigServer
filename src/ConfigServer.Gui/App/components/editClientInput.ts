@@ -1,8 +1,6 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-
-
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     selector: 'edit-client-input',
@@ -32,47 +30,48 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
     </div>
     <hr/>
     <edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>
-`
-
+`,
 })
 export class EditClientInputComponent {
+
     @Input()
-    csClient: ConfigurationClient;
+    public csClient: IConfigurationClient;
     @Output()
-    csClientChange: EventEmitter<ConfigurationClient> = new EventEmitter<ConfigurationClient>();
+    public csClientChange: EventEmitter<IConfigurationClient> = new EventEmitter<IConfigurationClient>();
+
+    @Output()
+    public csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Input()
+    public csExistingGroups: IConfigurationClientGroup[];
+    public existingEnviroments: string[];
     private _csIsValid: boolean;
     @Input()
-    get csIsValid(): boolean { return this._csIsValid; };
+    get csIsValid(): boolean { return this._csIsValid; }
     set csIsValid(value: boolean) {
         this._csIsValid = value;
         this.csIsValidChange.emit(value);
     }
-    @Output()
-    csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+    private _csAllClient: IConfigurationClient[];
     @Input()
-    csExistingGroups: ConfigurationClientGroup[]
-    existingEnviroments: string[]
-    
-    private _csAllClient : ConfigurationClient[]
-    @Input()
-    set csAllClient(value: ConfigurationClient[]) {
+    set csAllClient(value: IConfigurationClient[]) {
         this._csAllClient = value;
         if (value) {
-            this.existingEnviroments = this.toDistinct(value.map(item => item.enviroment));
+            this.existingEnviroments = this.toDistinct(value.map((item) => item.enviroment));
         }
-    };
+    }
 
     constructor() {
-        this.csExistingGroups = new Array<ConfigurationClientGroup>();
+        this.csExistingGroups = new Array<IConfigurationClientGroup>();
         this.existingEnviroments = new Array<string>();
     }
 
     private toDistinct(values: string[]) {
-        var set = new Object();
+        const set = new Object();
         values.forEach((value) => {
             set[value] = 1;
-        })
-        var keys = Object.keys(set);
-        return keys.filter((value)=> value !== "null")
+        });
+        const keys = Object.keys(set);
+        return keys.filter((value) => value !== "null");
     }
 }

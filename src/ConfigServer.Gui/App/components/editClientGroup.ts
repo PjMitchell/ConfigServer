@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-import { Router, ActivatedRoute,  } from '@angular/router';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     template: `
@@ -14,30 +14,30 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
                <button id="save-btn" type="button" class="btn btn-success" [disabled]="isDisabled" (click)="save()">Save</button>
             </div>
         </div>
-`
+`,
 })
 export class EditClientGroupComponent implements OnInit {
-    group: ConfigurationClientGroup;
-    groupId: string;
-    isDisabled: boolean;
+    public group: IConfigurationClientGroup;
+    public groupId: string;
+    public isDisabled: boolean;
     constructor(private clientGroupDataService: ConfigurationClientGroupDataService, private route: ActivatedRoute, private router: Router) {
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.route.params.forEach((value) => {
             this.groupId = value['groupId'];
             this.clientGroupDataService.getClientGroup(this.groupId)
-                .then(returnedClientGroup => this.group = returnedClientGroup);
+                .then((returnedClientGroup) => this.group = returnedClientGroup);
         });
     }
-    
-    save(): void {
+
+    public save(): void {
         this.isDisabled = true;
         this.clientGroupDataService.postClientGroup(this.group)
             .then(() => this.back());
     }
-    
-    back() {
+
+    public back() {
         this.router.navigate(['/']);
     }
 }

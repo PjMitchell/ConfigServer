@@ -1,9 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-import { Group } from '../interfaces/configurationSetDefintion';
-import { Router,ActivatedRoute } from '@angular/router';
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     template: `
@@ -15,7 +14,7 @@ import { Router,ActivatedRoute } from '@angular/router';
                     <h3>Group: {{group.name}}</h3>
                     <h4>Id: {{group.groupId}}</h4>
                 </div>
-            </div>               
+            </div>
             <hr />
             <div class="row">
                 <div class="col-sm-6 col-md-4"  *ngFor="let client of clients">
@@ -30,50 +29,50 @@ import { Router,ActivatedRoute } from '@angular/router';
                 </div>
             </div>
             <button type="button" class="btn btn-primary" (click)="back()">Back</button>
-`
+`,
 })
-export class GroupClientsComponent  implements OnInit{
-    groupId : string;
-    isSpecifiedGroup : boolean = false;
-    clients : ConfigurationClient[];
-    group : ConfigurationClientGroup;
-    constructor(private clientDataService: ConfigurationClientGroupDataService, private router: Router,private route: ActivatedRoute ) {
-        this.clients = new Array<ConfigurationClient>();
+export class GroupClientsComponent  implements OnInit {
+    public groupId: string;
+    public isSpecifiedGroup: boolean = false;
+    public clients: IConfigurationClient[];
+    public group: IConfigurationClientGroup;
+    constructor(private clientDataService: ConfigurationClientGroupDataService, private router: Router, private route: ActivatedRoute ) {
+        this.clients = new Array<IConfigurationClient>();
         this.group = {
             groupId : '',
             name: 'loading...',
-            imagePath: ''
+            imagePath: '',
         };
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.route.params.forEach((value) => {
             this.groupId = value['groupId'];
         });
-        if(!this.groupId) {
-            this.clientDataService.getClientForGroup().then((result)=> { this.clients = result; });
+        if (!this.groupId) {
+            this.clientDataService.getClientForGroup().then((result) => { this.clients = result; });
             this.isSpecifiedGroup = false;
             this.group = {
                         groupId : '',
                         name: 'No group',
-                        imagePath: ''
+                        imagePath: '',
             };
         } else {
             this.isSpecifiedGroup = true;
-            this.clientDataService.getClientForGroup(this.groupId).then((result)=> { this.clients = result; });
-            this.clientDataService.getClientGroup(this.groupId).then((result)=> { this.group = result; });            
+            this.clientDataService.getClientForGroup(this.groupId).then((result) => { this.clients = result; });
+            this.clientDataService.getClientGroup(this.groupId).then((result) => { this.group = result; });
         }
     }
 
-    goToClient(clientId: string) {
+    public goToClient(clientId: string) {
         this.router.navigate(['/client', clientId]);
     }
 
-    editClient(clientId: string) {
+    public editClient(clientId: string) {
         this.router.navigate(['/editClient', clientId]);
     }
 
-    back() {
+    public back() {
         this.router.navigate(['/']);
     }
 }

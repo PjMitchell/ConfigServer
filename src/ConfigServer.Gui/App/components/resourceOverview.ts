@@ -1,6 +1,6 @@
-﻿import { Component, Input, Output, EventEmitter} from '@angular/core';
-import { ResourceInfo } from '../interfaces/resourceInfo';
+﻿import { Component, EventEmitter, Input, Output} from '@angular/core';
 import { ResourceDataService } from '../dataservices/resource-data.service';
+import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
@@ -15,35 +15,35 @@ import { ResourceDataService } from '../dataservices/resource-data.service';
             </div>
         </div>
         <hr />
-        <div class="row">        
+        <div class="row">
             <resource-file-uploader [csClientId]="clientId" (onUpload)="onfileUploaded($event)" class="col-sm-6 col-md-4"> </resource-file-uploader>
-        </div>        
-`
+        </div>
+`,
 })
 export class ResourceOverviewComponent {
     @Input('csResources')
-    resources: ResourceInfo[];
+    public resources: IResourceInfo[];
     @Input('csClientId')
-    clientId: string;
+    public clientId: string;
     @Output('onResourcesChanged')
-    onResourcesChanged: EventEmitter<any> = new EventEmitter<any>();
+    public onResourcesChanged: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(private dataService: ResourceDataService) {
 
     }
-    downloadResource(file: string) {
+    public downloadResource(file: string) {
         window.open('resource/' + this.clientId + '/' + file);
     }
 
-    delete(file: string) {
-        var result = confirm('Are you sure you want to delete ' + file + '?');
+    public delete(file: string) {
+        const result = confirm('Are you sure you want to delete ' + file + '?');
         if (!result) {
-            return
+            return;
         }
         this.dataService.deleteResource(this.clientId, file).then(() => this.onResourcesChanged.emit());
     }
 
-    onfileUploaded() {
+    public onfileUploaded() {
         this.onResourcesChanged.emit();
     }
 }

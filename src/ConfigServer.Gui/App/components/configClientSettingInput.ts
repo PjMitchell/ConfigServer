@@ -1,7 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationClientSetting } from '../interfaces/configurationClientSetting';
-
-
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
 
 @Component({
     selector: 'edit-clientsetting-input',
@@ -31,37 +29,36 @@ import { ConfigurationClientSetting } from '../interfaces/configurationClientSet
         </div>
         <h4 class="errorMessage" *ngIf="!csIsValid">Duplicate Keys</h4>
     <div>
-`
-
+`,
 })
 export class EditClientSettingInputComponent {
     @Input()
-    csIsValid: boolean;
+    public csIsValid: boolean;
     @Output()
-    csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    public csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input()
-    csSettings: ConfigurationClientSetting[];
+    public csSettings: IConfigurationClientSetting[];
 
     constructor() {
         this.csIsValid = true;
-        this.csSettings = new Array<ConfigurationClientSetting>();
+        this.csSettings = new Array<IConfigurationClientSetting>();
     }
 
-    onKeyChange() {
+    public onKeyChange() {
         this.checkIsValid();
     }
 
-    add() {
-        var newItem: ConfigurationClientSetting = {
+    public add() {
+        const newItem: IConfigurationClientSetting = {
             key: 'key',
-            value : 'value'
-        }
+            value : 'value',
+        };
         this.csSettings.push(newItem);
         this.checkIsValid();
     }
 
-    remove(item: ConfigurationClientSetting) {
-        var index = this.csSettings.indexOf(item);
+    public remove(item: IConfigurationClientSetting) {
+        const index = this.csSettings.indexOf(item);
         this.csSettings.splice(index, 1);
         this.checkIsValid();
     }
@@ -72,19 +69,17 @@ export class EditClientSettingInputComponent {
     }
 
     private hasDuplicates() {
-        var set = new Object();
-        var result = false;
+        const set = new Object();
+        let result = false;
         this.csSettings.forEach((value) => {
-            var key = value.key.toUpperCase()
-            var count = set[key];
+            const key = value.key.toUpperCase();
+            const count = set[key];
             if (count) {
                 result = true;
             } else {
                 set[key] = 1;
             }
-        })
+        });
         return result;
     }
-
-
 }

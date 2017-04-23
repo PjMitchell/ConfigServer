@@ -1,8 +1,8 @@
-﻿import { Http } from '@angular/http';
-import { Injectable } from '@angular/core';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-import { ConfigurationClient } from '../interfaces/configurationClient';
+﻿import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Injectable()
 export class ConfigurationClientGroupDataService {
@@ -10,39 +10,39 @@ export class ConfigurationClientGroupDataService {
 
     constructor(private http: Http) { }
 
-    getClientGroups(): Promise<ConfigurationClientGroup[]> {
+    public getClientGroups(): Promise<IConfigurationClientGroup[]> {
         return this.http.get(this.clientGroupsUrl)
             .toPromise()
-            .then(response => response.json() as ConfigurationClientGroup[])
+            .then((response) => response.json() as IConfigurationClientGroup[])
             .catch(this.handleError);
     }
 
-    getClientGroup(clientGroupId: string): Promise<ConfigurationClientGroup> {
+    public getClientGroup(clientGroupId: string): Promise<IConfigurationClientGroup> {
         return this.http.get(this.clientGroupsUrl + '/' + clientGroupId)
             .toPromise()
-            .then(response => response.json() as ConfigurationClientGroup)
+            .then((response) => response.json() as IConfigurationClientGroup)
             .catch(this.handleError);
     }
 
-    getClientForGroup(clientGroupId?: string): Promise<ConfigurationClient[]> {
+    public getClientForGroup(clientGroupId?: string): Promise<IConfigurationClient[]> {
         let groupParam = clientGroupId;
-        if(!groupParam)
-            groupParam = 'None'
+        if (!groupParam) {
+            groupParam = 'None';
+        }
         return this.http.get(this.clientGroupsUrl + '/' + groupParam + '/Clients')
             .toPromise()
-            .then(response => response.json() as ConfigurationClient[])
+            .then((response) => response.json() as IConfigurationClient[])
             .catch(this.handleError);
     }
 
-    postClientGroup(clientGroup: ConfigurationClientGroup): Promise<boolean> {
+    public postClientGroup(clientGroup: IConfigurationClientGroup): Promise<boolean> {
         return this.http.post(this.clientGroupsUrl, clientGroup)
             .toPromise()
-            .then(response => response.ok)
+            .then((response) => response.ok)
             .catch(this.handleError);
     }
 
     private handleError(error: any): Promise<any> {
-        // console.error('An error occurred', error); 
         return Promise.reject(error.message || error);
     }
 }

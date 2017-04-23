@@ -1,15 +1,15 @@
-﻿import { HomePage } from '../pages/homepage';
+﻿import { browser, by, element } from 'protractor';
+import { Constants } from '../constants';
 import { EditGroupPage } from '../pages/editGroupPage';
-import { Constants } from '../constants'
-import { browser, element, by } from 'protractor'
+import { HomePage } from '../pages/homepage';
 
 describe('Given I am on the homepage', () => {
-    var homepage = new HomePage();
+    const homepage = new HomePage();
     beforeEach(() => {
         homepage.getPage();
     });
     describe('I Click On edit group', () => {
-        var editpage = new EditGroupPage();
+        const editpage = new EditGroupPage();
         beforeEach(() => {
             homepage.clickEditGroupButton(Constants.defaultGroupId);
         });
@@ -19,21 +19,21 @@ describe('Given I am on the homepage', () => {
                 .then(() => {
                     editpage.save();
                     done();
-                });     
+                });
         });
         it('Clicking save returns to home', () => {
             editpage.save();
             expect(browser.getCurrentUrl()).toEqual(Constants.angularPath('/'));
         });
         it('I can update name', (done) => {
-            var input = 'New Name';
+            const input = 'New Name';
             editpage.update(input)
                 .then(() => {
                     editpage.save();
-                    var groupPanel = homepage.groupPanelsById(Constants.defaultGroupId);
+                    const groupPanel = homepage.groupPanelsById(Constants.defaultGroupId);
                     expect(groupPanel.element(by.className('home-group-name')).getText()).toEqual(input);
                     done();
-                });            
+                });
         });
     });
 });

@@ -1,14 +1,10 @@
 ﻿import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-
-import { Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ConfigurationClientSetting } from '../interfaces/configurationClientSetting';
-
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-
-
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
 
 @Component({
     template: `
@@ -21,42 +17,42 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
                <button id="save-btn" [disabled]="isDisabled || !isValid" type="button" class="btn btn-success" (click)="create()">Create</button>
             </div>
         </div>
-`
+`,
 })
 export class CreateClientComponent {
-    client: ConfigurationClient;
-    clients: ConfigurationClient[];
-    groups: ConfigurationClientGroup[];
-    isValid: boolean = true;
-    isDisabled: boolean = false;
-    constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private router: Router) {
+    public client: IConfigurationClient;
+    public clients: IConfigurationClient[];
+    public groups: IConfigurationClientGroup[];
+    public isValid: boolean = true;
+    public isDisabled: boolean = false;
+    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService, private router: Router) {
         this.client = {
             clientId: '',
             name: '',
             group: '',
             enviroment: '',
             description: '',
-            settings: new Array<ConfigurationClientSetting>()
+            settings: new Array<IConfigurationClientSetting>(),
         };
     }
 
-    ngOnInit() {
+    public ngOnInit() {
        this.clientDataService.getClients()
-            .then(returnedClient => this.onAllClientsReturned(returnedClient));
-       this.clientGroupDataService.getClientGroups().then(grp => {this.groups = grp;})
+            .then((returnedClient) => this.onAllClientsReturned(returnedClient));
+       this.clientGroupDataService.getClientGroups().then((grp) => {this.groups = grp; });
     }
 
-    onAllClientsReturned(returnedClients: ConfigurationClient[]) {
+    public onAllClientsReturned(returnedClients: IConfigurationClient[]) {
         this.clients = returnedClients;
     }
 
-    create(): void {
-        this.isDisabled;
+    public create(): void {
+        this.isDisabled = true;
         this.clientDataService.postClient(this.client)
             .then(() => this.back());
     }
 
-    back() {
+    public back() {
         this.router.navigate(['/']);
     }
 }

@@ -1,12 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-
-import { Router, ActivatedRoute,  } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-
-
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
 @Component({
     template: `
@@ -19,43 +16,41 @@ import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup
                <button id="save-btn" type="button" class="btn btn-success" [disabled]="isDisabled || !isValid" (click)="save()">Save</button>
             </div>
         </div>
-`
+`,
 })
 export class EditClientComponent implements OnInit {
-    client: ConfigurationClient;
-    clients: ConfigurationClient[];
-    groups: ConfigurationClientGroup[];
-    clientId: string;
-    isDisabled: boolean = false;
-    isValid: boolean = true;
-    constructor(private clientDataService: ConfigurationClientDataService,private clientGroupDataService: ConfigurationClientGroupDataService, private route: ActivatedRoute, private router: Router) {
+    public client: IConfigurationClient;
+    public clients: IConfigurationClient[];
+    public groups: IConfigurationClientGroup[];
+    public clientId: string;
+    public isDisabled: boolean = false;
+    public isValid: boolean = true;
+    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService, private route: ActivatedRoute, private router: Router) {
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.route.params.forEach((value) => {
             this.clientId = value['clientId'];
             this.clientDataService.getClients()
-                .then(returnedClient => this.onAllClientsReturned(returnedClient));
+                .then((returnedClient) => this.onAllClientsReturned(returnedClient));
         });
-        this.clientGroupDataService.getClientGroups().then(grp => {this.groups = grp;})
+        this.clientGroupDataService.getClientGroups().then((grp) => {this.groups = grp; });
     }
 
-    onAllClientsReturned(returnedClients: ConfigurationClient[]) {
-        this.clients = returnedClients
+    public onAllClientsReturned(returnedClients: IConfigurationClient[]) {
+        this.clients = returnedClients;
         returnedClients.filter((value) => value.clientId === this.clientId).forEach((value) => {
             this.client = value;
         });
     }
 
-    save(): void {
+    public save(): void {
         this.isDisabled = true;
         this.clientDataService.postClient(this.client)
             .then(() => this.back());
     }
 
-
-
-    back() {
+    public back() {
         this.router.navigate(['/']);
     }
 }

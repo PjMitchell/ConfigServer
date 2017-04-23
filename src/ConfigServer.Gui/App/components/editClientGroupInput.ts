@@ -1,9 +1,8 @@
-﻿import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { ConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ResourceDataService } from '../dataservices/resource-data.service';
-import { ResourceInfo } from '../interfaces/resourceInfo';
+import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 import { IChildElement } from '../interfaces/htmlInterfaces';
-
+import { IResourceInfo } from '../interfaces/resourceInfo';
 
 @Component({
     selector: 'edit-clientgroup-input',
@@ -20,39 +19,38 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
             <img class="img-responsive" src="Resource/ClientGroupImages/{{image.name}}" />
         </div>
     </div>
-`
+`,
 
 })
 export class EditClientGroupInputComponent implements OnInit {
+    private static imagePath = 'ClientGroupImages';
     @Input()
-    csClientGroup: ConfigurationClientGroup;
+    public csClientGroup: IConfigurationClientGroup;
     @Output()
-    csClientGroupChange: EventEmitter<ConfigurationClientGroup> = new EventEmitter<ConfigurationClientGroup>();
+    public csClientGroupChange: EventEmitter<IConfigurationClientGroup> = new EventEmitter<IConfigurationClientGroup>();
     @ViewChild('input')
-    input: IChildElement<HTMLInputElement>;
+    public input: IChildElement<HTMLInputElement>;
     @ViewChild('form')
-    form: IChildElement<HTMLFormElement>;
-    fileName : string;
-    static imagePath = 'ClientGroupImages'; 
+    public form: IChildElement<HTMLFormElement>;
+    public images: IResourceInfo[];
+
     constructor(private resourceDataService: ResourceDataService) {
-        this.images = new Array<ResourceInfo>();
-    }    
+        this.images = new Array<IResourceInfo>();
+    }
 
-    images: ResourceInfo[];
-
-    ngOnInit() {
+    public ngOnInit() {
         this.updateImages();
     }
 
-    onImageClick(image: ResourceInfo) {
+    public onImageClick(image: IResourceInfo) {
         this.csClientGroup.imagePath = image.name;
     }
 
-    updateImages() {
+    public updateImages() {
         this.resourceDataService.getClientResourceInfo(EditClientGroupInputComponent.imagePath)
-            .then(info => this.images = info)
+            .then((info) => this.images = info);
     }
-    onImageUploaded(fileName: string) {
+    public onImageUploaded(fileName: string) {
         this.csClientGroup.imagePath = fileName;
         this.updateImages();
     }

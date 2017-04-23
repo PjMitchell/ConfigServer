@@ -1,6 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
-
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
 
 @Component({
     selector: 'config-property-item',
@@ -17,13 +16,13 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
         <collection-input *ngSwitchCase="'Collection'" [csDefinition]="csDefinition" [(csConfig)]="csConfig"></collection-input>
         <div *ngSwitchDefault>Not Acceptable</div>
     </div>
-`
+`,
 })
 export class ConfigurationPropertyInputComponent {
     @Input()
-    csDefinition: ConfigurationPropertyPayload;
+    public csDefinition: IConfigurationPropertyPayload;
     @Input()
-    csConfig: any;
+    public csConfig: any;
     @Output()
-    csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
 }
