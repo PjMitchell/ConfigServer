@@ -1,15 +1,12 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
 import { ResourceDataService } from '../dataservices/resource-data.service';
-
-import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigurationClient } from '../interfaces/configurationClient';
-import { ResourceInfo } from '../interfaces/resourceInfo';
-
-import { ConfigurationClientSetting } from '../interfaces/configurationClientSetting';
-import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
-
+import { IConfigurationClient } from '../interfaces/configurationClient';
+import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
+import { IConfigurationSetSummary } from '../interfaces/configurationSetSummary';
+import { IResourceInfo } from '../interfaces/resourceInfo';
 
 @Component({
     template: `
@@ -21,20 +18,20 @@ import { ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
         </div>
 
         <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)"></resource-overview>
- 
+
         <h3>ConfigurationSets</h3>
         <div class="break">
         </div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
         <button type="button" class="btn btn-primary" (click)="back()">Back</button>
-`
+`,
 })
 export class ClientOverviewComponent implements OnInit {
-    client: ConfigurationClient;
-    clientId: string;
-    configurationSets: ConfigurationSetSummary[];
-    resources: ResourceInfo[];
+    public client: IConfigurationClient;
+    public clientId: string;
+    public configurationSets: IConfigurationSetSummary[];
+    public resources: IResourceInfo[];
     constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private resourceDataService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
         this.clientId = '';
         this.client = {
@@ -43,28 +40,28 @@ export class ClientOverviewComponent implements OnInit {
             enviroment: '',
             description: '',
             group: '',
-            settings: new Array<ConfigurationClientSetting>()
-        }
-        this.configurationSets = new Array<ConfigurationSetSummary>()
-        this.resources = new Array<ResourceInfo>()
+            settings: new Array<IConfigurationClientSetting>(),
+        };
+        this.configurationSets = new Array<IConfigurationSetSummary>();
+        this.resources = new Array<IResourceInfo>();
     }
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.route.params.forEach((value) => {
             this.clientId = value['clientId'];
             this.clientDataService.getClient(this.clientId)
-                .then(returnedClient => this.client = returnedClient);
+                .then((returnedClient) => this.client = returnedClient);
             this.configSetDataService.getConfigurationSets()
-                .then(returnedConfigSet => this.configurationSets = returnedConfigSet);
+                .then((returnedConfigSet) => this.configurationSets = returnedConfigSet);
             this.resourceDataService.getClientResourceInfo(this.clientId)
-                .then(returnedResources => this.resources = returnedResources);
+                .then((returnedResources) => this.resources = returnedResources);
         });
     }
-    onResourcesChanged() {
+    public onResourcesChanged() {
         this.resourceDataService.getClientResourceInfo(this.clientId)
-            .then(returnedResources => this.resources = returnedResources);
+            .then((returnedResources) => this.resources = returnedResources);
     }
-    back() {
+    public back() {
         if (this.client.group) {
             this.router.navigate(['/group', this.client.group]);
         } else {

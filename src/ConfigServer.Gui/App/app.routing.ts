@@ -1,16 +1,13 @@
 ﻿import { ModuleWithProviders } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './components/home';
-import { ClientOverviewComponent } from './components/clientOverview';
+import { RouterModule, Routes } from '@angular/router';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
+import { ClientOverviewComponent } from './components/clientOverview';
 import { CreateClientComponent } from './components/createClient';
-import { GroupClientsComponent } from './components/groupClients';
-
-import { EditClientComponent } from './components/editClient';
 import { CreateClientGroupComponent } from './components/createClientGroup';
+import { EditClientComponent } from './components/editClient';
 import { EditClientGroupComponent } from './components/editClientGroup';
-
-
+import { GroupClientsComponent } from './components/groupClients';
+import { HomeComponent } from './components/home';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
@@ -21,7 +18,7 @@ const appRoutes: Routes = [
     { path: 'client/:clientId', component: ClientOverviewComponent },
     { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigShellComponent },
     { path: 'group', component: GroupClientsComponent },
-    { path: 'group/:groupId', component: GroupClientsComponent }
+    { path: 'group/:groupId', component: GroupClientsComponent },
 ];
 
 export const appRoutingProviders: any[] = [

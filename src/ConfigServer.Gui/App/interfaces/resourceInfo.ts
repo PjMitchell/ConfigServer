@@ -1,3 +1,3 @@
-﻿export interface ResourceInfo {
+﻿export interface IResourceInfo {
     name: string;
 }

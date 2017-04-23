@@ -1,6 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter} from '@angular/core';
-import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
-
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
 
 @Component({
     selector: 'config-property',
@@ -11,21 +10,20 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
                 <config-property-item [csDefinition]="csDefinition" [(csConfig)]="csConfig">
                 </config-property-item>
             </div>
-`
-})
+`})
 export class ConfigurationPropertyComponent {
-    _csDefinition : ConfigurationPropertyPayload;
     @Input()
-    get csDefinition() : ConfigurationPropertyPayload { return this._csDefinition;};
-    set csDefinition(value : ConfigurationPropertyPayload) {
+    public csConfig: any;
+    @Output()
+    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    public isCollection: boolean;
+
+    private _csDefinition: IConfigurationPropertyPayload;
+    @Input()
+    get csDefinition(): IConfigurationPropertyPayload { return this._csDefinition; }
+    set csDefinition(value: IConfigurationPropertyPayload) {
         this._csDefinition = value;
         this.isCollection = this._csDefinition.propertyType === 'Collection';
     }
-    @Input()
-    csConfig: any;
-    @Output()
-    csConfigChange: EventEmitter<any> = new EventEmitter<any>();
-
-    isCollection: boolean;
 
 }

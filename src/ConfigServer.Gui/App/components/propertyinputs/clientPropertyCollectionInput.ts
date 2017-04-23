@@ -1,6 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetDefintion';
-
+﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
 
 @Component({
     selector: 'collection-input',
@@ -22,37 +21,36 @@ import { ConfigurationPropertyPayload } from '../../interfaces/configurationSetD
         </td>
     </tr>
 </table>
-`
-
+`,
 })
 export class ConfigurationPropertyCollectionInputComponent implements OnInit {
     @Input()
-    csDefinition: ConfigurationPropertyPayload;
+    public csDefinition: IConfigurationPropertyPayload;
     @Input()
-    csConfig: any;
+    public csConfig: any;
     @Output()
-    csConfigChange: EventEmitter<any> = new EventEmitter<any>();
-    collection: any[];
+    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    public collection: any[];
 
-    ngOnInit() {
+    public ngOnInit() {
         this.collection = this.csConfig[this.csDefinition.propertyName];
     }
 
-    add() {
-        var newItem = new Object();
-        var keys = Object.keys(this.csDefinition.childProperty);
+    public add() {
+        const newItem = new Object();
+        const keys = Object.keys(this.csDefinition.childProperty);
         keys.forEach((value) => {
             newItem[value] = '';
-        })
+        });
         this.collection.push(newItem);
     }
 
-    remove(item: any) {
-        var index = this.collection.indexOf(item);
+    public remove(item: any) {
+        const index = this.collection.indexOf(item);
         this.collection.splice(index, 1);
     }
 
-    customTrackBy(index: number, obj: any): any {
+    public customTrackBy(index: number, obj: any): any {
         return index;
     }
 }

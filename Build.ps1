@@ -65,6 +65,13 @@ function ExecuteGulpTasks
 		Write-Error "gulp asset package failed";
 		exit 1;
 	}
+
+	Write-Host "gulp TsLint"
+	& "gulp" TsLint
+	if ($LastExitCode -ne 0) {
+		Write-Error "gulp tslint failed";
+		exit 1;
+	}
 	Pop-Location
 }
 

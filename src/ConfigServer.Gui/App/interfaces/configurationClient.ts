@@ -1,10 +1,9 @@
-﻿import { ConfigurationClientSetting} from './configurationClientSetting'
-export interface ConfigurationClient
-{
+﻿import { IConfigurationClientSetting} from './configurationClientSetting';
+export interface IConfigurationClient {
     clientId: string;
     name: string;
     description: string;
     group: string;
-    enviroment: string
-    settings: ConfigurationClientSetting[]
+    enviroment: string;
+    settings: IConfigurationClientSetting[];
 }

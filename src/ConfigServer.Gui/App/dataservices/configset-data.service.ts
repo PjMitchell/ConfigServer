@@ -1,35 +1,32 @@
-﻿import { Headers, Http, Response } from '@angular/http';
-import { Injectable } from '@angular/core';
-import { ConfigurationModelSummary, ConfigurationSetSummary } from '../interfaces/configurationSetSummary';
-import { ConfigurationSetModelPayload } from '../interfaces/configurationSetDefintion';
+﻿import { Injectable } from '@angular/core';
+import { Headers, Http, Response } from '@angular/http';
+import { IConfigurationSetModelPayload } from '../interfaces/configurationSetDefintion';
+import {  IConfigurationSetSummary } from '../interfaces/configurationSetSummary';
 
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
-export class ConfigurationSetDataService 
-{
+export class ConfigurationSetDataService {
     private configSetUrl = 'ConfigurationSet';  // URL to web api
     private configSetModelUrl = 'ConfigurationSet/Model/';  // URL to web api
 
-
     constructor(private http: Http) { }
 
-    getConfigurationSets(): Promise<ConfigurationSetSummary[]> {
+    public getConfigurationSets(): Promise<IConfigurationSetSummary[]> {
         return this.http.get(this.configSetUrl)
             .toPromise()
-            .then(response => response.json() as ConfigurationSetSummary[])
+            .then((response) => response.json() as IConfigurationSetSummary[])
             .catch(this.handleError);
     }
 
-    getConfigurationSetModel(configurationSetName: string, clientId : string): Promise<ConfigurationSetModelPayload> {
+    public getConfigurationSetModel(configurationSetName: string, clientId: string): Promise<IConfigurationSetModelPayload> {
         return this.http.get(this.configSetModelUrl + clientId + '/' + configurationSetName)
             .toPromise()
-            .then(response => response.json() as ConfigurationSetModelPayload)
+            .then((response) => response.json() as IConfigurationSetModelPayload)
             .catch(this.handleError);
     }
 
     private handleError(error: any): Promise<any> {
-        //console.error('An error occurred', error); 
         return Promise.reject(error.message || error);
     }
 }

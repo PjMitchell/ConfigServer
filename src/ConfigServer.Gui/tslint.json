@@ -1,0 +1,16 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "quotemark": [ "single" ],
+        "max-line-length": [ 560 ],
+        "object-literal-sort-keys": false,
+        "no-string-literal": false,
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore"
+        ]
+
+    }
+}

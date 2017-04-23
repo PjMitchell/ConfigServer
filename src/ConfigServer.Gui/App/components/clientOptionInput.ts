@@ -1,5 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ConfigurationModelPayload } from '../interfaces/configurationSetDefintion';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IConfigurationModelPayload } from '../interfaces/configurationModelPayload';
 
 @Component({
     selector: 'config-option-input',
@@ -21,31 +21,31 @@ import { ConfigurationModelPayload } from '../interfaces/configurationSetDefinti
                 </td>
             </tr>
         </table>
-`
+`,
 })
 export class OptionInputComponent {
     @Input()
-    csModel: ConfigurationModelPayload;
+    public csModel: IConfigurationModelPayload;
     @Input()
-    csCollection: any[];
+    public csCollection: any[];
     @Output()
-    csCollectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+    public csCollectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
-    add() {
-        var newItem = new Object();
-        var keys = Object.keys(this.csModel.property);
+    public add() {
+        const newItem = new Object();
+        const keys = Object.keys(this.csModel.property);
         keys.forEach((value) => {
             newItem[value] = '';
-        })
+        });
         this.csCollection.push(newItem);
     }
 
-    remove(item: any) {
-        var index = this.csCollection.indexOf(item);
+    public remove(item: any) {
+        const index = this.csCollection.indexOf(item);
         this.csCollection.splice(index, 1);
     }
 
-    customTrackBy(index: number, obj: any): any {
+    public customTrackBy(index: number, obj: any): any {
         return index;
     }
 }
