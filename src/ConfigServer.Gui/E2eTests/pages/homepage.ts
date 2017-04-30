@@ -3,28 +3,28 @@ import { Constants } from '../constants';
 
 export class HomePage {
 
-    public getPage(): void {
-        browser.get(Constants.angularPath('/'));
+    public getPage() {
+        return browser.get(Constants.angularPath('/'));
     }
 
     public clickAddClientButton() {
-        element(by.id('createClientBtn')).click();
+        return element(by.id('createClientBtn')).click();
     }
 
     public clickAddGroupButton() {
-        element(by.id('createGroupBtn')).click();
+        return element(by.id('createGroupBtn')).click();
     }
 
     public clickManageGroupButton(id: string) {
-        element(by.id('manage-group-btn-' + id)).click();
+        return element(by.id('manage-group-btn-' + id)).click();
     }
 
     public clickManageClientsWithoutGroupButton() {
-        element(by.id('manage-group-btn')).click();
+        return element(by.id('manage-group-btn')).click();
     }
 
     public clickEditGroupButton(id: string) {
-        element(by.id('edit-group-btn-' + id)).click();
+        return element(by.id('edit-group-btn-' + id)).click();
     }
 
     public groupPanels() {

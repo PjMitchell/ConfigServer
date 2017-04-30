@@ -8,6 +8,7 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
 @Component({
     template: `
         <h2>Edit client</h2>
+        <h4 id="client-id" *ngIf="client">{{client.clientId}}</h4>
         <div *ngIf="client && groups">
             <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [(csIsValid)]="isValid"></edit-client-input>
             <hr />

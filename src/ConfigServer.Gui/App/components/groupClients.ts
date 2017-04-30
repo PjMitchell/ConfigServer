@@ -8,23 +8,23 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
     template: `
             <div class="row">
                 <div class="col-sm-6 col-md-4">
-                    <div *ngIf="group.imagePath"><img class="img-responsive" src="Resource/ClientGroupImages/{{group.imagePath}}" /></div>
+                    <div *ngIf="group.imagePath"><img id="group-image" class="img-responsive" src="Resource/ClientGroupImages/{{group.imagePath}}" /></div>
                 </div>
                 <div class="col-sm-6 col-md-8">
-                    <h3>Group: {{group.name}}</h3>
-                    <h4>Id: {{group.groupId}}</h4>
+                    <h3 id="group-title">Group: {{group.name}}</h3>
+                    <h4 id="group-id">Id: {{group.groupId}}</h4>
                 </div>
             </div>
             <hr />
             <div class="row">
-                <div class="col-sm-6 col-md-4"  *ngFor="let client of clients">
+                <div id="client-panel-{{client.clientId}}" class="col-sm-6 col-md-4 client-panel"  *ngFor="let client of clients">
                     <div  class="thumbnail">
-                        <h3>{{client.name}}</h3>
-                        <p>Id: {{client.clientId}}</p>
-                        <p>{{client.enviroment}}</p>
-                        <p>{{client.description}}</p>
-                        <button type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
-                        <button type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
+                        <h3 class="client-name">{{client.name}}</h3>
+                        <p class="client-id">Id: {{client.clientId}}</p>
+                        <p class="client-enviroment">{{client.enviroment}}</p>
+                        <p class="client-description">{{client.description}}</p>
+                        <button id="manage-client-btn-{{client.clientId}}" type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
+                        <button id="edit-client-btn-{{client.clientId}}" type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
                     </div>
                 </div>
             </div>

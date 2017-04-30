@@ -8,24 +8,24 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <h4>Name:</h4>
-            <input [(ngModel)]="csClient.name" type="text" class="form-control">
+            <input id="client-name-input" [(ngModel)]="csClient.name" type="text" class="form-control">
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Group:</h4>
-            <select class="form-control" [(ngModel)]="csClient.group">
+            <select id="client-group-input" class="form-control" [(ngModel)]="csClient.group">
                 <option *ngFor="let p of csExistingGroups" [value]="p.groupId">{{p.name}}</option>
             </select>
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Enviroment:</h4>
-            <input [(ngModel)]="csClient.enviroment" type="text" list="enviroments" class="form-control">
+            <input id="client-enviroment-input" [(ngModel)]="csClient.enviroment" type="text" list="enviroments" class="form-control">
             <datalist id="enviroments">
                 <option *ngFor="let existingEnviroment of existingEnviroments" value="{{existingEnviroment}}">
             </datalist>
         </div>
         <div class="col-sm-6 col-md-4">
             <h4>Description:</h4>
-            <input [(ngModel)]="csClient.description" type="text" class="form-control">
+            <input id="client-description-input" [(ngModel)]="csClient.description" type="text" class="form-control">
         </div>
     </div>
     <hr/>
