@@ -6,23 +6,23 @@ import { IConfigurationClientSetting } from '../interfaces/configurationClientSe
     template: `
     <div class="row">
         <div class="col-sm-12 col-md-6">
-            <table>
+            <table id="clientsetting-input">
                 <tr>
                     <th>Key</th>
                     <th>Value</th>
                     <th class="column-btn">
-                        <button type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
+                        <button id="clientsetting-input-add-btn" type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
                     </th>
                 </tr>
-                <tr *ngFor="let item of csSettings">
+                <tr *ngFor="let item of csSettings" class="clientsetting-row">
                     <td>
-                        <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()" class="form-control">
+                        <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()" class="form-control clientsetting-row-key">
                     </td>
                     <td>
-                        <input [(ngModel)]="item.value" type="text"  class="form-control">
+                        <input [(ngModel)]="item.value" type="text"  class="form-control clientsetting-row-value">
                     </td>
                     <td class="column-btn">
-                        <button type="button" class="btn btn-danger" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                        <button type="button" class="btn btn-danger clientsetting-row-delete" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
                     </td>
                 </tr>
             </table>

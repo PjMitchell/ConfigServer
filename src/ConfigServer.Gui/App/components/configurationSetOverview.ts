@@ -5,11 +5,11 @@ import { IConfigurationSetSummary } from '../interfaces/configurationSetSummary'
 @Component({
     selector: 'configSet-overview',
     template: `
-        <div class="group">
+        <div id="configset-overview-{{configurationSet.configurationSetId}}" class="group configset-overview">
             <div class="row">
                 <div class="col-sm-6 col-md-8" >
-                    <h3>{{configurationSet.name}}</h3>
-                    <p>Description: {{configurationSet.description}}</p>
+                    <h3 class="configset-name">{{configurationSet.name}}</h3>
+                    <p class="configset-description">Description: {{configurationSet.description}}</p>
                 </div>
             </div>
             <div class="row">

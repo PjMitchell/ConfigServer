@@ -6,12 +6,12 @@ import { IConfigurationModelSummary } from '../interfaces/configurationModelSumm
 @Component({
     selector: 'config-overview',
     template: `
-            <div class="item">
-                <h4>{{config.displayName}}</h4>
-                <p>Description: {{config.description}}</p>
+            <div id="config-{{configurationSetId}}-{{config.id}}" class="item">
+                <h4 class="config-name">{{config.displayName}}</h4>
+                <p class="config-description">Description: {{config.description}}</p>
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
                 <button type="button" class="btn btn-primary" (click)="downloadConfig(configurationSetId,config.id)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
-                <button type="button" class="btn btn-primary" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
+                <button type="button" class="btn btn-primary config-edit-btn" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
             </div>
 `,
 })

@@ -15,7 +15,7 @@ describe('Given I am on the homepage', () => {
         });
         afterEach((done) => {
             homepage.clickEditGroupButton(Constants.defaultGroupId);
-            editpage.update('My Apps')
+            editpage.editElement.update('My Apps')
                 .then(() => {
                     editpage.save();
                     done();
@@ -27,7 +27,7 @@ describe('Given I am on the homepage', () => {
         });
         it('I can update name', (done) => {
             const input = 'New Name';
-            editpage.update(input)
+            editpage.editElement.update(input)
                 .then(() => {
                     editpage.save();
                     const groupPanel = homepage.groupPanelsById(Constants.defaultGroupId);

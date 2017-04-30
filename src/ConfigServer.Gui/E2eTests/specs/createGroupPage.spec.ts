@@ -15,8 +15,8 @@ describe('Given I am on the homepage', () => {
         });
         it('I can add group', (done) => {
             const input = 'New Name';
-            createPage.clickImage(Constants.defaultImage);
-            createPage.update(input)
+            createPage.editElement.clickImage(Constants.defaultImage);
+            createPage.editElement.update(input)
                 .then(() => {
                     createPage.getGroupId()
                         .then((s) => {

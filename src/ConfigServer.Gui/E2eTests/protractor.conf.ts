@@ -13,5 +13,5 @@ export let config = {
     showColors: true, // Use colors in the command line report.
   },
   specs : ['specs/*.spec.js'],
-
+  // specs: ['specs/manageClientPage.spec.js'],
 };

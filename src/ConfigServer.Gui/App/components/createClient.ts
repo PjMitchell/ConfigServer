@@ -2,6 +2,7 @@
 import { Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
+import { GuidGenerator } from '../dataservices/guid-generator';
 import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
@@ -9,6 +10,7 @@ import { IConfigurationClientSetting } from '../interfaces/configurationClientSe
 @Component({
     template: `
         <h2>Create client</h2>
+        <h4 id="client-id">{{client.clientId}}</h4>
         <div>
             <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [(csIsValid)]="isValid"></edit-client-input>
             <hr />
@@ -25,7 +27,7 @@ export class CreateClientComponent {
     public groups: IConfigurationClientGroup[];
     public isValid: boolean = true;
     public isDisabled: boolean = false;
-    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService, private guidGenerator: GuidGenerator, private router: Router) {
         this.client = {
             clientId: '',
             name: '',
@@ -37,9 +39,15 @@ export class CreateClientComponent {
     }
 
     public ngOnInit() {
-       this.clientDataService.getClients()
+        this.isDisabled = true;
+        this.clientDataService.getClients()
             .then((returnedClient) => this.onAllClientsReturned(returnedClient));
-       this.clientGroupDataService.getClientGroups().then((grp) => {this.groups = grp; });
+        this.clientGroupDataService.getClientGroups().then((grp) => {this.groups = grp; });
+        this.guidGenerator.getGuid()
+            .then((g) => {
+                this.client.clientId = g;
+                this.isDisabled = false;
+            });
     }
 
     public onAllClientsReturned(returnedClients: IConfigurationClient[]) {

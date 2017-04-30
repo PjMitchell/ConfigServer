@@ -11,10 +11,10 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     template: `
         <div *ngIf="client">
-            <h2>{{client.name}}</h2>
-                <p>Id: {{client.clientId}}</p>
-                <p>{{client.enviroment}}</p>
-                <p>{{client.description}}</p>
+            <h2 id="client-name">{{client.name}}</h2>
+            <p id="client-id">Id: {{client.clientId}}</p>
+            <p id="client-env">{{client.enviroment}}</p>
+            <p id="client-desc">{{client.description}}</p>
         </div>
 
         <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)"></resource-overview>
