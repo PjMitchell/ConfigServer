@@ -108,7 +108,9 @@ namespace ConfigServer.TextProvider.Core
         public async Task UpdateConfigAsync(ConfigInstance config)
         {
             var configId = config.ConfigType.Name;
-            var configPath = GetCacheKey(configId, config.ConfigurationIdentity.Client.ClientId);
+            var configPath = config.IsCollection
+                ? GetCollectionConfigCacheKey(configId, config.ConfigurationIdentity.Client.ClientId)
+                : GetCacheKey(configId, config.ConfigurationIdentity.Client.ClientId);
             var configText = JsonConvert.SerializeObject(config.GetConfiguration(), jsonSerializerSettings);
             await storageConnector.SetConfigFileAsync(configId, config.ConfigurationIdentity.Client.ClientId, configText);
             memoryCache.Set<string>(cachePrefix + configPath, configText, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));            
