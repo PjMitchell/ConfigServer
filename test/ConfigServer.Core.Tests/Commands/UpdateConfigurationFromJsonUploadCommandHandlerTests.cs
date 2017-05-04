@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Tests.Commands
 {
     public class UpdateConfigurationFromJsonUploadCommandHandlerTests
     {
-        private readonly IConfigurationSetRegistry registry;
+        private readonly ConfigurationSetRegistry registry;
         private readonly Mock<IConfigurationService> configurationService;
         private readonly Mock<IConfigRepository> configRepository;
         private readonly Mock<IConfigurationValidator> configurationValidator;
@@ -25,7 +25,7 @@ namespace ConfigServer.Core.Tests.Commands
 
         public UpdateConfigurationFromJsonUploadCommandHandlerTests()
         {
-            expectedIdentity = new ConfigurationIdentity(new ConfigurationClient(clientId));
+            expectedIdentity = new ConfigurationIdentity(new ConfigurationClient(clientId), new Version(1, 0));
             var configSet = new SampleConfigSet();
             registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(configSet.BuildConfigurationSetModel());

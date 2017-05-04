@@ -25,7 +25,7 @@ namespace ConfigServer.Core.Tests.Commands
 
         public UpdateConfigurationFromEditorCommandHandlerTests()
         {
-            command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(new ConfigurationClient(clientId)), typeof(SampleConfig), "{}");
+            command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(new ConfigurationClient(clientId), new Version(1, 0)), typeof(SampleConfig), "{}");
             var configSetModel = new ConfigurationSetModel<SampleConfigSet>();
             configSetModel.GetOrInitialize(set => set.SampleConfig);
             model = configSetModel;

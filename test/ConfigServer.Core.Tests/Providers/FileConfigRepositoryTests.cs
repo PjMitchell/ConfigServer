@@ -24,15 +24,15 @@ namespace ConfigServer.Core.Tests
         {
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             var option = new FileConfigRespositoryBuilderOptions { ConfigStorePath = testdirectory };
-            target = new TextStorageConfigurationRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())),new FileStorageConnector(option),option);
-            clientTarget = new TextStorageConfigurationClientRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())), new FileStorageConnector(option), option);
+            target = new TextStorageConfigurationRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())),new FileStorageConnector(option));
+            clientTarget = new TextStorageConfigurationClientRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())), new FileStorageConnector(option));
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
                 Name = "Client 1",
                 Description = "A description Client"
             };
-            configId = new ConfigurationIdentity(client);
+            configId = new ConfigurationIdentity(client, new Version(1, 0));
             clientTarget.UpdateClientAsync(client).Wait();
         }
 
@@ -120,7 +120,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveCollectionAsync()
         {
-            var configId = new ConfigurationIdentity(new ConfigurationClient("3E37AC18-A00F-47A5-B84E-C79E0823F6D4"));
+            var configId = new ConfigurationIdentity(new ConfigurationClient("3E37AC18-A00F-47A5-B84E-C79E0823F6D4"), new Version(1, 0));
             const int testValue = 23;
             const int testValue2 = 24;
             var values = new[]
@@ -143,7 +143,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public async Task CanSaveAndRetriveCollectionWithTypeAsync()
         {
-            var configId = new ConfigurationIdentity(new ConfigurationClient("3E37AC18-A00F-47A5-B84E-C79E0823F6D4"));
+            var configId = new ConfigurationIdentity(new ConfigurationClient("3E37AC18-A00F-47A5-B84E-C79E0823F6D4"), new Version(1, 0));
             const int testValue = 23;
             const int testValue2 = 24;
             var values = new[]

@@ -8,7 +8,7 @@ namespace ConfigServer.AzureTableStorageProvider
     /// <summary>
     /// Azure Table Storage Repository Builder Options
     /// </summary>
-    public class AzureTableStorageRepositoryBuilderOptions : ITextStorageSetting
+    public class AzureTableStorageRepositoryBuilderOptions
     {
         /// <summary>
         /// Azure storage base url
@@ -25,10 +25,5 @@ namespace ConfigServer.AzureTableStorageProvider
         /// Default ConfigServerStore
         /// </summary>
         public string Table { get; set; } = "ConfigServerStore";
-
-        /// <summary>
-        /// Json Serialization settings
-        /// </summary>
-        public JsonSerializerSettings JsonSerializerSettings { get; set; } = new JsonSerializerSettings();
     }
 }

@@ -13,7 +13,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
     public class UploadEnpointTests
     {
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly IConfigurationSetRegistry configCollection;
+        private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<ICommandBus> commandBus;
         private readonly Mock<IConfigurationClientService> configClientService;
         private ConfigurationClient expectedClient;

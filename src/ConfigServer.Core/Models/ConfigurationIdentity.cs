@@ -1,4 +1,6 @@
-﻿namespace ConfigServer.Core
+﻿using System;
+
+namespace ConfigServer.Core
 {
     /// <summary>
     /// Identity of Configuration. 
@@ -9,15 +11,21 @@
         /// <summary>
         /// Initialize new ConfigurationIdentity with ConfigurationClient
         /// </summary>
-        public ConfigurationIdentity(ConfigurationClient clientId)
+        public ConfigurationIdentity(ConfigurationClient clientId, Version version)
         {
             Client = clientId;
+            ServerVersion = version;
         }
 
         /// <summary>
         /// Client for configuration
         /// </summary>
         public ConfigurationClient Client { get; }
+
+        /// <summary>
+        /// Version of the configuration server
+        /// </summary>
+        public Version ServerVersion { get; }
 
         /// <summary>
         /// Determines whether this instance and another specified System.String object have the same value.
@@ -27,13 +35,21 @@
         public override bool Equals(object obj)
         {
             var identity = obj as ConfigurationIdentity;
-            return identity != null && Client.Equals(identity.Client);
+            return identity != null && Client.Equals(identity.Client) && ServerVersion == identity.ServerVersion;
         }
 
         /// <summary>
         /// Returns the hash code for this string.
         /// </summary>
         /// <returns> A 32-bit signed integer hash code.</returns>
-        public override int GetHashCode() => Client.GetHashCode();
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int result = Client.GetHashCode();
+                result = (result * 397) ^ ServerVersion.GetHashCode();
+                return result;
+            }
+        } 
     }
 }

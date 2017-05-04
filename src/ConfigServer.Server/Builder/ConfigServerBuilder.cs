@@ -1,5 +1,6 @@
 ﻿using ConfigServer.Core;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace ConfigServer.Server
 {
@@ -9,11 +10,12 @@ namespace ConfigServer.Server
     /// </summary>
     public class ConfigServerBuilder
     {
+        private readonly ConfigurationSetRegistry registry;
+
         internal ConfigServerBuilder(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection;
-            var registry = new ConfigurationSetRegistry();
-            ConfigurationSetCollection = registry;
+            registry = new ConfigurationSetRegistry();
             ServiceCollection.AddSingleton(registry);
             ServiceCollection.AddSingleton<IConfigurationSetRegistry>(registry);
         }
@@ -26,7 +28,20 @@ namespace ConfigServer.Server
         /// <summary>
         /// ConfigurationSetRegistry for builder that forms a registry of available configurations sets for the server 
         /// </summary>
-        public IConfigurationSetRegistry ConfigurationSetCollection { get; }
+        public IConfigurationSetRegistry ConfigurationSetCollection => registry;
+
+        /// <summary>
+        /// Adds new configuration set to the registry
+        /// </summary>
+        /// <param name="model">ConfigurationSetModel to be added to the registry</param>
+        /// <returns>returns true if successful or false if registry already contains configuration set type</returns>
+        public bool AddConfigurationSet(ConfigurationSetModel model) => registry.AddConfigurationSet(model);
+
+        /// <summary>
+        /// Sets version for configurations
+        /// </summary>
+        /// <param name="version">Configuration version</param>
+        public void SetVersion(Version version) => registry.SetVersion(version);
 
     }
 }

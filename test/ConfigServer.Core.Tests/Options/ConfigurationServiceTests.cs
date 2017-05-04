@@ -3,6 +3,8 @@ using ConfigServer.Server;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
+using System;
+
 namespace ConfigServer.Core.Tests.Options
 {
     public class ConfigurationServiceTests
@@ -17,18 +19,22 @@ namespace ConfigServer.Core.Tests.Options
             var registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(new SampleConfigSet().BuildConfigurationSetModel());
             configurationSetService = new Mock<IConfigurationSetService>();
-            identity = new ConfigurationIdentity(new ConfigurationClient(clientId));
+            identity = new ConfigurationIdentity(new ConfigurationClient(clientId), new Version(1, 0));
             target = new ConfigurationService(configurationSetService.Object, registry);
         }
 
         [Fact]
         public async Task GetsConfigFromSets()
         {
-            var config = new SampleConfig();
-            config.IsLlamaFarmer = true;
-            var configSet = new SampleConfigSet();
-            configSet.SampleConfig = new Config<SampleConfig>(config);
-            configSet.Instance = identity;
+            var config = new SampleConfig()
+            {
+                IsLlamaFarmer = true
+            };
+            var configSet = new SampleConfigSet()
+            {
+                SampleConfig = new Config<SampleConfig>(config),
+                Instance = identity
+            };
             configurationSetService.Setup(set => set.GetConfigurationSet(typeof(SampleConfigSet), identity))
                 .ReturnsAsync(configSet);
             var result = await target.GetAsync(typeof(SampleConfig), identity);

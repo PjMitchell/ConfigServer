@@ -20,7 +20,7 @@ namespace ConfigServer.Core.Tests.Validators
         public ConfigurationValidatorTests()
         {
             modelBuilder = new ConfigurationModelBuilder<SampleConfig, SampleConfigSet>(nameof(SampleConfigSet.SampleConfig), c=> c.SampleConfig);
-            configIdentity = new ConfigurationIdentity(new ConfigurationClient("TestId"));
+            configIdentity = new ConfigurationIdentity(new ConfigurationClient("TestId"), new Version(1, 0));
             service = new Mock<IConfigurationSetService>();
             service.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
                 .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });

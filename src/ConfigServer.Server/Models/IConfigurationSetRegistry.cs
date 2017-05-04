@@ -10,11 +10,10 @@ namespace ConfigServer.Server
     public interface IConfigurationSetRegistry : IEnumerable<ConfigurationSetModel>
     {
         /// <summary>
-        /// Adds new configuration set to the registry
+        /// Gets version of configuration
         /// </summary>
-        /// <param name="model">ConfigurationSetModel to be added to the registry</param>
-        /// <returns>returns true if successful or false if registry already contains configuration set type</returns>
-        bool AddConfigurationSet(ConfigurationSetModel model);
+        /// <returns>Version of configuration</returns>
+        Version GetVersion();
 
         ///<summary>
         /// Gets definition for configuration type

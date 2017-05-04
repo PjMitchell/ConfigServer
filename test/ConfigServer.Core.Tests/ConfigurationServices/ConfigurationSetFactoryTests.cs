@@ -6,6 +6,7 @@ using Xunit;
 using System.Collections;
 using ConfigServer.Sample.Models;
 using ConfigServer.Core.Tests.TestModels;
+using System;
 
 namespace ConfigServer.Core.Tests.ConfigurationServices
 {
@@ -21,7 +22,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
 
         public ConfigurationSetFactoryTests()
         {
-            identity = new ConfigurationIdentity(new ConfigurationClient("fbce468f-0950-4b5f-a7e1-8e24e746bb91"));
+            identity = new ConfigurationIdentity(new ConfigurationClient("fbce468f-0950-4b5f-a7e1-8e24e746bb91"), new Version(1, 0));
             registry = new ConfigurationSetRegistry();
             registry.AddConfigurationSet(new TestConfiguationModule().BuildConfigurationSetModel());
             defaultOptions = new List<ExternalOption>

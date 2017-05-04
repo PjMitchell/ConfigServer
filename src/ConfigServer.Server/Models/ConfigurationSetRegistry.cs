@@ -8,9 +8,10 @@ namespace ConfigServer.Server
     /// <summary>
     /// Registry of ConfigurationSets
     /// </summary>
-    public class ConfigurationSetRegistry : IConfigurationSetRegistry
+    internal class ConfigurationSetRegistry : IConfigurationSetRegistry
     {
         private readonly Dictionary<Type, ConfigurationSetModel> collection;
+        private Version version;
 
         /// <summary>
         /// Initializes new ConfigurationSetRegistry
@@ -18,7 +19,16 @@ namespace ConfigServer.Server
         public ConfigurationSetRegistry()
         {
             collection = new Dictionary<Type, ConfigurationSetModel>();
+            version = new Version(0, 0);
         }
+
+        public void SetVersion(Version value) => version = value;
+
+        /// <summary>
+        /// Gets version of configuration
+        /// </summary>
+        /// <returns>Version of configuration</returns>
+        public Version GetVersion() => version;
 
         /// <summary>
         /// Adds new configuration set to the registry

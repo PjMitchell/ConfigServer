@@ -13,7 +13,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
     {
         private readonly IEndpoint target;
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly IConfigurationSetRegistry configCollection;
+        private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<IConfigurationSetService> configurationSetService;
         private readonly Mock<IConfigurationClientService> configClientService;
         private ConfigurationClient expectedClient;

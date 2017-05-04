@@ -25,6 +25,18 @@ namespace ConfigServer.Server
         }
 
         /// <summary>
+        /// Sets version of configuration service
+        /// </summary>
+        /// <param name="source">The ConfigServerBuilder to set the version for</param>
+        /// <param name="version">Version of the configuration service. Helps to manage changes in the configuration sets</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder WithVersion(this ConfigServerBuilder source, Version version)
+        {
+            source.SetVersion(version);
+            return source;
+        }
+
+        /// <summary>
         /// Adds a local ConfigServer to specified ServiceCollection with not capability of communicating over http   
         /// </summary>
         /// <param name="source">The IServiceCollection to add ConfigServer to</param>
@@ -44,14 +56,14 @@ namespace ConfigServer.Server
         {
             var configSet = new TConfigSet();
             var definition = configSet.BuildConfigurationSetModel();
-            source.ConfigurationSetCollection.AddConfigurationSet(definition);
+            source.AddConfigurationSet(definition);
             return source;
         }
 
         /// <summary>
         /// Adds Local ConfigServer client to specified ServiceCollection  
         /// </summary>
-        /// <param name="source">The IServiceCollection to add local ConfigServer client to</param>
+        /// <param name="source">The ConfigServerBuilder to add local ConfigServer client to</param>
         /// <param name="applicationId">Identifier for application requesting the configuration</param>
         /// <param name="configServeruri">Identifier for application requesting the configuration</param>
         /// <returns>ConfigServer client builder for further configuration of client</returns>
@@ -59,7 +71,7 @@ namespace ConfigServer.Server
         {
             var configurationCollection = new ConfigurationRegistry();
             var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
-            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), r.GetService<IConfigurationClientService>(), r.GetService<IResourceStore>(), applicationId, configServeruri)));
+            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), r.GetService<IConfigurationClientService>(), r.GetService<IConfigurationSetRegistry>(), r.GetService<IResourceStore>(), applicationId, configServeruri)));
             return builder;
         }
 

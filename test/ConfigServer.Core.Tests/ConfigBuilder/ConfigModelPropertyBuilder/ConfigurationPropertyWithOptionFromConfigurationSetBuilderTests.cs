@@ -13,7 +13,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
         public ConfigurationPropertyWithOptionFromConfigurationSetBuilderTests()
         {
             target = new ConfigurationModelBuilder<TestConfig, TestConfiguationModule>(new ConfigurationModel<TestConfig, TestConfiguationModule>(nameof(TestConfiguationModule.TestConfig), c=> c.TestConfig, (set, c) => set.TestConfig = c));
-            configIdentity = new ConfigurationIdentity(new ConfigurationClient("TestId"));
+            configIdentity = new ConfigurationIdentity(new ConfigurationClient("TestId"), new Version(1,0));
         }
 
         [Fact]

@@ -39,6 +39,7 @@ namespace ConfigServer.Sample.mvc
             // Add framework services.
             services.AddMvc();
             services.AddConfigServer()
+                .WithVersion(new Version(1,0,0))
                 .UseConfigSet<SampleConfigSet>()
                 .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = enviroment.ContentRootPath + "/FileStore/Configs" })
                 .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = enviroment.ContentRootPath + "/FileStore/Resources" })
