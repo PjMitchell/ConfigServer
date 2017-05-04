@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ConfigServer.Server;
 using ConfigServer.FileProvider;
 using ConfigServer.Gui.Models;
+using System;
 
 namespace ConfigServer.Gui
 {
@@ -31,6 +32,7 @@ namespace ConfigServer.Gui
             services.AddMvc();
             // Add framework services.
             services.AddConfigServer()
+                .WithVersion(new Version(1, 0, 0))
                 .UseConfigSet<SampleConfigSet>()
                 .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath +"/FileStore/Configs" })
                 .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = Env.ContentRootPath + "/FileStore/Resources" });

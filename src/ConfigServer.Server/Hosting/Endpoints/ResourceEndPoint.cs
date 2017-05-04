@@ -11,12 +11,14 @@ namespace ConfigServer.Server
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;
         private readonly IHttpResponseFactory httpResponseFactory;
+        private readonly IConfigurationSetRegistry registry;
         private const string clientGroupImagePath = "ClientGroupImages";
-        public ResourceEndpoint(IConfigurationClientService configClientService, IResourceStore resourceStore, IHttpResponseFactory httpResponseFactory)
+        public ResourceEndpoint(IConfigurationClientService configClientService,IConfigurationSetRegistry registry, IResourceStore resourceStore, IHttpResponseFactory httpResponseFactory)
         {
             this.configClientService = configClientService;
             this.resourceStore = resourceStore;
             this.httpResponseFactory = httpResponseFactory;
+            this.registry = registry;
         }
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
@@ -90,9 +92,9 @@ namespace ConfigServer.Server
         private async Task<ConfigurationIdentity> GetIdentityFromPathOrDefault(string pathParam)
         {
             if (string.Equals(pathParam, clientGroupImagePath, StringComparison.OrdinalIgnoreCase))
-                return new ConfigurationIdentity(new ConfigurationClient(clientGroupImagePath));
+                return new ConfigurationIdentity(new ConfigurationClient(clientGroupImagePath), registry.GetVersion());
             var client = await configClientService.GetClientOrDefault(pathParam);            
-            var clientIdentity = new ConfigurationIdentity(client);
+            var clientIdentity = new ConfigurationIdentity(client, registry.GetVersion());
             return clientIdentity;
         }
     }

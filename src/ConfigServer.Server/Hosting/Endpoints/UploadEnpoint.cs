@@ -62,7 +62,7 @@ namespace ConfigServer.Server
                 return true;
             }
             var json = await context.ReadBodyTextAsync();
-            var result = await commandBus.SubmitAsync(new UpdateConfigurationSetFromJsonUploadCommand(new ConfigurationIdentity(client), configSet.ConfigSetType, json));
+            var result = await commandBus.SubmitAsync(new UpdateConfigurationSetFromJsonUploadCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configSet.ConfigSetType, json));
             await responseFactory.BuildResponseFromCommandResult(context, result);
             return true;
         }
@@ -76,7 +76,7 @@ namespace ConfigServer.Server
                 return true;
             }
             var json = await context.ReadBodyTextAsync();
-            var result = await commandBus.SubmitAsync(new UpdateConfigurationFromJsonUploadCommand(new ConfigurationIdentity(client), configModel.Type, json));
+            var result = await commandBus.SubmitAsync(new UpdateConfigurationFromJsonUploadCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configModel.Type, json));
             await responseFactory.BuildResponseFromCommandResult(context, result);
             return true;
         }

@@ -1,5 +1,6 @@
 ﻿using ConfigServer.Server;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
         private ConfigurationClient expectedClient;
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
+        private readonly Version version = new Version(1, 0);
         private const string clientGroupImagePath = "ClientGroupImages";
         private readonly IEndpoint target;
 
@@ -26,8 +28,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => expectedClient);
             resourceStore = new Mock<IResourceStore>();
             httpResponseFactory = new Mock<IHttpResponseFactory>();
-
-            target = new ResourceEndpoint(configClientService.Object, resourceStore.Object, httpResponseFactory.Object);
+            var registry = new ConfigurationSetRegistry();
+            registry.SetVersion(version);
+            target = new ResourceEndpoint(configClientService.Object, registry, resourceStore.Object, httpResponseFactory.Object);
         }
 
         [Fact]

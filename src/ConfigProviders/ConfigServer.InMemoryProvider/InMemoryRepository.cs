@@ -140,10 +140,9 @@ namespace ConfigServer.InMemoryProvider
         private ConfigInstance Get(Type type, ConfigurationIdentity id)
         {
             var innerDic = innerStore[id.Client.ClientId];
-            ConfigInstance config;
-            if (!innerDic.TryGetValue(type, out config))
+            if (!innerDic.TryGetValue(type, out var config))
             {
-                config = ConfigFactory.CreateGenericInstance(type, id.Client);
+                config = ConfigFactory.CreateGenericInstance(type, id);
             }
 
             return config;

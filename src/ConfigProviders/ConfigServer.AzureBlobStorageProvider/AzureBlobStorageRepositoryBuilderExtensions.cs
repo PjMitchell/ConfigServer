@@ -26,11 +26,9 @@ namespace ConfigServer.AzureBlobStorageProvider
                 throw new ArgumentException($"{nameof(options.Uri)} cannot be null", nameof(options));
             if (options.Credentials == null)
                 throw new ArgumentException($"{nameof(options.Credentials)} cannot be null", nameof(options));
-
-            options.JsonSerializerSettings = options.JsonSerializerSettings ?? new JsonSerializerSettings();
+            
             builder.ServiceCollection.AddMemoryCache();
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
-            builder.ServiceCollection.Add(ServiceDescriptor.Singleton<ITextStorageSetting>(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, StorageConnector>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());

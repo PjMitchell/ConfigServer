@@ -62,7 +62,7 @@ namespace ConfigServer.Server
                 var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
                 if (configSet == null)
                     return false;
-                await responseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client)));
+                await responseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client, configCollection.GetVersion())));
                 return true;
             }
             if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
@@ -102,7 +102,7 @@ namespace ConfigServer.Server
                 return;
             }
 
-            var command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(client), configModel.Type,await context.ReadBodyTextAsync());
+            var command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configModel.Type,await context.ReadBodyTextAsync());
             var result = await commandBus.SubmitAsync(command);
             await responseFactory.BuildResponseFromCommandResult(context, result);
         }

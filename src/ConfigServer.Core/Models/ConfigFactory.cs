@@ -9,13 +9,6 @@ namespace ConfigServer.Core
     /// </summary>
     public static class ConfigFactory
     {
-        /// <summary>
-        /// Creates Instance of a generic ConfigInstance
-        /// </summary>
-        /// <param name="type">Type for generic ConfigInstance</param>
-        /// <param name="client">Configuration Client</param>
-        /// <returns></returns>
-        public static ConfigInstance CreateGenericInstance(Type type, ConfigurationClient client) => CreateGenericInstance(type, new ConfigurationIdentity(client));
 
         /// <summary>
         /// Creates Instance of a generic ConfigInstance
@@ -32,14 +25,6 @@ namespace ConfigServer.Core
             result.ConfigurationIdentity = identity;
             return result;
         }
-
-        /// <summary>
-        /// Creates Instance of a generic collection ConfigInstance
-        /// </summary>
-        /// <param name="type">Type for generic ConfigInstance</param>
-        /// <param name="client">Configuration Client</param>
-        /// <returns></returns>
-        public static ConfigInstance CreateGenericCollectionInstance(Type type, ConfigurationClient client) => CreateGenericCollectionInstance(type, new ConfigurationIdentity(client));
 
         /// <summary>
         /// Creates Instance of a generic collection ConfigInstance

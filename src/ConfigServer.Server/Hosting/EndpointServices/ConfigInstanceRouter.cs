@@ -19,12 +19,14 @@ namespace ConfigServer.Server
         private IConfigurationClientService configClientService;
         private readonly IEnumerable<ConfigurationModel> configModelCollection;
         private IConfigurationService configurationService;
+        IConfigurationSetRegistry registry;
 
-        public ConfigInstanceRouter(IConfigurationClientService configClientService,IConfigurationService configurationService, ConfigurationSetRegistry configCollection)
+        public ConfigInstanceRouter(IConfigurationClientService configClientService,IConfigurationService configurationService, IConfigurationSetRegistry registry)
         {
             this.configClientService = configClientService;
-            this.configModelCollection = configCollection.SelectMany(s => s.Configs).ToList();
+            this.configModelCollection = registry.SelectMany(s => s.Configs).ToList();
             this.configurationService = configurationService;
+            this.registry = registry;
         }
 
         public Task<ConfigInstance> GetConfigInstanceOrDefault(PathString path)
@@ -49,7 +51,7 @@ namespace ConfigServer.Server
             var configModelResult = configModelCollection.SingleOrDefault(s => string.Equals(s.Type.Name, configId, StringComparison.OrdinalIgnoreCase));
             if (configModelResult == null)
                 return null;
-            var config = await configurationService.GetAsync(configModelResult.Type, new ConfigurationIdentity(client));
+            var config = await configurationService.GetAsync(configModelResult.Type, new ConfigurationIdentity(client, registry.GetVersion()));
             return config;
         }
     }

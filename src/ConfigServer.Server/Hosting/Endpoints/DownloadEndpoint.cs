@@ -66,7 +66,7 @@ namespace ConfigServer.Server
                 var configModel = configurationSetModel.Configs.SingleOrDefault(s => pathParams[2].Equals($"{s.Type.Name}{jsonExtension}", StringComparison.OrdinalIgnoreCase));
                 if (configModel == null)
                     return null;
-                var configurationSet = await configurationSetService.GetConfigurationSet(configurationSetModel.ConfigSetType, new ConfigurationIdentity(client));
+                var configurationSet = await configurationSetService.GetConfigurationSet(configurationSetModel.ConfigSetType, new ConfigurationIdentity(client, configCollection.GetVersion()));
                 return new FilePayload(configModel.GetConfigurationFromConfigurationSet(configurationSet), $"{configModel.Type.Name}{jsonExtension}");
             }
             return null;
@@ -75,7 +75,7 @@ namespace ConfigServer.Server
         private async Task<object> GetConfigurationSet(ConfigurationSetModel model, ConfigurationClient client)
         {
             IDictionary<string, object> result = new ExpandoObject();
-            var configurationSet = await configurationSetService.GetConfigurationSet(model.ConfigSetType, new ConfigurationIdentity(client));
+            var configurationSet = await configurationSetService.GetConfigurationSet(model.ConfigSetType, new ConfigurationIdentity(client, configCollection.GetVersion()));
             foreach(var configModel in model.Configs)
             {
                 result[configModel.Name] = configModel.GetConfigurationFromConfigurationSet(configurationSet);

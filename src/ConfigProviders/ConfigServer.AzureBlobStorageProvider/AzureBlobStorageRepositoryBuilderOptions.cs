@@ -8,7 +8,7 @@ namespace ConfigServer.AzureBlobStorageProvider
     /// <summary>
     /// Azure Blob Storage Repository Builder Options
     /// </summary>
-    public class AzureBlobStorageRepositoryBuilderOptions : ITextStorageSetting
+    public class AzureBlobStorageRepositoryBuilderOptions
     {
         /// <summary>
         /// Azure storage base url
@@ -25,10 +25,6 @@ namespace ConfigServer.AzureBlobStorageProvider
         /// Default ConfigServerStore
         /// </summary>
         public string Container { get; set; } = "ConfigServerStore";
-
-        /// <summary>
-        /// Json Serialization settings
-        /// </summary>
-        public JsonSerializerSettings JsonSerializerSettings { get; set; } = new JsonSerializerSettings();
+        
     }
 }

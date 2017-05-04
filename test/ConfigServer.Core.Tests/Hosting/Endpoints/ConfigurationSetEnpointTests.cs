@@ -2,6 +2,7 @@
 using ConfigServer.Server;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Mock<IConfigurationSetModelPayloadMapper> modelPayloadMapper;
         private readonly Mock<IConfigInstanceRouter> configInstanceRouter;
         private readonly Mock<IConfigurationEditModelMapper> configurationEditModelMapper;
-        private readonly IConfigurationSetRegistry configCollection;
+        private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<IConfigurationClientService> configClientService;
         private readonly Mock<ICommandBus> commandBus;
         private const string modelPath = "Model";
@@ -92,7 +93,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_Value_ReturnsConfigurationEditModelForClient()
         {
             var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").TestContext;
-            var configInstance = new ConfigInstance<SampleConfig>(new SampleConfig(), new ConfigurationIdentity(expectedClient));
+            var configInstance = new ConfigInstance<SampleConfig>(new SampleConfig(), new ConfigurationIdentity(expectedClient, new Version(1, 0)));
             configInstanceRouter.Setup(r => r.GetConfigInstanceOrDefault(expectedClient, typeof(SampleConfig).Name))
                 .ReturnsAsync(() => configInstance);
             var mappedModel = new object();

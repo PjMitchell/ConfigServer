@@ -22,9 +22,9 @@ namespace ConfigServer.TextProvider.Core
         /// <summary>
         /// Initializes File store
         /// </summary>
-        public TextStorageConfigurationClientRepository(IMemoryCache memoryCache, IStorageConnector storageConnector, ITextStorageSetting options)
+        public TextStorageConfigurationClientRepository(IMemoryCache memoryCache, IStorageConnector storageConnector)
         {
-            jsonSerializerSettings = options.JsonSerializerSettings;
+            jsonSerializerSettings = new JsonSerializerSettings();
             this.memoryCache = memoryCache;
             this.storageConnector = storageConnector;
         }
