@@ -13,6 +13,11 @@
     <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="systemjs.config.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
     <ProjectReference Include="..\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />
     <ProjectReference Include="..\ConfigServer.Server\ConfigServer.Server.csproj" />

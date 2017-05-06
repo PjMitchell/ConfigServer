@@ -1,7 +1,10 @@
 ﻿var gulp = require('gulp'),
     tsc = require('gulp-typescript'),
     tslint = require('gulp-tslint'),
-    clean = require('gulp-clean');
+    clean = require('gulp-clean'),
+    systemjsBuilder = require('gulp-systemjs-builder');
+
+
 gulp.task('BuildUi', ['CleanUi'], function () {
     var tsProject = tsc.createProject('./App/tsconfig.json');
     var tsResult = tsProject.src()
@@ -20,6 +23,17 @@ gulp.task('BuildTsAssets', function () {
 
     return tsResult.js.pipe(gulp.dest('../ConfigServer.Server/Assets/app'));
 });
+
+gulp.task('build-sjs',  function  ()  {
+    var builder = systemjsBuilder();
+    builder.loadConfigSync('./systemjs.config.js');
+
+    builder.buildStatic('app',  {
+                minify:  false,
+                mangle: false
+    })
+    .pipe(gulp.dest('./build'));
+})
 
 gulp.task('CopyWwwRootAssets', function () {
     
