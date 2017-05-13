@@ -48,7 +48,7 @@ namespace ConfigServer.Server
                 {Config(basePath)}
                 </script>
                 <script>
-                  System.import('app').catch(function(err) {{ console.error(err); }});
+                  System.import('{basePath}/Assets/app.min.js').catch(function(err) {{ console.error(err); }});
                 </script>
                 <base href=""{managerPath}"" />
             </head>
@@ -67,8 +67,6 @@ namespace ConfigServer.Server
                         'npm:': 'https://unpkg.com/'
                     }},
                     map: {{
-                        app: '{basePath}/Assets/app',
-
                         // angular bundles
                         '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
                         '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
@@ -84,13 +82,6 @@ namespace ConfigServer.Server
                         'rxjs': 'npm:rxjs',
                         'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api'
 
-                    }},
-                    // packages tells the System loader how to load when no filename and/or no extension
-                    packages: {{
-                        app: {{
-                            main: './main.js',
-                            defaultExtension: 'js'
-                        }}
                     }}
                 }});
             }})(this);";

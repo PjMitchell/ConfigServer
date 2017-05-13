@@ -21,12 +21,17 @@
         "zone.js": "~0.6.25",
         "typescript": "2.2.2",
         "bootstrap": "3.3.6",
+        "es6-promise": "~4.1.0",
         "jquery": "2.2.0",
         "jquery-validation": "1.14.0",
         "jquery-validation-unobtrusive": "3.2.6",
         "protractor": "5.1.1",
         "tslint": "^5.1.0",
-        "@types/jasmine": "2.5.41"
+        "@types/jasmine": "2.5.41",
+        "@types/core-js": "0.9.36"
+
+
+
     },
   "dependencies": {}
 }

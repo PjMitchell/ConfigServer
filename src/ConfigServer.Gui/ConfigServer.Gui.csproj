@@ -5,6 +5,9 @@
     <AssemblyName>ConfigServer.Gui</AssemblyName>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
+  <PropertyGroup>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="wwwroot\Assets\css\**" />
     <Content Remove="App\**\*.js;App\**\*.js.map" />
@@ -13,6 +16,9 @@
     <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\systemjs.config.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="systemjs.config.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -74,9 +80,5 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
-    <Exec Command="bower install" />
-    <Exec Command="dotnet bundle" />
-  </Target>
   <Target Name="PostpublishScript" AfterTargets="Publish" Condition=" '$(IsCrossTargetingBuild)' != 'true' " />
 </Project>

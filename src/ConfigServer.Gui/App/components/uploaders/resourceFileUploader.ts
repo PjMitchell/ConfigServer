@@ -80,7 +80,7 @@ export class ResourceFileUploaderComponent implements OnInit {
     private checkFileName() {
         const files = this.input.nativeElement.files;
         if (files && files.length === 1) {
-            this.isValidFilename = this.regrex.test(this.fileName) && this.fileName && this.fileName.includes('.');
+            this.isValidFilename = this.regrex.test(this.fileName) && this.fileName && this.fileName.indexOf('.') >= 0 ;
         } else {
             this.isValidFilename = true;
         }

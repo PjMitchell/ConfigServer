@@ -1,4 +1,4 @@
-(function (global) {
+﻿(function (global) {
     System.config({
         
         paths: {
@@ -6,7 +6,7 @@
             'npm:': 'https://unpkg.com/'
         },
         map: {
-            app: 'Assets/app',
+            app: 'App',
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',

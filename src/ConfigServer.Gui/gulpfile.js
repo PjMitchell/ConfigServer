@@ -13,31 +13,35 @@ gulp.task('BuildUi', ['CleanUi'], function () {
     return tsResult.js.pipe(gulp.dest('wwwroot/Assets/app'));
 });
 
-gulp.task('BuildPackageAssets', ['BuildTsAssets', 'CopyWwwRootAssets'])
+gulp.task('BuildPackageAssets', ['CopyWwwRootAssets'])
 
-gulp.task('BuildTsAssets', function () {
-    var tscProject = tsc.createProject('./App/tsconfig.json');
-    var tsResult = gulp.src('./App/**/*.ts')
-        .pipe(tscProject(tsc.reporter.longReporter()))
-        .on('error', function () { process.exit(1) });
+gulp.task('BuildTs', function () {
+    var tsProject = tsc.createProject('./App/tsconfig.json');
+    var tsResult = tsProject.src()
+        .pipe(tsProject());
 
-    return tsResult.js.pipe(gulp.dest('../ConfigServer.Server/Assets/app'));
+    return tsResult.js.pipe(gulp.dest('./App'));
 });
 
-gulp.task('build-sjs',  function  ()  {
+gulp.task('build-sjs', ['BuildTs'], function  ()  {
     var builder = systemjsBuilder();
-    builder.loadConfigSync('./systemjs.config.js');
+    builder.loadConfigSync('./App/systemjs.config.js');
 
-    builder.buildStatic('app',  {
-                minify:  false,
+    builder.buildStatic('app', 'app.js', {
+                minify:false,
                 mangle: false
     })
-    .pipe(gulp.dest('./build'));
+        .pipe(gulp.dest('./wwwroot/Assets'));
+    builder.buildStatic('app', 'app.min.js',  {
+        minify: true,
+        mangle: true
+    })
+        .pipe(gulp.dest('./wwwroot/Assets'));
 })
 
-gulp.task('CopyWwwRootAssets', function () {
+gulp.task('CopyWwwRootAssets', ['build-sjs'], function () {
     
-    return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/systemjs.config.js'])
+    return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/app.min.js'])
     .pipe(gulp.dest('../ConfigServer.Server/Assets'));
 });
 

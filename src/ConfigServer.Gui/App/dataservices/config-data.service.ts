@@ -30,7 +30,7 @@ export class ConfigurationDataService {
         };
     }
 
-    private handleError(error: Response): Promise<IHttpRequestResult> {
+    private handleError(error: Response) {
         if (error.status === 409) {
             return Promise.resolve({ suceeded: false, failureMessage: error.text() });
         }
