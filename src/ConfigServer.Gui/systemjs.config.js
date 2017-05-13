@@ -1,12 +1,30 @@
-(function (global) {
+﻿(function (global) {
     System.config({
         
         paths: {
             // paths serve as alias
-            'npm:': 'https://unpkg.com/'
+            'npm:': 'https://unpkg.com/',
+            'dev:': './node_modules/'
+        },
+        transpiler: 'ts',
+        typescriptOptions: {
+            // Copy of compiler options in standard tsconfig.json
+            "target": "es2015",
+            "module": "system",
+            "moduleResolution": "node",
+            "sourceMap": true,
+            "emitDecoratorMetadata": true,
+            "experimentalDecorators": true,
+            "noImplicitAny": true,
+            "suppressImplicitAnyIndexErrors": true
+        },
+        meta: {
+            'typescript': {
+                "exports": "ts"
+            }
         },
         map: {
-            app: 'Assets/app',
+            app: 'App',
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -24,13 +42,16 @@
             'jquery': 'npm:jquery/dist/jquery.min.js',
             'jquery-validation': 'npm:jquery-validation/dist/jquery.validate.js',
             'jquery-validation-unobtrusive': 'npm:jquery-validation-unobtrusive/jquery.validate.unobtrusive.js',
-            'bootstrap': 'npm:bootstrap/dist/js/bootstrap.min.js'
+            'bootstrap': 'npm:bootstrap/dist/js/bootstrap.min.js',
+
+            'ts': 'dev:plugin-typescript/lib/plugin.js',
+            'typescript': 'dev:typescript/lib/typescript.js',
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
             app: {
-                main: './main.js',
-                defaultExtension: 'js'
+                main: 'main.ts',
+                defaultExtension: 'ts'
             }
         }
     });

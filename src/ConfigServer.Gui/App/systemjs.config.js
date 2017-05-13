@@ -6,6 +6,7 @@
             'npm:': 'https://unpkg.com/'
         },
         map: {
+            app: 'App',
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -24,6 +25,13 @@
             'jquery-validation': 'npm:jquery-validation/dist/jquery.validate.js',
             'jquery-validation-unobtrusive': 'npm:jquery-validation-unobtrusive/jquery.validate.unobtrusive.js',
             'bootstrap': 'npm:bootstrap/dist/js/bootstrap.min.js'
+        },
+        // packages tells the System loader how to load when no filename and/or no extension
+        packages: {
+            app: {
+                main: './main.js',
+                defaultExtension: 'js'
+            }
         }
     });
 })(this);
