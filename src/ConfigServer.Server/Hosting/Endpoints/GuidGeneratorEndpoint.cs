@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
 {
-    internal class GuidGeneratorEndpointcs : IEndpoint
+    internal class GuidGeneratorEndpoint : IEndpoint
     {
         private readonly IHttpResponseFactory httpResponseFactory;
 
-        public GuidGeneratorEndpointcs(IHttpResponseFactory httpResponseFactory)
+        public GuidGeneratorEndpoint(IHttpResponseFactory httpResponseFactory)
         {
             this.httpResponseFactory = httpResponseFactory;
         }

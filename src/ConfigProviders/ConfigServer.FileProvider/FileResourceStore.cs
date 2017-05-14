@@ -3,95 +3,129 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace ConfigServer.FileProvider
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     internal class FileResourceStore : IResourceStore
     {
-        private IFileResourceStorageConnector fileResourceConnector;
+        readonly string folderPath;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileResourceConnector"></param>
-        public FileResourceStore(IFileResourceStorageConnector fileResourceConnector)
+        public FileResourceStore(FileResourceRepositoryBuilderOptions options)
         {
-            this.fileResourceConnector = fileResourceConnector;
+            folderPath = options.ResourceStorePath;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="identity"></param>
-        /// <returns></returns>
-        public async Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
+        public Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
         {
-            var buffer = await fileResourceConnector.GetResourceAsync(name, identity.Client.ClientId);
+          
+            string path = Path.Combine(GetResourceSetFolder(identity).FullName, name);
 
-            return new ResourceEntry()
+            var result = new ResourceEntry()
             {
                 Name = name,
-                Content = new MemoryStream(buffer),
-                HasEntry = buffer.Length == 0 ? false : true
+                Content = File.OpenRead(path),
+                HasEntry = File.Exists(path)
             };
+            return Task.FromResult(result);
+
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="identity"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<ResourceEntryInfo>> GetResourceCatalogue(ConfigurationIdentity identity)
+        public Task<IEnumerable<ResourceEntryInfo>> GetResourceCatalogue(ConfigurationIdentity identity)
         {
-            var entries = await fileResourceConnector.GetResourceCatalog(identity.Client.ClientId);
+            string path = GetResourceSetFolder(identity).FullName;
+            var result = Directory.EnumerateFiles(path)
+                .Select(MapEntryInfo);
 
-            return entries.Select(e => new ResourceEntryInfo()
+            return Task.FromResult(result);
+        }
+
+        public Task UpdateResource(UpdateResourceRequest request)
+        {
+            string path = Path.Combine(GetResourceSetFolder(request.Identity).FullName, request.Name);
+            var existingFile = new FileInfo(path);
+            ArchiveIfExists(existingFile, request.Identity);
+            using (var writeStream = File.Create(path))
             {
-                Name = e
-            });
+                request.Content.Seek(0, SeekOrigin.Begin);
+                request.Content.CopyTo(writeStream);
+            }
+
+            return Task.FromResult(true);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public async Task UpdateResource(UpdateResourceRequest request)
+        public Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
         {
-            MemoryStream stream = new MemoryStream();
-            await request.Content.CopyToAsync(stream);
-            await fileResourceConnector.SetResourceAsync(request.Name, stream.ToArray(), request.Identity.Client.ClientId);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sourceIdentity"></param>
-        /// <param name="destinationIdentity"></param>
-        /// <returns></returns>
-        public async Task CopyResources(ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
-        {
-            await fileResourceConnector.CopyResourcesAsync(sourceIdentity.Client.ClientId, destinationIdentity.Client.ClientId);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="identity"></param>
-        /// <returns></returns>
-        public async Task DeleteResources(string name, ConfigurationIdentity identity)
-        {
-            await fileResourceConnector.DeleteResources(name, identity.Client.ClientId);
+            var originPath = GetResourceSetFolder(sourceIdentity);
+            var destinationPath = GetResourceSetFolder(destinationIdentity);
+            foreach (var originFile in Directory.EnumerateFiles(originPath.FullName))
+            {
+                CopyResource(destinationPath, originFile, destinationIdentity);
+            }
+            return Task.FromResult(true);
         }
 
         public Task CopyResources(IEnumerable<string> filesToCopy, ConfigurationIdentity sourceIdentity, ConfigurationIdentity destinationIdentity)
         {
-            return fileResourceConnector.CopyResourcesAsync(filesToCopy, sourceIdentity.Client.ClientId, destinationIdentity.Client.ClientId);
+            var fileHashSet = new HashSet<string>(filesToCopy, StringComparer.OrdinalIgnoreCase);
+            var originPath = GetResourceSetFolder(sourceIdentity);
+            var destinationPath = GetResourceSetFolder(destinationIdentity);
+            foreach (var originFile in Directory.EnumerateFiles(originPath.FullName).Where(w => filesToCopy.Contains(Path.GetFileName(w))))
+            {
+                CopyResource(destinationPath, originFile, destinationIdentity);
+            }
+            return Task.FromResult(true);
+        }
+
+        public Task DeleteResources(string name, ConfigurationIdentity identity)
+        {
+            var path = GetResourceSetFolder(identity);
+            var fileToDelete = Path.Combine(path.FullName, name);
+            var existingFile = new FileInfo(fileToDelete);
+            ArchiveIfExists(existingFile, identity);
+            existingFile.Delete();
+            return Task.FromResult(true);
+        }
+
+        private void CopyResource(DirectoryInfo destinationPath, string originFilePath, ConfigurationIdentity identity)
+        {
+            var existingFile = new FileInfo(originFilePath);
+
+            string destinationFile = Path.Combine(destinationPath.FullName, existingFile.Name);
+            ArchiveIfExists(new FileInfo(destinationFile), identity);
+            existingFile.CopyTo(destinationFile);
+        }
+
+        private void ArchiveIfExists(FileInfo existingFile, ConfigurationIdentity identity)
+        {
+            if (!existingFile.Exists)
+                return;
+            var newName = $"{Path.GetFileNameWithoutExtension(existingFile.FullName)}_{existingFile.LastWriteTimeUtc.ToString("yyMMddHHmmssff")}{existingFile.Extension}";
+            var newPath = Path.Combine(GetArchiveResourceSetFolder(identity).FullName, newName);
+            File.Copy(existingFile.FullName, newPath);
+        }
+
+        private ResourceEntryInfo MapEntryInfo(string path)
+        {
+            var fileinfo = new FileInfo(path);
+            return new ResourceEntryInfo
+            {
+                Name = fileinfo.Name,
+                TimeStamp = fileinfo.LastWriteTimeUtc
+            };
+        }
+
+        private DirectoryInfo GetResourceSetFolder(ConfigurationIdentity identity)
+        {
+            var filestore = Directory.CreateDirectory($"{folderPath}/{identity.Client.ClientId}");
+            return filestore;
+        }
+
+        private DirectoryInfo GetArchiveResourceSetFolder(ConfigurationIdentity identity)
+        {
+            var filestore = Directory.CreateDirectory($"{folderPath}/Archive/{identity.Client.ClientId}");
+            return filestore;
         }
     }
 }

@@ -138,6 +138,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
         }
 
+        [Fact]
         public async Task Post_GroupImageResource_UploadsResources()
         {
             var resourceName = "File.txt";

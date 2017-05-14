@@ -56,6 +56,12 @@ namespace ConfigServer.Core.Tests
             source.Request.Body = stream;
             return this;
         }
+
+        public TestHttpContextBuilder WithQueryParam(string key, string param)
+        {
+            ((TestQueryCollection)source.Request.Query).Add(key, param);
+            return this;
+        }
     }
 
 }

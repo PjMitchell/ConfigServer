@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             var option = new FileResourceRepositoryBuilderOptions { ResourceStorePath = testdirectory };
 
-            target = new FileResourceStore(new FileResourceStorageConnector(option));
+            target = new FileResourceStore(option);
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",
@@ -64,9 +64,10 @@ namespace ConfigServer.Core.Tests
             await target.UpdateResource(request);
 
 
-            var result = await target.GetResource(request.Name, configId);
-
-            Assert.Equal(resource.LongCount(), result.Content.Length);
+            using (var result = await target.GetResource(request.Name, configId))
+            {
+                Assert.Equal(resource.LongCount(), result.Content.Length);
+            }
         }
 
         [Fact]
@@ -122,10 +123,11 @@ namespace ConfigServer.Core.Tests
             };
 
             await target.UpdateResource(requestUpdated);
-
-            var result = await target.GetResource(request.Name, configId);
-
-            Assert.Equal(resourceUpdated.LongCount(), result.Content.Length);
+            
+            using (var result = await target.GetResource(request.Name, configId))
+            {
+                Assert.Equal(resourceUpdated.LongCount(), result.Content.Length);
+            }
 
         }
 
