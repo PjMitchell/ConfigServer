@@ -19,9 +19,5 @@ namespace ConfigServer.Core
         /// </summary>
         public DateTime TimeStamp { get; set; }
 
-        /// <summary>
-        /// User who uploaded resource
-        /// </summary>
-        public string UserUpdated { get; set; }
     }
 }

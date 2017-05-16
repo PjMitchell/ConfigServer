@@ -1,15 +1,17 @@
-﻿import { Component, EventEmitter, Input, Output} from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { ResourceDataService } from '../dataservices/resource-data.service';
 import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
-        <h3>Resources</h3>
+        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button></h3>        
         <div class="break">
         </div>
         <div class="row">
             <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
                 <p>{{resource.name}}</p>
+                <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
                 <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
                 <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
             </div>
@@ -28,7 +30,7 @@ export class ResourceOverviewComponent {
     @Output('onResourcesChanged')
     public onResourcesChanged: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor(private dataService: ResourceDataService) {
+    constructor(private dataService: ResourceDataService, private router : Router) {
 
     }
     public downloadResource(file: string) {
@@ -45,5 +47,9 @@ export class ResourceOverviewComponent {
 
     public onfileUploaded() {
         this.onResourcesChanged.emit();
+    }
+
+    public goToArchive(configurationSetId: string, configId: string): void {
+        this.router.navigate(['/resourceArchive', this.clientId]);
     }
 }

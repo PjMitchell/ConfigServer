@@ -8,6 +8,8 @@ import { EditClientComponent } from './components/editClient';
 import { EditClientGroupComponent } from './components/editClientGroup';
 import { GroupClientsComponent } from './components/groupClients';
 import { HomeComponent } from './components/home';
+import { ResourceArchiveComponent } from './components/resourceArchive';
+
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
@@ -19,6 +21,8 @@ const appRoutes: Routes = [
     { path: 'client/:clientId/:configurationSetId/:configurationId', component: ClientConfigShellComponent },
     { path: 'group', component: GroupClientsComponent },
     { path: 'group/:groupId', component: GroupClientsComponent },
+    { path: 'resourceArchive/:clientId', component: ResourceArchiveComponent },
+
 ];
 
 export const appRoutingProviders: any[] = [

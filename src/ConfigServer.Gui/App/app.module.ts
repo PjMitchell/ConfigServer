@@ -43,6 +43,7 @@ import { ResourceDataService } from './dataservices/resource-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { ObjectToIteratorPipe } from './pipes/objectToIterable';
 import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
+import { ResourceArchiveComponent } from './components/resourceArchive';
 
 @NgModule({
     bootstrap: [AppShell],
@@ -78,6 +79,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         EditClientGroupComponent,
         JsonFileUploaderComponent,
         ResourceOverviewComponent,
+        ResourceArchiveComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],
