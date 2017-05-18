@@ -1,11 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ConfigServer.Core
 {
     /// <summary>
     /// Represents a Resource entry request
     /// </summary>
-    public class ResourceEntry
+    public class ResourceEntry : IDisposable
     {
         /// <summary>
         /// Was requested entry found
@@ -19,5 +20,13 @@ namespace ConfigServer.Core
         /// Resource Content
         /// </summary>
         public Stream Content { get; set; }
+
+        /// <summary>
+        /// Disposes object
+        /// </summary>
+        public void Dispose()
+        {
+            Content?.Dispose();
+        }
     }
 }

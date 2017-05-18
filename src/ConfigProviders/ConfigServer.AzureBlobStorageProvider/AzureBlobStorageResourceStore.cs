@@ -39,26 +39,18 @@ namespace ConfigServer.AzureBlobStorageProvider
             }
         }
 
-        private async Task CopyResource(CloudBlobContainer containerRef, CloudBlob sourceBlob, ConfigurationIdentity destinationIdentity)
-        {
-            using(var stream = await sourceBlob.OpenReadAsync())
-            {
-                var location = GetResourcePath(destinationIdentity.Client.ClientId, TrimFolderPath(sourceBlob.Name));
-                await SetFileAsync(location, stream);
-            }
-        }
-
         public async Task DeleteResources(string name, ConfigurationIdentity identity)
         {
             var containerRef = client.GetContainerReference(container);
-            var location = GetResourcePath(identity.Client.ClientId, name);
-            ICloudBlob entry = await containerRef.GetBlobReferenceFromServerAsync(location);
+            var location = GetResourcePath(identity, name);
+            var entry = containerRef.GetBlockBlobReference(location);
+            await ArchiveIfExists(containerRef, entry, identity, name);
             await entry.DeleteIfExistsAsync();
         }
 
         public async Task<ResourceEntry> GetResource(string name, ConfigurationIdentity identity)
         {
-            var location = GetResourcePath(identity.Client.ClientId, name);
+            var location = GetResourcePath(identity, name);
             var containerRef = client.GetContainerReference(container);
             var entry = containerRef.GetBlockBlobReference(location);
             var exists = await entry.ExistsAsync();
@@ -77,14 +69,26 @@ namespace ConfigServer.AzureBlobStorageProvider
         public async Task<IEnumerable<ResourceEntryInfo>> GetResourceCatalogue(ConfigurationIdentity identity)
         {
             var containerRef = client.GetContainerReference(container);
-            var entry = (await GetResources(containerRef,identity)).Select(s=> new ResourceEntryInfo { Name = TrimFolderPath(s.Name) }).ToArray();
+            var entry = (await GetResources(containerRef, identity)).Select(Map).ToArray();
             return entry;
+        }
+
+        private ResourceEntryInfo Map(CloudBlob blob)
+        {
+            return new ResourceEntryInfo { Name = TrimFolderPath(blob.Name), TimeStamp = GetLastModifiedUtcDate(blob) };
         }
 
         public Task UpdateResource(UpdateResourceRequest request)
         {
-            var location = GetResourcePath(request.Identity.Client.ClientId, request.Name);
-            return SetFileAsync(location, request.Content);
+            return SetFileAsync(request.Identity, request.Name, request.Content);
+        }
+
+        private async Task CopyResource(CloudBlobContainer containerRef, CloudBlob sourceBlob, ConfigurationIdentity destinationIdentity)
+        {
+            using (var stream = await sourceBlob.OpenReadAsync())
+            {
+                await SetFileAsync(destinationIdentity, TrimFolderPath(sourceBlob.Name), stream);
+            }
         }
 
         private async Task<IEnumerable<CloudBlob>> GetResources(CloudBlobContainer containerRef,ConfigurationIdentity identity)
@@ -103,14 +107,39 @@ namespace ConfigServer.AzureBlobStorageProvider
 
         }
 
-        private async Task SetFileAsync(string location, Stream value)
+        private async Task SetFileAsync(ConfigurationIdentity identity, string name, Stream value)
         {
             var containerRef = client.GetContainerReference(container);
+            var location = GetResourcePath(identity, name);
             var entry = containerRef.GetBlockBlobReference(location);
+            await ArchiveIfExists(containerRef, entry, identity, name);
             await entry.UploadFromStreamAsync(value);
         }
 
-        private string GetResourcePath(string clientId, string name) => $"{clientId}/{name.ToLowerInvariant()}";
+        private async Task ArchiveIfExists(CloudBlobContainer containerRef, CloudBlockBlob existingFile, ConfigurationIdentity identity, string name)
+        {
+            if (!await existingFile.ExistsAsync())
+                return;
+            var lastModified = GetLastModifiedUtcDate(existingFile);
+            var newName = $"{Path.GetFileNameWithoutExtension(name)}_{lastModified.ToString("yyMMddHHmmssff")}{Path.GetExtension(name)}";
+            var newPath = GetArchiveResourcePath(identity, newName);
+            var entry = containerRef.GetBlockBlobReference(newPath);
+            using (var stream = await existingFile.OpenReadAsync())
+            {
+                await entry.UploadFromStreamAsync(stream);
+            }
+        }
+
+        private static DateTime GetLastModifiedUtcDate(CloudBlob existingFile)
+        {
+            return existingFile.Properties.LastModified.HasValue
+                ? existingFile.Properties.LastModified.Value.UtcDateTime
+                : DateTime.UtcNow;
+        }
+
+        private string GetResourcePath(ConfigurationIdentity identity, string name) => $"{identity.Client.ClientId}/{name.ToLowerInvariant()}";
+
+        private string GetArchiveResourcePath(ConfigurationIdentity identity, string name) => $"Archive/{identity.Client.ClientId}/{name.ToLowerInvariant()}";
 
         private string TrimFolderPath(string path)
         {

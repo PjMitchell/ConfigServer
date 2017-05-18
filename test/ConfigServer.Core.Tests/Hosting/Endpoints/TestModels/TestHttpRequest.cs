@@ -3,6 +3,9 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using Microsoft.Extensions.Primitives;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ConfigServer.Core.Tests
 {
@@ -13,6 +16,7 @@ namespace ConfigServer.Core.Tests
             Path = path;
             Method = "GET";
             Body = new MemoryStream();
+            Query = new TestQueryCollection();
         }
 
         public override Stream Body { get; set; }
@@ -43,7 +47,7 @@ namespace ConfigServer.Core.Tests
 
         public override string Protocol { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
-        public override IQueryCollection Query { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override IQueryCollection Query { get; set; }
 
         public override QueryString QueryString { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
@@ -53,5 +57,37 @@ namespace ConfigServer.Core.Tests
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class TestQueryCollection : IQueryCollection
+    {
+        private Dictionary<string, StringValues> source;
+
+        public TestQueryCollection()
+        {
+            source = new Dictionary<string, StringValues>();
+        }
+
+        public void Add(string key, StringValues value) => source.Add(key, value);
+
+        public StringValues this[string key] => source[key];
+
+        public int Count => source.Count;
+
+        public ICollection<string> Keys => source.Keys;
+
+        public bool ContainsKey(string key) => source.ContainsKey(key);
+
+        public IEnumerator<KeyValuePair<string, StringValues>> GetEnumerator()
+        {
+            return source.GetEnumerator();
+        }
+
+        public bool TryGetValue(string key, out StringValues value)
+        {
+            return source.TryGetValue(key, out value);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

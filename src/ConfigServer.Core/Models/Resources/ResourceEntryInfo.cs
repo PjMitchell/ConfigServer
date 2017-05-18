@@ -13,5 +13,11 @@ namespace ConfigServer.Core
         /// Name of Resource Entry
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Time stamp for resource
+        /// </summary>
+        public DateTime TimeStamp { get; set; }
+
     }
 }

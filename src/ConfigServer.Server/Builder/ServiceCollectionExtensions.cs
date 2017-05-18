@@ -11,6 +11,7 @@ namespace ConfigServer.Server
             collection.AddMemoryCache();
             collection.Add(ServiceDescriptor.Transient<IHttpResponseFactory, HttpResponseFactory>());
             collection.Add(ServiceDescriptor.Transient<IResourceStore, EmptyResourceStore>());
+            collection.Add(ServiceDescriptor.Transient<IResourceArchive, EmptyResourceArchive>());
 
             collection.Add(ServiceDescriptor.Transient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>());
             collection.Add(ServiceDescriptor.Transient<IConfigurationEditModelMapper, ConfigurationEditModelMapper>());
@@ -44,7 +45,9 @@ namespace ConfigServer.Server
             collection.Add(ServiceDescriptor.Transient<UploadEnpoint, UploadEnpoint>());
             collection.Add(ServiceDescriptor.Transient<ResourceEndpoint, ResourceEndpoint>());
             collection.Add(ServiceDescriptor.Transient<ClientGroupEndpoint, ClientGroupEndpoint>());
-            collection.Add(ServiceDescriptor.Transient<GuidGeneratorEndpointcs, GuidGeneratorEndpointcs>());
+            collection.Add(ServiceDescriptor.Transient<GuidGeneratorEndpoint, GuidGeneratorEndpoint>());
+            collection.Add(ServiceDescriptor.Transient<ResourceArchiveEndpoint, ResourceArchiveEndpoint>());
+
             return collection;
         }
 

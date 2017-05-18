@@ -30,6 +30,7 @@ import { ConfigurationPropertyMultipleOptionInputComponent } from './components/
 import { ConfigurationPropertyOptionInputComponent } from './components/propertyinputs/clientPropertyOptionInput';
 import { ConfigurationPropertyStringInputComponent } from './components/propertyinputs/clientPropertyStringInput';
 import { ConfigurationPropertyComponent } from './components/propertyinputs/configProperty';
+import { ResourceArchiveComponent } from './components/resourceArchive';
 import { ResourceOverviewComponent } from './components/resourceOverview';
 import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
 import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
@@ -78,6 +79,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         EditClientGroupComponent,
         JsonFileUploaderComponent,
         ResourceOverviewComponent,
+        ResourceArchiveComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],
