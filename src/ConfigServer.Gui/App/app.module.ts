@@ -30,6 +30,7 @@ import { ConfigurationPropertyMultipleOptionInputComponent } from './components/
 import { ConfigurationPropertyOptionInputComponent } from './components/propertyinputs/clientPropertyOptionInput';
 import { ConfigurationPropertyStringInputComponent } from './components/propertyinputs/clientPropertyStringInput';
 import { ConfigurationPropertyComponent } from './components/propertyinputs/configProperty';
+import { ResourceArchiveComponent } from './components/resourceArchive';
 import { ResourceOverviewComponent } from './components/resourceOverview';
 import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
 import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
@@ -43,7 +44,6 @@ import { ResourceDataService } from './dataservices/resource-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { ObjectToIteratorPipe } from './pipes/objectToIterable';
 import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
-import { ResourceArchiveComponent } from './components/resourceArchive';
 
 @NgModule({
     bootstrap: [AppShell],

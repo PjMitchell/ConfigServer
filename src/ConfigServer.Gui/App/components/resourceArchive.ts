@@ -1,11 +1,11 @@
-﻿import { Component, EventEmitter, Input, Output, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceDataService } from '../dataservices/resource-data.service';
-import { IResourceInfo } from '../interfaces/resourceInfo';
 import { IChildElement } from '../interfaces/htmlInterfaces';
+import { IResourceInfo } from '../interfaces/resourceInfo';
 
 @Component({
-    template: `        
+    template: `
         <div class="row">
             <h3>Resources Archive</h3>
         </div>
@@ -28,7 +28,7 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
         </div>
         <hr />
         <div class="row">
-            <button type="button" class="btn btn-primary" (click)="back()">Back</button>       
+            <button type="button" class="btn btn-primary" (click)="back()">Back</button>
         </div>
 `,
 })
@@ -46,7 +46,7 @@ export class ResourceArchiveComponent implements OnInit {
     public ngOnInit() {
         this.route.params.forEach((value) => {
             this.clientId = value['clientId'];
-            this.updateArchiveList()
+            this.updateArchiveList();
         });
     }
 

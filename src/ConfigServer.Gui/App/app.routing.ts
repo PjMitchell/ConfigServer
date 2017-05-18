@@ -10,7 +10,6 @@ import { GroupClientsComponent } from './components/groupClients';
 import { HomeComponent } from './components/home';
 import { ResourceArchiveComponent } from './components/resourceArchive';
 
-
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'createClient', component: CreateClientComponent },

@@ -7,7 +7,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 export class ResourceDataService {
     private resourceUrl = 'Resource';  // URL to web api
     private resourceArchiveUrl = 'ResourceArchive';  // URL to web api
-    
+
     constructor(private http: Http) { }
 
     public getClientResourceInfo(clientId: string): Promise<IResourceInfo[]> {
@@ -63,7 +63,7 @@ export class ResourceDataService {
 
     private mapResourceArray(data: any): IResourceInfo[] {
         return (data as any[]).map((value) => {
-            return { name: value.name, timeStamp: new Date(value.timeStamp) }
+            return { name: value.name, timeStamp: new Date(value.timeStamp) };
         });
     }
 }

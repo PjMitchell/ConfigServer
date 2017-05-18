@@ -5,7 +5,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
-        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button></h3>        
+        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button></h3>
         <div class="break">
         </div>
         <div class="row">
@@ -30,7 +30,7 @@ export class ResourceOverviewComponent {
     @Output('onResourcesChanged')
     public onResourcesChanged: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor(private dataService: ResourceDataService, private router : Router) {
+    constructor(private dataService: ResourceDataService, private router: Router) {
 
     }
     public downloadResource(file: string) {
