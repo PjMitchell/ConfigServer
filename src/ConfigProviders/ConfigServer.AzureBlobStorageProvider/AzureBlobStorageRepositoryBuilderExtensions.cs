@@ -48,6 +48,8 @@ namespace ConfigServer.AzureBlobStorageProvider
                 throw new ArgumentNullException(nameof(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IResourceStore, AzureBlobStorageResourceStore>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IResourceArchive, AzureBlobStorageResourceArchive>());
+
             return builder;
         }
     }
