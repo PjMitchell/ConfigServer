@@ -43,10 +43,10 @@ namespace ConfigServer.Client
         /// <returns>Configuration of specified type</returns>
         public async Task<object> GetConfigAsync(Type type)
         {
-            ThrowIfConfigNotRegistered(type);
+            var registration = GetRegistration(type);
             return options.CacheOptions.IsDisabled
-                ? await GetConfigInternal(type).ConfigureAwait(false)
-                : await GetOrAddConfigFromCache(type).ConfigureAwait(false);            
+                ? await GetConfigInternal(registration).ConfigureAwait(false)
+                : await GetOrAddConfigFromCache(registration).ConfigureAwait(false);            
 
         }
 
@@ -68,11 +68,11 @@ namespace ConfigServer.Client
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
             var type = typeof(TConfig);
-            ThrowIfConfigNotRegistered(type);
+            var registration = GetRegistration(type);
 
             return options.CacheOptions.IsDisabled
-                ? await GetCollectionConfigInternal<TConfig>().ConfigureAwait(false)
-                : await GetOrAddCollectionConfigFromCache<TConfig>().ConfigureAwait(false);
+                ? await GetCollectionConfigInternal<TConfig>(registration).ConfigureAwait(false)
+                : await GetOrAddCollectionConfigFromCache<TConfig>(registration).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace ConfigServer.Client
             return new Uri($"{options.ConfigServer}/Resource/{options.ClientId}/{name}");
         }
 
-        private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>() where TConfig : class, new()
+        private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>(ConfigurationRegistration registration) where TConfig : class, new()
         {
             return cache.GetOrCreateAsync(BuildCacheKey(typeof(TConfig)), cacheEntry =>
             {
@@ -152,31 +152,31 @@ namespace ConfigServer.Client
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
                 if (options.CacheOptions.SlidingExpiration.HasValue)
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetCollectionConfigInternal<TConfig>();
+                return GetCollectionConfigInternal<TConfig>(registration);
             });
         }
 
-        private Task<object> GetOrAddConfigFromCache(Type type)
+        private Task<object> GetOrAddConfigFromCache(ConfigurationRegistration registration)
         {
-            return cache.GetOrCreateAsync(BuildCacheKey(type), cacheEntry =>
+            return cache.GetOrCreateAsync(BuildCacheKey(registration.ConfigType), cacheEntry =>
             {
                 if (options.CacheOptions.AbsoluteExpiration.HasValue)
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
                 if (options.CacheOptions.SlidingExpiration.HasValue)
                     cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetConfigInternal(type);
+                return GetConfigInternal(registration);
             });
         }
 
-        private async Task<object> GetConfigInternal(Type type)
+        private async Task<object> GetConfigInternal(ConfigurationRegistration registration)
         {
-            var result = await GetConfig(type.Name);
-            return JsonConvert.DeserializeObject(result, type, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            var result = await GetConfig(registration.ConfigurationName);
+            return JsonConvert.DeserializeObject(result, registration.ConfigType, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
         }
 
-        private async Task<IEnumerable<TConfig>> GetCollectionConfigInternal<TConfig>()
+        private async Task<IEnumerable<TConfig>> GetCollectionConfigInternal<TConfig>(ConfigurationRegistration registration)
         {
-            var result = await GetConfig(typeof(TConfig).Name);
+            var result = await GetConfig(registration.ConfigurationName);
             return (IEnumerable<TConfig>)JsonConvert.DeserializeObject(result,typeof(List<TConfig>), new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
         }
 
@@ -198,10 +198,11 @@ namespace ConfigServer.Client
             return new Uri($"{options.ConfigServer}/{options.ClientId}/{configName}");
         }
 
-        private void ThrowIfConfigNotRegistered(Type type)
+        private ConfigurationRegistration GetRegistration(Type type)
         {
-            if (!collection.Any(reg => reg.ConfigType == type))
-                throw new InvalidConfigurationException(type);
+            if (collection.TryGet(type, out var result))
+                return result;
+            throw new InvalidConfigurationException(type);
         }
 
         private string BuildCacheKey(Type type) => cachePrefix + type.Name;

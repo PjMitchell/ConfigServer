@@ -54,6 +54,14 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
+        /// Tries to get Registration for type
+        /// </summary>
+        /// <param name="type">Type of config being requested</param>
+        /// <param name="value">ConfigurationRegistration for type</param>
+        /// <returns>True if found, false if not</returns>
+        public bool TryGet(Type type, out ConfigurationRegistration value) => collection.TryGetValue(type, out value);
+
+        /// <summary>
         /// Returns an enumerator that iterates through the ConfigurationRegistrations.
         /// </summary>
         /// <returns>Enumerator that iterates through the ConfigurationRegistrations.</returns>
