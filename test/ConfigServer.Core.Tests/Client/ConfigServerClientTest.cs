@@ -1,4 +1,5 @@
 ﻿using ConfigServer.Client;
+using ConfigServer.Sample.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Newtonsoft.Json;
@@ -17,12 +18,14 @@ namespace ConfigServer.Core.Tests.Client
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
         private readonly Mock<IMemoryCache> cache;
+        private const string configRegisration = "AnotherConfigName";
 
 
         public ConfigServerClientTest()
         {
             collection = new ConfigurationRegistry();
             collection.AddRegistration(ConfigurationRegistration.Build<SimpleConfig>());
+            collection.AddRegistration(ConfigurationRegistration.Build<SampleConfig>(configRegisration));
             options = new ConfigServerClientOptions();
             options.ClientId = "1234-5678-1234";
             options.ConfigServer = "https://test.com/Config";
@@ -45,6 +48,15 @@ namespace ConfigServer.Core.Tests.Client
                 .Returns(() => Task.FromResult(BuildResponse(new SimpleConfig())));
             await target.GetConfigAsync(typeof(SimpleConfig));
             clientWrapper.Verify(r => r.GetAsync(It.Is<Uri>(u => Check(u))), Times.AtLeastOnce());
+        }
+
+        [Fact]
+        public async Task BuildConfigAsync_CallsConfigurationServerWithCorrectUri_SpecifiedName()
+        {
+            clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
+                .Returns(() => Task.FromResult(BuildResponse(new SampleConfig())));
+            await target.GetConfigAsync(typeof(SampleConfig));
+            clientWrapper.Verify(r => r.GetAsync(It.Is<Uri>(u => CheckByName(u, configRegisration))), Times.AtLeastOnce());
         }
 
         [Fact]
@@ -88,6 +100,15 @@ namespace ConfigServer.Core.Tests.Client
         }
 
         [Fact]
+        public async Task BuildConfigAsync_T_CallsConfigurationServerWithCorrectUri_SpecifiedName()
+        {
+            clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
+                .Returns(() => Task.FromResult(BuildResponse(new SampleConfig())));
+            await target.GetConfigAsync<SampleConfig>();
+            clientWrapper.Verify(r => r.GetAsync(It.Is<Uri>(u => CheckByName(u, configRegisration))), Times.AtLeastOnce());
+        }
+
+        [Fact]
         public async Task BuildConfigAsync_T_Throws_If404()
         {
             clientWrapper.Setup(r => r.GetAsync(It.IsAny<Uri>()))
@@ -112,13 +133,15 @@ namespace ConfigServer.Core.Tests.Client
         #endregion
 
 
-        private bool Check(Uri uri)
+        private bool Check(Uri uri) => CheckByName(uri, typeof(SimpleConfig).Name);
+
+        private bool CheckByName(Uri uri, string name)
         {
-            var expectedUri = new Uri($"{options.ConfigServer}/{options.ClientId}/{typeof(SimpleConfig).Name}");
+            var expectedUri = new Uri($"{options.ConfigServer}/{options.ClientId}/{name}");
             var result = uri.Equals(expectedUri);
             return result;
         }
-        
+
         private HttpResponseMessage BuildResponse(object content)
         {
             var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
