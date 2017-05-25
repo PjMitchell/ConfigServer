@@ -123,6 +123,8 @@ namespace ConfigServer.TextProvider.Core
             {
                 ServerVersion = config.ConfigurationIdentity.ServerVersion.ToString(),
                 ClientId = config.ConfigurationIdentity.Client.ClientId,
+                ConfigName = config.Name,
+                TimeStamp = DateTime.UtcNow,
                 Config = config.GetConfiguration()
             };
         }

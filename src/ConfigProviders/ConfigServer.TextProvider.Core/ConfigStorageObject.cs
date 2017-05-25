@@ -8,6 +8,8 @@ namespace ConfigServer.TextProvider.Core
     {
         public string ServerVersion { get; set; }
         public string ClientId { get; set; }
+        public string ConfigName { get; set; }
+        public DateTime TimeStamp { get; set; }
         public object Config { get; set; }
     }
 }
