@@ -35,9 +35,12 @@ namespace ConfigServer.AzureBlobStorageProvider
             return SetFileAsync(indexFile,value);
         }
 
-        public Task SetConfigFileAsync(string configId, string instanceId, string value)
+        public async Task SetConfigFileAsync(string configId, string instanceId, string value)
         {
-            return SetFileAsync(GetConfigPath(configId, instanceId), value);
+            var containerRef = client.GetContainerReference(container);
+            var entry = containerRef.GetBlockBlobReference(GetConfigPath(configId, instanceId));
+            await ArchiveIfExists(configId, instanceId, containerRef, entry);
+            await entry.UploadTextAsync(value);            
         }
 
         public Task<string> GetClientGroupRegistryFileAsync()
@@ -67,8 +70,24 @@ namespace ConfigServer.AzureBlobStorageProvider
             await entry.UploadTextAsync(value);
         }
 
+        private async Task ArchiveIfExists(string configId, string instanceId, CloudBlobContainer containerRef, CloudBlockBlob existingFile)
+        {
+            if (!await existingFile.ExistsAsync())
+                return;
+            
+            var newPath = GetArchiveConfigPath(configId, instanceId);
+            var entry = containerRef.GetBlockBlobReference(newPath);
+            using (var stream = await existingFile.OpenReadAsync())
+            {
+                await entry.UploadFromStreamAsync(stream);
+            }
+        }
+
         private string GetConfigPath(string configId, string clientId) => $"{clientId}/{configId}.json";
 
-
+        private string GetArchiveConfigPath(string configId, string clientId)
+        {
+            return $"Archive/{clientId}/{configId}_{DateTime.UtcNow.ToString("yyMMddHHmmssff")}.json";
+        }
     }
 }

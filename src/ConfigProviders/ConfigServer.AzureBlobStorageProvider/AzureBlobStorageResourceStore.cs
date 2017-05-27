@@ -120,8 +120,7 @@ namespace ConfigServer.AzureBlobStorageProvider
         {
             if (!await existingFile.ExistsAsync())
                 return;
-            var lastModified = GetLastModifiedUtcDate(existingFile);
-            var newName = $"{Path.GetFileNameWithoutExtension(name)}_{lastModified.ToString("yyMMddHHmmssff")}{Path.GetExtension(name)}";
+            var newName = $"{Path.GetFileNameWithoutExtension(name)}_{DateTime.UtcNow.ToString("yyMMddHHmmssff")}{Path.GetExtension(name)}";
             var newPath = GetArchiveResourcePath(identity, newName);
             var entry = containerRef.GetBlockBlobReference(newPath);
             using (var stream = await existingFile.OpenReadAsync())
