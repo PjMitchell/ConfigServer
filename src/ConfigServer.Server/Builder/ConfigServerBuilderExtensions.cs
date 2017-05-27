@@ -100,7 +100,7 @@ namespace ConfigServer.Server
             app.Map(HostPaths.Group, client => client.UseEndpoint<ClientGroupEndpoint>(options));
             app.Map(HostPaths.Guid, client => client.UseEndpoint<GuidGeneratorEndpoint>(options));
             app.Map(HostPaths.ResourceArchive, client => client.UseEndpoint<ResourceArchiveEndpoint>(options));
-
+            app.Map(HostPaths.Archive, client => client.UseEndpoint<ConfigArchiveEndPoint>(options));
 
             app.UseEndpoint<ConfigEnpoint>(options);
             

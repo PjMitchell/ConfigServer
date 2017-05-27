@@ -8,6 +8,7 @@ import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { ConfigurationInputComponent } from './components/clientConfigurationInput';
 import { OptionInputComponent } from './components/clientOptionInput';
 import { ClientOverviewComponent } from './components/clientOverview';
+import { ConfigArchiveComponent } from "./components/configArchive";
 import { EditClientSettingInputComponent } from './components/configClientSettingInput';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
@@ -35,6 +36,7 @@ import { ResourceOverviewComponent } from './components/resourceOverview';
 import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
 import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
 import { ResourceFileUploaderComponent } from './components/uploaders/resourceFileUploader';
+import { ArchiveConfigService } from './dataservices/archiveconfig-data.service';
 import { ConfigurationClientDataService } from './dataservices/client-data.service';
 import { ConfigurationClientGroupDataService } from './dataservices/clientgroup-data.service';
 import { ConfigurationDataService } from './dataservices/config-data.service';
@@ -80,11 +82,22 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         JsonFileUploaderComponent,
         ResourceOverviewComponent,
         ResourceArchiveComponent,
+        ConfigArchiveComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],
     imports: [BrowserModule, routing, HttpModule, FormsModule],
-    providers: [appRoutingProviders, ConfigurationClientDataService, ConfigurationSetDataService, ResourceDataService, ConfigurationDataService, UploadDataService, ConfigurationClientGroupDataService, GuidGenerator],
+    providers: [
+        appRoutingProviders,
+        ArchiveConfigService,
+        ConfigurationClientDataService,
+        ConfigurationClientGroupDataService,
+        ConfigurationDataService,
+        ConfigurationSetDataService,
+        GuidGenerator,
+        ResourceDataService,
+        UploadDataService,
+        ],
 })
 
 export class AppModule { }

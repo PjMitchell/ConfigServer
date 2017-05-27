@@ -67,11 +67,14 @@ namespace ConfigServer.FileProvider
         private ConfigArchiveEntryInfo MapEntryInfo(string path)
         {
             var config = JsonConvert.DeserializeObject<ConfigStorageInfo>(File.ReadAllText(path));
+            var fileInfo = new FileInfo(path);
             return new ConfigArchiveEntryInfo
             {
-                Name = Path.GetFileName(path),
+                Name = fileInfo.Name,
                 Configuration = config.ConfigName,
-                TimeStamp = config.TimeStamp
+                ServerVersion = config.ServerVersion,
+                TimeStamp = config.TimeStamp,
+                ArchiveTimeStamp = fileInfo.LastWriteTimeUtc
             };
         }
 

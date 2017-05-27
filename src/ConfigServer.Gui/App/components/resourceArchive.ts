@@ -11,7 +11,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
         </div>
         <div class="row">
             <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
-                <p>{{resource.name}}</p>
+                <h5>{{resource.name}}</h5>
                 <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
                 <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
                 <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>

@@ -24,5 +24,12 @@ namespace ConfigServer.Core
         /// </summary>
         public DateTime TimeStamp { get; set; }
 
+        /// <summary>
+        /// Time stamp for Archive
+        /// </summary>
+        public DateTime ArchiveTimeStamp { get; set; }
+
+        public string ServerVersion { get; set; }
+
     }
 }

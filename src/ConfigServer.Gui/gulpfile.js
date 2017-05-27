@@ -5,14 +5,6 @@
     systemjsBuilder = require('gulp-systemjs-builder');
 
 
-gulp.task('BuildUi', ['CleanUi'], function () {
-    var tsProject = tsc.createProject('./App/tsconfig.json');
-    var tsResult = tsProject.src()
-        .pipe(tsProject());
-
-    return tsResult.js.pipe(gulp.dest('wwwroot/Assets/app'));
-});
-
 gulp.task('BuildPackageAssets', ['CopyWwwRootAssets'])
 
 gulp.task('BuildTs', function () {
