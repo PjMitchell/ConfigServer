@@ -99,7 +99,5 @@ exec { & dotnet pack .\src\ConfigProviders\ConfigServer.TextProvider.Core\Config
 exec { & dotnet pack .\src\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }
 exec { & dotnet pack .\src\ConfigProviders\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ConfigProviders\ConfigServer.AzureTableStorageProvider\ConfigServer.AzureTableStorageProvider.csproj -c Release -o .\artifacts --version-suffix=$revision }  
-
 
 

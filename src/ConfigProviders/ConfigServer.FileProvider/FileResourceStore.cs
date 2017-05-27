@@ -101,7 +101,7 @@ namespace ConfigServer.FileProvider
         {
             if (!existingFile.Exists)
                 return;
-            var newName = $"{Path.GetFileNameWithoutExtension(existingFile.FullName)}_{existingFile.LastWriteTimeUtc.ToString("yyMMddHHmmssff")}{existingFile.Extension}";
+            var newName = $"{Path.GetFileNameWithoutExtension(existingFile.FullName)}_{DateTime.UtcNow.ToString("yyMMddHHmmssff")}{existingFile.Extension}";
             var newPath = Path.Combine(GetArchiveResourceSetFolder(identity).FullName, newName);
             File.Copy(existingFile.FullName, newPath);
         }

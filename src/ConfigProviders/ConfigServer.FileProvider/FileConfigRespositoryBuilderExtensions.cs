@@ -31,6 +31,7 @@ namespace ConfigServer.FileProvider
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigClientRepository, TextStorageConfigurationClientRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
             builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, FileStorageConnector>());
+            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigArchive, FileConfigArchive>());
 
             return builder;
         }

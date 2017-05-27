@@ -38,6 +38,10 @@ namespace ConfigServer.FileProvider
         public Task SetConfigFileAsync(string configId, string instanceId, string value)
         {
             var configPath = GetConfigPath(configId, instanceId);
+            var configArchivePath = GetArchiveConfigPath(configId, instanceId);
+
+            if (File.Exists(configPath))
+                File.Copy(configPath, configArchivePath);
             File.WriteAllText(configPath, value);
             return Task.FromResult(true);
         }
@@ -85,14 +89,26 @@ namespace ConfigServer.FileProvider
 
         private DirectoryInfo GetConfigSetFolder(string clientId)
         {
-            var filestore = GetFileStore();
-            return filestore.EnumerateDirectories().SingleOrDefault(s => s.Name == clientId) ?? filestore.CreateSubdirectory(clientId);
+            var filestore = Directory.CreateDirectory($"{folderPath}/{clientId}");
+            return filestore;
+        }
+
+        private DirectoryInfo GetArchiveConfigSetFolder(string clientId)
+        {
+            var filestore = Directory.CreateDirectory($"{folderPath}/Archive/{clientId}");
+            return filestore;
         }
 
         private string GetConfigPath(string configId, string clientId)
         {
             var configSetFolder = GetConfigSetFolder(clientId);
             return $"{configSetFolder.FullName}/{configId}.json";
+        }
+
+        private string GetArchiveConfigPath(string configId, string clientId)
+        {
+            var configSetFolder = GetArchiveConfigSetFolder(clientId);
+            return $"{configSetFolder.FullName}/{configId}_{DateTime.UtcNow.ToString("yyMMddHHmmssff")}.json";
         }
 
 

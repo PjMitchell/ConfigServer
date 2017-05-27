@@ -17,6 +17,11 @@ h2 {
     padding-left:3px;
 }
 
+h5 {
+    font-size: 1em;
+    font-weight:700;
+}
+
 button {
     background-color:#ABB8FF;
     border-color:#ABB8FF;
