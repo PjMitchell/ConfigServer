@@ -71,7 +71,7 @@ namespace ConfigServer.AzureBlobStorageProvider
             var config = JsonConvert.DeserializeObject<ConfigStorageInfo>(await blob.DownloadTextAsync());
             return new ConfigArchiveEntryInfo
             {
-                Name = TrimFolderPath(blob.Name),
+                Name = Helpers.TrimFolderPath(blob.Name),
                 Configuration = config.ConfigName,
                 ServerVersion = config.ServerVersion,
                 TimeStamp = config.TimeStamp,
@@ -107,14 +107,7 @@ namespace ConfigServer.AzureBlobStorageProvider
                 : DateTime.UtcNow;
         }
 
-        private string TrimFolderPath(string path)
-        {
-            var result = path;
-            var index = path.IndexOf('/');
-            while (index >= 0)
-                result = path.Substring(index + 1);
-            return result;
-        }
+
 
         private class ConfigStorageInfo
         {

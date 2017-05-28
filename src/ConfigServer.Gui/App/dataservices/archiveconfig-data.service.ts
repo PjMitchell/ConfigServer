@@ -19,7 +19,7 @@ export class ArchiveConfigService {
     }
 
     public deleteArchivedConfig(clientId: string, archiveConfigName: string) {
-        return this.http.delete(this.configArchiveUrl + clientId)
+        return this.http.delete(this.configArchiveUrl + clientId + '/' + archiveConfigName)
             .toPromise()
             .then((response) => this.handleSuccess(response))
             .catch(this.handleError);

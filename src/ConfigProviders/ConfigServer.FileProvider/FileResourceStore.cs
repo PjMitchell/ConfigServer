@@ -94,7 +94,7 @@ namespace ConfigServer.FileProvider
 
             string destinationFile = Path.Combine(destinationPath.FullName, existingFile.Name);
             ArchiveIfExists(new FileInfo(destinationFile), identity);
-            existingFile.CopyTo(destinationFile);
+            existingFile.CopyTo(destinationFile, true);
         }
 
         private void ArchiveIfExists(FileInfo existingFile, ConfigurationIdentity identity)

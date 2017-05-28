@@ -89,18 +89,9 @@ namespace ConfigServer.AzureBlobStorageProvider
 
         private ResourceEntryInfo Map(CloudBlob blob)
         {
-            return new ResourceEntryInfo { Name = TrimFolderPath(blob.Name), TimeStamp = GetLastModifiedUtcDate(blob) };
+            return new ResourceEntryInfo { Name = Helpers.TrimFolderPath(blob.Name), TimeStamp = GetLastModifiedUtcDate(blob) };
         }
 
         private string GetArchiveResourcePath(ConfigurationIdentity identity, string name) => $"Archive/{identity.Client.ClientId}/{name.ToLowerInvariant()}";
-
-        private string TrimFolderPath(string path)
-        {
-            var result = path;
-            var index = path.IndexOf('/');
-            while(index >= 0)
-                result = path.Substring(index + 1);
-            return result;
-        }
     }
 }

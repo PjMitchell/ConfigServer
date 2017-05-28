@@ -52,6 +52,13 @@ export class ResourceDataService {
             .catch(this.handleError);
     }
 
+    public copyResources(fromClientId: string, toClientId: string, resources: string[] ): Promise<IHttpRequestResult> {
+        return this.http.post(this.resourceUrl + fromClientId + '/to/' + toClientId, resources)
+            .toPromise()
+            .then((response) => this.handlePostSuccess(response))
+            .catch(this.handleError);
+    }
+
     private handlePostSuccess(response: Response) {
         return {
             suceeded: true,

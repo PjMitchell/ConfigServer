@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { ClientOverviewComponent } from './components/clientOverview';
 import { ConfigArchiveComponent } from './components/configArchive';
+import { CopyResourceComponent } from "./components/copyResource";
 import { CreateClientComponent } from './components/createClient';
 import { CreateClientGroupComponent } from './components/createClientGroup';
 import { EditClientComponent } from './components/editClient';
@@ -11,6 +12,7 @@ import { EditClientGroupComponent } from './components/editClientGroup';
 import { GroupClientsComponent } from './components/groupClients';
 import { HomeComponent } from './components/home';
 import { ResourceArchiveComponent } from './components/resourceArchive';
+
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'createClient', component: CreateClientComponent },
@@ -23,6 +25,7 @@ const appRoutes: Routes = [
     { path: 'group/:groupId', component: GroupClientsComponent },
     { path: 'resourceArchive/:clientId', component: ResourceArchiveComponent },
     { path: 'configArchive/:clientId', component: ConfigArchiveComponent },
+    { path: 'copyResource/:clientId', component: CopyResourceComponent },
 ];
 
 export const appRoutingProviders: any[] = [
