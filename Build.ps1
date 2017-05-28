@@ -1,4 +1,5 @@
-cd c:<#  
+cd c:
+<#  
 .SYNOPSIS
     You can add this to you build script to ensure that psbuild is available before calling
     Invoke-MSBuild. If psbuild is not available locally it will be downloaded automatically.
