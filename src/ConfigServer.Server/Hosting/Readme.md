@@ -37,19 +37,30 @@ POST: Sets Config from editor model
 
 ### Resource ~/Resource
 /{clientId} GET :Gets Catalogue of resources
+
 /{clientId}/{resource} GET: Gets Resource file
+
 /{clientId}/{resource} POST: Uploads Resource file
+
+/{clientId}/to/{clientId} POST: Copies resources to client in same group
+
 /{clientId}/{resource} DELETE: Delets Resource file
 
 
 ### Resource Archive ~/ResourceArchive
 /{clientId} GET: Gets Catalogue of archived resources
+
 /{clientId}/{resource}  GET: Gets archived resource file
+
 /{clientId}/{resource}  DELETE: Deletes archived resource file
+
 /{clientId}?before={date} DELETE:Deletes archived resource files created before set date
 
 ### Config Archive ~/Archive
 /{clientId} GET: Gets Catalogue of archived configs
+
 /{clientId}/{configName}  GET: Gets archived configs json
+
 /{clientId}/{resource}  DELETE: Deletes archived configs
+
 /{clientId}?before={date} DELETE:Deletes archived configs created before set date

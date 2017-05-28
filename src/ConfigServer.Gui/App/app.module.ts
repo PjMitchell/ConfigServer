@@ -12,6 +12,7 @@ import { ConfigArchiveComponent } from "./components/configArchive";
 import { EditClientSettingInputComponent } from './components/configClientSettingInput';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
+import { CopyResourceComponent } from "./components/copyResource";
 import { CreateClientComponent } from './components/createClient';
 import { CreateClientGroupComponent } from './components/createClientGroup';
 import { EditClientComponent } from './components/editClient';
@@ -83,6 +84,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ResourceOverviewComponent,
         ResourceArchiveComponent,
         ConfigArchiveComponent,
+        CopyResourceComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],

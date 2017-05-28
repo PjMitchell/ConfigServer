@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ConfigServer.Server;
 using ConfigServer.FileProvider;
+using ConfigServer.AzureBlobStorageProvider;
 using ConfigServer.Gui.Models;
 using System;
 
@@ -31,11 +32,14 @@ namespace ConfigServer.Gui
         {
             services.AddMvc();
             // Add framework services.
-            services.AddConfigServer()
+            var configserverBuilder = services.AddConfigServer()
                 .WithVersion(new Version(1, 0, 0))
-                .UseConfigSet<SampleConfigSet>()
-                .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath +"/FileStore/Configs" })
-                .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = Env.ContentRootPath + "/FileStore/Resources" });
+                .UseConfigSet<SampleConfigSet>();
+
+            UseFileStorage(configserverBuilder);
+            // Comment line above and uncomment line below to test azure blob storage provider
+            // UseAzureBlobStorage(configserverBuilder);
+
             services.AddTransient<IOptionProvider, OptionProvider>();
         }
 
@@ -71,5 +75,29 @@ namespace ConfigServer.Gui
 
             });
         }
+
+        private void UseFileStorage(ConfigServerBuilder builder)
+        {
+            builder.UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = Env.ContentRootPath + "/FileStore/Configs" })
+            .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = Env.ContentRootPath + "/FileStore/Resources" });
+        }
+
+        private void UseAzureBlobStorage(ConfigServerBuilder builder)
+        {
+            builder.UseAzureBlobStorageConfigProvider(new AzureBlobStorageRepositoryBuilderOptions
+            {
+                Uri = new Uri("http://127.0.0.1:10000/devstoreaccount1"),
+                Credentials = new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("devstoreaccount1", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="),
+                Container = "configs",
+            })
+                .UseAzureBlobStorageResourceProvider(new AzureBlobStorageResourceStoreOptions
+                {
+                    Uri = new Uri("http://127.0.0.1:10000/devstoreaccount1"),
+                    Credentials = new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("devstoreaccount1", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="),
+                    Container = "resources",
+                });
+        }
+
     }
+
 }

@@ -5,7 +5,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
-        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button></h3>
+        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> <button type="button" class="btn btn-primary" (click)="gotoCopy()">Copy</button></h3>
         <div class="break">
         </div>
         <div class="row">
@@ -49,7 +49,11 @@ export class ResourceOverviewComponent {
         this.onResourcesChanged.emit();
     }
 
-    public goToArchive(configurationSetId: string, configId: string): void {
+    public goToArchive(): void {
         this.router.navigate(['/resourceArchive', this.clientId]);
+    }
+
+    public gotoCopy() {
+        this.router.navigate(['/copyResource', this.clientId]);
     }
 }
