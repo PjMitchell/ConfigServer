@@ -33,8 +33,8 @@ namespace ConfigServer.Server
             if(user.HasClaim(s=> s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.WriteClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {
                 result.CanAccessClientAdmin = true;
-                result.CanAddClients = true;
-                result.CanAddGroups = true;
+                result.CanEditClients = true;
+                result.CanEditGroups = true;
             }
             if(!result.CanAccessClientAdmin && user.HasClaim(s => s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.ReadClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {

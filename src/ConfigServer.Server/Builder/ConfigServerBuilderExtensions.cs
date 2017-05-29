@@ -101,7 +101,7 @@ namespace ConfigServer.Server
             app.Map(HostPaths.Guid, client => client.UseOldEndpoint<GuidGeneratorEndpoint>(options));
             app.Map(HostPaths.ResourceArchive, client => client.UseOldEndpoint<ResourceArchiveEndpoint>(options));
             app.Map(HostPaths.Archive, client => client.UseOldEndpoint<ConfigArchiveEndPoint>(options));
-
+            app.Map(HostPaths.UserPermissions, client => client.UseEndpoint<PermissionEndpoint>(options));
             app.UseOldEndpoint<ConfigEnpoint>(options);
             
             return app;

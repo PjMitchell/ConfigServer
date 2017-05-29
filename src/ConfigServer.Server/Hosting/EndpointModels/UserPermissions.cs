@@ -7,7 +7,7 @@ namespace ConfigServer.Server
     internal class UserPermissions
     {
         public bool CanAccessClientAdmin { get; set; }
-        public bool CanAddClients { get; set; }
-        public bool CanAddGroups { get; set; }
+        public bool CanEditClients { get; set; }
+        public bool CanEditGroups { get; set; }
     }
 }

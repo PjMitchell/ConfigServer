@@ -47,7 +47,8 @@ namespace ConfigServer.Server
                 .AddTransient<ClientGroupEndpoint>()
                 .AddTransient<GuidGeneratorEndpoint>()
                 .AddTransient<ResourceArchiveEndpoint>()
-                .AddTransient<ConfigArchiveEndPoint>();
+                .AddTransient<ConfigArchiveEndPoint>()
+                .AddTransient<PermissionEndpoint>();
             return collection;
         }
 

@@ -52,8 +52,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(context, options);
             Assert.NotNull(permission);
             Assert.False(permission.CanAccessClientAdmin);
-            Assert.False(permission.CanAddClients);
-            Assert.False(permission.CanAddGroups);
+            Assert.False(permission.CanEditClients);
+            Assert.False(permission.CanEditGroups);
 
         }
 
@@ -73,8 +73,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(context, options);
             Assert.NotNull(permission);
             Assert.True(permission.CanAccessClientAdmin);
-            Assert.False(permission.CanAddClients);
-            Assert.False(permission.CanAddGroups);
+            Assert.False(permission.CanEditClients);
+            Assert.False(permission.CanEditGroups);
 
         }
 
@@ -94,8 +94,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(context, options);
             Assert.NotNull(permission);
             Assert.True(permission.CanAccessClientAdmin);
-            Assert.True(permission.CanAddClients);
-            Assert.True(permission.CanAddGroups);
+            Assert.True(permission.CanEditClients);
+            Assert.True(permission.CanEditGroups);
 
         }
 
