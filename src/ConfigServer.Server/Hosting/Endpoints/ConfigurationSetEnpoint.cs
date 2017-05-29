@@ -8,7 +8,7 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationSetEnpoint : IEndpoint
+    internal class ConfigurationSetEnpoint : IOldEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
         readonly IConfigurationSetRegistry configCollection;

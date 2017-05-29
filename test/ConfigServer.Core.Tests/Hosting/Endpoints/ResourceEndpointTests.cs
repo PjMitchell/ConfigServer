@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
         private readonly Version version = new Version(1, 0);
         private const string clientGroupImagePath = "ClientGroupImages";
-        private readonly IEndpoint target;
+        private readonly IOldEndpoint target;
 
         public ResourceEndpointTests()
         {

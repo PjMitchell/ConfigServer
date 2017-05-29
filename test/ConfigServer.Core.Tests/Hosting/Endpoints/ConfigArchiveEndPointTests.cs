@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private ConfigurationClient expectedClient;
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private readonly Version version = new Version(1, 0);
-        private readonly IEndpoint target;
+        private readonly IOldEndpoint target;
 
         public ConfigArchiveEndPointTests()
         {

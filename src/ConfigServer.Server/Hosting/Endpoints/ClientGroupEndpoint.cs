@@ -23,35 +23,51 @@ namespace ConfigServer.Server
             this.commandBus = commandBus;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
-
-        public async Task<bool> TryHandle(HttpContext context)
+        public Task Handle(HttpContext context, ConfigServerOptions options)
         {
             // GET Gets All Groups
             // POST Update Groups
             // /{GroupId} GET
             // /{GroupId}/Clients GET
             // /None/Clients GET
+            if (!CheckMethodAndAuthentication(context, options))
+                return Task.FromResult(true);
+            
+
             var pathParams = context.ToPathParams();
             switch(pathParams.Length)
             {
                 case 0:
-                    return await HandleEmptyPath(context);
+                    return HandleEmptyPath(context);
                 case 1:
-                    return await HandleGroupPath(context, pathParams[0]);
+                    return HandleGroupPath(context, pathParams[0]);
                 case 2:
                     return string.Equals(pathParams[1],groupClientsPath, StringComparison.OrdinalIgnoreCase)
-                        ? await HandleGroupClientPath(context, pathParams[0])
-                        : await HandleNotFound(context);
+                        ? HandleGroupClientPath(context, pathParams[0])
+                        : HandleNotFound(context);
                 default:
-                    return await HandleNotFound(context);
+                    return HandleNotFound(context);
             }
         }
 
-        private async Task<bool> HandleEmptyPath(HttpContext context)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), factory);
+            }
+            else if (context.Request.Method == "POST")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), factory);
+            }
+            else
+            {
+                factory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
+        }
+
+        private async Task HandleEmptyPath(HttpContext context)
         {
             switch (context.Request.Method)
             {
@@ -65,8 +81,6 @@ namespace ConfigServer.Server
                     factory.BuildMethodNotAcceptedStatusResponse(context);
                     break;
             }
-                
-            return true;
         }
 
         private async Task HandleGroupSaveRequest(HttpContext context)
@@ -76,17 +90,16 @@ namespace ConfigServer.Server
             await factory.BuildResponseFromCommandResult(context,result);
         }
 
-        private async Task<bool> HandleGroupPath(HttpContext context, string groupId)
+        private async Task HandleGroupPath(HttpContext context, string groupId)
         {
             var group = await configurationClientService.GetClientGroupOrDefault(groupId);
             if (group != null)
                 await factory.BuildJsonResponse(context, group);
             else
                 factory.BuildNotFoundStatusResponse(context);
-            return true;
         }
 
-        private async Task<bool> HandleGroupClientPath(HttpContext context, string groupId)
+        private async Task HandleGroupClientPath(HttpContext context, string groupId)
         {
             IEnumerable<ConfigurationClient> clients;
             if (string.Equals(groupId, noGroupPath, StringComparison.OrdinalIgnoreCase))
@@ -100,7 +113,6 @@ namespace ConfigServer.Server
                 clients = (await configurationClientService.GetClients()).Where(c => string.Equals(groupId, c.Group, StringComparison.OrdinalIgnoreCase));
             }
             await factory.BuildJsonResponse(context, clients);
-            return true;
         }
 
         private Task<bool> HandleNotFound(HttpContext context)

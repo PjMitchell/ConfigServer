@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ConfigServer.Server
 {
-    internal class ResourceEndpoint : IEndpoint
+    internal class ResourceEndpoint : IOldEndpoint
     {
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;

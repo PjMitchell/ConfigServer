@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
 {
-    internal class GuidGeneratorEndpoint : IEndpoint
+    internal class GuidGeneratorEndpoint : IOldEndpoint
     {
         private readonly IHttpResponseFactory httpResponseFactory;
 

@@ -5,8 +5,22 @@
 GET: Gets All clients
 
 POST: Updates client
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+POST 'write'
 
-/\{Client Id} GET: Gets specified client
+/{Client Id} GET: Gets specified client
+
+### Config Client Groups ~/ClientGroup
+GET Gets All Groups
+POST Update Groups
+/{GroupId} GET
+/{GroupId}/Clients GET
+/None/Clients GET
+
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+POST 'write'
 
 ### Config ~/
 /\{Client Id}/\{Config name} GET: Gets config.

@@ -11,7 +11,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 {
     public class DownloadEndpointTests
     {
-        private readonly IEndpoint target;
+        private readonly IOldEndpoint target;
         private readonly Mock<IHttpResponseFactory> responseFactory;
         private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<IConfigurationSetService> configurationSetService;

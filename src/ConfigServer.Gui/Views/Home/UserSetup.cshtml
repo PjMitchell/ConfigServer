@@ -1,0 +1,29 @@
+﻿@{     
+}
+@using ConfigServer.Gui.Models;
+@model UserClaimModel
+<form asp-controller="Home" asp-action="UserSetup" method="post">
+    <!-- Input and Submit elements -->
+    <label>Username</label>
+    <input asp-for="@Model.Username" />
+    <label>Client Admin Claim</label>
+    <input asp-for="@Model.ClientAdmin" list="standardClaims" />
+    <button type="submit">Update</button>
+    <datalist id="standardClaims">
+        <option value="read"/>
+        <option value="write"/>
+    </datalist> 
+</form>
+<script>
+    function deleteRow(r) {
+            var i = r.parentNode.parentNode.rowIndex;
+            document.getElementById('table').deleteRow(i);
+    }
+
+    function addRow() {
+            var table = document.getElementById('table'),
+                len = table.rows.length,
+                newRow = table.rows[len - 1].cloneNode(true);
+            table.appendChild(newRow);
+    }
+</script>

@@ -7,7 +7,7 @@ using ConfigServer.Core;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigArchiveEndPoint : IEndpoint
+    internal class ConfigArchiveEndPoint : IOldEndpoint
     {
         private readonly IConfigurationClientService configurationClientService;
         private readonly IConfigurationSetRegistry registry;

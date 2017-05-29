@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace ConfigServer.Core.Tests
         private TestHttpContextBuilder(string path)
         {
             source = new TestHttpContext(path);
+            source.User = new ClaimsPrincipal(new ClaimsIdentity());
         }
 
         public HttpContext TestContext => source;
@@ -31,7 +33,11 @@ namespace ConfigServer.Core.Tests
         public TestHttpContextBuilder WithPost() => WithMethod("POST");
         public TestHttpContextBuilder WithDelete() => WithMethod("DELETE");
 
-
+        public TestHttpContextBuilder WithClaims(params Claim[] claims)
+        {
+            source.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "test"));
+            return this;
+        }
         public TestHttpContextBuilder WithJsonBody<TData>(TData data)
         {
             var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
