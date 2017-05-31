@@ -82,7 +82,7 @@ if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq "False") {
 	exit 1;
 }
 if( (Test-Path .\src\ConfigServer.Server\Assets\app.min.js) -eq "False") {
-	Write-Error "Asset styles.css not found";
+	Write-Error "Asset app.min.js not found";
 	exit 1;
 }
 
