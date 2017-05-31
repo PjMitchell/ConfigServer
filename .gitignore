@@ -252,3 +252,4 @@ ModelManifest.xml
 ##File store for GUI can repopulate from seed data
 **/ConfigServer.Gui/FileStore/
 **/ConfigServer.Sample.mvc/FileStore/
+**/ConfigServer.Server/Assets/
