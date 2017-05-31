@@ -76,14 +76,15 @@ function ExecuteGulpTasks
 	Pop-Location
 }
 
-##Check Assets
-if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq "False") {
-	Write-Error "Asset styles.css not found";
-	exit 1;
-}
-if( (Test-Path .\src\ConfigServer.Server\Assets\app.min.js) -eq "False") {
-	Write-Error "Asset app.min.js not found";
-	exit 1;
+function CheckAssets {
+	if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq "False") {
+		Write-Error "Asset styles.css not found";
+		exit 1;
+	}
+	if( (Test-Path .\src\ConfigServer.Server\Assets\app.min.js) -eq "False") {
+		Write-Error "Asset app.min.js not found";
+		exit 1;
+	}
 }
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
@@ -92,7 +93,7 @@ EnsurePsbuildInstalled
 exec { & dotnet --info }
 exec { & dotnet restore }
 ExecuteGulpTasks
-
+CheckAssets
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10);
 $revision = "beta9-" + $revision;
