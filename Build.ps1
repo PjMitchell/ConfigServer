@@ -76,6 +76,15 @@ function ExecuteGulpTasks
 	Pop-Location
 }
 
+##Check Assets
+if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq "False") {
+	Write-Error "Asset styles.css not found";
+	exit 1;
+}
+if( (Test-Path .\src\ConfigServer.Server\Assets\app.min.js) -eq "False") {
+	Write-Error "Asset styles.css not found";
+	exit 1;
+}
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
