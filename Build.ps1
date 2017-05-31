@@ -77,14 +77,16 @@ function ExecuteGulpTasks
 }
 
 function CheckAssets {
-	if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq "False") {
+	Push-Location "./src/ConfigServer.Server/Assets"  
+	if( (Test-Path .\styles.css) -eq $false) {
 		Write-Error "Asset styles.css not found";
 		exit 1;
 	}
-	if( (Test-Path .\src\ConfigServer.Server\Assets\app.min.js) -eq "False") {
+	if( (Test-Path .\app.min.js) -eq $false) {
 		Write-Error "Asset app.min.js not found";
 		exit 1;
 	}
+	Pop-Location
 }
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
