@@ -77,6 +77,10 @@ function ExecuteGulpTasks
 }
 
 function CheckAssets {
+	if( (Test-Path .\src\ConfigServer.Gui\wwwroot\Assets\app.min.js) -eq $false) {
+		Write-Host "app.min.js Not created";
+	}
+
 	Push-Location "./src/ConfigServer.Server/Assets"  
 	if( (Test-Path .\styles.css) -eq $false) {
 		Write-Error "Asset styles.css not found";
