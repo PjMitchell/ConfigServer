@@ -46,21 +46,30 @@ namespace ConfigServer.Server
             return new StreamReader(body).ReadToEndAsync();
         }
 
-        public static bool ChallengeUser(this HttpContext source, string claimType, ICollection<string> acceptableValues, IHttpResponseFactory responseFactory)
+        public static bool ChallengeUser(this HttpContext source, string claimType, ICollection<string> acceptableValues,bool allowAnomynous, IHttpResponseFactory responseFactory)
         {
             if (string.IsNullOrWhiteSpace(claimType))
-                return true;
-            if(!source.User.Identity.IsAuthenticated)
-            {
-                responseFactory.BuildStatusResponse(source, 401);
+                return source.ChallengeAuthentication(allowAnomynous, responseFactory);
+
+            if(!source.ChallengeAuthentication(allowAnomynous, responseFactory))
                 return false;
-            }
+
             if (!source.User.HasClaim(c=> claimType.Equals(c.Type, StringComparison.OrdinalIgnoreCase) && acceptableValues.Contains(c.Value)))
             {
                 responseFactory.BuildStatusResponse(source, 403);
                 return false;
             }
 
+            return true;
+        }
+
+        private static bool ChallengeAuthentication(this HttpContext source, bool allowAnomynous, IHttpResponseFactory responseFactory)
+        {
+            if (!allowAnomynous && !source.User.Identity.IsAuthenticated)
+            {
+                responseFactory.BuildStatusResponse(source, 401);
+                return false;
+            }
             return true;
         }
     }

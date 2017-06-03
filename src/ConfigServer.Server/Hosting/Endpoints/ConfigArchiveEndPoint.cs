@@ -7,7 +7,7 @@ using ConfigServer.Core;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigArchiveEndPoint : IOldEndpoint
+    internal class ConfigArchiveEndPoint : IEndpoint
     {
         private readonly IConfigurationClientService configurationClientService;
         private readonly IConfigurationSetRegistry registry;
@@ -24,40 +24,38 @@ namespace ConfigServer.Server
 
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
-
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
             // /{id} GET
             // /{id}/{resource} DELETE GET
             // /{id}?before={date} DELETE
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
+
             var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 2)
             {
                 httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
-                return true;
+                return;
             }
 
             var clientIdentity = await GetIdentityFromPathOrDefault(pathParams[0]);
             if (clientIdentity == null)
             {
                 httpResponseFactory.BuildStatusResponse(context, StatusCodes.Status404NotFound);
-                return true;
+                return;
             }
             if (pathParams.Length == 1)
             {
                 await HandleSingleParam(context, clientIdentity);
-                return true;
+                return;
             }
             else
             {
                 await HandleTwoParams(context, pathParams, clientIdentity);
             }
 
-            return true;
+            return;
         }
 
         private async Task HandleSingleParam(HttpContext context, ConfigurationIdentity clientIdentity)
@@ -117,6 +115,23 @@ namespace ConfigServer.Server
                         break;
                     }
 
+            }
+        }
+
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            else if (context.Request.Method == "DELETE")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            else
+            {
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
             }
         }
 

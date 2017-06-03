@@ -1,6 +1,7 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceDataService } from '../dataservices/resource-data.service';
+import { UserPermissionService } from '../dataservices/userpermission-data.service';
 import { IChildElement } from '../interfaces/htmlInterfaces';
 import { IResourceInfo } from '../interfaces/resourceInfo';
 
@@ -14,11 +15,11 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
                 <h5>{{resource.name}}</h5>
                 <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
                 <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
-                <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                <button type="button" class="btn btn-primary" *ngIf="canDeleteArchives" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
             </div>
         </div>
         <hr />
-        <div class="row">
+        <div class="row" *ngIf="canDeleteArchives">
             <div class="input-group col-sm-4 col-md-3">
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-primary" (click)="deleteBefore()">Delete before</button>
@@ -38,8 +39,8 @@ export class ResourceArchiveComponent implements OnInit {
     public inputDate: Date;
     @ViewChild('input')
     public input: IChildElement<HTMLInputElement>;
-
-    constructor(private dataService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
+    public canDeleteArchives = false;
+    constructor(private dataService: ResourceDataService, private permissionService: UserPermissionService, private route: ActivatedRoute, private router: Router) {
         this.inputDate = new Date();
     }
 
@@ -48,6 +49,10 @@ export class ResourceArchiveComponent implements OnInit {
             this.clientId = value['clientId'];
             this.updateArchiveList();
         });
+        this.permissionService.getPermission()
+            .then((permissions) => {
+            this.canDeleteArchives = permissions.canDeleteArchives;
+            });
     }
 
     public downloadResource(file: string) {

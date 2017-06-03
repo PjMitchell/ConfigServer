@@ -54,6 +54,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.False(permission.CanAccessClientAdmin);
             Assert.False(permission.CanEditClients);
             Assert.False(permission.CanEditGroups);
+            Assert.False(permission.CanDeleteArchives);
+
+            
 
         }
 
@@ -75,6 +78,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.True(permission.CanAccessClientAdmin);
             Assert.False(permission.CanEditClients);
             Assert.False(permission.CanEditGroups);
+            Assert.False(permission.CanDeleteArchives);
 
         }
 
@@ -96,6 +100,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.True(permission.CanAccessClientAdmin);
             Assert.True(permission.CanEditClients);
             Assert.True(permission.CanEditGroups);
+            Assert.True(permission.CanDeleteArchives);
 
         }
 

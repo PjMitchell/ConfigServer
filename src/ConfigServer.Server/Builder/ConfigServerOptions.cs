@@ -15,6 +15,10 @@
         /// </summary>
         public ConfigServerAuthenticationOptions ManagerAuthenticationOptions { get; set; } = new ConfigServerAuthenticationOptions();
 
+        /// <summary>
+        /// Allows Anomynous access if no required claims have been specified
+        /// </summary>
+        public bool AllowAnomynousAccess { get; set; }
 
         /// <summary>
         /// Claim type for access to create clients and client groups.

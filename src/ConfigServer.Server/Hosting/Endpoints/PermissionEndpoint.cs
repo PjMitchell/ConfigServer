@@ -35,6 +35,7 @@ namespace ConfigServer.Server
                 result.CanAccessClientAdmin = true;
                 result.CanEditClients = true;
                 result.CanEditGroups = true;
+                result.CanDeleteArchives = true;
             }
             if(!result.CanAccessClientAdmin && user.HasClaim(s => s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.ReadClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {
