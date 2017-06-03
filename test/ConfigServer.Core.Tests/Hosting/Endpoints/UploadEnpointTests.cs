@@ -20,7 +20,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private const string notFoundClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D2";
 
-        private readonly IEndpoint target;
+        private readonly IOldEndpoint target;
 
         // /ConfigurationSet/{clientId}/{Configuration Set}
         // POST: Uploads configuration set file

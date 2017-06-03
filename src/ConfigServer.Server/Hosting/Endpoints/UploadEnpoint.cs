@@ -6,7 +6,7 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class UploadEnpoint : IEndpoint
+    internal class UploadEnpoint : IOldEndpoint
     {
         private readonly IHttpResponseFactory responseFactory;
         private readonly IConfigurationSetRegistry configCollection;

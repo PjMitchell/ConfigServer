@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigEnpoint : IEndpoint
+    internal class ConfigEnpoint : IOldEndpoint
     {
         readonly IConfigInstanceRouter router;
         readonly IHttpResponseFactory responseFactory;

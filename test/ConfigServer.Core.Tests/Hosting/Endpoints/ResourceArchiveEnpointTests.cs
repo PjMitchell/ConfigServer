@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -22,6 +23,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Version version = new Version(1, 0);
         private readonly IEndpoint target;
 
+        private ConfigServerOptions options;
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+
         public ResourceArchiveEndpointTests()
         {
             expectedClient = new ConfigurationClient(clientId);
@@ -33,27 +38,42 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var registry = new ConfigurationSetRegistry();
             registry.SetVersion(version);
             target = new ResourceArchiveEndpoint(configClientService.Object, registry, resourceStore.Object, httpResponseFactory.Object);
+            options = new ConfigServerOptions();
         }
 
         [Fact]
         public async Task Get_ClientArchiveSummary_GetsClientSummary()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(readClaim)
+                .TestContext;
             var expectedResources = new List<ResourceEntryInfo>
             {
                 new ResourceEntryInfo{ Name = "File.txt"}
             };
             resourceStore.Setup(r => r.GetArchiveResourceCatalogue(It.Is<ConfigurationIdentity>(s => s.Client.Equals(expectedClient))))
                 .ReturnsAsync(() => expectedResources);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, options);
             httpResponseFactory.Verify(f => f.BuildJsonResponse(testContext, expectedResources));
+        }
+
+        [Fact]
+        public async Task Get_Returns403_WithNoClaim()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims()
+                .TestContext;
+            await target.Handle(testContext, options);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
 
         [Fact]
         public async Task Get_ClientArchiveResource_GetsClientResource()
         {
             var resourceName = "File.txt";
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(readClaim)
+                .TestContext;
             var expectedResource = new ResourceEntry
             {
                 HasEntry = true,
@@ -62,7 +82,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             };
             resourceStore.Setup(r => r.GetArchiveResource(resourceName, It.Is<ConfigurationIdentity>(s => s.Client.Equals(expectedClient))))
                 .ReturnsAsync(() => expectedResource);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, options);
             httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
         }
 
@@ -70,14 +90,16 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_ClientArchiveResource_ReturnsNotFoundIfNotFound()
         {
             var resourceName = "File.txt";
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(readClaim)
+                .TestContext;
             var expectedResource = new ResourceEntry
             {
                 HasEntry = false
             };
             resourceStore.Setup(r => r.GetArchiveResource(resourceName, It.Is<ConfigurationIdentity>(s => s.Client.Equals(expectedClient))))
                 .ReturnsAsync(() => expectedResource);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, options);
             httpResponseFactory.Verify(f => f.BuildNotFoundStatusResponse(testContext));
         }
 
@@ -87,11 +109,26 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var resourceName = "File.txt";
             
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(writeClaim)
                 .WithDelete()
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, options);
             resourceStore.Verify(r => r.DeleteArchiveResource(resourceName, It.Is<ConfigurationIdentity>(a => a.Client.Equals(expectedClient))));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
+        }
+
+        [Fact]
+        public async Task Delete_Returns403_IfReadClaim()
+        {
+            var resourceName = "File.txt";
+
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(readClaim)
+                .WithDelete()
+                .TestContext;
+            await target.Handle(testContext, options);
+            resourceStore.Verify(r => r.DeleteArchiveResource(resourceName, It.Is<ConfigurationIdentity>(a => a.Client.Equals(expectedClient))), Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
 
         [Fact]
@@ -99,10 +136,11 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var datetime = new DateTime(2017, 02, 21);
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(writeClaim)
                 .WithQueryParam("before",datetime.ToString("yyyy-MM-dd"))
                 .WithDelete()
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, options);
             resourceStore.Verify(r => r.DeleteOldArchiveResources(datetime, It.Is<ConfigurationIdentity>(a => a.Client.Equals(expectedClient))));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
         }

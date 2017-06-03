@@ -21,46 +21,60 @@ namespace ConfigServer.Server
             this.commandBus = commandBus;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
-
-        public async Task<bool> TryHandle(HttpContext context)
+        public Task Handle(HttpContext context, ConfigServerOptions options)
         {
             // GET Gets All
             // POST Update Client
             // /{ClientId} GET
+            if (!CheckMethodAndAuthentication(context, options))
+                return Task.FromResult(true);
+
             var pathParams = context.ToPathParams();
             switch (pathParams.Length)
             {
                 case 0:
-                    return await HandleEmptyPath(context);
+                    return HandleEmptyPath(context);
                 case 1:
-                    return await HandleClientPath(context, pathParams[0]);
+                    return HandleClientPath(context, pathParams[0]);
                 default:
-                    return await HandleNotFound(context);
+                    return HandleNotFound(context);
 
             }
         }
 
-        private Task<bool> HandleNotFound(HttpContext context)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+            }
+            else if (context.Request.Method == "POST")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+            }
+            else
+            {
+                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
+        }
+
+        private Task HandleNotFound(HttpContext context)
         {
             responseFactory.BuildNotFoundStatusResponse(context);
             return Task.FromResult(true);
         }
 
-        private async Task<bool> HandleClientPath(HttpContext context, string clientId)
+        private async Task HandleClientPath(HttpContext context, string clientId)
         {
             var client = await configurationClientService.GetClientOrDefault(clientId);
             if (client == null)
                 responseFactory.BuildNotFoundStatusResponse(context);
             else
                 await responseFactory.BuildJsonResponse(context, Map(client));
-            return true;
         }
 
-        private async Task<bool> HandleEmptyPath(HttpContext context)
+        private async Task HandleEmptyPath(HttpContext context)
         {
             switch (context.Request.Method)
             {
@@ -74,7 +88,6 @@ namespace ConfigServer.Server
                     responseFactory.BuildMethodNotAcceptedStatusResponse(context);
                     break;
             }
-            return true;
         }
 
         private async Task<IEnumerable<ConfigurationClientPayload>> GetAllClients()

@@ -41,7 +41,7 @@ namespace ConfigServer.Core.Tests
 
         public override string TraceIdentifier { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
-        public override ClaimsPrincipal User { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+        public override ClaimsPrincipal User { get; set; }
 
         public override WebSocketManager WebSockets { get { throw new NotImplementedException(); } }
 

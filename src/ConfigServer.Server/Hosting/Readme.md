@@ -5,8 +5,22 @@
 GET: Gets All clients
 
 POST: Updates client
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+POST 'write'
 
-/\{Client Id} GET: Gets specified client
+/{Client Id} GET: Gets specified client
+
+### Config Client Groups ~/ClientGroup
+GET Gets All Groups
+POST Update Groups
+/{GroupId} GET
+/{GroupId}/Clients GET
+/None/Clients GET
+
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+POST 'write'
 
 ### Config ~/
 /\{Client Id}/\{Config name} GET: Gets config.
@@ -55,6 +69,10 @@ POST: Sets Config from editor model
 /{clientId}/{resource}  DELETE: Deletes archived resource file
 
 /{clientId}?before={date} DELETE:Deletes archived resource files created before set date
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+DELETE 'write'
+
 
 ### Config Archive ~/Archive
 /{clientId} GET: Gets Catalogue of archived configs
@@ -64,3 +82,7 @@ POST: Sets Config from editor model
 /{clientId}/{resource}  DELETE: Deletes archived configs
 
 /{clientId}?before={date} DELETE:Deletes archived configs created before set date
+
+Required Claim: option.ClientAdminClaimType 
+GET 'read','write'
+DELETE 'write'

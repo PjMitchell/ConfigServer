@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
+import { UserPermissionService } from '../dataservices/userpermission-data.service';
 import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
 
@@ -24,7 +25,7 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
                         <p class="client-enviroment">{{client.enviroment}}</p>
                         <p class="client-description">{{client.description}}</p>
                         <button id="manage-client-btn-{{client.clientId}}" type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
-                        <button id="edit-client-btn-{{client.clientId}}" type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
+                        <button id="edit-client-btn-{{client.clientId}}" *ngIf="canEditClients" type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
                     </div>
                 </div>
             </div>
@@ -36,7 +37,8 @@ export class GroupClientsComponent  implements OnInit {
     public isSpecifiedGroup: boolean = false;
     public clients: IConfigurationClient[];
     public group: IConfigurationClientGroup;
-    constructor(private clientDataService: ConfigurationClientGroupDataService, private router: Router, private route: ActivatedRoute ) {
+    public canEditClients = false;
+    constructor(private clientDataService: ConfigurationClientGroupDataService, private permissionService: UserPermissionService, private router: Router, private route: ActivatedRoute ) {
         this.clients = new Array<IConfigurationClient>();
         this.group = {
             groupId : '',
@@ -62,6 +64,10 @@ export class GroupClientsComponent  implements OnInit {
             this.clientDataService.getClientForGroup(this.groupId).then((result) => { this.clients = result; });
             this.clientDataService.getClientGroup(this.groupId).then((result) => { this.group = result; });
         }
+        this.permissionService.getPermission()
+            .then((permissions) => {
+                this.canEditClients = permissions.canEditClients;
+        });
     }
 
     public goToClient(clientId: string) {

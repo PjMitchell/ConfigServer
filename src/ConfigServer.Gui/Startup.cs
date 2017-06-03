@@ -8,6 +8,8 @@ using ConfigServer.FileProvider;
 using ConfigServer.AzureBlobStorageProvider;
 using ConfigServer.Gui.Models;
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Gui
 {
@@ -41,6 +43,7 @@ namespace ConfigServer.Gui
             // UseAzureBlobStorage(configserverBuilder);
 
             services.AddTransient<IOptionProvider, OptionProvider>();
+            services.AddSingleton<UserProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +54,7 @@ namespace ConfigServer.Gui
 
             app.UseDeveloperExceptionPage();
             app.UseBrowserLink();
-
+            app.Use(AddUserContext);
             app.UseStaticFiles(new StaticFileOptions()
             {
                 OnPrepareResponse = (context) =>
@@ -69,10 +72,7 @@ namespace ConfigServer.Gui
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
             app.UseConfigServer(new ConfigServerOptions {
-                ServerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
-                ManagerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false }
-
-
+                ClientAdminClaimType = Constants.ClientAdminClaimType
             });
         }
 
@@ -96,6 +96,14 @@ namespace ConfigServer.Gui
                     Credentials = new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials("devstoreaccount1", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="),
                     Container = "resources",
                 });
+        }
+
+        private Task AddUserContext(HttpContext context, Func<Task> next)
+        {
+            var userProvider = context.RequestServices.GetService<UserProvider>();
+            var pricipal = userProvider.GetPrincipal();
+            context.User = pricipal;
+            return next();
         }
 
     }

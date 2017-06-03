@@ -2,23 +2,39 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
     internal class ConfigManagerEndpoint : IEndpoint
     {
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        private readonly IHttpResponseFactory factory;
+
+        public ConfigManagerEndpoint(IHttpResponseFactory factory)
         {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
+            this.factory = factory;
         }
 
-        public async Task<bool> TryHandle(HttpContext context)
+        public Task Handle(HttpContext context, ConfigServerOptions options)
         {
             var managerPath = context.Request.PathBase.Value;
             var basePath = GetBasePath(managerPath);
+            if (!CheckMethodAndAuthentication(context, options))
+                return Task.FromResult(true);
+            return context.Response.WriteAsync(Shell(basePath, managerPath));
+        }
 
-            await context.Response.WriteAsync(Shell(basePath, managerPath));
-            return true;
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, factory);
+            }
+            else
+            {
+                factory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
 
         private string GetBasePath(string managerPath)

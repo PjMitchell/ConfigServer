@@ -93,16 +93,16 @@ namespace ConfigServer.Server
             
             app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
             app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
-            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
-            app.Map(HostPaths.Download, client => client.UseEndpoint<DownloadEndpoint>(options));
-            app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
-            app.Map(HostPaths.Resource, client => client.UseEndpoint<ResourceEndpoint>(options));
+            app.Map(HostPaths.ConfigurationSet, client => client.UseOldEndpoint<ConfigurationSetEnpoint>(options));
+            app.Map(HostPaths.Download, client => client.UseOldEndpoint<DownloadEndpoint>(options));
+            app.Map(HostPaths.Upload, client => client.UseOldEndpoint<UploadEnpoint>(options));
+            app.Map(HostPaths.Resource, client => client.UseOldEndpoint<ResourceEndpoint>(options));
             app.Map(HostPaths.Group, client => client.UseEndpoint<ClientGroupEndpoint>(options));
             app.Map(HostPaths.Guid, client => client.UseEndpoint<GuidGeneratorEndpoint>(options));
             app.Map(HostPaths.ResourceArchive, client => client.UseEndpoint<ResourceArchiveEndpoint>(options));
             app.Map(HostPaths.Archive, client => client.UseEndpoint<ConfigArchiveEndPoint>(options));
-
-            app.UseEndpoint<ConfigEnpoint>(options);
+            app.Map(HostPaths.UserPermissions, client => client.UseEndpoint<PermissionEndpoint>(options));
+            app.UseOldEndpoint<ConfigEnpoint>(options);
             
             return app;
         }

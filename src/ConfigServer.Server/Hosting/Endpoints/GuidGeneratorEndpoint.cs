@@ -17,7 +17,7 @@ namespace ConfigServer.Server
 
         public bool IsAuthorizated(HttpContext context, ConfigServerOptions options) => true;
 
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
             var param = context.ToPathParams();
             if (param.Length != 0)
@@ -26,7 +26,6 @@ namespace ConfigServer.Server
                 httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
             else
                 await httpResponseFactory.BuildJsonResponse(context, Guid.NewGuid());
-            return true;
         }
     }
 }

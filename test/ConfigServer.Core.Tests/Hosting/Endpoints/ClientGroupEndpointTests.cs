@@ -4,6 +4,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,6 +20,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string groupClientsPath = "Clients";
         private const string groupId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
         private const string groupId2 = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
+        private ConfigServerOptions options;
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
 
         private IEndpoint target;
 
@@ -32,6 +36,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configurationClientService = new Mock<IConfigurationClientService>();
             factory = new Mock<IHttpResponseFactory>();
             commandBus = new Mock<ICommandBus>();
+            options = new ConfigServerOptions();
             target = new ClientGroupEndpoint(configurationClientService.Object, factory.Object, commandBus.Object);
         }
 
@@ -44,11 +49,28 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             };
             configurationClientService.Setup(s => s.GetGroups())
                 .ReturnsAsync(() => groups);
-            var context = TestHttpContextBuilder.CreateForPath("/").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims(readClaim).TestContext;
 
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context,options);
             factory.Verify(f => f.BuildJsonResponse(context, groups));
+
+        }
+
+        [Fact]
+        public async Task GET_Returns403IfUserDoesNotHaveReadClaim()
+        {
+            var group = new ConfigurationClientGroup { GroupId = groupId };
+            var commandResult = CommandResult.Success();
+            var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims()
+                .WithPost()
+                .WithJsonBody(group)
+                .TestContext;
+            await target.Handle(context, options);
+            commandBus.Verify(f => f.SubmitAsync(It.IsAny<CreateUpdateClientGroupCommand>()), Times.Never);
+
+            factory.Verify(f => f.BuildStatusResponse(context, 403));
 
         }
 
@@ -59,10 +81,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             configurationClientService.Setup(s => s.GetClientGroupOrDefault(groupId))
                 .ReturnsAsync(() => group);
-            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}")
+                .WithClaims(readClaim).TestContext;
 
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             factory.Verify(f => f.BuildJsonResponse(context, group));
         }
 
@@ -73,10 +95,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             configurationClientService.Setup(s => s.GetClientGroupOrDefault(groupId))
                 .ReturnsAsync(() => null);
-            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}")
+                .WithClaims(readClaim).TestContext;
 
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             factory.Verify(f => f.BuildNotFoundStatusResponse(context));
         }
 
@@ -93,13 +115,13 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             configurationClientService.Setup(s => s.GetClients())
                 .ReturnsAsync(() => clients);
-            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}/{groupClientsPath}").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}/{groupClientsPath}")
+                .WithClaims(readClaim).TestContext;
             var observed = new List<ConfigurationClient>();
             factory.Setup(f => f.BuildJsonResponse(context,It.IsAny<IEnumerable<ConfigurationClient>>()))
                 .Callback((HttpContext c, object arg2)=> observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
                 .Returns(()=> Task.FromResult(1));
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             Assert.Equal(clients.Where(w => groupId.Equals(w.Group)).ToList(), observed);
         }
 
@@ -122,13 +144,13 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => groups);
             configurationClientService.Setup(s => s.GetClients())
                 .ReturnsAsync(() => clients);
-            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}")
+                .WithClaims(readClaim).TestContext;
             var observed = new List<ConfigurationClient>();
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
                 .Returns(() => Task.FromResult(1));
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             Assert.Equal(clients.Where(w => String.IsNullOrWhiteSpace(w.Group)).ToList(), observed);
         }
 
@@ -150,13 +172,13 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => groups);
             configurationClientService.Setup(s => s.GetClients())
                 .ReturnsAsync(() => clients);
-            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}").TestContext;
+            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}")
+                .WithClaims(readClaim).TestContext;
             var observed = new List<ConfigurationClient>();
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
                 .Returns(() => Task.FromResult(1));
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             Assert.Equal(clients.Where(w => !groupId.Equals(w.Group)).ToList(), observed);
         }
 
@@ -166,12 +188,12 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var group = new ConfigurationClientGroup{ GroupId = groupId};
 
             var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims(writeClaim)
                 .WithPost()
                 .WithJsonBody(group)
                 .TestContext;
 
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             commandBus.Verify(f => f.SubmitAsync(It.Is<CreateUpdateClientGroupCommand>(c=> c.ClientGroup.GroupId == group.GroupId)));
 
         }
@@ -182,15 +204,48 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var group = new ConfigurationClientGroup { GroupId = groupId };
             var commandResult = CommandResult.Success();
             var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims(writeClaim)
                 .WithPost()
                 .WithJsonBody(group)
                 .TestContext;
             commandBus.Setup(f => f.SubmitAsync(It.IsAny<CreateUpdateClientGroupCommand>()))
                 .ReturnsAsync(()=> commandResult);
 
-            var result = await target.TryHandle(context);
-            Assert.True(result);
+            await target.Handle(context, options);
             factory.Verify(f => f.BuildResponseFromCommandResult(context, commandResult));
+
+        }
+
+        [Fact]
+        public async Task Post_Returns403IfUserDoesNotHaveWriteClaim()
+        {
+            var group = new ConfigurationClientGroup { GroupId = groupId };
+            var commandResult = CommandResult.Success();
+            var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims(readClaim)
+                .WithPost()
+                .WithJsonBody(group)
+                .TestContext;
+            await target.Handle(context, options);
+            commandBus.Verify(f => f.SubmitAsync(It.IsAny<CreateUpdateClientGroupCommand>()), Times.Never);          
+            
+            factory.Verify(f => f.BuildStatusResponse(context, 403));
+
+        }
+
+        [Fact]
+        public async Task Post_Returns401IfUserNotAuthenticated()
+        {
+            var group = new ConfigurationClientGroup { GroupId = groupId };
+            var commandResult = CommandResult.Success();
+            var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithPost()
+                .WithJsonBody(group)
+                .TestContext;
+            await target.Handle(context, options);
+            commandBus.Verify(f => f.SubmitAsync(It.IsAny<CreateUpdateClientGroupCommand>()), Times.Never);
+
+            factory.Verify(f => f.BuildStatusResponse(context, 401));
 
         }
     }

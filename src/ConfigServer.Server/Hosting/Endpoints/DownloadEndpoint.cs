@@ -8,7 +8,7 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class DownloadEndpoint : IEndpoint
+    internal class DownloadEndpoint : IOldEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
         readonly IConfigurationSetRegistry configCollection;
