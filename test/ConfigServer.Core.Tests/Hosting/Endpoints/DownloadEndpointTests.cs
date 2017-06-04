@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -11,7 +12,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 {
     public class DownloadEndpointTests
     {
-        private readonly IOldEndpoint target;
+        private ConfigServerOptions option;
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private readonly IEndpoint target;
         private readonly Mock<IHttpResponseFactory> responseFactory;
         private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<IConfigurationSetService> configurationSetService;
@@ -32,29 +35,47 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configClientService = new Mock<IConfigurationClientService>();
             configClientService.Setup(s => s.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => expectedClient);
-
+            option = new ConfigServerOptions();
             target = new DownloadEndpoint(responseFactory.Object, configCollection, configurationSetService.Object, configClientService.Object);
         }
 
         [Fact]
         public async Task Get_GetsConfigAsJsonFile()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}/{nameof(SampleConfig)}.json").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}/{nameof(SampleConfig)}.json")
+                .WithClaims(readClaim)
+                .TestContext;
             var configSet = new SampleConfigSet
             {
                 SampleConfig = new Config<SampleConfig>(new SampleConfig { LlamaCapacity = 23 })
             };
             configurationSetService.Setup(s => s.GetConfigurationSet(typeof(SampleConfigSet), It.Is<ConfigurationIdentity>(i => i.Client.Equals(expectedClient))))
                 .ReturnsAsync(() => configSet);
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+            await target.Handle(testContext, option);
             responseFactory.Verify(f => f.BuildJsonFileResponse(testContext, configSet.SampleConfig.Value, $"{nameof(SampleConfig)}.json"));
+        }
+
+
+        [Fact]
+        public async Task Get_Returns403_IfNoClaim()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}/{nameof(SampleConfig)}.json")
+                .WithClaims()
+                .TestContext;
+            var configSet = new SampleConfigSet
+            {
+                SampleConfig = new Config<SampleConfig>(new SampleConfig { LlamaCapacity = 23 })
+            };
+            await target.Handle(testContext, option);
+            responseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
 
         [Fact]
         public async Task Get_GetsConfigSetAsJsonFile()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}.json").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}.json")
+                .WithClaims(readClaim)
+                .TestContext;
             var configSet = new SampleConfigSet
             {
                 SampleConfig = new Config<SampleConfig>(new SampleConfig { LlamaCapacity = 23 }),
@@ -66,8 +87,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             responseFactory.Setup(f => f.BuildJsonFileResponse(testContext, It.IsAny<object>(), $"{nameof(SampleConfigSet)}.json"))
                 .Callback((HttpContext c, object p, string n)=> payload = p)
                 .Returns(()=> Task.FromResult(true));
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+            await target.Handle(testContext, option);
             Assert.NotNull(payload);
             var sampleConfig = payload.SampleConfig as SampleConfig;
             Assert.NotNull(sampleConfig);

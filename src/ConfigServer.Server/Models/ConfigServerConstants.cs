@@ -12,12 +12,12 @@ namespace ConfigServer.Server
         public const string ClientAdminClaimType = "configserver_clientadmin";
 
         /// <summary>
-        /// Default ConfigServer read claim value
+        /// Default ConfigServer configurator claim value
         /// </summary>
-        public const string ReadClaimValue = "read";
+        public const string ConfiguratorClaimValue = "configurator";
         /// <summary>
-        /// Default ConfigServer write claim value
+        /// Default ConfigServer admin claim value
         /// </summary>
-        public const string WriteClaimValue = "write";
+        public const string AdminClaimValue = "admin";
     }
 }

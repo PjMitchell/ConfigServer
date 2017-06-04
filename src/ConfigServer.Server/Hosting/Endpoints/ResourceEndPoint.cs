@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ResourceEndpoint : IOldEndpoint
+    internal class ResourceEndpoint : IEndpoint
     {
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;
@@ -21,36 +22,43 @@ namespace ConfigServer.Server
             this.registry = registry;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.Request.Method == "GET"
-                ?context.CheckAuthorization(options.ServerAuthenticationOptions)
-                :context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
-
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
             // /{id}
             // /{id}/{resource}
             // /{id}/to/{id}
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
+
             var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 3)
-                return HandleNotFound(context);
+            {
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
 
             var clientIdentity = await GetIdentityFromPathOrDefault(pathParams[0]);
             if (clientIdentity == null)
-                return HandleNotFound(context);
+            {
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
+                
 
             switch (pathParams.Length)
             {
                 case 1:
-                    return await HandleSingleParam(context, clientIdentity);
+                    await HandleSingleParam(context, clientIdentity);
+                    break;
                 case 2:
-                    return await HandleTwoParams(context, pathParams, clientIdentity);
+                    await HandleTwoParams(context, pathParams, clientIdentity);
+                    break;
                 case 3:
-                    return await HandleThreeParams(context, pathParams, clientIdentity);
+                    await HandleThreeParams(context, pathParams, clientIdentity);
+                    break;
                 default:
-                    return HandleNotFound(context);
+                    httpResponseFactory.BuildNotFoundStatusResponse(context);
+                    break;
             }
         }
 
@@ -68,7 +76,7 @@ namespace ConfigServer.Server
             return true;
         }
 
-        private async Task<bool> HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
         {
             switch (context.Request.Method)
             {
@@ -106,25 +114,26 @@ namespace ConfigServer.Server
                         break;
                     }
             }
-            return true;
         }
 
-        private async Task<bool> HandleThreeParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task HandleThreeParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
         {
             if(context.Request.Method != "POST")
             {
                 httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                return true;
+                return;
             }
 
             var targetConfigIdentity = await GetIdentityFromPathOrDefault(pathParams[2]);
             if (targetConfigIdentity == null || !pathParams[1].Equals("to", StringComparison.OrdinalIgnoreCase))
-                return HandleNotFound(context);
+            {
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
             var filesToCopy = await context.GetObjectFromJsonBodyAsync<string[]>();
             if (filesToCopy.Length > 0)
                 await resourceStore.CopyResources(filesToCopy, clientIdentity, targetConfigIdentity);
             httpResponseFactory.BuildNoContentResponse(context);
-            return true;
         }
 
         private async Task<ConfigurationIdentity> GetIdentityFromPathOrDefault(string pathParam)
@@ -136,10 +145,22 @@ namespace ConfigServer.Server
             return clientIdentity;
         }
 
-        private bool HandleNotFound(HttpContext context)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
         {
-            httpResponseFactory.BuildNotFoundStatusResponse(context);
-            return true;
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeAuthentication(options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            if(context.Request.Method == "POST" || context.Request.Method == "DELETE")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            else
+            {
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false;
+            }
         }
+
     }
 }

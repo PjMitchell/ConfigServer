@@ -69,8 +69,6 @@ namespace ConfigServer.Sample.mvc
 
             app.UseStaticFiles();
             app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions {
-                ServerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
-                ManagerAuthenticationOptions = new ConfigServerAuthenticationOptions { RequireAuthentication = false },
                 ClientAdminClaimType = string.Empty,
                 AllowAnomynousAccess = true
 

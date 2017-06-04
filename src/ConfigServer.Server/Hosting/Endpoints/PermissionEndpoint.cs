@@ -30,14 +30,14 @@ namespace ConfigServer.Server
         private UserPermissions GetPermissionFromPrincipal(ClaimsPrincipal user, ConfigServerOptions options)
         {
             var result = new UserPermissions();
-            if(user.HasClaim(s=> s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.WriteClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
+            if(user.HasClaim(s=> s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.AdminClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {
                 result.CanAccessClientAdmin = true;
                 result.CanEditClients = true;
                 result.CanEditGroups = true;
                 result.CanDeleteArchives = true;
             }
-            if(!result.CanAccessClientAdmin && user.HasClaim(s => s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.ReadClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
+            if(!result.CanAccessClientAdmin && user.HasClaim(s => s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.ConfiguratorClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {
                 result.CanAccessClientAdmin = true;
             }

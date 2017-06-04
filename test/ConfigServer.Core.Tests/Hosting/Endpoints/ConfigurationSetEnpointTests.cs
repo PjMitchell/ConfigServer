@@ -5,6 +5,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -24,7 +25,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
         private ConfigurationClient expectedClient;
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
-        private readonly IOldEndpoint target;
+        private ConfigServerOptions options;
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private readonly IEndpoint target;
 
         // GET: Gets all configuration set summaries
         // Model/{ Client Id}/{ Configuration Set}
@@ -49,18 +52,20 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             commandBus = new Mock<ICommandBus>();
 
             target = new ConfigurationSetEnpoint(responseFactory.Object, modelPayloadMapper.Object, configInstanceRouter.Object, configurationEditModelMapper.Object, configCollection, configClientService.Object, commandBus.Object);
+            options = new ConfigServerOptions();
         }
 
         [Fact]
         public async Task Get_ReturnsConfigurationSetSummary()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath("/").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims(readClaim)
+                .TestContext;
             List<ConfigurationSetSummary> summaries = null;
             responseFactory.Setup(f => f.BuildJsonResponse(testContext, It.IsAny<IEnumerable<ConfigurationSetSummary>>()))
                 .Callback((HttpContext c,object arg) => summaries =((IEnumerable<ConfigurationSetSummary>)arg).ToList())
                 .Returns(()=> Task.FromResult(true));
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+            await target.Handle(testContext, options);
             Assert.Equal(1, summaries.Count);
             var summary = summaries.Single();
             var model = configCollection.Single();
@@ -76,15 +81,26 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_Returns403_IfNoReadClaim()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims()
+                .TestContext;
+
+            await target.Handle(testContext, options);
+            responseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));                
+        }
+
+        [Fact]
         public async Task Get_Model_ReturnsConfigurationSetModelForClient()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{modelPath}/{clientId}/{typeof(SampleConfigSet).Name}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{modelPath}/{clientId}/{typeof(SampleConfigSet).Name}")
+                .WithClaims(readClaim).TestContext;
             var mappedModel = new ConfigurationSetModelPayload();
             modelPayloadMapper.Setup(m => m.Map(configCollection.GetConfigSetDefinition(typeof(SampleConfigSet)), It.Is<ConfigurationIdentity>(i => i.Client.Equals(expectedClient))))
-                .ReturnsAsync(() => mappedModel);           
-            
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+                .ReturnsAsync(() => mappedModel);
+
+            await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildJsonResponse(testContext, mappedModel));
             
         }
@@ -92,7 +108,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         [Fact]
         public async Task Get_Value_ReturnsConfigurationEditModelForClient()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").WithClaims(readClaim).TestContext;
             var configInstance = new ConfigInstance<SampleConfig>(new SampleConfig(), new ConfigurationIdentity(expectedClient, new Version(1, 0)));
             configInstanceRouter.Setup(r => r.GetConfigInstanceOrDefault(expectedClient, typeof(SampleConfig).Name))
                 .ReturnsAsync(() => configInstance);
@@ -100,8 +116,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configurationEditModelMapper.Setup(m => m.MapToEditConfig(configInstance,(configCollection.GetConfigSetDefinition(typeof(SampleConfigSet)))))
                 .Returns(() => mappedModel);
 
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+            await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildJsonResponse(testContext, mappedModel));
 
         }
@@ -111,6 +126,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var stringValue = "Hello";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}")
+                .WithClaims(readClaim)
                 .WithPost()
                 .WithStringBody(stringValue)
                 .TestContext;
@@ -118,8 +134,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             commandBus.Setup(c => c.SubmitAsync(It.Is<UpdateConfigurationFromEditorCommand>(command => command.Identity.Client.Equals(expectedClient) && command.ConfigurationType == typeof(SampleConfig) && command.ConfigurationAsJson == stringValue)))
                 .ReturnsAsync(() => commandResult);
 
-            var result = await target.TryHandle(testContext);
-            Assert.True(result);
+            await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildResponseFromCommandResult(testContext, commandResult));
 
         }

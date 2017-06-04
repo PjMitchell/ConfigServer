@@ -3,6 +3,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,7 +23,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
         private readonly Version version = new Version(1, 0);
         private const string clientGroupImagePath = "ClientGroupImages";
-        private readonly IOldEndpoint target;
+        private ConfigServerOptions option;
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private readonly IEndpoint target;
 
         public ResourceEndpointTests()
         {
@@ -37,20 +40,23 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             httpResponseFactory = new Mock<IHttpResponseFactory>();
             var registry = new ConfigurationSetRegistry();
             registry.SetVersion(version);
+            option = new ConfigServerOptions();
             target = new ResourceEndpoint(configClientService.Object, registry, resourceStore.Object, httpResponseFactory.Object);
         }
 
         [Fact]
         public async Task Get_ClientSummary_GetsClientSummary()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims()
+                .TestContext;
             var expectedResources = new List<ResourceEntryInfo>
             {
                 new ResourceEntryInfo{ Name = "File.txt"}
             };
             resourceStore.Setup(r => r.GetResourceCatalogue(ItMatchesClient(expectedClient)))
                 .ReturnsAsync(() => expectedResources);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildJsonResponse(testContext, expectedResources));
         }
 
@@ -58,7 +64,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_ClientResource_GetsClientResource()
         {
             var resourceName = "File.txt";
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims()
+                .TestContext;
             var expectedResource = new ResourceEntry
             {
                 HasEntry = true,
@@ -67,7 +75,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             };
             resourceStore.Setup(r => r.GetResource(resourceName, ItMatchesClient(expectedClient)))
                 .ReturnsAsync(() => expectedResource);
-            var result = await target.TryHandle(testContext);
+
+            await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
         }
 
@@ -75,14 +84,16 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_ClientResource_ReturnsNotFoundIfNotFound()
         {
             var resourceName = "File.txt";
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims()
+                .TestContext;
             var expectedResource = new ResourceEntry
             {
                 HasEntry = false
             };
             resourceStore.Setup(r => r.GetResource(resourceName, ItMatchesClient(expectedClient)))
                 .ReturnsAsync(() => expectedResource);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildNotFoundStatusResponse(testContext));
         }
 
@@ -94,11 +105,27 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithPost()
+                .WithClaims(readClaim)
                 .WithFile(file, resourceName)
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             resourceStore.Verify(r => r.UpdateResource(It.Is<UpdateResourceRequest>(a => a.Identity.Client.Equals(expectedClient) && a.Name == resourceName && file == a.Content)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
+        }
+
+        [Fact]
+        public async Task Post_Returns403_IfNoClientReadClaim()
+        {
+            var resourceName = "File.txt";
+            var file = new MemoryStream();
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithPost()
+                .WithClaims()
+                .WithFile(file, resourceName)
+                .TestContext;
+            await target.Handle(testContext, option);
+            resourceStore.Verify(r => r.UpdateResource(It.IsAny<UpdateResourceRequest>()), Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
 
         [Fact]
@@ -108,23 +135,41 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithDelete()
+                .WithClaims(readClaim)
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             resourceStore.Verify(r => r.DeleteResources(resourceName, ItMatchesClient(expectedClient)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
         }
 
         [Fact]
+        public async Task Delete_Returns403_IfNoClientReadClaim()
+        {
+            var resourceName = "File.txt";
+            var file = new MemoryStream();
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithPost()
+                .WithClaims()
+                .WithFile(file, resourceName)
+                .TestContext;
+            await target.Handle(testContext, option);
+            resourceStore.Verify(r => r.UpdateResource(It.IsAny<UpdateResourceRequest>()), Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
         public async Task Get_GroupImageSummary_GetsClientSummary()
         {
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}")
+                .WithClaims()
+                .TestContext;
             var expectedResources = new List<ResourceEntryInfo>
             {
                 new ResourceEntryInfo{ Name = "File.txt"}
             };
             resourceStore.Setup(r => r.GetResourceCatalogue(ItMatchesClientId(clientGroupImagePath)))
                 .ReturnsAsync(() => expectedResources);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildJsonResponse(testContext, expectedResources));
         }
 
@@ -132,7 +177,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_GroupImageResource_GetsClientResource()
         {
             var resourceName = "File.txt";
-            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}").TestContext;
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}")
+                .WithClaims()
+                .TestContext;
             var expectedResource = new ResourceEntry
             {
                 HasEntry = true,
@@ -141,7 +188,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             };
             resourceStore.Setup(r => r.GetResource(resourceName, ItMatchesClientId(clientGroupImagePath)))
                 .ReturnsAsync(() => expectedResource);
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
         }
 
@@ -153,10 +200,11 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}")
+                .WithClaims(readClaim)
                 .WithPost()
                 .WithFile(file, resourceName)
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             resourceStore.Verify(r => r.UpdateResource(It.Is<UpdateResourceRequest>(a => a.Identity.Client.ClientId.Equals(clientGroupImagePath) && a.Name == resourceName && file == a.Content)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
         }
@@ -167,9 +215,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}")
+                .WithClaims(readClaim)
                 .WithDelete()
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             resourceStore.Verify(r => r.DeleteResources(resourceName, ItMatchesClientId(clientGroupImagePath)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
         }
@@ -181,9 +230,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expected = new HashSet<string>(new[] { resourceName });
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/to/{targetClientId}")
                 .WithPost()
+                .WithClaims(readClaim)
                 .WithJsonBody(new[] { resourceName })
                 .TestContext;
-            var result = await target.TryHandle(testContext);
+            await target.Handle(testContext, option);
             resourceStore.Verify(r => r.CopyResources(It.Is<IEnumerable<string>>(s=> expected.SetEquals(s)), ItMatchesClient(expectedClient),ItMatchesClient(expectedTargetClient)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
         }

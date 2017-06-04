@@ -8,7 +8,7 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationSetEnpoint : IOldEndpoint
+    internal class ConfigurationSetEnpoint : IEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
         readonly IConfigurationSetRegistry configCollection;
@@ -29,12 +29,7 @@ namespace ConfigServer.Server
             this.commandBus = commandBus;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
-        {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
-
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
             // GET: Gets all configuration set summaries
             // Model/{ Client Id}/{ Configuration Set}
@@ -42,28 +37,31 @@ namespace ConfigServer.Server
             // Value/{ Client Id}/{ config name}
             // GET: Gets Config model for editor
             // POST: Sets Config from editor model
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
+
             var pathParams = context.ToPathParams();
 
             if (pathParams.Length == 0)
             {
                 await responseFactory.BuildJsonResponse(context, GetConfigurationSetSummaries());
-                return true;
+                return;
             }
             if (pathParams.Length != 3)
-                return false;
+                return;
 
             var client = await configClientService.GetClientOrDefault(pathParams[1]);
             if (client == null)
-                return false;
+                return;
 
             if (pathParams[0].Equals("Model", StringComparison.OrdinalIgnoreCase))
             {
 
                 var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
                 if (configSet == null)
-                    return false;
+                    return;
                 await responseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client, configCollection.GetVersion())));
-                return true;
+                return;
             }
             if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
             {
@@ -79,9 +77,8 @@ namespace ConfigServer.Server
                         responseFactory.BuildMethodNotAcceptedStatusResponse(context);
                         break;
                 } 
-                return true;
+                return;
             }
-            return false;
         }
 
         private async Task HandleValueGetRequest(HttpContext context,ConfigurationClient client, string configType)
@@ -140,6 +137,19 @@ namespace ConfigServer.Server
                 DisplayName = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription
             };
+        }
+
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET" || context.Request.Method == "POST")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+            }
+            else
+            {
+                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
     }
 }

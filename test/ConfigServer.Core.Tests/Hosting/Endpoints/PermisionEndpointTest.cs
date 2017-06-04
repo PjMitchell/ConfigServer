@@ -17,8 +17,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Mock<IHttpResponseFactory> factory;
 
         private ConfigServerOptions options;
-        private static readonly Claim writeClientAdminClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
-        private static readonly Claim readClientAdminClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+        private static readonly Claim writeClientAdminClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
+        private static readonly Claim readClientAdminClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
         public PermisionEndpointTest()
         {
             options = new ConfigServerOptions();

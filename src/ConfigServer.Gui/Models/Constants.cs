@@ -8,9 +8,5 @@ namespace ConfigServer.Gui.Models
     public class Constants
     {
         public const string ClientAdminClaimType = "ClientAdmin";
-
-        public const string Read = "Read";
-        public const string Write = "Write";
-
     }
 }

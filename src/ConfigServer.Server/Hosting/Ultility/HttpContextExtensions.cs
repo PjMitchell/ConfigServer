@@ -51,7 +51,8 @@ namespace ConfigServer.Server
             if (string.IsNullOrWhiteSpace(claimType))
                 return source.ChallengeAuthentication(allowAnomynous, responseFactory);
 
-            if(!source.ChallengeAuthentication(allowAnomynous, responseFactory))
+            //If we have an expected claim then we do not want to allow anomynous
+            if(!source.ChallengeAuthentication(false, responseFactory))
                 return false;
 
             if (!source.User.HasClaim(c=> claimType.Equals(c.Type, StringComparison.OrdinalIgnoreCase) && acceptableValues.Contains(c.Value)))
@@ -63,7 +64,7 @@ namespace ConfigServer.Server
             return true;
         }
 
-        private static bool ChallengeAuthentication(this HttpContext source, bool allowAnomynous, IHttpResponseFactory responseFactory)
+        public static bool ChallengeAuthentication(this HttpContext source, bool allowAnomynous, IHttpResponseFactory responseFactory)
         {
             if (!allowAnomynous && !source.User.Identity.IsAuthenticated)
             {

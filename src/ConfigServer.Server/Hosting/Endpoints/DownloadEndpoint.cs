@@ -8,7 +8,7 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class DownloadEndpoint : IOldEndpoint
+    internal class DownloadEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory responseFactory;
         readonly IConfigurationSetRegistry configCollection;
@@ -24,18 +24,20 @@ namespace ConfigServer.Server
             this.configClientService = configClientService;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
 
-        public async Task<bool> TryHandle(HttpContext context)
-        {
             var result = await GetObjectOrDefault(context.Request.Path);
             if (result == null)
-                return false;
-            await responseFactory.BuildJsonFileResponse(context, result.Payload, result.FileName);
-            return true;
+            {
+                responseFactory.BuildNotFoundStatusResponse(context);
+            }
+            else
+            {
+                await responseFactory.BuildJsonFileResponse(context, result.Payload, result.FileName);
+            }            
         }
 
         private async Task<FilePayload> GetObjectOrDefault(PathString path)
@@ -92,6 +94,19 @@ namespace ConfigServer.Server
             }
             public string FileName { get; }
             public object Payload { get; }
+        }
+
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+            }
+            else
+            {
+                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
     }
 }

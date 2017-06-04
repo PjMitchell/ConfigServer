@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigEnpoint : IOldEndpoint
+    internal class ConfigEnpoint : IEndpoint
     {
         readonly IConfigInstanceRouter router;
         readonly IHttpResponseFactory responseFactory;
@@ -14,18 +15,30 @@ namespace ConfigServer.Server
             this.router = router;
         }
 
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
+
             var config = await router.GetConfigInstanceOrDefault(context.Request.Path);
             if (config == null)
-                return false;
-            await responseFactory.BuildJsonResponse(context, config.GetConfiguration());
-            return true;
+                responseFactory.BuildNotFoundStatusResponse(context);
+            else
+                await responseFactory.BuildJsonResponse(context, config.GetConfiguration());
+
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.ServerAuthenticationOptions);
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeAuthentication(options.AllowAnomynousAccess, responseFactory);
+            }
+            else
+            {
+                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
     }
 }

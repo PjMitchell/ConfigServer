@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Server;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -18,7 +19,7 @@ namespace ConfigServer.Gui.Models
             var claims = new List<Claim>
             {
                 new Claim(username, "A.Person"),
-                new Claim(Constants.ClientAdminClaimType, Constants.Write)
+                new Claim(Constants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue)
             };
             SetPrincipal(claims);
         }

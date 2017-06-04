@@ -21,8 +21,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string groupId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
         private const string groupId2 = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private ConfigServerOptions options;
-        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
 
         private IEndpoint target;
 

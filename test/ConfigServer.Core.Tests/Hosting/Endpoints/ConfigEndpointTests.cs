@@ -18,7 +18,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private readonly ConfigurationSetRegistry configSetConfig;
         private readonly List<ConfigurationClient> clients;
         private readonly ConfigInstance<SimpleConfig> defaultConfig;
-
+        private ConfigServerOptions options;
         public ConfigEndpointTests()
         {
             
@@ -44,44 +44,43 @@ namespace ConfigServer.Core.Tests.Hosting
                 .Returns(Task.FromResult(true));
 
             responseFactory = new Mock<IHttpResponseFactory>();
-
+            options = new ConfigServerOptions();
             target = new ConfigEnpoint(new ConfigInstanceRouter(repository.Object, configurationService.Object, configSetConfig), responseFactory.Object);
         }
 
         [Fact]
-        public async Task ReturnsFalse_IfNoApplicationfound()
+        public async Task ReturnsNotFound_IfNoApplicationfound()
         {
-            var context = new TestHttpContext("/");
-            var result = await target.TryHandle(context);
-            Assert.False(result);
+            var context = TestHttpContextBuilder.CreateForPath("/")
+                .WithClaims()
+                .TestContext;
+            await target.Handle(context, options);
+            responseFactory.Verify(f => f.BuildNotFoundStatusResponse(context));
         }
 
         [Fact]
-        public async Task ReturnsFalse_IfApplicationfound_ButNoModel()
+        public async Task ReturnsNotFound_IfApplicationfound_ButNoModel()
         {
-            var context = new TestHttpContext($"/{clients[0].ClientId}");
-            var result = await target.TryHandle(context);
-            Assert.False(result);
+            var context = TestHttpContextBuilder.CreateForPath($"/{clients[0].ClientId}")
+               .WithClaims()
+               .TestContext;
+            await target.Handle(context, options);
+            responseFactory.Verify(f => f.BuildNotFoundStatusResponse(context));
         }
 
-        [Fact]
-        public async Task ReturnsTrue_IfApplicationfound_ButNoModel()
-        {
-            var context = new TestHttpContext($"/{clients[0].ClientId}/{nameof(SimpleConfig)}");
-            var result = await target.TryHandle(context);
-            Assert.True(result);
-        }
 
         [Fact]
         public async Task CallsResponseFactoryWithConfig()
         {
-            var context = new TestHttpContext($"/{clients[0].ClientId}/{nameof(SimpleConfig)}");
+            var context = TestHttpContextBuilder.CreateForPath($"/{clients[0].ClientId}/{nameof(SimpleConfig)}")
+               .WithClaims()
+               .TestContext;
             var config = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 43 }, new ConfigurationIdentity(clients[0], new Version(1, 0)));
             configurationService.Setup(r => r.GetAsync(typeof(SimpleConfig), It.Is<ConfigurationIdentity>(arg => arg.Client.ClientId == clients[0].ClientId))).ReturnsAsync(config);
             responseFactory.Setup(r => r.BuildJsonResponse(context, config.Configuration))
                 .Returns(Task.FromResult(true));
 
-            var result = await target.TryHandle(context);
+            await target.Handle(context, options);
             responseFactory.Verify(r => r.BuildJsonResponse(context, config.Configuration), Times.AtLeastOnce());
         }
     }
