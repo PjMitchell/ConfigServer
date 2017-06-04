@@ -19,7 +19,7 @@ namespace ConfigServer.Gui.Models
             var claims = new List<Claim>
             {
                 new Claim(username, "A.Person"),
-                new Claim(Constants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue)
+                new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue)
             };
             SetPrincipal(claims);
         }

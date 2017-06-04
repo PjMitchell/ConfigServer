@@ -9,6 +9,8 @@ namespace ConfigServer.Gui.Models
     {
         public string Username { get; set; }
         public string ClientAdmin { get; set; }
+        public string ReadClaims { get; set; }
+        public string WriteClaims { get; set; }
     }
 
     public class ClaimModel

@@ -27,6 +27,14 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
             <h4>Description:</h4>
             <input id="client-description-input" [(ngModel)]="csClient.description" type="text" class="form-control">
         </div>
+        <div class="col-sm-6 col-md-4">
+            <h4>Read claim:</h4>
+            <input id="client-readclaim-input" [(ngModel)]="csClient.readClaim" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <h4>Write claim:</h4>
+            <input id="client-writeclaim-input" [(ngModel)]="csClient.writeClaim" type="text" class="form-control">
+        </div>
     </div>
     <hr/>
     <edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>
