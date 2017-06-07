@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ConfigServer.Core;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -71,6 +72,31 @@ namespace ConfigServer.Server
                 responseFactory.BuildStatusResponse(source, 401);
                 return false;
             }
+            return true;
+        }
+
+
+        public static bool ChallengeClientRead(this HttpContext source, ConfigServerOptions option, ConfigurationClient client, IHttpResponseFactory responseFactory)
+        {
+            if(client == null)
+            {
+                responseFactory.BuildNotFoundStatusResponse(source);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.ReadClaim))
+                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+
+            //If we have an expected claim then we do not want to allow anomynous
+            if (!source.ChallengeAuthentication(false, responseFactory))
+                return false;
+
+            if (!source.User.HasClaim(c => option.ClientReadClaimType.Equals(c.Type, StringComparison.OrdinalIgnoreCase) && client.ReadClaim.Equals(c.Value, StringComparison.OrdinalIgnoreCase)))
+            {
+                responseFactory.BuildStatusResponse(source, 403);
+                return false;
+            }
+
             return true;
         }
     }

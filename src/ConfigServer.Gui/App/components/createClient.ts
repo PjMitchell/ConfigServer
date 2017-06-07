@@ -34,6 +34,8 @@ export class CreateClientComponent {
             group: '',
             enviroment: '',
             description: '',
+            readClaim: '',
+            writeClaim: '',
             settings: new Array<IConfigurationClientSetting>(),
         };
     }

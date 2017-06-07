@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using ConfigServer.Server;
 using System.Linq;
 using System;
+using System.Security.Claims;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -45,7 +46,7 @@ namespace ConfigServer.Core.Tests.Hosting
 
             responseFactory = new Mock<IHttpResponseFactory>();
             options = new ConfigServerOptions();
-            target = new ConfigEnpoint(new ConfigInstanceRouter(repository.Object, configurationService.Object, configSetConfig), responseFactory.Object);
+            target = new ConfigEnpoint(new ConfigInstanceRouter(repository.Object, configurationService.Object, configSetConfig), repository.Object, responseFactory.Object);
         }
 
         [Fact]
@@ -57,6 +58,8 @@ namespace ConfigServer.Core.Tests.Hosting
             await target.Handle(context, options);
             responseFactory.Verify(f => f.BuildNotFoundStatusResponse(context));
         }
+
+
 
         [Fact]
         public async Task ReturnsNotFound_IfApplicationfound_ButNoModel()
@@ -82,6 +85,37 @@ namespace ConfigServer.Core.Tests.Hosting
 
             await target.Handle(context, options);
             responseFactory.Verify(r => r.BuildJsonResponse(context, config.Configuration), Times.AtLeastOnce());
+        }
+
+        [Fact]
+        public async Task Returns403_IfUserDoesNotHaveReadClaim()
+        {
+            var claimValue = "ClientOne";
+            clients[0].ReadClaim = claimValue;
+            var context = TestHttpContextBuilder.CreateForPath($"/{clients[0].ClientId}/{nameof(SimpleConfig)}")
+                .WithClaims()
+                .TestContext;
+            await target.Handle(context, options);
+            responseFactory.Verify(f => f.BuildStatusResponse(context, 403));
+        }
+
+        [Fact]
+        public async Task CallsResponseFactoryWithConfig_WhenUserHasReadClaim()
+        {
+            var claimValue = "ClientOne";
+            clients[0].ReadClaim = claimValue;
+            var readClaim = GetReadClaim(claimValue);
+            var context = TestHttpContextBuilder.CreateForPath($"/{clients[0].ClientId}/{nameof(SimpleConfig)}")
+               .WithClaims(readClaim)
+               .TestContext;
+            
+            await target.Handle(context, options);
+            responseFactory.Verify(r => r.BuildJsonResponse(context, It.IsAny<object>()), Times.AtLeastOnce());
+        }
+
+        private Claim GetReadClaim(string value)
+        {
+            return new Claim(options.ClientReadClaimType, value);
         }
     }
 

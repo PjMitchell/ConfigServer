@@ -40,6 +40,8 @@ export class ClientOverviewComponent implements OnInit {
             enviroment: '',
             description: '',
             group: '',
+            readClaim: '',
+            writeClaim: '',
             settings: new Array<IConfigurationClientSetting>(),
         };
         this.configurationSets = new Array<IConfigurationSetSummary>();
