@@ -43,7 +43,7 @@ namespace ConfigServer.Server
                     return HandleGroupPath(context, pathParams[0]);
                 case 2:
                     return string.Equals(pathParams[1],groupClientsPath, StringComparison.OrdinalIgnoreCase)
-                        ? HandleGroupClientPath(context, pathParams[0])
+                        ? HandleGroupClientPath(context, pathParams[0], options)
                         : HandleNotFound(context);
                 default:
                     return HandleNotFound(context);
@@ -99,7 +99,7 @@ namespace ConfigServer.Server
                 factory.BuildNotFoundStatusResponse(context);
         }
 
-        private async Task HandleGroupClientPath(HttpContext context, string groupId)
+        private async Task HandleGroupClientPath(HttpContext context, string groupId, ConfigServerOptions options)
         {
             IEnumerable<ConfigurationClient> clients;
             if (string.Equals(groupId, noGroupPath, StringComparison.OrdinalIgnoreCase))
@@ -112,6 +112,8 @@ namespace ConfigServer.Server
             {
                 clients = (await configurationClientService.GetClients()).Where(c => string.Equals(groupId, c.Group, StringComparison.OrdinalIgnoreCase));
             }
+            if(!string.IsNullOrWhiteSpace(options.ClientAdminClaimType) && !context.HasClaim(options.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue))
+                clients = clients.Where(c => context.CheckClientWrite(options, c));
             await factory.BuildJsonResponse(context, clients);
         }
 

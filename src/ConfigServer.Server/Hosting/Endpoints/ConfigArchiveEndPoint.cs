@@ -52,7 +52,7 @@ namespace ConfigServer.Server
             }
             else
             {
-                await HandleTwoParams(context, pathParams, clientIdentity);
+                await HandleTwoParams(context, pathParams, clientIdentity, options);
             }
 
             return;
@@ -90,12 +90,14 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
         {
             switch (context.Request.Method)
             {
                 case "GET":
                     {
+                        if (!context.ChallengeClientWrite(options, clientIdentity.Client, httpResponseFactory))
+                            return;
                         var result = await archive.GetArchiveConfig(pathParams[1], clientIdentity);
                         if (!result.HasEntry)
                             httpResponseFactory.BuildNotFoundStatusResponse(context);

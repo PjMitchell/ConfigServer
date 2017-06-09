@@ -99,5 +99,41 @@ namespace ConfigServer.Server
 
             return true;
         }
+
+        public static bool ChallengeClientWrite(this HttpContext source, ConfigServerOptions option, ConfigurationClient client, IHttpResponseFactory responseFactory)
+        {
+            if (client == null)
+            {
+                responseFactory.BuildNotFoundStatusResponse(source);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(option.ClientWriteClaimType) || string.IsNullOrWhiteSpace(client.WriteClaim))
+                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+
+            //If we have an expected claim then we do not want to allow anomynous
+            if (!source.ChallengeAuthentication(false, responseFactory))
+                return false;
+
+            if (!source.HasClaim(option.ClientWriteClaimType, client.WriteClaim))
+            {
+                responseFactory.BuildStatusResponse(source, 403);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool CheckClientWrite(this HttpContext source, ConfigServerOptions option, ConfigurationClient client)
+        {
+            if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.WriteClaim))
+                return true;
+            return source.HasClaim(option.ClientWriteClaimType, client.WriteClaim);
+        }
+
+        public static bool HasClaim(this HttpContext source, string claimType, string claim)
+        {
+            return source.User.HasClaim(c => claimType.Equals(c.Type, StringComparison.OrdinalIgnoreCase) && claim.Equals(c.Value, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
