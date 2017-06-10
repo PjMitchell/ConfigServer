@@ -51,7 +51,7 @@ namespace ConfigServer.Server
                 return;
 
             var client = await configClientService.GetClientOrDefault(pathParams[1]);
-            if (client == null)
+            if (!context.ChallengeClientConfigurator(options,client, responseFactory))
                 return;
 
             if (pathParams[0].Equals("Model", StringComparison.OrdinalIgnoreCase))

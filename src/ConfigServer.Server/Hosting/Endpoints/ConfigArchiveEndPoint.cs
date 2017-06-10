@@ -96,7 +96,7 @@ namespace ConfigServer.Server
             {
                 case "GET":
                     {
-                        if (!context.ChallengeClientWrite(options, clientIdentity.Client, httpResponseFactory))
+                        if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
                             return;
                         var result = await archive.GetArchiveConfig(pathParams[1], clientIdentity);
                         if (!result.HasEntry)

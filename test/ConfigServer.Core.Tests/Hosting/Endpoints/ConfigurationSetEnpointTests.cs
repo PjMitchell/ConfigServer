@@ -106,6 +106,18 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_Model_Returns403IfNoConfiguratorClaimOnClient()
+        {
+            expectedClient.WriteClaim = "Denied";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{modelPath}/{clientId}/{typeof(SampleConfigSet).Name}")
+                .WithClaims(readClaim).TestContext;
+            
+            await target.Handle(testContext, options);
+            responseFactory.Verify(v => v.BuildStatusResponse(testContext, 403));
+
+        }
+
+        [Fact]
         public async Task Get_Value_ReturnsConfigurationEditModelForClient()
         {
             var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").WithClaims(readClaim).TestContext;
@@ -118,6 +130,17 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildJsonResponse(testContext, mappedModel));
+
+        }
+
+
+        [Fact]
+        public async Task Get_Value_Returns403IfNoConfiguratorClaimOnClient()
+        {
+            expectedClient.WriteClaim = "Denied";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").WithClaims(readClaim).TestContext;
+            await target.Handle(testContext, options);
+            responseFactory.Verify(v => v.BuildStatusResponse(testContext, 403));
 
         }
 
@@ -136,6 +159,24 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildResponseFromCommandResult(testContext, commandResult));
+
+        }
+
+        [Fact]
+        public async Task Post_Value_Returns403IfNoConfiguratorClaimOnClient()
+        {
+            expectedClient.WriteClaim = "Denied";
+            var stringValue = "Hello";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}")
+                .WithClaims(readClaim)
+                .WithPost()
+                .WithStringBody(stringValue)
+                .TestContext;
+            await target.Handle(testContext, options);
+            commandBus.Verify(c => c.SubmitAsync(It.IsAny<UpdateConfigurationFromEditorCommand>()),Times.Never);
+
+
+            responseFactory.Verify(v => v.BuildStatusResponse(testContext, 403));
 
         }
     }

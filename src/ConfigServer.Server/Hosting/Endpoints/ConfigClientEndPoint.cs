@@ -33,9 +33,9 @@ namespace ConfigServer.Server
             switch (pathParams.Length)
             {
                 case 0:
-                    return HandleEmptyPath(context);
+                    return HandleEmptyPath(context,options);
                 case 1:
-                    return HandleClientPath(context, pathParams[0]);
+                    return HandleClientPath(context, pathParams[0],options);
                 default:
                     return HandleNotFound(context);
 
@@ -65,21 +65,19 @@ namespace ConfigServer.Server
             return Task.FromResult(true);
         }
 
-        private async Task HandleClientPath(HttpContext context, string clientId)
+        private async Task HandleClientPath(HttpContext context, string clientId, ConfigServerOptions options)
         {
             var client = await configurationClientService.GetClientOrDefault(clientId);
-            if (client == null)
-                responseFactory.BuildNotFoundStatusResponse(context);
-            else
+            if (context.ChallengeClientConfiguratorOrAdmin(options,client,responseFactory))
                 await responseFactory.BuildJsonResponse(context, Map(client));
         }
 
-        private async Task HandleEmptyPath(HttpContext context)
+        private async Task HandleEmptyPath(HttpContext context, ConfigServerOptions options)
         {
             switch (context.Request.Method)
             {
                 case "GET":
-                    await responseFactory.BuildJsonResponse(context,await GetAllClients());
+                    await responseFactory.BuildJsonResponse(context,await GetAllClients(context,options));
                     break;
                 case "POST":
                     await HandlePost(context);
@@ -90,10 +88,10 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task<IEnumerable<ConfigurationClientPayload>> GetAllClients()
+        private async Task<IEnumerable<ConfigurationClientPayload>> GetAllClients(HttpContext context, ConfigServerOptions options)
         {
             var clients = await configurationClientService.GetClients();
-            return clients.Select(Map);
+            return context.FilterClientsForUser(clients, options).Select(Map);
         }
 
         private async Task HandlePost(HttpContext context)

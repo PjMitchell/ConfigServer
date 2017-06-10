@@ -112,8 +112,7 @@ namespace ConfigServer.Server
             {
                 clients = (await configurationClientService.GetClients()).Where(c => string.Equals(groupId, c.Group, StringComparison.OrdinalIgnoreCase));
             }
-            if(!string.IsNullOrWhiteSpace(options.ClientAdminClaimType) && !context.HasClaim(options.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue))
-                clients = clients.Where(c => context.CheckClientWrite(options, c));
+            clients = context.FilterClientsForUser(clients, options);
             await factory.BuildJsonResponse(context, clients);
         }
 

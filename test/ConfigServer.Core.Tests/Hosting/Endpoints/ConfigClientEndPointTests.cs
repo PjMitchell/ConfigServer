@@ -1,6 +1,7 @@
 ﻿using ConfigServer.Server;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -45,7 +46,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 Name = "Test Client",
                 Description = "Description",
                 Enviroment = "Dev",
-                Group = groupId
+                Group = groupId,
+                ReadClaim ="AnyOne",
+                WriteClaim ="Dev"
             };
 
             client.Settings.Add("Password", new ConfigurationClientSetting { Key = "Password", Value = "1234" });
@@ -58,7 +61,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => clients);
             
             var context = TestHttpContextBuilder.CreateForPath("")
-                .WithClaims(readClaim)
+                .WithClaims(writeClaim)
                 .TestContext;
             List<ConfigurationClientPayload> observed = null;
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClientPayload>>()))
@@ -69,6 +72,33 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.NotNull(observed);
             Assert.Equal(1, observed.Count);
             AssertClient(observed[0], client);
+        }
+
+        [Fact]
+        public async Task Get_ReturnsAllClients_ForUserWithClientPermission()
+        {
+            var expectedClaim = "expected";
+            var clients = new List<ConfigurationClient>
+            {
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), WriteClaim = expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), WriteClaim = "un" + expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString()},
+
+            };
+            configurationClientService.Setup(cs => cs.GetClients())
+                .ReturnsAsync(() => clients);
+
+            var context = TestHttpContextBuilder.CreateForPath("")
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim))
+                .TestContext;
+            List<ConfigurationClientPayload> observed = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClientPayload>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClientPayload>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+
+            await target.Handle(context, options);
+            Assert.NotNull(observed);
+            Assert.Equal(clients.Where(w=> w.WriteClaim == expectedClaim || string.IsNullOrWhiteSpace(w.WriteClaim)).Select(s=>s.ClientId), observed.Select(s => s.ClientId));
         }
 
         [Fact]
@@ -110,6 +140,47 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(context, options);
             Assert.NotNull(observed);
             AssertClient(observed, client);
+        }
+
+        [Fact]
+        public async Task Get_ClientId_Returns403_IfFoundButNoClaim()
+        {
+            var client = new ConfigurationClient
+            {
+                ClientId = clientId,
+                WriteClaim  = "RequiredClaim",
+            };
+
+            configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
+                .ReturnsAsync(() => client);
+
+            var context = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(readClaim).TestContext;
+            
+            await target.Handle(context, options);
+            factory.Verify(f => f.BuildStatusResponse(context,403));
+        }
+        [Fact]
+        public async Task Get_ClientId_ReturnsClient_IfFoundAndHasAdminClaimButNoConfiguratorClaim()
+        {
+            var client = new ConfigurationClient
+            {
+                ClientId = clientId,
+                WriteClaim = "RequiredClaim",
+            };
+            configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
+                .ReturnsAsync(() => client);
+
+            var context = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(writeClaim).TestContext;
+            ConfigurationClientPayload observed = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<ConfigurationClientPayload>()))
+                .Callback((HttpContext c, object arg2) => observed = (ConfigurationClientPayload)arg2)
+                .Returns(() => Task.FromResult(1));
+
+            await target.Handle(context, options);
+            Assert.NotNull(observed);
+            
         }
 
         [Fact]
@@ -196,6 +267,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.Equal(payload.Description, client.Description);
             Assert.Equal(payload.Enviroment, client.Enviroment);
             Assert.Equal(payload.Group, client.Group);
+            Assert.Equal(payload.ReadClaim, client.ReadClaim);
+            Assert.Equal(payload.WriteClaim, client.WriteClaim);
             Assert.Equal(payload.Settings.Select(s => s.Key), client.Settings.Values.Select(s => s.Key));
             Assert.Equal(payload.Settings.Select(s => s.Value), client.Settings.Values.Select(s => s.Value));
 

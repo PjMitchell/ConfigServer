@@ -139,7 +139,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configurationClientService.Setup(s => s.GetClients())
                 .ReturnsAsync(() => clients);
             var context = TestHttpContextBuilder.CreateForPath($"/{groupId}/{groupClientsPath}")
-                .WithClaims(readClaim, new Claim(options.ClientWriteClaimType, expectedClaim)).TestContext;
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim)).TestContext;
             var observed = new List<ConfigurationClient>();
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
@@ -242,7 +242,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configurationClientService.Setup(s => s.GetClients())
                 .ReturnsAsync(() => clients);
             var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}")
-                .WithClaims(readClaim, new Claim(options.ClientWriteClaimType, expectedClaim)).TestContext;
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim)).TestContext;
             var observed = new List<ConfigurationClient>();
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())

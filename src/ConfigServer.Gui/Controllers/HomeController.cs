@@ -34,7 +34,7 @@ namespace ConfigServer.Gui.Controllers
             claimModel.Username = principal.Identity.Name;
             claimModel.ClientAdmin = principal.FindFirst(c => c.Type == ConfigServerConstants.ClientAdminClaimType)?.Value ?? string.Empty;
             claimModel.ReadClaims = string.Join(",", principal.FindAll(ConfigServerConstants.ClientReadClaimType).Select(s => s.Value));
-            claimModel.WriteClaims = string.Join(",", principal.FindAll(ConfigServerConstants.ClientWriteClaimType).Select(s => s.Value));
+            claimModel.WriteClaims = string.Join(",", principal.FindAll(ConfigServerConstants.ClientConfiguratorClaimType).Select(s => s.Value));
 
             return View(claimModel);
         }
@@ -49,7 +49,7 @@ namespace ConfigServer.Gui.Controllers
             if (!string.IsNullOrWhiteSpace(claimModel.ReadClaims))
                 claims.AddRange(claimModel.ReadClaims.Split(',').Select(s => new Claim(ConfigServerConstants.ClientReadClaimType, s)));
             if (!string.IsNullOrWhiteSpace(claimModel.WriteClaims))
-                claims.AddRange(claimModel.WriteClaims.Split(',').Select(s => new Claim(ConfigServerConstants.ClientWriteClaimType, s)));
+                claims.AddRange(claimModel.WriteClaims.Split(',').Select(s => new Claim(ConfigServerConstants.ClientConfiguratorClaimType, s)));
             userProvider.SetPrincipal(claims);
             return RedirectToAction(nameof(Index));
         }

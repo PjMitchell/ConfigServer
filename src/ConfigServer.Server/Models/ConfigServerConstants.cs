@@ -17,9 +17,9 @@ namespace ConfigServer.Server
         public const string ClientReadClaimType = "configserver_clientread";
 
         /// <summary>
-        /// Default ConfigServer Client Write Claim Type
+        /// Default ConfigServer Client Configurator Claim Type
         /// </summary>
-        public const string ClientWriteClaimType = "configserver_clientwrite";
+        public const string ClientConfiguratorClaimType = "configserver_clientconfigurator";
 
         /// <summary>
         /// Default ConfigServer configurator claim value

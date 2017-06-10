@@ -11,10 +11,10 @@
         public bool AllowAnomynousAccess { get; set; }
 
         /// <summary>
-        /// Claim type for access to create clients and client groups.
+        /// Claim type for access to configurator screen Admin users can add  clients and client groups.
         /// default configserver_clientadmin
         /// empty ClaimType will give all authenticated users the ability to create clients and client groups
-        /// Claim value can be read/write
+        /// Claim value can be configurator/admin
         /// </summary>
         public string ClientAdminClaimType { get; set; } = ConfigServerConstants.ClientAdminClaimType;
 
@@ -27,11 +27,11 @@
         public string ClientReadClaimType { get; set; } = ConfigServerConstants.ClientReadClaimType;
 
         /// <summary>
-        /// Claim type for write access to config.
-        /// default configserver_clientwrite
-        /// empty ClaimType will give all authenticated users the ability to read all clients
+        /// Claim type for configurator access to config.
+        /// default configserver_clientconfigurator
+        /// empty ClaimType will give all authenticated users the ability to configurate all clients
         /// Required Claim value defined by each client 
         /// </summary>
-        public string ClientWriteClaimType { get; set; } = ConfigServerConstants.ClientWriteClaimType;
+        public string ClientConfiguratorClaimType { get; set; } = ConfigServerConstants.ClientConfiguratorClaimType;
     }
 }
