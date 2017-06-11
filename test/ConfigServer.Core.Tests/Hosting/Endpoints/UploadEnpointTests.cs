@@ -21,7 +21,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private const string notFoundClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D2";
         private ConfigServerOptions option;
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private static readonly Claim configuratorClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private static readonly Claim clientConfiguratorClaim = new Claim(ConfigServerConstants.ClientConfiguratorClaimType, "Expected");
+
         private readonly IEndpoint target;
 
         // /ConfigurationSet/{clientId}/{Configuration Set}
@@ -35,7 +37,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configCollection = new ConfigurationSetRegistry();
             configCollection.AddConfigurationSet(testConfigSet.BuildConfigurationSetModel());
             commandBus = new Mock<ICommandBus>();
-            expectedClient = new ConfigurationClient(clientId);
+            expectedClient = new ConfigurationClient(clientId) { ConfiguratorClaim = clientConfiguratorClaim.Value };
             configClientService = new Mock<IConfigurationClientService>();
             configClientService.Setup(s => s.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => expectedClient);
@@ -48,7 +50,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var json = "{}";
             var testContext = TestHttpContextBuilder.CreateForPath($"/ConfigurationSet/{clientId}/{nameof(SampleConfigSet)}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .WithPost()
                 .WithStringBody(json)
                 .TestContext;
@@ -61,11 +63,11 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
-        public async Task Upload_Returns403_IfNoClaim()
+        public async Task Upload_Returns403_IfNoClaimWithoutConfiguratorClaim()
         {
             var json = "{}";
             var testContext = TestHttpContextBuilder.CreateForPath($"/ConfigurationSet/{clientId}/{nameof(SampleConfigSet)}")
-                .WithClaims()
+                .WithClaims(clientConfiguratorClaim)
                 .WithPost()
                 .WithStringBody(json)
                 .TestContext;
@@ -78,11 +80,28 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Upload_Returns403_IfNoClaimWithoutClientConfiguratorClaim()
+        {
+            var json = "{}";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/ConfigurationSet/{clientId}/{nameof(SampleConfigSet)}")
+                .WithClaims(configuratorClaim)
+                .WithPost()
+                .WithStringBody(json)
+                .TestContext;
+            var commandResult = CommandResult.Success();
+
+            await target.Handle(testContext, option);
+            commandBus.Verify(cb => cb.SubmitAsync(It.IsAny<UpdateConfigurationSetFromJsonUploadCommand>()), Times.Never);
+            responseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+
+        }
+
+        [Fact]
         public async Task Upload_ConfigSet_NotFoundIfClientNotFound()
         {
             var json = "{}";
             var testContext = TestHttpContextBuilder.CreateForPath($"/ConfigurationSet/{notFoundClientId}/{nameof(SampleConfigSet)}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .WithPost()
                 .WithStringBody(json)
                 .TestContext;
@@ -99,7 +118,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var json = "{}";
             var testContext = TestHttpContextBuilder.CreateForPath($"/Configuration/{clientId}/{nameof(SampleConfig)}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .WithPost()
                 .WithStringBody(json)
                 .TestContext;
@@ -116,7 +135,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var json = "{}";
             var testContext = TestHttpContextBuilder.CreateForPath($"/Configuration/{notFoundClientId}/{nameof(SampleConfig)}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .WithPost()
                 .WithStringBody(json)
                 .TestContext;

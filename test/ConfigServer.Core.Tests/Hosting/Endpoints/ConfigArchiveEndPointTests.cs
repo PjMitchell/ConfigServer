@@ -92,7 +92,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_ClientArchiveResource_Returns403IfNoClientWriteClaim()
         {
             var archivedConfig = "SampleConfig_123454.json";
-            expectedClient.WriteClaim = "ClientClaim";
+            expectedClient.ConfiguratorClaim = "ClientClaim";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{archivedConfig}")
                 .WithClaims(readClaim)
                 .TestContext;

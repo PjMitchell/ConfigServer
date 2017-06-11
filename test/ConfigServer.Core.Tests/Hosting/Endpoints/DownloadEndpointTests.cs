@@ -71,6 +71,21 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_Returns403_IfNoConfiguratorClaim()
+        {
+            expectedClient.ConfiguratorClaim = "Expected";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}/{nameof(SampleConfig)}.json")
+                .WithClaims(readClaim)
+                .TestContext;
+            var configSet = new SampleConfigSet
+            {
+                SampleConfig = new Config<SampleConfig>(new SampleConfig { LlamaCapacity = 23 })
+            };
+            await target.Handle(testContext, option);
+            responseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
         public async Task Get_GetsConfigSetAsJsonFile()
         {
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{nameof(SampleConfigSet)}.json")

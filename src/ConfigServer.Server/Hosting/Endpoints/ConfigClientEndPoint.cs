@@ -111,7 +111,7 @@ namespace ConfigServer.Server
                 Group = payload.Group,
                 Enviroment = payload.Enviroment,
                 ReadClaim = payload.ReadClaim,
-                WriteClaim = payload.WriteClaim,
+                ConfiguratorClaim = payload.ConfiguratorClaim,
                 Settings = new List<ConfigurationClientSetting>(payload.Settings.Values)
             };
             return result;

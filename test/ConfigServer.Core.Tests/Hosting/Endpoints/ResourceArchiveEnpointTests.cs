@@ -22,6 +22,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private readonly Version version = new Version(1, 0);
         private readonly IEndpoint target;
+        private readonly string configuratorClaim = "Configurator";
 
         private ConfigServerOptions options;
         private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
@@ -29,7 +30,10 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
         public ResourceArchiveEndpointTests()
         {
-            expectedClient = new ConfigurationClient(clientId);
+            expectedClient = new ConfigurationClient(clientId)
+            {
+                ConfiguratorClaim = configuratorClaim
+            };
             configClientService = new Mock<IConfigurationClientService>();
             configClientService.Setup(s => s.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => expectedClient);
@@ -42,10 +46,26 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
-        public async Task Get_ClientArchiveSummary_GetsClientSummary()
+        public async Task Get_ClientArchiveSummary_GetsClientSummary_WithConfiguratorAndClientConfiguratorClaim()
         {
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
-                .WithClaims(readClaim)
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, configuratorClaim))
+                .TestContext;
+            var expectedResources = new List<ResourceEntryInfo>
+            {
+                new ResourceEntryInfo{ Name = "File.txt"}
+            };
+            resourceStore.Setup(r => r.GetArchiveResourceCatalogue(It.Is<ConfigurationIdentity>(s => s.Client.Equals(expectedClient))))
+                .ReturnsAsync(() => expectedResources);
+            await target.Handle(testContext, options);
+            httpResponseFactory.Verify(f => f.BuildJsonResponse(testContext, expectedResources));
+        }
+
+        [Fact]
+        public async Task Get_ClientArchiveSummary_GetsClientSummary_WithAdmin()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(writeClaim)
                 .TestContext;
             var expectedResources = new List<ResourceEntryInfo>
             {
@@ -68,11 +88,21 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_Returns403_WithConfiguratorAndNoClientConfigurator()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(readClaim)
+                .TestContext;
+            await target.Handle(testContext, options);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
         public async Task Get_ClientArchiveResource_GetsClientResource()
         {
             var resourceName = "File.txt";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
-                .WithClaims(readClaim)
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, configuratorClaim))
                 .TestContext;
             var expectedResource = new ResourceEntry
             {
@@ -87,11 +117,22 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
-        public async Task Get_ClientArchiveResource_ReturnsNotFoundIfNotFound()
+        public async Task Get_ClientArchiveResource_Get403IfNoClientConfiguratorClaim()
         {
             var resourceName = "File.txt";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithClaims(readClaim)
+                .TestContext;
+            await target.Handle(testContext, options);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
+        public async Task Get_ClientArchiveResource_ReturnsNotFoundIfNotFound()
+        {
+            var resourceName = "File.txt";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, configuratorClaim))
                 .TestContext;
             var expectedResource = new ResourceEntry
             {

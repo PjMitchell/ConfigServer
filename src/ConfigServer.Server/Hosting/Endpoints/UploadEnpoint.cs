@@ -33,14 +33,15 @@ namespace ConfigServer.Server
                 return;
 
             var pathParams = context.ToPathParams();
-            if (context.Request.Method != "POST" || pathParams.Length != 3)
-                return;
-            var client = await configClientService.GetClientOrDefault(pathParams[1]);
-            if (client == null)
+            if (pathParams.Length != 3)
             {
                 responseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
+                
+            var client = await configClientService.GetClientOrDefault(pathParams[1]);
+            if (!context.ChallengeClientConfigurator(options, client, responseFactory))
+                return;
                 
             if (pathParams[0].Equals("Configuration", StringComparison.OrdinalIgnoreCase))
                 await HandleUploadConfiguration(context, pathParams[2], client);

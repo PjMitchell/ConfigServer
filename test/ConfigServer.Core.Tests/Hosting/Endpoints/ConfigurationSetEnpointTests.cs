@@ -108,7 +108,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         [Fact]
         public async Task Get_Model_Returns403IfNoConfiguratorClaimOnClient()
         {
-            expectedClient.WriteClaim = "Denied";
+            expectedClient.ConfiguratorClaim = "Denied";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{modelPath}/{clientId}/{typeof(SampleConfigSet).Name}")
                 .WithClaims(readClaim).TestContext;
             
@@ -137,7 +137,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         [Fact]
         public async Task Get_Value_Returns403IfNoConfiguratorClaimOnClient()
         {
-            expectedClient.WriteClaim = "Denied";
+            expectedClient.ConfiguratorClaim = "Denied";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}").WithClaims(readClaim).TestContext;
             await target.Handle(testContext, options);
             responseFactory.Verify(v => v.BuildStatusResponse(testContext, 403));
@@ -165,7 +165,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         [Fact]
         public async Task Post_Value_Returns403IfNoConfiguratorClaimOnClient()
         {
-            expectedClient.WriteClaim = "Denied";
+            expectedClient.ConfiguratorClaim = "Denied";
             var stringValue = "Hello";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{valuePath}/{clientId}/{typeof(SampleConfig).Name}")
                 .WithClaims(readClaim)

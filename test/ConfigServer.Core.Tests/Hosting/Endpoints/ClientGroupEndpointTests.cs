@@ -131,8 +131,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expectedClaim = "Expected";
             var clients = new List<ConfigurationClient>
             {
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", WriteClaim = expectedClaim},
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", WriteClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
                 new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name3" },
             };
 
@@ -145,7 +145,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
                 .Returns(() => Task.FromResult(1));
             await target.Handle(context, options);
-            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.WriteClaim) || string.IsNullOrWhiteSpace(w.WriteClaim)).ToList(), observed);
+            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.ConfiguratorClaim) || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).ToList(), observed);
         }
 
         [Fact]
@@ -154,8 +154,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expectedClaim = "Expected";
             var clients = new List<ConfigurationClient>
             {
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", WriteClaim = expectedClaim},
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", WriteClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
                 new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name3" },
             };
 
@@ -234,8 +234,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expectedClaim = "Expected";
             var clients = new List<ConfigurationClient>
             {
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", WriteClaim = expectedClaim},
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", WriteClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
                 new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name3" },
             };
 
@@ -248,7 +248,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
                 .Returns(() => Task.FromResult(1));
             await target.Handle(context, options);
-            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.WriteClaim) || string.IsNullOrWhiteSpace(w.WriteClaim)).ToList(), observed);
+            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.ConfiguratorClaim) || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).ToList(), observed);
         }
 
         [Fact]
@@ -257,8 +257,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expectedClaim = "Expected";
             var clients = new List<ConfigurationClient>
             {
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", WriteClaim = expectedClaim},
-                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", WriteClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
                 new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name3" },
             };
 

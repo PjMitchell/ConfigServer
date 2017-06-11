@@ -29,28 +29,29 @@ namespace ConfigServer.Server
             if (!CheckMethodAndAuthentication(context, options))
                 return;
 
-            var result = await GetObjectOrDefault(context.Request.Path);
-            if (result == null)
-            {
-                responseFactory.BuildNotFoundStatusResponse(context);
-            }
-            else
-            {
-                await responseFactory.BuildJsonFileResponse(context, result.Payload, result.FileName);
-            }            
-        }
-
-        private async Task<FilePayload> GetObjectOrDefault(PathString path)
-        {
             // clientId/ConfigSet.json
             // clientId/ConfigSet/Config.json
-            var pathParams = path.ToPathParams();
+            var pathParams = context.ToPathParams();
             if (pathParams.Length < 2)
-                return null;
+            {
+                responseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
+
 
             var client = await configClientService.GetClientOrDefault(pathParams[0]);
-            if (client == null)
-                return null;
+            if (!context.ChallengeClientConfigurator(options, client, responseFactory))
+                return;
+            var payload = await GetPayloadOrDefault(pathParams, client);
+
+            if (payload == null)
+                responseFactory.BuildNotFoundStatusResponse(context);
+            else
+                await responseFactory.BuildJsonFileResponse(context, payload.Payload, payload.FileName);
+        }
+
+        private async Task<FilePayload> GetPayloadOrDefault(string[] pathParams, ConfigurationClient client)
+        {
             if (pathParams.Length == 2)
             {
                 var configurationSet = configCollection.SingleOrDefault(s => pathParams[1].Equals($"{s.ConfigSetType.Name}{jsonExtension}", StringComparison.OrdinalIgnoreCase));

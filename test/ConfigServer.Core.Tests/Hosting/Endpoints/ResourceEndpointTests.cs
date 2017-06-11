@@ -24,13 +24,16 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Version version = new Version(1, 0);
         private const string clientGroupImagePath = "ClientGroupImages";
         private ConfigServerOptions option;
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private static readonly Claim configuratorClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
+        private static readonly Claim clientConfiguratorClaim = new Claim(ConfigServerConstants.ClientConfiguratorClaimType, "Configurator");
+        private static readonly Claim clientReadClaim = new Claim(ConfigServerConstants.ClientReadClaimType, "ReadClaim");
+
         private readonly IEndpoint target;
 
         public ResourceEndpointTests()
         {
-            expectedClient = new ConfigurationClient(clientId);
-            expectedTargetClient = new ConfigurationClient(targetClientId);
+            expectedClient = new ConfigurationClient(clientId) { ConfiguratorClaim = clientConfiguratorClaim.Value, ReadClaim = clientReadClaim.Value };
+            expectedTargetClient = new ConfigurationClient(targetClientId) { ConfiguratorClaim = "SecondWriteClaim", ReadClaim = clientReadClaim.Value };
             configClientService = new Mock<IConfigurationClientService>();
             configClientService.Setup(s => s.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => expectedClient);
@@ -48,7 +51,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Get_ClientSummary_GetsClientSummary()
         {
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
-                .WithClaims()
+                .WithClaims(clientConfiguratorClaim)
                 .TestContext;
             var expectedResources = new List<ResourceEntryInfo>
             {
@@ -61,11 +64,41 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_ClientSummary_Returns403_IfNoConfiguratorPermission()
+        {
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims()
+                .TestContext;
+            await target.Handle(testContext, option);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
         public async Task Get_ClientResource_GetsClientResource()
         {
             var resourceName = "File.txt";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
-                .WithClaims()
+                .WithClaims(clientReadClaim)
+                .TestContext;
+            var expectedResource = new ResourceEntry
+            {
+                HasEntry = true,
+                Content = new MemoryStream(),
+                Name = resourceName
+            };
+            resourceStore.Setup(r => r.GetResource(resourceName, ItMatchesClient(expectedClient)))
+                .ReturnsAsync(() => expectedResource);
+
+            await target.Handle(testContext, option);
+            httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
+        }
+
+        [Fact]
+        public async Task Get_ClientResource_GetsClientResource_WithConfiguratorClaim()
+        {
+            var resourceName = "File.txt";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims(clientConfiguratorClaim)
                 .TestContext;
             var expectedResource = new ResourceEntry
             {
@@ -85,7 +118,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var resourceName = "File.txt";
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
-                .WithClaims()
+                .WithClaims(clientReadClaim)
                 .TestContext;
             var expectedResource = new ResourceEntry
             {
@@ -97,6 +130,17 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             httpResponseFactory.Verify(f => f.BuildNotFoundStatusResponse(testContext));
         }
 
+        [Fact]
+        public async Task Get_ClientResource_Returns403IfNoReadOrConfigurator()
+        {
+            var resourceName = "File.txt";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithClaims()
+                .TestContext;
+            await target.Handle(testContext, option);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
 
         [Fact]
         public async Task Post_ClientResource_UploadsResources()
@@ -105,7 +149,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithPost()
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .WithFile(file, resourceName)
                 .TestContext;
             await target.Handle(testContext, option);
@@ -114,13 +158,13 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
-        public async Task Post_Returns403_IfNoClientReadClaim()
+        public async Task Post_Returns403_IfNoClientConfiguratorClaim()
         {
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithPost()
-                .WithClaims()
+                .WithClaims(clientReadClaim)
                 .WithFile(file, resourceName)
                 .TestContext;
             await target.Handle(testContext, option);
@@ -135,7 +179,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithDelete()
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
                 .TestContext;
             await target.Handle(testContext, option);
             resourceStore.Verify(r => r.DeleteResources(resourceName, ItMatchesClient(expectedClient)));
@@ -143,13 +187,28 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
-        public async Task Delete_Returns403_IfNoClientReadClaim()
+        public async Task Delete_Returns403_IfNoConfiguratorClaim()
         {
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
                 .WithPost()
-                .WithClaims()
+                .WithClaims(clientConfiguratorClaim)
+                .WithFile(file, resourceName)
+                .TestContext;
+            await target.Handle(testContext, option);
+            resourceStore.Verify(r => r.UpdateResource(It.IsAny<UpdateResourceRequest>()), Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
+        public async Task Delete_Returns403_IfNoClientClientClaim()
+        {
+            var resourceName = "File.txt";
+            var file = new MemoryStream();
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .WithPost()
+                .WithClaims(configuratorClaim)
                 .WithFile(file, resourceName)
                 .TestContext;
             await target.Handle(testContext, option);
@@ -200,7 +259,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim)
                 .WithPost()
                 .WithFile(file, resourceName)
                 .TestContext;
@@ -215,7 +274,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var resourceName = "File.txt";
             var file = new MemoryStream();
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientGroupImagePath}/{resourceName}")
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim)
                 .WithDelete()
                 .TestContext;
             await target.Handle(testContext, option);
@@ -230,12 +289,42 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expected = new HashSet<string>(new[] { resourceName });
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/to/{targetClientId}")
                 .WithPost()
-                .WithClaims(readClaim)
+                .WithClaims(configuratorClaim, clientConfiguratorClaim, new Claim(option.ClientConfiguratorClaimType, expectedTargetClient.ConfiguratorClaim))
                 .WithJsonBody(new[] { resourceName })
                 .TestContext;
             await target.Handle(testContext, option);
             resourceStore.Verify(r => r.CopyResources(It.Is<IEnumerable<string>>(s=> expected.SetEquals(s)), ItMatchesClient(expectedClient),ItMatchesClient(expectedTargetClient)));
             httpResponseFactory.Verify(f => f.BuildNoContentResponse(testContext));
+        }
+
+        [Fact]
+        public async Task CopyTo_CopiesResources_Returns403IfFromClaimMissing()
+        {
+            var resourceName = "File.txt";
+            var expected = new HashSet<string>(new[] { resourceName });
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/to/{targetClientId}")
+                .WithPost()
+                .WithClaims(configuratorClaim, new Claim(option.ClientConfiguratorClaimType, expectedTargetClient.ConfiguratorClaim))
+                .WithJsonBody(new[] { resourceName })
+                .TestContext;
+            await target.Handle(testContext, option);
+            resourceStore.Verify(r => r.CopyResources(It.IsAny<IEnumerable<string>>(), ItMatchesClient(expectedClient), ItMatchesClient(expectedTargetClient)),Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
+        public async Task CopyTo_CopiesResources_Returns403IfToClaimMissing()
+        {
+            var resourceName = "File.txt";
+            var expected = new HashSet<string>(new[] { resourceName });
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/to/{targetClientId}")
+                .WithPost()
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
+                .WithJsonBody(new[] { resourceName })
+                .TestContext;
+            await target.Handle(testContext, option);
+            resourceStore.Verify(r => r.CopyResources(It.IsAny<IEnumerable<string>>(), ItMatchesClient(expectedClient), ItMatchesClient(expectedTargetClient)), Times.Never);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
 
         private static ConfigurationIdentity ItMatchesClientId(string expectedClientId)

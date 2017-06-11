@@ -48,7 +48,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 Enviroment = "Dev",
                 Group = groupId,
                 ReadClaim ="AnyOne",
-                WriteClaim ="Dev"
+                ConfiguratorClaim ="Dev"
             };
 
             client.Settings.Add("Password", new ConfigurationClientSetting { Key = "Password", Value = "1234" });
@@ -80,8 +80,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var expectedClaim = "expected";
             var clients = new List<ConfigurationClient>
             {
-                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), WriteClaim = expectedClaim},
-                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), WriteClaim = "un" + expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), ConfiguratorClaim = expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), ConfiguratorClaim = "un" + expectedClaim},
                   new ConfigurationClient{ ClientId = Guid.NewGuid().ToString()},
 
             };
@@ -98,7 +98,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             await target.Handle(context, options);
             Assert.NotNull(observed);
-            Assert.Equal(clients.Where(w=> w.WriteClaim == expectedClaim || string.IsNullOrWhiteSpace(w.WriteClaim)).Select(s=>s.ClientId), observed.Select(s => s.ClientId));
+            Assert.Equal(clients.Where(w=> w.ConfiguratorClaim == expectedClaim || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).Select(s=>s.ClientId), observed.Select(s => s.ClientId));
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var client = new ConfigurationClient
             {
                 ClientId = clientId,
-                WriteClaim  = "RequiredClaim",
+                ConfiguratorClaim  = "RequiredClaim",
             };
 
             configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
@@ -166,7 +166,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var client = new ConfigurationClient
             {
                 ClientId = clientId,
-                WriteClaim = "RequiredClaim",
+                ConfiguratorClaim = "RequiredClaim",
             };
             configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => client);
@@ -268,7 +268,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.Equal(payload.Enviroment, client.Enviroment);
             Assert.Equal(payload.Group, client.Group);
             Assert.Equal(payload.ReadClaim, client.ReadClaim);
-            Assert.Equal(payload.WriteClaim, client.WriteClaim);
+            Assert.Equal(payload.ConfiguratorClaim, client.ConfiguratorClaim);
             Assert.Equal(payload.Settings.Select(s => s.Key), client.Settings.Values.Select(s => s.Key));
             Assert.Equal(payload.Settings.Select(s => s.Value), client.Settings.Values.Select(s => s.Value));
 

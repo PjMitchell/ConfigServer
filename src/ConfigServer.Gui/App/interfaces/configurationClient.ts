@@ -6,6 +6,6 @@ export interface IConfigurationClient {
     group: string;
     enviroment: string;
     readClaim: string;
-    writeClaim: string;
+    configuratorClaim: string;
     settings: IConfigurationClientSetting[];
 }

@@ -32,8 +32,8 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
             <input id="client-readclaim-input" [(ngModel)]="csClient.readClaim" type="text" class="form-control">
         </div>
         <div class="col-sm-6 col-md-4">
-            <h4>Write claim:</h4>
-            <input id="client-writeclaim-input" [(ngModel)]="csClient.writeClaim" type="text" class="form-control">
+            <h4>Configurator claim:</h4>
+            <input id="client-configuratorclaim-input" [(ngModel)]="csClient.configuratorClaim" type="text" class="form-control">
         </div>
     </div>
     <hr/>

@@ -60,9 +60,9 @@ namespace ConfigServer.Core
 
 
         /// <summary>
-        /// Write claim for client
+        /// Configurator claim for client
         /// </summary>
-        public string WriteClaim { get; set; }
+        public string ConfiguratorClaim { get; set; }
 
         /// <summary>
         /// Settings for client

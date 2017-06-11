@@ -35,7 +35,7 @@ export class CreateClientComponent {
             enviroment: '',
             description: '',
             readClaim: '',
-            writeClaim: '',
+            configuratorClaim: '',
             settings: new Array<IConfigurationClientSetting>(),
         };
     }

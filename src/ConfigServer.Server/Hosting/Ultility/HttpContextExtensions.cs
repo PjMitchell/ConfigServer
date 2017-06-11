@@ -101,6 +101,30 @@ namespace ConfigServer.Server
             return true;
         }
 
+        public static bool ChallengeClientReadOrConfigurator(this HttpContext source, ConfigServerOptions option, ConfigurationClient client, IHttpResponseFactory responseFactory)
+        {
+            if (client == null)
+            {
+                responseFactory.BuildNotFoundStatusResponse(source);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.ReadClaim) || string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
+                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+
+            //If we have an expected claim then we do not want to allow anomynous
+            if (!source.ChallengeAuthentication(false, responseFactory))
+                return false;
+
+            if (!(source.HasClaim(option.ClientReadClaimType, client.ReadClaim) || source.HasClaim(option.ClientConfiguratorClaimType, client.ConfiguratorClaim)))
+            {
+                responseFactory.BuildStatusResponse(source, 403);
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool ChallengeClientConfigurator(this HttpContext source, ConfigServerOptions option, ConfigurationClient client, IHttpResponseFactory responseFactory)
         {
             if (client == null)
@@ -109,14 +133,14 @@ namespace ConfigServer.Server
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.WriteClaim))
+            if (string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
                 return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
 
             //If we have an expected claim then we do not want to allow anomynous
             if (!source.ChallengeAuthentication(false, responseFactory))
                 return false;
 
-            if (!source.HasClaim(option.ClientConfiguratorClaimType, client.WriteClaim))
+            if (!source.HasClaim(option.ClientConfiguratorClaimType, client.ConfiguratorClaim))
             {
                 responseFactory.BuildStatusResponse(source, 403);
                 return false;
@@ -133,14 +157,14 @@ namespace ConfigServer.Server
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(option.ClientAdminClaimType) ||string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.WriteClaim))
+            if (string.IsNullOrWhiteSpace(option.ClientAdminClaimType) ||string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
                 return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
 
             //If we have an expected claim then we do not want to allow anomynous
             if (!source.ChallengeAuthentication(false, responseFactory))
                 return false;
 
-            if (!(source.HasClaim(option.ClientConfiguratorClaimType, client.WriteClaim) || source.HasClaim(option.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue)))
+            if (!(source.HasClaim(option.ClientConfiguratorClaimType, client.ConfiguratorClaim) || source.HasClaim(option.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue)))
             {
                 responseFactory.BuildStatusResponse(source, 403);
                 return false;
@@ -151,9 +175,9 @@ namespace ConfigServer.Server
 
         public static bool CheckClientWrite(this HttpContext source, ConfigServerOptions option, ConfigurationClient client)
         {
-            if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.WriteClaim))
+            if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
                 return true;
-            return source.HasClaim(option.ClientConfiguratorClaimType, client.WriteClaim);
+            return source.HasClaim(option.ClientConfiguratorClaimType, client.ConfiguratorClaim);
         }
 
         public static bool HasClaim(this HttpContext source, string claimType, string claim)

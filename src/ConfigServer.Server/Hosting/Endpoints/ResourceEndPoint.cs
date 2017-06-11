@@ -48,13 +48,13 @@ namespace ConfigServer.Server
             switch (pathParams.Length)
             {
                 case 1:
-                    await HandleSingleParam(context, clientIdentity);
+                    await GetResourceCatalogue(context, clientIdentity, options);
                     break;
                 case 2:
-                    await HandleTwoParams(context, pathParams, clientIdentity);
+                    await HandleTwoParams(context, pathParams, clientIdentity, options);
                     break;
                 case 3:
-                    await HandleThreeParams(context, pathParams, clientIdentity);
+                    await TransferResource(context, pathParams, clientIdentity, options);
                     break;
                 default:
                     httpResponseFactory.BuildNotFoundStatusResponse(context);
@@ -64,59 +64,78 @@ namespace ConfigServer.Server
 
  
 
-        private async Task<bool> HandleSingleParam(HttpContext context, ConfigurationIdentity clientIdentity)
+        private async Task GetResourceCatalogue(HttpContext context, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
         {
             if (context.Request.Method != "GET")
             {
                 httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                return true;
+                return;
             }
+            if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                return;
             var clientResourceCatalogue = await resourceStore.GetResourceCatalogue(clientIdentity);
             await httpResponseFactory.BuildJsonResponse(context, clientResourceCatalogue);
-            return true;
+            
         }
 
-        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
         {
             switch (context.Request.Method)
             {
                 case "GET":
-                    {
-                        var result = await resourceStore.GetResource(pathParams[1], clientIdentity);
-                        if (!result.HasEntry)
-                            httpResponseFactory.BuildNotFoundStatusResponse(context);
-                        else
-                            await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
-                        break;
-                    }
+                    return GetClientResource(context, pathParams[1], clientIdentity, options);
                 case "POST":
-                    {
-                        var file = context.Request.Form.Files.Single();
-                        var uploadRequest = new UpdateResourceRequest
-                        {
-                            Name = pathParams[1],
-                            Identity = clientIdentity,
-                            Content = file.OpenReadStream()
-                        };
-                        await resourceStore.UpdateResource(uploadRequest);
-                        httpResponseFactory.BuildNoContentResponse(context);
-                        break;
-                    }
+                    return SaveClientResource(context, pathParams[1], clientIdentity, options);
                 case "DELETE":
-                    {
-                        await resourceStore.DeleteResources(pathParams[1], clientIdentity);
-                        httpResponseFactory.BuildNoContentResponse(context);
-                        break;
-                    }
+                    return DeleteClientResource(context, pathParams[1], clientIdentity, options);
                 default:
                     {
                         httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                        break;
+                        return Task.FromResult(true);
                     }
             }
         }
 
-        private async Task HandleThreeParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task GetClientResource(HttpContext context, string resourceName, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
+        {
+            if (!context.ChallengeClientReadOrConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                return;
+            var result = await resourceStore.GetResource(resourceName, clientIdentity);
+            if (!result.HasEntry)
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+            else
+                await httpResponseFactory.BuildFileResponse(context, result.Content, result.Name);
+
+        }
+
+        private async Task SaveClientResource(HttpContext context, string resourceName, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
+        {
+            if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                return;
+
+            var file = context.Request.Form.Files.Single();
+            var uploadRequest = new UpdateResourceRequest
+            {
+                Name = resourceName,
+                Identity = clientIdentity,
+                Content = file.OpenReadStream()
+            };
+            await resourceStore.UpdateResource(uploadRequest);
+            httpResponseFactory.BuildNoContentResponse(context);
+
+        }
+
+        private async Task DeleteClientResource(HttpContext context, string resourceName, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
+        {
+            if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                return;
+
+            await resourceStore.DeleteResources(resourceName, clientIdentity);
+            httpResponseFactory.BuildNoContentResponse(context);
+        }
+
+
+        private async Task TransferResource(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
         {
             if(context.Request.Method != "POST")
             {
@@ -124,12 +143,17 @@ namespace ConfigServer.Server
                 return;
             }
 
+            if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                return;
+
             var targetConfigIdentity = await GetIdentityFromPathOrDefault(pathParams[2]);
             if (targetConfigIdentity == null || !pathParams[1].Equals("to", StringComparison.OrdinalIgnoreCase))
             {
                 httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
+            if (!context.ChallengeClientConfigurator(options, targetConfigIdentity.Client, httpResponseFactory))
+                return;
             var filesToCopy = await context.GetObjectFromJsonBodyAsync<string[]>();
             if (filesToCopy.Length > 0)
                 await resourceStore.CopyResources(filesToCopy, clientIdentity, targetConfigIdentity);
