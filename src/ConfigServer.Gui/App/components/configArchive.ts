@@ -23,7 +23,7 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
                         Created:{{config.timeStamp | date:"MM/dd/yy" }} <br/>
                         Archived:{{config.archiveTimeStamp | date:"MM/dd/yy" }}
                     </p>
-                    <button type="button" class="btn btn-primary" (click)="downloadConfig(config.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
+                    <button type="button" class="btn btn-primary" *ngIf="canDownloadArchive" (click)="downloadConfig(config.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
                     <button type="button" class="btn btn-primary" *ngIf="canDeleteArchives" (click)="delete(config.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
                 </div>
             </div>
@@ -50,6 +50,7 @@ export class ConfigArchiveComponent implements OnInit {
     @ViewChild('input')
     public input: IChildElement<HTMLInputElement>;
     public canDeleteArchives = false;
+    public canDownloadArchive = false;
     constructor(private dataService: ArchiveConfigService, private permissionService: UserPermissionService, private route: ActivatedRoute, private router: Router) {
         this.inputDate = new Date();
     }
@@ -59,9 +60,10 @@ export class ConfigArchiveComponent implements OnInit {
             this.clientId = value['clientId'];
             this.updateArchiveList();
         });
-        this.permissionService.getPermission()
+        this.permissionService.getPermissionForClient(this.clientId)
             .then((permissions) => {
                 this.canDeleteArchives = permissions.canDeleteArchives;
+                this.canDownloadArchive = permissions.hasClientConfiguratorClaim;
             });
     }
 

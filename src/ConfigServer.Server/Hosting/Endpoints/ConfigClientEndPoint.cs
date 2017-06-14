@@ -10,13 +10,13 @@ namespace ConfigServer.Server
     internal class ConfigClientEndPoint : IEndpoint
     {
 
-        readonly IHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory httpResponseFactory;
         readonly IConfigurationClientService configurationClientService;
         readonly ICommandBus commandBus;
 
-        public ConfigClientEndPoint(IConfigurationClientService configurationClientService, IHttpResponseFactory responseFactory, ICommandBus commandBus)
+        public ConfigClientEndPoint(IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory, ICommandBus commandBus)
         {
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.configurationClientService = configurationClientService;
             this.commandBus = commandBus;
         }
@@ -33,9 +33,9 @@ namespace ConfigServer.Server
             switch (pathParams.Length)
             {
                 case 0:
-                    return HandleEmptyPath(context);
+                    return HandleEmptyPath(context,options);
                 case 1:
-                    return HandleClientPath(context, pathParams[0]);
+                    return HandleClientPath(context, pathParams[0],options);
                 default:
                     return HandleNotFound(context);
 
@@ -46,61 +46,59 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else if (context.Request.Method == "POST")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }
 
         private Task HandleNotFound(HttpContext context)
         {
-            responseFactory.BuildNotFoundStatusResponse(context);
+            httpResponseFactory.BuildNotFoundStatusResponse(context);
             return Task.FromResult(true);
         }
 
-        private async Task HandleClientPath(HttpContext context, string clientId)
+        private async Task HandleClientPath(HttpContext context, string clientId, ConfigServerOptions options)
         {
             var client = await configurationClientService.GetClientOrDefault(clientId);
-            if (client == null)
-                responseFactory.BuildNotFoundStatusResponse(context);
-            else
-                await responseFactory.BuildJsonResponse(context, Map(client));
+            if (context.ChallengeClientConfiguratorOrAdmin(options,client,httpResponseFactory))
+                await httpResponseFactory.BuildJsonResponse(context, Map(client));
         }
 
-        private async Task HandleEmptyPath(HttpContext context)
+        private async Task HandleEmptyPath(HttpContext context, ConfigServerOptions options)
         {
             switch (context.Request.Method)
             {
                 case "GET":
-                    await responseFactory.BuildJsonResponse(context,await GetAllClients());
+                    await httpResponseFactory.BuildJsonResponse(context,await GetAllClients(context,options));
                     break;
                 case "POST":
                     await HandlePost(context);
                     break;
                 default:
-                    responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                    httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                     break;
             }
         }
 
-        private async Task<IEnumerable<ConfigurationClientPayload>> GetAllClients()
+        private async Task<IEnumerable<ConfigurationClientPayload>> GetAllClients(HttpContext context, ConfigServerOptions options)
         {
             var clients = await configurationClientService.GetClients();
-            return clients.Select(Map);
+            return context.FilterClientsForUser(clients, options).Select(Map);
         }
 
         private async Task HandlePost(HttpContext context)
         {
             var data = await context.GetObjectFromJsonBodyAsync<ConfigurationClientPayload>();
             var commandResult = await commandBus.SubmitAsync(new CreateUpdateClientCommand(data));
-            await responseFactory.BuildResponseFromCommandResult(context, commandResult);
+            await httpResponseFactory.BuildResponseFromCommandResult(context, commandResult);
         }
 
         private ConfigurationClientPayload Map(ConfigurationClient payload)
@@ -112,6 +110,8 @@ namespace ConfigServer.Server
                 Description = payload.Description,
                 Group = payload.Group,
                 Enviroment = payload.Enviroment,
+                ReadClaim = payload.ReadClaim,
+                ConfiguratorClaim = payload.ConfiguratorClaim,
                 Settings = new List<ConfigurationClientSetting>(payload.Settings.Values)
             };
             return result;

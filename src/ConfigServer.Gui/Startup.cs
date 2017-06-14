@@ -71,9 +71,7 @@ namespace ConfigServer.Gui
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseConfigServer(new ConfigServerOptions {
-                ClientAdminClaimType = Constants.ClientAdminClaimType
-            });
+            app.UseConfigServer(new ConfigServerOptions());
         }
 
         private void UseFileStorage(ConfigServerBuilder builder)

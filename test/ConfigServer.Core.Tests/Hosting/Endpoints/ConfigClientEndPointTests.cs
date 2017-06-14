@@ -1,6 +1,7 @@
 ﻿using ConfigServer.Server;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -15,8 +16,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Mock<IHttpResponseFactory> factory;
         private readonly Mock<ICommandBus> commandBus;
         private ConfigServerOptions options;
-        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
         private const string noGroupPath = "None";
         private const string groupClientsPath = "Clients";
         private const string groupId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
@@ -45,7 +46,9 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 Name = "Test Client",
                 Description = "Description",
                 Enviroment = "Dev",
-                Group = groupId
+                Group = groupId,
+                ReadClaim ="AnyOne",
+                ConfiguratorClaim ="Dev"
             };
 
             client.Settings.Add("Password", new ConfigurationClientSetting { Key = "Password", Value = "1234" });
@@ -58,7 +61,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => clients);
             
             var context = TestHttpContextBuilder.CreateForPath("")
-                .WithClaims(readClaim)
+                .WithClaims(writeClaim)
                 .TestContext;
             List<ConfigurationClientPayload> observed = null;
             factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClientPayload>>()))
@@ -69,6 +72,33 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.NotNull(observed);
             Assert.Equal(1, observed.Count);
             AssertClient(observed[0], client);
+        }
+
+        [Fact]
+        public async Task Get_ReturnsAllClients_ForUserWithClientPermission()
+        {
+            var expectedClaim = "expected";
+            var clients = new List<ConfigurationClient>
+            {
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), ConfiguratorClaim = expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), ConfiguratorClaim = "un" + expectedClaim},
+                  new ConfigurationClient{ ClientId = Guid.NewGuid().ToString()},
+
+            };
+            configurationClientService.Setup(cs => cs.GetClients())
+                .ReturnsAsync(() => clients);
+
+            var context = TestHttpContextBuilder.CreateForPath("")
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim))
+                .TestContext;
+            List<ConfigurationClientPayload> observed = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClientPayload>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClientPayload>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+
+            await target.Handle(context, options);
+            Assert.NotNull(observed);
+            Assert.Equal(clients.Where(w=> w.ConfiguratorClaim == expectedClaim || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).Select(s=>s.ClientId), observed.Select(s => s.ClientId));
         }
 
         [Fact]
@@ -110,6 +140,47 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(context, options);
             Assert.NotNull(observed);
             AssertClient(observed, client);
+        }
+
+        [Fact]
+        public async Task Get_ClientId_Returns403_IfFoundButNoClaim()
+        {
+            var client = new ConfigurationClient
+            {
+                ClientId = clientId,
+                ConfiguratorClaim  = "RequiredClaim",
+            };
+
+            configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
+                .ReturnsAsync(() => client);
+
+            var context = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(readClaim).TestContext;
+            
+            await target.Handle(context, options);
+            factory.Verify(f => f.BuildStatusResponse(context,403));
+        }
+        [Fact]
+        public async Task Get_ClientId_ReturnsClient_IfFoundAndHasAdminClaimButNoConfiguratorClaim()
+        {
+            var client = new ConfigurationClient
+            {
+                ClientId = clientId,
+                ConfiguratorClaim = "RequiredClaim",
+            };
+            configurationClientService.Setup(cs => cs.GetClientOrDefault(clientId))
+                .ReturnsAsync(() => client);
+
+            var context = TestHttpContextBuilder.CreateForPath($"/{clientId}")
+                .WithClaims(writeClaim).TestContext;
+            ConfigurationClientPayload observed = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<ConfigurationClientPayload>()))
+                .Callback((HttpContext c, object arg2) => observed = (ConfigurationClientPayload)arg2)
+                .Returns(() => Task.FromResult(1));
+
+            await target.Handle(context, options);
+            Assert.NotNull(observed);
+            
         }
 
         [Fact]
@@ -196,6 +267,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.Equal(payload.Description, client.Description);
             Assert.Equal(payload.Enviroment, client.Enviroment);
             Assert.Equal(payload.Group, client.Group);
+            Assert.Equal(payload.ReadClaim, client.ReadClaim);
+            Assert.Equal(payload.ConfiguratorClaim, client.ConfiguratorClaim);
             Assert.Equal(payload.Settings.Select(s => s.Key), client.Settings.Values.Select(s => s.Key));
             Assert.Equal(payload.Settings.Select(s => s.Value), client.Settings.Values.Select(s => s.Value));
 

@@ -8,10 +8,15 @@
     <input asp-for="@Model.Username" />
     <label>Client Admin Claim</label>
     <input asp-for="@Model.ClientAdmin" list="standardClaims" />
+    <label>Read Claims (comma separated)</label>
+    <input asp-for="@Model.ReadClaims" />
+    <label>Write Claims (comma separated)</label>
+    <input asp-for="@Model.ConfiguratorClaim"  />
+
     <button type="submit">Update</button>
     <datalist id="standardClaims">
-        <option value="read"/>
-        <option value="write"/>
+        <option value="configurator"/>
+        <option value="admin"/>
     </datalist> 
 </form>
 <script>

@@ -52,6 +52,18 @@ namespace ConfigServer.Core
         /// </summary>
         public string Description { get; set; }
 
+
+        /// <summary>
+        /// Read claim client
+        /// </summary>
+        public string ReadClaim { get; set; }
+
+
+        /// <summary>
+        /// Configurator claim for client
+        /// </summary>
+        public string ConfiguratorClaim { get; set; }
+
         /// <summary>
         /// Settings for client
         /// </summary>

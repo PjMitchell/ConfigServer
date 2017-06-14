@@ -5,7 +5,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
-        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> <button type="button" class="btn btn-primary" (click)="gotoCopy()">Copy</button></h3>
+        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> <button type="button" class="btn btn-primary" *ngIf="isConfigurator" (click)="gotoCopy()">Copy</button></h3>
         <div class="break">
         </div>
         <div class="row">
@@ -17,7 +17,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
             </div>
         </div>
         <hr />
-        <div class="row">
+        <div class="row" *ngIf="isConfigurator">
             <resource-file-uploader [csClientId]="clientId" (onUpload)="onfileUploaded($event)" class="col-sm-6 col-md-4"> </resource-file-uploader>
         </div>
 `,
@@ -27,6 +27,8 @@ export class ResourceOverviewComponent {
     public resources: IResourceInfo[];
     @Input('csClientId')
     public clientId: string;
+    @Input('csIsConfigurator')
+    public isConfigurator: boolean;
     @Output('onResourcesChanged')
     public onResourcesChanged: EventEmitter<any> = new EventEmitter<any>();
 

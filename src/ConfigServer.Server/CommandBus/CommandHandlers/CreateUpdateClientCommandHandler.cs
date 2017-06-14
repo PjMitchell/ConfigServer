@@ -35,6 +35,8 @@ namespace ConfigServer.Server
                 Name = payload.Name,
                 Description = payload.Description,
                 Group = payload.Group,
+                ReadClaim = payload.ReadClaim,
+                ConfiguratorClaim = payload.ConfiguratorClaim,
                 Enviroment = payload.Enviroment
             };
             foreach (var setting in payload.Settings)

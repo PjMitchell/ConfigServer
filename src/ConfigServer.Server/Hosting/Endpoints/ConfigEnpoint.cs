@@ -3,29 +3,52 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigEnpoint : IOldEndpoint
+    internal class ConfigEnpoint : IEndpoint
     {
         readonly IConfigInstanceRouter router;
-        readonly IHttpResponseFactory responseFactory;
+        readonly IConfigurationClientService configurationClientService;
+        readonly IHttpResponseFactory httpResponseFactory;
 
-        public ConfigEnpoint(IConfigInstanceRouter router, IHttpResponseFactory responseFactory)
+        public ConfigEnpoint(IConfigInstanceRouter router, IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory)
         {
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.router = router;
+            this.configurationClientService = configurationClientService;
         }
 
-        public async Task<bool> TryHandle(HttpContext context)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
-            var config = await router.GetConfigInstanceOrDefault(context.Request.Path);
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
+            var pathParams = context.ToPathParams();
+            if (pathParams.Length != 2)
+            {
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
+            var client = await configurationClientService.GetClientOrDefault(pathParams[0]);
+            if (!context.ChallengeClientRead(options, client, httpResponseFactory))
+                return;
+
+            var config = await router.GetConfigInstanceOrDefault(client, pathParams[1]);
             if (config == null)
-                return false;
-            await responseFactory.BuildJsonResponse(context, config.GetConfiguration());
-            return true;
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+            else
+                await httpResponseFactory.BuildJsonResponse(context, config.GetConfiguration());
+
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.ServerAuthenticationOptions);
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeAuthentication(options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            else
+            {
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
     }
 }

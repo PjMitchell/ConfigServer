@@ -44,18 +44,18 @@ namespace ConfigServer.Server
             }
             if (pathParams.Length == 1)
             {
-                await HandleSingleParam(context, clientIdentity);
+                await HandleSingleParam(context, options, clientIdentity);
                 return;
             }
             else
             {
-                await HandleTwoParams(context, pathParams, clientIdentity);
+                await HandleTwoParams(context, pathParams, options, clientIdentity);
             }
             
             return;
         }
 
-        private async Task HandleSingleParam(HttpContext context, ConfigurationIdentity clientIdentity)
+        private async Task HandleSingleParam(HttpContext context, ConfigServerOptions options, ConfigurationIdentity clientIdentity)
         {
             
 
@@ -63,6 +63,8 @@ namespace ConfigServer.Server
             {
                 case "GET":
                     {
+                        if (!context.ChallengeClientConfiguratorOrAdmin(options, clientIdentity.Client, httpResponseFactory))
+                            break;
                         var clientResourceCatalogue = await resourceArchive.GetArchiveResourceCatalogue(clientIdentity);
                         await httpResponseFactory.BuildJsonResponse(context, clientResourceCatalogue);
                         break;
@@ -87,12 +89,14 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigServerOptions options, ConfigurationIdentity clientIdentity)
         {
             switch (context.Request.Method)
             {
                 case "GET":
                     {
+                        if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                            break;
                         var result = await resourceArchive.GetArchiveResource(pathParams[1], clientIdentity);
                         if (!result.HasEntry)
                             httpResponseFactory.BuildNotFoundStatusResponse(context);
@@ -119,11 +123,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else if (context.Request.Method == "DELETE")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {

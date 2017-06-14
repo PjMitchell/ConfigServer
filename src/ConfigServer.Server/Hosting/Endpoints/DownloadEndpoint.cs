@@ -8,47 +8,50 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class DownloadEndpoint : IOldEndpoint
+    internal class DownloadEndpoint : IEndpoint
     {
-        readonly IHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory httpResponseFactory;
         readonly IConfigurationSetRegistry configCollection;
         readonly IConfigurationSetService configurationSetService;
         readonly IConfigurationClientService configClientService;
         const string jsonExtension = ".json";
 
-        public DownloadEndpoint(IHttpResponseFactory responseFactory, IConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
+        public DownloadEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
         {
             this.configurationSetService = configurationSetService;
             this.configCollection = configCollection;
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.configClientService = configClientService;
         }
 
-        public bool IsAuthorizated(HttpContext context, ConfigServerOptions options)
+        public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
-            return context.CheckAuthorization(options.ManagerAuthenticationOptions);
-        }
+            if (!CheckMethodAndAuthentication(context, options))
+                return;
 
-        public async Task<bool> TryHandle(HttpContext context)
-        {
-            var result = await GetObjectOrDefault(context.Request.Path);
-            if (result == null)
-                return false;
-            await responseFactory.BuildJsonFileResponse(context, result.Payload, result.FileName);
-            return true;
-        }
-
-        private async Task<FilePayload> GetObjectOrDefault(PathString path)
-        {
             // clientId/ConfigSet.json
             // clientId/ConfigSet/Config.json
-            var pathParams = path.ToPathParams();
+            var pathParams = context.ToPathParams();
             if (pathParams.Length < 2)
-                return null;
+            {
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+                return;
+            }
+
 
             var client = await configClientService.GetClientOrDefault(pathParams[0]);
-            if (client == null)
-                return null;
+            if (!context.ChallengeClientConfigurator(options, client, httpResponseFactory))
+                return;
+            var payload = await GetPayloadOrDefault(pathParams, client);
+
+            if (payload == null)
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
+            else
+                await httpResponseFactory.BuildJsonFileResponse(context, payload.Payload, payload.FileName);
+        }
+
+        private async Task<FilePayload> GetPayloadOrDefault(string[] pathParams, ConfigurationClient client)
+        {
             if (pathParams.Length == 2)
             {
                 var configurationSet = configCollection.SingleOrDefault(s => pathParams[1].Equals($"{s.ConfigSetType.Name}{jsonExtension}", StringComparison.OrdinalIgnoreCase));
@@ -92,6 +95,19 @@ namespace ConfigServer.Server
             }
             public string FileName { get; }
             public object Payload { get; }
+        }
+
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        {
+            if (context.Request.Method == "GET")
+            {
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+            }
+            else
+            {
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                return false; ;
+            }
         }
     }
 }

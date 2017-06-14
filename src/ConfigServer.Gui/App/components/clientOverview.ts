@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
 import { ResourceDataService } from '../dataservices/resource-data.service';
+import { UserPermissionService } from '../dataservices/userpermission-data.service';
 import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
 import { IConfigurationSetSummary } from '../interfaces/configurationSetSummary';
@@ -17,7 +18,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
             <p id="client-desc">{{client.description}}</p>
         </div>
 
-        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)"></resource-overview>
+        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)" [csIsConfigurator]="isConfigurator"></resource-overview>
 
         <h3>ConfigurationSets <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button></h3>
         <div class="break">
@@ -30,9 +31,10 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 export class ClientOverviewComponent implements OnInit {
     public client: IConfigurationClient;
     public clientId: string;
+    public isConfigurator = false;
     public configurationSets: IConfigurationSetSummary[];
     public resources: IResourceInfo[];
-    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private resourceDataService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private resourceDataService: ResourceDataService, private permissionService: UserPermissionService, private route: ActivatedRoute, private router: Router) {
         this.clientId = '';
         this.client = {
             clientId: '',
@@ -40,6 +42,8 @@ export class ClientOverviewComponent implements OnInit {
             enviroment: '',
             description: '',
             group: '',
+            readClaim: '',
+            configuratorClaim: '',
             settings: new Array<IConfigurationClientSetting>(),
         };
         this.configurationSets = new Array<IConfigurationSetSummary>();
@@ -49,12 +53,7 @@ export class ClientOverviewComponent implements OnInit {
     public ngOnInit(): void {
         this.route.params.forEach((value) => {
             this.clientId = value['clientId'];
-            this.clientDataService.getClient(this.clientId)
-                .then((returnedClient) => this.client = returnedClient);
-            this.configSetDataService.getConfigurationSets()
-                .then((returnedConfigSet) => this.configurationSets = returnedConfigSet);
-            this.resourceDataService.getClientResourceInfo(this.clientId)
-                .then((returnedResources) => this.resources = returnedResources);
+            this.loadInitialData(this.clientId);
         });
     }
     public onResourcesChanged() {
@@ -71,6 +70,22 @@ export class ClientOverviewComponent implements OnInit {
             this.router.navigate(['/group', this.client.group]);
         } else {
             this.router.navigate(['/group']);
+        }
+    }
+
+    private async loadInitialData(clientId: string) {
+        this.client = await this.clientDataService.getClient(clientId);
+        const permission = await this.permissionService.getPermission();
+        if (!this.client.configuratorClaim) {
+            this.isConfigurator = true;
+        } else if (permission.clientConfiguratorClaims.length !== 0 &&  permission.clientConfiguratorClaims.some((value) => value === this.client.configuratorClaim)) {
+            this.isConfigurator = true;
+        }else {
+            this.isConfigurator = false;
+        }
+        if (this.isConfigurator) {
+            this.configurationSets = await this.configSetDataService.getConfigurationSets();
+            this.resources = await this.resourceDataService.getClientResourceInfo(clientId);
         }
     }
 }

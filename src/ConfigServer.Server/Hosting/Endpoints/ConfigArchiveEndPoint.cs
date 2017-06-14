@@ -52,7 +52,7 @@ namespace ConfigServer.Server
             }
             else
             {
-                await HandleTwoParams(context, pathParams, clientIdentity);
+                await HandleTwoParams(context, pathParams, clientIdentity, options);
             }
 
             return;
@@ -90,12 +90,14 @@ namespace ConfigServer.Server
             }
         }
 
-        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity)
+        private async Task HandleTwoParams(HttpContext context, string[] pathParams, ConfigurationIdentity clientIdentity, ConfigServerOptions options)
         {
             switch (context.Request.Method)
             {
                 case "GET":
                     {
+                        if (!context.ChallengeClientConfigurator(options, clientIdentity.Client, httpResponseFactory))
+                            return;
                         var result = await archive.GetArchiveConfig(pathParams[1], clientIdentity);
                         if (!result.HasEntry)
                             httpResponseFactory.BuildNotFoundStatusResponse(context);
@@ -122,11 +124,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else if (context.Request.Method == "DELETE")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {

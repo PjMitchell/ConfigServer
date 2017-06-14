@@ -10,16 +10,16 @@ namespace ConfigServer.Server
     internal class ClientGroupEndpoint : IEndpoint
     {
         private readonly IConfigurationClientService configurationClientService;
-        private readonly IHttpResponseFactory factory;
+        private readonly IHttpResponseFactory httpResponseFactory;
         private readonly ICommandBus commandBus;
         private const string noGroupPath = "None";
         private const string groupClientsPath = "Clients";
 
 
-        public ClientGroupEndpoint(IConfigurationClientService configurationClientService, IHttpResponseFactory factory, ICommandBus commandBus)
+        public ClientGroupEndpoint(IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory, ICommandBus commandBus)
         {
             this.configurationClientService = configurationClientService;
-            this.factory = factory;
+            this.httpResponseFactory = httpResponseFactory;
             this.commandBus = commandBus;
         }
 
@@ -43,7 +43,7 @@ namespace ConfigServer.Server
                     return HandleGroupPath(context, pathParams[0]);
                 case 2:
                     return string.Equals(pathParams[1],groupClientsPath, StringComparison.OrdinalIgnoreCase)
-                        ? HandleGroupClientPath(context, pathParams[0])
+                        ? HandleGroupClientPath(context, pathParams[0], options)
                         : HandleNotFound(context);
                 default:
                     return HandleNotFound(context);
@@ -54,15 +54,15 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue, ConfigServerConstants.ReadClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, factory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else if (context.Request.Method == "POST")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.WriteClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, factory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                factory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }
@@ -72,13 +72,13 @@ namespace ConfigServer.Server
             switch (context.Request.Method)
             {
                 case "GET":
-                    await factory.BuildJsonResponse(context,await configurationClientService.GetGroups());
+                    await httpResponseFactory.BuildJsonResponse(context,await configurationClientService.GetGroups());
                     break;
                 case "POST":
                     await HandleGroupSaveRequest(context);
                     break;
                 default:
-                    factory.BuildMethodNotAcceptedStatusResponse(context);
+                    httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                     break;
             }
         }
@@ -87,19 +87,19 @@ namespace ConfigServer.Server
         {
             var group = await context.GetObjectFromJsonBodyAsync<ConfigurationClientGroup>();
             var result = await commandBus.SubmitAsync(new CreateUpdateClientGroupCommand(group));
-            await factory.BuildResponseFromCommandResult(context,result);
+            await httpResponseFactory.BuildResponseFromCommandResult(context,result);
         }
 
         private async Task HandleGroupPath(HttpContext context, string groupId)
         {
             var group = await configurationClientService.GetClientGroupOrDefault(groupId);
             if (group != null)
-                await factory.BuildJsonResponse(context, group);
+                await httpResponseFactory.BuildJsonResponse(context, group);
             else
-                factory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
         }
 
-        private async Task HandleGroupClientPath(HttpContext context, string groupId)
+        private async Task HandleGroupClientPath(HttpContext context, string groupId, ConfigServerOptions options)
         {
             IEnumerable<ConfigurationClient> clients;
             if (string.Equals(groupId, noGroupPath, StringComparison.OrdinalIgnoreCase))
@@ -112,12 +112,13 @@ namespace ConfigServer.Server
             {
                 clients = (await configurationClientService.GetClients()).Where(c => string.Equals(groupId, c.Group, StringComparison.OrdinalIgnoreCase));
             }
-            await factory.BuildJsonResponse(context, clients);
+            clients = context.FilterClientsForUser(clients, options);
+            await httpResponseFactory.BuildJsonResponse(context, clients);
         }
 
         private Task<bool> HandleNotFound(HttpContext context)
         {
-            factory.BuildNotFoundStatusResponse(context);
+            httpResponseFactory.BuildNotFoundStatusResponse(context);
             return Task.FromResult(true);
         }
     }

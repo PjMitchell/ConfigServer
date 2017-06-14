@@ -20,8 +20,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly IEndpoint target;
 
         private ConfigServerOptions options;
-        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
 
         public ConfigArchiveEndPointTests()
         {
@@ -89,6 +89,26 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_ClientArchiveResource_Returns403IfNoClientWriteClaim()
+        {
+            var archivedConfig = "SampleConfig_123454.json";
+            expectedClient.ConfiguratorClaim = "ClientClaim";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{archivedConfig}")
+                .WithClaims(readClaim)
+                .TestContext;
+            var expectedResource = new ConfigArchiveEntry
+            {
+                HasEntry = true,
+                Content = "JsonString",
+                Name = archivedConfig
+            };
+            configArchive.Setup(r => r.GetArchiveConfig(archivedConfig, It.Is<ConfigurationIdentity>(s => s.Client.Equals(expectedClient))))
+                .ReturnsAsync(() => expectedResource);
+            await target.Handle(testContext, options);
+            httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
+        }
+
+        [Fact]
         public async Task Get_ClientArchiveResource_ReturnsNotFoundIfNotFound()
         {
             var archivedConfig = "SampleConfig_123454.json";
@@ -123,7 +143,6 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         public async Task Delete_Returns403_WithNoWriteClaim()
         {
             var configName = "SampleConfig_123454.json";
-
             var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{configName}")
                 .WithClaims(readClaim)
                 .WithDelete()

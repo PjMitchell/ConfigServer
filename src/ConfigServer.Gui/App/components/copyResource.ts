@@ -4,6 +4,7 @@ import { timestamp } from 'rxjs/operator/timestamp';
 import { ArchiveConfigService } from '../dataservices/archiveconfig-data.service';
 import { ConfigurationClientDataService } from "../dataservices/client-data.service";
 import { ResourceDataService } from '../dataservices/resource-data.service';
+import { UserPermissionService } from "../dataservices/userpermission-data.service";
 import { IArchivedConfigInfo } from '../interfaces/archivedConfigInfo';
 import { IConfigurationClient } from "../interfaces/configurationClient";
 import { IGroup } from "../interfaces/group";
@@ -62,7 +63,7 @@ export class CopyResourceComponent implements OnInit {
     public isClientInfoReady = false;
     public isDisabled = true;
 
-    constructor(private clientDataService: ConfigurationClientDataService, private resourceService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private permissionService: UserPermissionService, private resourceService: ResourceDataService, private route: ActivatedRoute, private router: Router) {
         this.clients = new Array<IConfigurationClient>();
     }
 
@@ -93,11 +94,12 @@ export class CopyResourceComponent implements OnInit {
     }
 
     private async buildClientList() {
+        const permission = await this.permissionService.getPermission();
         const allClients = await this.clientDataService.getClients();
         this.sourceClient = allClients.find((value) => value.clientId === this.clientId);
 
         if (this.sourceClient) {
-            this.clients = allClients.filter((value) => value.group === this.sourceClient.group && value.clientId !== this.sourceClient.clientId);
+            this.clients = allClients.filter((value) => value.group === this.sourceClient.group && value.clientId !== this.sourceClient.clientId && this.canConfigureClient(value.configuratorClaim, permission.clientConfiguratorClaims));
         }
         if (this.clients.length > 0) {
             this.targetClient = this.clients[0];
@@ -115,5 +117,12 @@ export class CopyResourceComponent implements OnInit {
             timeStamp: value.timeStamp,
             };
         });
+    }
+
+    private canConfigureClient(clientClaim: string, permissions: string[]) {
+        if (!clientClaim) {
+            return true;
+        }
+        return permissions.some((claim) => claim === clientClaim);
     }
 }

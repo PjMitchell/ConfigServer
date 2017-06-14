@@ -21,8 +21,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private const string groupId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
         private const string groupId2 = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private ConfigServerOptions options;
-        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.WriteClaimValue);
-        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ReadClaimValue);
+        private static readonly Claim writeClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.AdminClaimValue);
+        private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
 
         private IEndpoint target;
 
@@ -126,6 +126,52 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_Group_Client_ReturnsClientsForGroup_WithWritePermission()
+        {
+            var expectedClaim = "Expected";
+            var clients = new List<ConfigurationClient>
+            {
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name3" },
+            };
+
+            configurationClientService.Setup(s => s.GetClients())
+                .ReturnsAsync(() => clients);
+            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}/{groupClientsPath}")
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim)).TestContext;
+            var observed = new List<ConfigurationClient>();
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+            await target.Handle(context, options);
+            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.ConfiguratorClaim) || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).ToList(), observed);
+        }
+
+        [Fact]
+        public async Task Get_Group_Client_ReturnsAllClientsForGroup_WithAdminPermission()
+        {
+            var expectedClaim = "Expected";
+            var clients = new List<ConfigurationClient>
+            {
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Group = groupId, Name = "Name3" },
+            };
+
+            configurationClientService.Setup(s => s.GetClients())
+                .ReturnsAsync(() => clients);
+            var context = TestHttpContextBuilder.CreateForPath($"/{groupId}/{groupClientsPath}")
+                .WithClaims(writeClaim).TestContext;
+            var observed = new List<ConfigurationClient>();
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+            await target.Handle(context, options);
+            Assert.Equal(clients.ToList(), observed);
+        }
+
+        [Fact]
         public async Task Get_NoGroup_Client_ReturnsClientsWithoutGroup()
         {
             var clients = new List<ConfigurationClient>
@@ -180,6 +226,52 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .Returns(() => Task.FromResult(1));
             await target.Handle(context, options);
             Assert.Equal(clients.Where(w => !groupId.Equals(w.Group)).ToList(), observed);
+        }
+
+        [Fact]
+        public async Task Get_NoGroup_Client_ReturnsClientsWithoutGroup_WithWritePermission()
+        {
+            var expectedClaim = "Expected";
+            var clients = new List<ConfigurationClient>
+            {
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name3" },
+            };
+
+            configurationClientService.Setup(s => s.GetClients())
+                .ReturnsAsync(() => clients);
+            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}")
+                .WithClaims(readClaim, new Claim(options.ClientConfiguratorClaimType, expectedClaim)).TestContext;
+            var observed = new List<ConfigurationClient>();
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+            await target.Handle(context, options);
+            Assert.Equal(clients.Where(w => expectedClaim.Equals(w.ConfiguratorClaim) || string.IsNullOrWhiteSpace(w.ConfiguratorClaim)).ToList(), observed);
+        }
+
+        [Fact]
+        public async Task Get_NoGroup_Client_ReturnsAllClientsWithoutGroup_WithAdminPermission()
+        {
+            var expectedClaim = "Expected";
+            var clients = new List<ConfigurationClient>
+            {
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name1", ConfiguratorClaim = expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name2", ConfiguratorClaim = "un" + expectedClaim},
+                new ConfigurationClient{ ClientId = Guid.NewGuid().ToString(), Name = "Name3" },
+            };
+
+            configurationClientService.Setup(s => s.GetClients())
+                .ReturnsAsync(() => clients);
+            var context = TestHttpContextBuilder.CreateForPath($"/{noGroupPath}/{groupClientsPath}")
+                .WithClaims(writeClaim).TestContext;
+            var observed = new List<ConfigurationClient>();
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<IEnumerable<ConfigurationClient>>()))
+                .Callback((HttpContext c, object arg2) => observed = ((IEnumerable<ConfigurationClient>)arg2).ToList())
+                .Returns(() => Task.FromResult(1));
+            await target.Handle(context, options);
+            Assert.Equal(clients.ToList(), observed);
         }
 
         [Fact]

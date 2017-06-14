@@ -9,8 +9,6 @@ namespace ConfigServer.Server
 {
     internal interface IConfigInstanceRouter
     {
-        Task<ConfigInstance> GetConfigInstanceOrDefault(PathString path);
-        Task<ConfigInstance> GetConfigInstanceOrDefault(string clientId, string configId);
         Task<ConfigInstance> GetConfigInstanceOrDefault(ConfigurationClient client, string configId);
     }
 
@@ -28,21 +26,6 @@ namespace ConfigServer.Server
             this.configurationService = configurationService;
             this.registry = registry;
         }
-
-        public Task<ConfigInstance> GetConfigInstanceOrDefault(PathString path)
-        {
-            var pathParams = path.ToPathParams();
-            if (pathParams.Length != 2)
-                return Task.FromResult<ConfigInstance>(null);
-            return GetConfigInstanceOrDefault(pathParams[0], pathParams[1]);
-        }
-
-        public async Task<ConfigInstance> GetConfigInstanceOrDefault(string clientId, string configId)
-        {
-            var client = await configClientService.GetClientOrDefault(clientId);
-            return await GetConfigInstanceOrDefault(client, configId);
-        }
-
 
         public async Task<ConfigInstance> GetConfigInstanceOrDefault(ConfigurationClient client, string configId)
         {
