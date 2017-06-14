@@ -11,12 +11,12 @@ namespace ConfigServer.Server
 {
     internal class PermissionEndpoint : IEndpoint
     {
-        private readonly IHttpResponseFactory factory;
+        private readonly IHttpResponseFactory httpResponseFactory;
         private readonly IConfigurationClientService clientService;
 
-        public PermissionEndpoint(IHttpResponseFactory factory, IConfigurationClientService clientService)
+        public PermissionEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationClientService clientService)
         {
-            this.factory = factory;
+            this.httpResponseFactory = httpResponseFactory;
             this.clientService = clientService;
         }
 
@@ -24,19 +24,19 @@ namespace ConfigServer.Server
         {
             if(context.Request.Method != "GET")
             {
-                factory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return;
             }
             
             var permissions = GetPermissionFromPrincipal(context.User, options);
             var pathParams = context.ToPathParams();
             if (pathParams.Length == 0)
-                await factory.BuildJsonResponse(context, permissions);
+                await httpResponseFactory.BuildJsonResponse(context, permissions);
             else
             {
                 var client = await clientService.GetClientOrDefault(pathParams[0]);
                 var clientPermission = MapToClientPermission(permissions, client);
-                await factory.BuildJsonResponse(context, clientPermission);
+                await httpResponseFactory.BuildJsonResponse(context, clientPermission);
             }
         }
 

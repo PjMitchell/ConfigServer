@@ -10,17 +10,17 @@ namespace ConfigServer.Server
 {
     internal class DownloadEndpoint : IEndpoint
     {
-        readonly IHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory httpResponseFactory;
         readonly IConfigurationSetRegistry configCollection;
         readonly IConfigurationSetService configurationSetService;
         readonly IConfigurationClientService configClientService;
         const string jsonExtension = ".json";
 
-        public DownloadEndpoint(IHttpResponseFactory responseFactory, IConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
+        public DownloadEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetRegistry configCollection, IConfigurationSetService configurationSetService, IConfigurationClientService configClientService)
         {
             this.configurationSetService = configurationSetService;
             this.configCollection = configCollection;
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.configClientService = configClientService;
         }
 
@@ -34,20 +34,20 @@ namespace ConfigServer.Server
             var pathParams = context.ToPathParams();
             if (pathParams.Length < 2)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
 
 
             var client = await configClientService.GetClientOrDefault(pathParams[0]);
-            if (!context.ChallengeClientConfigurator(options, client, responseFactory))
+            if (!context.ChallengeClientConfigurator(options, client, httpResponseFactory))
                 return;
             var payload = await GetPayloadOrDefault(pathParams, client);
 
             if (payload == null)
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
             else
-                await responseFactory.BuildJsonFileResponse(context, payload.Payload, payload.FileName);
+                await httpResponseFactory.BuildJsonFileResponse(context, payload.Payload, payload.FileName);
         }
 
         private async Task<FilePayload> GetPayloadOrDefault(string[] pathParams, ConfigurationClient client)
@@ -101,11 +101,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }

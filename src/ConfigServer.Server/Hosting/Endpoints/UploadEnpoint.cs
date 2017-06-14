@@ -9,15 +9,15 @@ namespace ConfigServer.Server
 {
     internal class UploadEnpoint : IEndpoint
     {
-        private readonly IHttpResponseFactory responseFactory;
+        private readonly IHttpResponseFactory httpResponseFactory;
         private readonly IConfigurationSetRegistry configCollection;
         private readonly ICommandBus commandBus;
         private readonly IConfigurationClientService configClientService;
 
 
-        public UploadEnpoint(IHttpResponseFactory responseFactory, IConfigurationSetRegistry configCollection, ICommandBus commandBus, IConfigurationClientService configClientService)
+        public UploadEnpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetRegistry configCollection, ICommandBus commandBus, IConfigurationClientService configClientService)
         {
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;
             this.commandBus = commandBus;
             this.configClientService = configClientService;
@@ -35,12 +35,12 @@ namespace ConfigServer.Server
             var pathParams = context.ToPathParams();
             if (pathParams.Length != 3)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
                 
             var client = await configClientService.GetClientOrDefault(pathParams[1]);
-            if (!context.ChallengeClientConfigurator(options, client, responseFactory))
+            if (!context.ChallengeClientConfigurator(options, client, httpResponseFactory))
                 return;
                 
             if (pathParams[0].Equals("Configuration", StringComparison.OrdinalIgnoreCase))
@@ -48,7 +48,7 @@ namespace ConfigServer.Server
             else if (pathParams[0].Equals("ConfigurationSet", StringComparison.OrdinalIgnoreCase))
                 await HandleUploadConfigurationSet(context, pathParams[2], client);
             else
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
         }
 
         private async Task HandleUploadConfigurationSet(HttpContext context, string configSetName, ConfigurationClient client)
@@ -56,12 +56,12 @@ namespace ConfigServer.Server
             var configSet = configCollection.SingleOrDefault(c => configSetName.Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
             if (configSet == null)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
             var json = await context.ReadBodyTextAsync();
             var result = await commandBus.SubmitAsync(new UpdateConfigurationSetFromJsonUploadCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configSet.ConfigSetType, json));
-            await responseFactory.BuildResponseFromCommandResult(context, result);
+            await httpResponseFactory.BuildResponseFromCommandResult(context, result);
             return;
         }
 
@@ -70,12 +70,12 @@ namespace ConfigServer.Server
             var configModel = configCollection.SelectMany(s => s.Configs).SingleOrDefault(c => c.Type.Name.Equals(configName, StringComparison.OrdinalIgnoreCase));
             if (configModel == null)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
             var json = await context.ReadBodyTextAsync();
             var result = await commandBus.SubmitAsync(new UpdateConfigurationFromJsonUploadCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configModel.Type, json));
-            await responseFactory.BuildResponseFromCommandResult(context, result);
+            await httpResponseFactory.BuildResponseFromCommandResult(context, result);
             return;
         }
 
@@ -83,11 +83,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "POST")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }

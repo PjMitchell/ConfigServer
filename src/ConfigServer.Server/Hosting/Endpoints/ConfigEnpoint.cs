@@ -7,11 +7,11 @@ namespace ConfigServer.Server
     {
         readonly IConfigInstanceRouter router;
         readonly IConfigurationClientService configurationClientService;
-        readonly IHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory httpResponseFactory;
 
-        public ConfigEnpoint(IConfigInstanceRouter router, IConfigurationClientService configurationClientService, IHttpResponseFactory responseFactory)
+        public ConfigEnpoint(IConfigInstanceRouter router, IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory)
         {
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.router = router;
             this.configurationClientService = configurationClientService;
         }
@@ -23,18 +23,18 @@ namespace ConfigServer.Server
             var pathParams = context.ToPathParams();
             if (pathParams.Length != 2)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
             var client = await configurationClientService.GetClientOrDefault(pathParams[0]);
-            if (!context.ChallengeClientRead(options, client, responseFactory))
+            if (!context.ChallengeClientRead(options, client, httpResponseFactory))
                 return;
 
             var config = await router.GetConfigInstanceOrDefault(client, pathParams[1]);
             if (config == null)
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
             else
-                await responseFactory.BuildJsonResponse(context, config.GetConfiguration());
+                await httpResponseFactory.BuildJsonResponse(context, config.GetConfiguration());
 
         }
 
@@ -42,11 +42,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeAuthentication(options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeAuthentication(options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }

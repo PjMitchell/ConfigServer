@@ -10,7 +10,7 @@ namespace ConfigServer.Server
 {
     internal class ConfigurationSetEnpoint : IEndpoint
     {
-        readonly IHttpResponseFactory responseFactory;
+        readonly IHttpResponseFactory httpResponseFactory;
         readonly IConfigurationSetRegistry configCollection;
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
@@ -18,9 +18,9 @@ namespace ConfigServer.Server
         readonly IConfigurationClientService configClientService;
         readonly ICommandBus commandBus;
 
-        public ConfigurationSetEnpoint(IHttpResponseFactory responseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
+        public ConfigurationSetEnpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
         {
-            this.responseFactory = responseFactory;
+            this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;
             this.modelPayloadMapper = modelPayloadMapper;
             this.configInstanceRouter = configInstanceRouter;
@@ -44,14 +44,14 @@ namespace ConfigServer.Server
 
             if (pathParams.Length == 0)
             {
-                await responseFactory.BuildJsonResponse(context, GetConfigurationSetSummaries());
+                await httpResponseFactory.BuildJsonResponse(context, GetConfigurationSetSummaries());
                 return;
             }
             if (pathParams.Length != 3)
                 return;
 
             var client = await configClientService.GetClientOrDefault(pathParams[1]);
-            if (!context.ChallengeClientConfigurator(options,client, responseFactory))
+            if (!context.ChallengeClientConfigurator(options,client, httpResponseFactory))
                 return;
 
             if (pathParams[0].Equals("Model", StringComparison.OrdinalIgnoreCase))
@@ -60,7 +60,7 @@ namespace ConfigServer.Server
                 var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
                 if (configSet == null)
                     return;
-                await responseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client, configCollection.GetVersion())));
+                await httpResponseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client, configCollection.GetVersion())));
                 return;
             }
             if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
@@ -74,7 +74,7 @@ namespace ConfigServer.Server
                         await HandleValuePostRequest(context, client, pathParams[2]);
                         break;
                     default:
-                        responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                        httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                         break;
                 } 
                 return;
@@ -85,9 +85,9 @@ namespace ConfigServer.Server
         {
             var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(client, configType);
             if (configInstance == null)
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
             else
-                await responseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
+                await httpResponseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
         }
 
         private async Task HandleValuePostRequest(HttpContext context, ConfigurationClient client, string configType)
@@ -95,13 +95,13 @@ namespace ConfigServer.Server
             var configModel = configCollection.SelectMany(s => s.Configs).SingleOrDefault(s => s.Type.Name.Equals(configType, StringComparison.OrdinalIgnoreCase));
             if(configModel == null)
             {
-                responseFactory.BuildNotFoundStatusResponse(context);
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
             }
 
             var command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configModel.Type,await context.ReadBodyTextAsync());
             var result = await commandBus.SubmitAsync(command);
-            await responseFactory.BuildResponseFromCommandResult(context, result);
+            await httpResponseFactory.BuildResponseFromCommandResult(context, result);
         }
 
         
@@ -143,11 +143,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET" || context.Request.Method == "POST")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, responseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                responseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }

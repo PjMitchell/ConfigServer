@@ -8,11 +8,11 @@ namespace ConfigServer.Server
 {
     internal class ConfigManagerEndpoint : IEndpoint
     {
-        private readonly IHttpResponseFactory factory;
+        private readonly IHttpResponseFactory httpResponseFactory;
 
-        public ConfigManagerEndpoint(IHttpResponseFactory factory)
+        public ConfigManagerEndpoint(IHttpResponseFactory httpResponseFactory)
         {
-            this.factory = factory;
+            this.httpResponseFactory = httpResponseFactory;
         }
 
         public Task Handle(HttpContext context, ConfigServerOptions options)
@@ -28,11 +28,11 @@ namespace ConfigServer.Server
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, factory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
             else
             {
-                factory.BuildMethodNotAcceptedStatusResponse(context);
+                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
                 return false; ;
             }
         }
