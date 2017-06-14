@@ -3,4 +3,5 @@ export interface IUserPermissions {
     canEditClients: boolean;
     canEditGroups: boolean;
     canDeleteArchives: boolean;
+    clientConfiguratorClaims: string[];
 }

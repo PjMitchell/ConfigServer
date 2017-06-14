@@ -14,7 +14,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
             <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
                 <h5>{{resource.name}}</h5>
                 <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
-                <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
+                <button type="button" class="btn btn-primary" *ngIf="canDownloadArchive" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
                 <button type="button" class="btn btn-primary" *ngIf="canDeleteArchives" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
             </div>
         </div>
@@ -40,6 +40,7 @@ export class ResourceArchiveComponent implements OnInit {
     @ViewChild('input')
     public input: IChildElement<HTMLInputElement>;
     public canDeleteArchives = false;
+    public canDownloadArchive = false;
     constructor(private dataService: ResourceDataService, private permissionService: UserPermissionService, private route: ActivatedRoute, private router: Router) {
         this.inputDate = new Date();
     }
@@ -49,9 +50,10 @@ export class ResourceArchiveComponent implements OnInit {
             this.clientId = value['clientId'];
             this.updateArchiveList();
         });
-        this.permissionService.getPermission()
+        this.permissionService.getPermissionForClient(this.clientId)
             .then((permissions) => {
-            this.canDeleteArchives = permissions.canDeleteArchives;
+                this.canDeleteArchives = permissions.canDeleteArchives;
+                this.canDownloadArchive = permissions.hasClientConfiguratorClaim;
             });
     }
 

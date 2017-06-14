@@ -70,6 +70,8 @@ namespace ConfigServer.Sample.mvc
             app.UseStaticFiles();
             app.Map("/Config", configSrv => configSrv.UseConfigServer(new ConfigServerOptions {
                 ClientAdminClaimType = string.Empty,
+                ClientConfiguratorClaimType = string.Empty,
+                ClientReadClaimType = string.Empty,
                 AllowAnomynousAccess = true
 
             }));
