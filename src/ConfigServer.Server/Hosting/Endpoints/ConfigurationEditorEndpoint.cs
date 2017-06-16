@@ -8,21 +8,19 @@ using System;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationSetEnpoint : IEndpoint
+    internal class ConfigurationEditorEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory httpResponseFactory;
         readonly IConfigurationSetRegistry configCollection;
-        readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigurationClientService configClientService;
         readonly ICommandBus commandBus;
 
-        public ConfigurationSetEnpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
+        public ConfigurationEditorEndpoint(IHttpResponseFactory httpResponseFactory, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;
-            this.modelPayloadMapper = modelPayloadMapper;
             this.configInstanceRouter = configInstanceRouter;
             this.configurationEditModelMapper = configurationEditModelMapper;
             this.configClientService = configClientService;
@@ -31,10 +29,7 @@ namespace ConfigServer.Server
 
         public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
-            // GET: Gets all configuration set summaries
-            // Model/{ Client Id}/{ Configuration Set}
-            // GET: Model for configuration set
-            // Value/{ Client Id}/{ config name}
+            // /{ Client Id}/{ config name}
             // GET: Gets Config model for editor
             // POST: Sets Config from editor model
             if (!CheckMethodAndAuthentication(context, options))
@@ -42,46 +37,33 @@ namespace ConfigServer.Server
 
             var pathParams = context.ToPathParams();
 
-            if (pathParams.Length == 0)
+            if (pathParams.Length != 2)
             {
-                await httpResponseFactory.BuildJsonResponse(context, GetConfigurationSetSummaries());
+                httpResponseFactory.BuildNotFoundStatusResponse(context);
                 return;
-            }
-            if (pathParams.Length != 3)
-                return;
+            }                
 
-            var client = await configClientService.GetClientOrDefault(pathParams[1]);
+            var client = await configClientService.GetClientOrDefault(pathParams[0]);
             if (!context.ChallengeClientConfigurator(options,client, httpResponseFactory))
                 return;
 
-            if (pathParams[0].Equals("Model", StringComparison.OrdinalIgnoreCase))
+            switch(context.Request.Method)
             {
+                case "GET":
+                    await HandleGetRequest(context, client, pathParams[1]);
+                    break;
+                case "POST":
+                    await HandlePostRequest(context, client, pathParams[1]);
+                    break;
+                default:
+                    httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+                    break;
+            } 
+            return;
 
-                var configSet = configCollection.SingleOrDefault(c => pathParams[2].Equals(c.ConfigSetType.Name, StringComparison.OrdinalIgnoreCase));
-                if (configSet == null)
-                    return;
-                await httpResponseFactory.BuildJsonResponse(context, await modelPayloadMapper.Map(configSet, new ConfigurationIdentity(client, configCollection.GetVersion())));
-                return;
-            }
-            if (pathParams[0].Equals("Value", StringComparison.OrdinalIgnoreCase))
-            {
-                switch(context.Request.Method)
-                {
-                    case "GET":
-                        await HandleValueGetRequest(context, client, pathParams[2]);
-                        break;
-                    case "POST":
-                        await HandleValuePostRequest(context, client, pathParams[2]);
-                        break;
-                    default:
-                        httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                        break;
-                } 
-                return;
-            }
         }
 
-        private async Task HandleValueGetRequest(HttpContext context,ConfigurationClient client, string configType)
+        private async Task HandleGetRequest(HttpContext context,ConfigurationClient client, string configType)
         {
             var configInstance = await configInstanceRouter.GetConfigInstanceOrDefault(client, configType);
             if (configInstance == null)
@@ -90,7 +72,7 @@ namespace ConfigServer.Server
                 await httpResponseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
         }
 
-        private async Task HandleValuePostRequest(HttpContext context, ConfigurationClient client, string configType)
+        private async Task HandlePostRequest(HttpContext context, ConfigurationClient client, string configType)
         {
             var configModel = configCollection.SelectMany(s => s.Configs).SingleOrDefault(s => s.Type.Name.Equals(configType, StringComparison.OrdinalIgnoreCase));
             if(configModel == null)
@@ -102,41 +84,11 @@ namespace ConfigServer.Server
             var command = new UpdateConfigurationFromEditorCommand(new ConfigurationIdentity(client, configCollection.GetVersion()), configModel.Type,await context.ReadBodyTextAsync());
             var result = await commandBus.SubmitAsync(command);
             await httpResponseFactory.BuildResponseFromCommandResult(context, result);
-        }
-
-        
+        }        
 
         private ConfigurationSetModel GetConfigurationSetForModel(ConfigInstance configInstance)
         {
             return configCollection.GetConfigSetForConfig(configInstance.ConfigType);
-        }
-
-        private IEnumerable<ConfigurationSetSummary> GetConfigurationSetSummaries()
-        {
-            return configCollection.Select(MapToSummary);
-        }
-
-        private ConfigurationSetSummary MapToSummary(ConfigurationSetModel model)
-        {
-            return new ConfigurationSetSummary
-            {
-                ConfigurationSetId = model.ConfigSetType.Name,
-                Name = model.Name,
-                Description = model.Description,
-                Configs = model.Configs.Where(w=> !w.IsReadOnly)
-                    .Select(MapToSummary)
-                    .ToList()
-            };
-        }
-
-        private ConfigurationModelSummary MapToSummary(ConfigurationModel model)
-        {
-            return new ConfigurationModelSummary
-            {
-                Id = model.Type.Name.ToLowerCamelCase(),
-                DisplayName = model.ConfigurationDisplayName,
-                Description = model.ConfigurationDescription
-            };
         }
 
         private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)

@@ -93,7 +93,9 @@ namespace ConfigServer.Server
             
             app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
             app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
-            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEnpoint>(options));
+            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEndpoint>(options));
+            app.Map(HostPaths.ConfigurationEditor, client => client.UseEndpoint<ConfigurationEditorEndpoint>(options));
+            app.Map(HostPaths.ConfigurationSetModel, client => client.UseEndpoint<ConfigurationSetModelEndpoint>(options));
             app.Map(HostPaths.Download, client => client.UseEndpoint<DownloadEndpoint>(options));
             app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
             app.Map(HostPaths.Resource, client => client.UseEndpoint<ResourceEndpoint>(options));

@@ -37,7 +37,9 @@ namespace ConfigServer.Server
 
         private static IServiceCollection AddConfigServerEndPoints(this IServiceCollection collection)
         {
-            collection.AddTransient<ConfigurationSetEnpoint>()
+            collection.AddTransient<ConfigurationSetEndpoint>()
+                .AddTransient<ConfigurationSetModelEndpoint>()
+                .AddTransient<ConfigurationEditorEndpoint>()
                 .AddTransient<ConfigClientEndPoint>()
                 .AddTransient<ConfigManagerEndpoint>()
                 .AddTransient<ConfigEnpoint>()
