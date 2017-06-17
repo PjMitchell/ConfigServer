@@ -9,7 +9,6 @@ export class UploadDataService {
     private configSetUrl = 'Upload/ConfigurationSet/';  // URL to web api
     private configEditorUrl = 'Upload/Editor/';  // URL to web api
 
-
     constructor(private http: Http) { }
 
     public postConfig(clientId: string, configId: string, config: any): Promise<boolean> {

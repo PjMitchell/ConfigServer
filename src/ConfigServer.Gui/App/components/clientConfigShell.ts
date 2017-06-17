@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationDataService } from '../dataservices/config-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
+import { UploadDataService } from "../dataservices/upload-data.service";
 import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationModelPayload } from "../interfaces/configurationModelPayload";
 import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDefintion";
-import { UploadDataService } from "../dataservices/upload-data.service";
 
 @Component({
     template: `
@@ -16,7 +16,7 @@ import { UploadDataService } from "../dataservices/upload-data.service";
             <p>{{configModel.description}}</p>
         </div>
         <div class="row">
-            <div class="col-md-3">            
+            <div class="col-md-3">
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
             </div>
         </div>
@@ -31,7 +31,7 @@ import { UploadDataService } from "../dataservices/upload-data.service";
             </div>
             <div class="break"></div>
             <div >
-                <button type="button" class="btn btn-primary" (click)="back()">Back</button>                
+                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
                 <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" class="btn btn-primary" (click)="save()">Save</button>
             </div>
         </form>
