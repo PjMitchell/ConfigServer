@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting
             model = new ConfigurationSetModel<TestConfigurationSet>();
             model.GetOrInitialize(c=> c.ConfigOne);
             model.GetOrInitialize(c=> c.ConfigTwo);
-            target = new ConfigurationSetUploadMapper();
+            target = new ConfigurationSetUploadMapper(new ConfigurationUploadMapper());
         }
 
         [Fact]

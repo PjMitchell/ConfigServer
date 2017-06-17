@@ -17,6 +17,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly ConfigurationSetRegistry configCollection;
         private readonly Mock<ICommandBus> commandBus;
         private readonly Mock<IConfigurationClientService> configClientService;
+        private readonly Mock<IUploadToEditorModelMapper> uploadToEditorMapper;
+
         private ConfigurationClient expectedClient;
         private const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D9";
         private const string notFoundClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D2";
@@ -42,7 +44,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configClientService.Setup(s => s.GetClientOrDefault(clientId))
                 .ReturnsAsync(() => expectedClient);
             option = new ConfigServerOptions();
-            target = new UploadEnpoint(responseFactory.Object, configCollection, commandBus.Object, configClientService.Object);
+            uploadToEditorMapper = new Mock<IUploadToEditorModelMapper>();
+            target = new UploadEnpoint(responseFactory.Object, configCollection, commandBus.Object, configClientService.Object, uploadToEditorMapper.Object);
         }
 
         [Fact]
@@ -145,6 +148,39 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             responseFactory.Verify(f => f.BuildNotFoundStatusResponse(testContext));
             commandBus.Verify(cb => cb.SubmitAsync(It.IsAny<UpdateConfigurationFromJsonUploadCommand>()), Times.Never);
 
+        }
+
+        [Fact]
+        public async Task Upload_Editor_ReturnsMappedConfig()
+        {
+            var json = "{}";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/Editor/{clientId}/{nameof(SampleConfig)}")
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
+                .WithPost()
+                .WithStringBody(json)
+                .TestContext;
+            var result = new Object();
+            uploadToEditorMapper.Setup(mapper => mapper.MapUploadToEditModel(json, It.Is<ConfigurationIdentity>(c => c.Client.Equals(expectedClient)), configCollection.GetConfigDefinition<SampleConfig>()))
+                .Returns(result);
+                
+            await target.Handle(testContext, option);
+            responseFactory.Verify(f => f.BuildJsonResponse(testContext, result));
+
+        }
+
+        [Fact]
+        public async Task Upload_Editor_NotFoundIfClientNotFound()
+        {
+            var json = "{}";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/Editor/{notFoundClientId}/{nameof(SampleConfig)}")
+                .WithClaims(configuratorClaim, clientConfiguratorClaim)
+                .WithPost()
+                .WithStringBody(json)
+                .TestContext;
+
+
+            await target.Handle(testContext, option);
+            responseFactory.Verify(f => f.BuildNotFoundStatusResponse(testContext));
         }
     }
 }

@@ -73,19 +73,5 @@ namespace ConfigServer.Server
         {
             return registry.GetConfigDefinition(configInstance.ConfigType);
         }
-
-        public static object GetObjectFromJsonOrDefault(string json, Type type)
-        {
-            bool failed = false;
-            var result = JsonConvert.DeserializeObject(json, type, new JsonSerializerSettings
-            {
-                Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
-                {
-                    failed = true;
-                    args.ErrorContext.Handled = true;
-                }
-            });
-            return failed ? null : result;
-        }
     }
 }

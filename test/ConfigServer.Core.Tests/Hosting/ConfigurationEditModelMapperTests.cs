@@ -76,7 +76,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsRegularValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
             Assert.Equal(sample.Choice, response.Choice);
             Assert.Equal(sample.IsLlamaFarmer, response.IsLlamaFarmer);
             Assert.Equal(sample.Decimal, response.Decimal);
@@ -87,14 +87,14 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsOptionValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
             Assert.Equal(sample.Option.Id.ToString(), response.Option);
         }
 
         [Fact]
         public void MapsOptionsValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
             var expected = sample.MoarOptions.Select(s => s.Id.ToString()).ToList();
             Assert.Equal(expected, response.MoarOptions);
         }
@@ -102,7 +102,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsListOfConfigsValues()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
             Assert.Equal(1, listOfConfigs.Count());
             Assert.Equal(sample.ListOfConfigs[0].Name, listOfConfigs.First().Name);
@@ -113,7 +113,7 @@ namespace ConfigServer.Core.Tests.Hosting
         [Fact]
         public void MapsNewObject()
         {
-            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig(), clientId), definition);
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(new SampleConfig(), clientId), definition.Get<SampleConfig>());
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
 
             var moarOptions = response.MoarOptions as IEnumerable<dynamic>;

@@ -26,6 +26,8 @@ namespace ConfigServer.Server
             collection.AddTransient<IConfigurationSetFactory, ConfigurationSetFactory>();
             collection.AddTransient<IConfigurationValidator, ConfigurationValidator>();
             collection.AddTransient<IConfigurationSetUploadMapper, ConfigurationSetUploadMapper>();
+            collection.AddTransient<IConfigurationUploadMapper, ConfigurationUploadMapper>();
+            collection.AddTransient<IUploadToEditorModelMapper, UploadToEditorModelMapper>();
             collection.AddTransient<IConfigurationService, ConfigurationService>();
             collection.AddConfigServerEndPoints()
                 .AddConfigServerCommandHandlers()

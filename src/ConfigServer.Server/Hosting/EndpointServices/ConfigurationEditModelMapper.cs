@@ -8,7 +8,7 @@ namespace ConfigServer.Server
 {
     internal interface IConfigurationEditModelMapper
     {
-        object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model);
+        object MapToEditConfig(ConfigInstance config, ConfigurationModel configModel);
     }
 
     internal class ConfigurationEditModelMapper : IConfigurationEditModelMapper
@@ -24,9 +24,8 @@ namespace ConfigServer.Server
             this.configurationSetService = configurationSetService;
         }
 
-        public object MapToEditConfig(ConfigInstance config, ConfigurationSetModel model)
+        public object MapToEditConfig(ConfigInstance config, ConfigurationModel configModel)
         {
-            var configModel = model.Configs.Single(s => s.Type == config.ConfigType);
             var source = config.GetConfiguration();
             return BuildObject(source, configModel);
         }

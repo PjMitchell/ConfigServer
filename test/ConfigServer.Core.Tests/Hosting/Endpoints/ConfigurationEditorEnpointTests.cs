@@ -59,7 +59,8 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             configInstanceRouter.Setup(r => r.GetConfigInstanceOrDefault(expectedClient, typeof(SampleConfig).Name))
                 .ReturnsAsync(() => configInstance);
             var mappedModel = new object();
-            configurationEditModelMapper.Setup(m => m.MapToEditConfig(configInstance,(configCollection.GetConfigSetDefinition(typeof(SampleConfigSet)))))
+
+            configurationEditModelMapper.Setup(m => m.MapToEditConfig(configInstance,(configCollection.GetConfigDefinition(typeof(SampleConfig)))))
                 .Returns(() => mappedModel);
 
             await target.Handle(testContext, options);
