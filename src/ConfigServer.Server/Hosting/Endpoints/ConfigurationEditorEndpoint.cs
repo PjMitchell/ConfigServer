@@ -69,7 +69,7 @@ namespace ConfigServer.Server
             if (configInstance == null)
                 httpResponseFactory.BuildNotFoundStatusResponse(context);
             else
-                await httpResponseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationSetForModel(configInstance)));
+                await httpResponseFactory.BuildJsonResponse(context, configurationEditModelMapper.MapToEditConfig(configInstance, GetConfigurationModel(configInstance)));
         }
 
         private async Task HandlePostRequest(HttpContext context, ConfigurationClient client, string configType)
@@ -86,9 +86,9 @@ namespace ConfigServer.Server
             await httpResponseFactory.BuildResponseFromCommandResult(context, result);
         }        
 
-        private ConfigurationSetModel GetConfigurationSetForModel(ConfigInstance configInstance)
+        private ConfigurationModel GetConfigurationModel(ConfigInstance configInstance)
         {
-            return configCollection.GetConfigSetForConfig(configInstance.ConfigType);
+            return configCollection.GetConfigDefinition(configInstance.ConfigType);
         }
 
         private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
@@ -97,11 +97,10 @@ namespace ConfigServer.Server
             {
                 return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
             }
-            else
-            {
-                httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                return false; ;
-            }
+
+            httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
+            return false; ;
+
         }
     }
 }

@@ -7,6 +7,7 @@ export class UploadDataService {
 
     private configUrl = 'Upload/Configuration/';  // URL to web api
     private configSetUrl = 'Upload/ConfigurationSet/';  // URL to web api
+    private configEditorUrl = 'Upload/Editor/';  // URL to web api
 
     constructor(private http: Http) { }
 
@@ -21,6 +22,13 @@ export class UploadDataService {
         return this.http.post(this.configSetUrl + clientId + '/' + configSetId, config)
             .toPromise()
             .then((response) => response.ok)
+            .catch(this.handleError);
+    }
+
+    public mapToEditor(clientId: string, configId: string, config: any): Promise<any> {
+        return this.http.post(this.configEditorUrl + clientId + '/' + configId, config)
+            .toPromise()
+            .then((response) => response.json())
             .catch(this.handleError);
     }
 

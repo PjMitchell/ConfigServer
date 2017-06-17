@@ -13,6 +13,13 @@ namespace ConfigServer.Server
 
     internal class ConfigurationSetUploadMapper : IConfigurationSetUploadMapper
     {
+        private readonly IConfigurationUploadMapper configurationUploadMapper;
+
+        public ConfigurationSetUploadMapper(IConfigurationUploadMapper configurationUploadMapper)
+        {
+            this.configurationUploadMapper = configurationUploadMapper;
+        }
+
         public IEnumerable<KeyValuePair<string, object>> MapConfigurationSetUpload(string upload, ConfigurationSetModel model)
         {
             var jObject = JObject.Parse(upload); 
@@ -20,32 +27,11 @@ namespace ConfigServer.Server
             {
                 if (!jObject.TryGetValue(item.Name,StringComparison.OrdinalIgnoreCase, out var configJToken))
                     continue;
-                var config = ToObjectOrDefault(configJToken, item);
+                var config = configurationUploadMapper.ToObjectOrDefault(configJToken.ToString(), item);
                 yield return new KeyValuePair<string, object>(item.Name, config);
             }
         }
 
-        private object ToObjectOrDefault(JToken token, ConfigurationModel model)
-        {
-            if (model is ConfigurationOptionModel option)
-                return ToObjectOrDefault(token, option.StoredType);
-            return ToObjectOrDefault(token, model.Type);
-        }
-
-        private object ToObjectOrDefault(JToken token, Type type)
-        {
-            bool failed = false;
-            var result = JsonConvert.DeserializeObject(token.ToString(), type, new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Error,
-                Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
-                {
-                    failed = true;
-                    args.ErrorContext.Handled = true;
-                }
-            });
-            return failed ? null : result;
-        }
 
     }
 }

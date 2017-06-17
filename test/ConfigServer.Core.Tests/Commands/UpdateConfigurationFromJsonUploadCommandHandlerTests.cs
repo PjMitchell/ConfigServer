@@ -35,7 +35,7 @@ namespace ConfigServer.Core.Tests.Commands
             configurationValidator.Setup(v => v.Validate(It.IsAny<object>(), It.IsAny<ConfigurationModel>(), expectedIdentity))
                 .ReturnsAsync(() => ValidationResult.CreateValid());
             eventService = new Mock<IEventService>();
-            target = new UpdateConfigurationFromJsonUploadCommandHandler(registry,configurationService.Object, configRepository.Object, configurationValidator.Object, eventService.Object);
+            target = new UpdateConfigurationFromJsonUploadCommandHandler(registry,configurationService.Object, configRepository.Object, configurationValidator.Object, eventService.Object, new ConfigurationUploadMapper());
         }
 
         [Fact]
@@ -47,12 +47,10 @@ namespace ConfigServer.Core.Tests.Commands
             };
             var existingInstance = new ConfigInstance<SampleConfig>(new SampleConfig(), expectedIdentity);
             var input = new UpdateConfigurationFromJsonUploadCommand(expectedIdentity, typeof(SampleConfig), JsonConvert.SerializeObject(config));
-            configurationService.Setup(r => r.GetAsync(input.ConfigurationType, input.Identity))
-                .ReturnsAsync(() => existingInstance);
 
             var result = await target.Handle(input);
             Assert.True(result.IsSuccessful);
-            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => c == existingInstance && config.LlamaCapacity == ((ConfigInstance<SampleConfig>)c).Configuration.LlamaCapacity)));
+            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => c.ConfigurationIdentity == existingInstance.ConfigurationIdentity && config.LlamaCapacity == ((ConfigInstance<SampleConfig>)c).Configuration.LlamaCapacity)));
         }
 
         [Fact]
@@ -63,13 +61,11 @@ namespace ConfigServer.Core.Tests.Commands
                 new Option{ Id = 1, Description = "One"}
             };
             var existingInstance = new ConfigCollectionInstance<Option>(expectedIdentity);
-            var input = new UpdateConfigurationFromJsonUploadCommand(expectedIdentity, typeof(SampleConfig), JsonConvert.SerializeObject(config));
-            configurationService.Setup(r => r.GetAsync(input.ConfigurationType, input.Identity))
-                .ReturnsAsync(() => existingInstance);
+            var input = new UpdateConfigurationFromJsonUploadCommand(expectedIdentity, typeof(Option), JsonConvert.SerializeObject(config));
 
             var result = await target.Handle(input);
             Assert.True(result.IsSuccessful);
-            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => c == existingInstance && config.Count == ((ConfigCollectionInstance<Option>)c).Configuration.Count)));
+            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => c.ConfigurationIdentity == existingInstance.ConfigurationIdentity && config.Count == ((ConfigCollectionInstance<Option>)c).Configuration.Count)));
         }
 
         [Fact]

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationDataService } from '../dataservices/config-data.service';
 import { ConfigurationSetDataService } from '../dataservices/configset-data.service';
+import { UploadDataService } from "../dataservices/upload-data.service";
 import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationModelPayload } from "../interfaces/configurationModelPayload";
 import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDefintion";
@@ -13,6 +14,11 @@ import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDef
         <div *ngIf="client && configModel">
             <h2>{{client.name}}: {{configModel.name}}</h2>
             <p>{{configModel.description}}</p>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
+            </div>
         </div>
         <div class="validationResult"></div>
         <div class="break"></div>
@@ -24,7 +30,7 @@ import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDef
                 </div>
             </div>
             <div class="break"></div>
-            <div>
+            <div >
                 <button type="button" class="btn btn-primary" (click)="back()">Back</button>
                 <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" class="btn btn-primary" (click)="save()">Save</button>
             </div>
@@ -40,8 +46,9 @@ export class ClientConfigShellComponent implements OnInit {
     public isDisabled: boolean;
     public client: IConfigurationClient;
     public configModel: IConfigurationModelPayload;
-    public configurationModelType: 'config'|'option';
-    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private route: ActivatedRoute, private router: Router) {
+    public uploadMessage: string;
+    public configurationModelType: 'config' | 'option';
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private uploadDataService: UploadDataService, private route: ActivatedRoute, private router: Router) {
 
     }
 
@@ -88,5 +95,13 @@ export class ClientConfigShellComponent implements OnInit {
 
     public back() {
         this.router.navigate(['/client', this.clientId]);
+    }
+
+    public uploadConfig(value: any) {
+
+        this.uploadDataService.mapToEditor(this.clientId, this.configurationId, value)
+            .then((result) => {
+                this.config = result;
+            });
     }
 }
