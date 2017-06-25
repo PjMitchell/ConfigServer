@@ -10,12 +10,12 @@ namespace ConfigServer.Server
     internal class ConfigArchiveEndPoint : IEndpoint
     {
         private readonly IConfigurationClientService configurationClientService;
-        private readonly IConfigurationSetRegistry registry;
+        private readonly IConfigurationModelRegistry registry;
         private readonly IConfigArchive archive;
         private readonly IHttpResponseFactory httpResponseFactory;
 
 
-        public ConfigArchiveEndPoint(IConfigurationClientService configurationClientService, IConfigurationSetRegistry registry, IConfigArchive archive, IHttpResponseFactory httpResponseFactory)
+        public ConfigArchiveEndPoint(IConfigurationClientService configurationClientService, IConfigurationModelRegistry registry, IConfigArchive archive, IHttpResponseFactory httpResponseFactory)
         {
             this.configurationClientService = configurationClientService;
             this.registry = registry;

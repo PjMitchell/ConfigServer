@@ -10,12 +10,12 @@ namespace ConfigServer.Server
     internal class UploadEnpoint : IEndpoint
     {
         private readonly IHttpResponseFactory httpResponseFactory;
-        private readonly IConfigurationSetRegistry configCollection;
+        private readonly IConfigurationModelRegistry configCollection;
         private readonly ICommandBus commandBus;
         private readonly IConfigurationClientService configClientService;
         private readonly IUploadToEditorModelMapper uploadToEditorModelMapper;
 
-        public UploadEnpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetRegistry configCollection, ICommandBus commandBus, IConfigurationClientService configClientService, IUploadToEditorModelMapper uploadToEditorModelMapper)
+        public UploadEnpoint(IHttpResponseFactory httpResponseFactory, IConfigurationModelRegistry configCollection, ICommandBus commandBus, IConfigurationClientService configClientService, IUploadToEditorModelMapper uploadToEditorModelMapper)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;

@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
     public class ConfigurationSetEnpointTests
     {
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly ConfigurationSetRegistry configCollection;
+        private readonly ConfigurationModelRegistry configCollection;
         private ConfigServerOptions options;
         private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
         private readonly IEndpoint target;
@@ -24,7 +24,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
 
             responseFactory = new Mock<IHttpResponseFactory>();
-            configCollection = new ConfigurationSetRegistry();
+            configCollection = new ConfigurationModelRegistry();
             var configSetModel = new ConfigurationSetModel<SampleConfigSet>("Sample", "Sample description");
             configSetModel.GetOrInitialize(set => set.SampleConfig);
             configCollection.AddConfigurationSet(configSetModel);

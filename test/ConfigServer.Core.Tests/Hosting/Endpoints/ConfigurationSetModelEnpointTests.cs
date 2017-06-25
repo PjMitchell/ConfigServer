@@ -15,7 +15,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
     {
         private readonly Mock<IHttpResponseFactory> responseFactory;
         private readonly Mock<IConfigurationSetModelPayloadMapper> modelPayloadMapper;
-        private readonly ConfigurationSetRegistry configCollection;
+        private readonly ConfigurationModelRegistry configCollection;
         private readonly Mock<IConfigurationClientService> configClientService;
 
         private ConfigurationClient expectedClient;
@@ -31,7 +31,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             expectedClient = new ConfigurationClient(clientId);
             responseFactory = new Mock<IHttpResponseFactory>();
             modelPayloadMapper = new Mock<IConfigurationSetModelPayloadMapper>();
-            configCollection = new ConfigurationSetRegistry();
+            configCollection = new ConfigurationModelRegistry();
             var configSetModel = new ConfigurationSetModel<SampleConfigSet>("Sample", "Sample description");
             configSetModel.GetOrInitialize(set => set.SampleConfig);
             configCollection.AddConfigurationSet(configSetModel);

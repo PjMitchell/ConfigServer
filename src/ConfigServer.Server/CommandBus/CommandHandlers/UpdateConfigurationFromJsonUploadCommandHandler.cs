@@ -7,14 +7,14 @@ namespace ConfigServer.Server
 {
     internal class UpdateConfigurationFromJsonUploadCommandHandler : ICommandHandler<UpdateConfigurationFromJsonUploadCommand>
     {
-        private readonly IConfigurationSetRegistry registry;
+        private readonly IConfigurationModelRegistry registry;
         private readonly IConfigurationService configurationService;
         private readonly IConfigRepository configRepository;
         private readonly IConfigurationValidator configurationValidator;
         private readonly IConfigurationUploadMapper configurationUploadMapper;
         private readonly IEventService eventService;
 
-        public UpdateConfigurationFromJsonUploadCommandHandler(IConfigurationSetRegistry registry, IConfigurationService configurationService,IConfigRepository configRepository, IConfigurationValidator configurationValidator, IEventService eventService, IConfigurationUploadMapper configurationUploadMapper)
+        public UpdateConfigurationFromJsonUploadCommandHandler(IConfigurationModelRegistry registry, IConfigurationService configurationService,IConfigRepository configRepository, IConfigurationValidator configurationValidator, IEventService eventService, IConfigurationUploadMapper configurationUploadMapper)
         {
             this.registry = registry;
             this.configurationService = configurationService;

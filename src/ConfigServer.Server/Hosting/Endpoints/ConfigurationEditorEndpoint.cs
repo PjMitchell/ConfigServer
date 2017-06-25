@@ -11,13 +11,13 @@ namespace ConfigServer.Server
     internal class ConfigurationEditorEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory httpResponseFactory;
-        readonly IConfigurationSetRegistry configCollection;
+        readonly IConfigurationModelRegistry configCollection;
         readonly IConfigurationEditModelMapper configurationEditModelMapper;
         readonly IConfigInstanceRouter configInstanceRouter;
         readonly IConfigurationClientService configClientService;
         readonly ICommandBus commandBus;
 
-        public ConfigurationEditorEndpoint(IHttpResponseFactory httpResponseFactory, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
+        public ConfigurationEditorEndpoint(IHttpResponseFactory httpResponseFactory, IConfigInstanceRouter configInstanceRouter, IConfigurationEditModelMapper configurationEditModelMapper, IConfigurationModelRegistry configCollection, IConfigurationClientService configClientService, ICommandBus commandBus)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;

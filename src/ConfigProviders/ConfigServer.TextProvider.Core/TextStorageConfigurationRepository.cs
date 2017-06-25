@@ -50,7 +50,7 @@ namespace ConfigServer.TextProvider.Core
             });
 
             if (!string.IsNullOrWhiteSpace(json))
-                result.SetConfiguration(ParseStoredObject(json, type, id));
+                result.SetConfiguration(ConfigStorageObjectParser.ParseConfigurationStoredObject(json, type));
             return result;
         }
 
@@ -95,7 +95,7 @@ namespace ConfigServer.TextProvider.Core
             });
             var configType = BuildGenericType(typeof(List<>), type);
             if (!string.IsNullOrWhiteSpace(json))
-                 return (IEnumerable)ParseStoredObject(json, configType, id);
+                 return (IEnumerable)ConfigStorageObjectParser.ParseConfigurationStoredObject(json, configType);
             return (IEnumerable)Activator.CreateInstance(configType);
         }
 
@@ -129,12 +129,7 @@ namespace ConfigServer.TextProvider.Core
             };
         }
 
-        private object ParseStoredObject(string json,Type type, ConfigurationIdentity id)
-        {
-            var storageObject = JObject.Parse(json);
-            var result = storageObject.GetValue(nameof(ConfigStorageObject.Config)).ToObject(type);
-            return result;
-        }
+
 
         private string GetCacheKey(string configId, string clientId) => $"{clientId}_{configId}";
 

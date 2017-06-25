@@ -17,9 +17,9 @@ namespace ConfigServer.Server
         private IConfigurationClientService configClientService;
         private readonly IEnumerable<ConfigurationModel> configModelCollection;
         private IConfigurationService configurationService;
-        IConfigurationSetRegistry registry;
+        IConfigurationModelRegistry registry;
 
-        public ConfigInstanceRouter(IConfigurationClientService configClientService,IConfigurationService configurationService, IConfigurationSetRegistry registry)
+        public ConfigInstanceRouter(IConfigurationClientService configClientService,IConfigurationService configurationService, IConfigurationModelRegistry registry)
         {
             this.configClientService = configClientService;
             this.configModelCollection = registry.SelectMany(s => s.Configs).ToList();

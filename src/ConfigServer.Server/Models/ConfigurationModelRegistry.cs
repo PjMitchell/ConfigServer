@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ConfigServer.Core;
 
 namespace ConfigServer.Server
 {
     /// <summary>
-    /// Registry of ConfigurationSets
+    /// Registry of ConfigurationSets Model
     /// </summary>
-    internal class ConfigurationSetRegistry : IConfigurationSetRegistry
+    internal class ConfigurationModelRegistry : IConfigurationModelRegistry
     {
         private readonly Dictionary<Type, ConfigurationSetModel> collection;
         private Version version;
@@ -16,7 +17,7 @@ namespace ConfigServer.Server
         /// <summary>
         /// Initializes new ConfigurationSetRegistry
         /// </summary>
-        public ConfigurationSetRegistry()
+        public ConfigurationModelRegistry()
         {
             collection = new Dictionary<Type, ConfigurationSetModel>();
             version = new Version(0, 0);
@@ -93,6 +94,11 @@ namespace ConfigServer.Server
             return collection.Values.Single(s=> s.ContainsConfig(type));
         }
 
+        public IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations()
+        {
+            return collection.Values.SelectMany(setModels => setModels.Configs.Select(configModel => new ConfigurationRegistration(configModel.Type, configModel.Name, configModel.IsCollection)));
+        }
+
         /// <summary>
         /// Returns an enumerator that iterates through the ConfigurationSetModels
         /// </summary>
@@ -106,5 +112,7 @@ namespace ConfigServer.Server
         {
             return collection.Values.GetEnumerator();
         }
+
+
     }
 }

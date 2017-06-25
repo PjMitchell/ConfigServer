@@ -11,9 +11,9 @@ namespace ConfigServer.Server
     internal class ConfigurationSetEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory httpResponseFactory;
-        readonly IConfigurationSetRegistry configCollection;
+        readonly IConfigurationModelRegistry configCollection;
 
-        public ConfigurationSetEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetRegistry configCollection)
+        public ConfigurationSetEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationModelRegistry configCollection)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;

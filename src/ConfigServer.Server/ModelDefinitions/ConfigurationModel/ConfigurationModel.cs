@@ -16,13 +16,15 @@ namespace ConfigServer.Server
         /// <param name="name">Name that identifies config</param>
         /// <param name="type">Type of config</param>
         /// <param name="configurationSetType">ConfigurationSet type that contains configuration</param>
-        public ConfigurationModel(string name, Type type, Type configurationSetType)
+        /// <param name="isCollection">Is Configuration type a collection</param>
+        public ConfigurationModel(string name, Type type, Type configurationSetType,bool isCollection = false)
         {
             Type = type;
             ConfigurationSetType = configurationSetType;
             Name = name;
             ConfigurationDisplayName = type.Name;
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
+            IsCollection = isCollection;
         }
 
         /// <summary>
@@ -94,7 +96,10 @@ namespace ConfigServer.Server
         /// </summary>
         public bool IsReadOnly { get; protected set; }
 
-
+        /// <summary>
+        /// Is collection model
+        /// </summary>
+        public bool IsCollection { get; }
     }
 
     internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet where TConfiguration : class, new()

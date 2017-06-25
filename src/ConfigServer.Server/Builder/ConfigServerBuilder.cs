@@ -10,14 +10,14 @@ namespace ConfigServer.Server
     /// </summary>
     public class ConfigServerBuilder
     {
-        private readonly ConfigurationSetRegistry registry;
+        private readonly ConfigurationModelRegistry registry;
 
         internal ConfigServerBuilder(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection;
-            registry = new ConfigurationSetRegistry();
+            registry = new ConfigurationModelRegistry();
             ServiceCollection.AddSingleton(registry);
-            ServiceCollection.AddSingleton<IConfigurationSetRegistry>(registry);
+            ServiceCollection.AddSingleton<IConfigurationModelRegistry>(registry);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace ConfigServer.Server
         /// <summary>
         /// ConfigurationSetRegistry for builder that forms a registry of available configurations sets for the server 
         /// </summary>
-        public IConfigurationSetRegistry ConfigurationSetCollection => registry;
+        public IConfigurationModelRegistry ConfigurationSetCollection => registry;
 
         /// <summary>
         /// Adds new configuration set to the registry

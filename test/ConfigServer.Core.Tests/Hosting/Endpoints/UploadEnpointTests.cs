@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
     public class UploadEnpointTests
     {
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly ConfigurationSetRegistry configCollection;
+        private readonly ConfigurationModelRegistry configCollection;
         private readonly Mock<ICommandBus> commandBus;
         private readonly Mock<IConfigurationClientService> configClientService;
         private readonly Mock<IUploadToEditorModelMapper> uploadToEditorMapper;
@@ -36,7 +36,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             responseFactory = new Mock<IHttpResponseFactory>();
             var testConfigSet = new SampleConfigSet();
-            configCollection = new ConfigurationSetRegistry();
+            configCollection = new ConfigurationModelRegistry();
             configCollection.AddConfigurationSet(testConfigSet.BuildConfigurationSetModel());
             commandBus = new Mock<ICommandBus>();
             expectedClient = new ConfigurationClient(clientId) { ConfiguratorClaim = clientConfiguratorClaim.Value };

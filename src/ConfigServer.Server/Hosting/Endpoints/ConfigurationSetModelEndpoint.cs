@@ -10,11 +10,11 @@ namespace ConfigServer.Server
     internal class ConfigurationSetModelEndpoint : IEndpoint
     {
         readonly IHttpResponseFactory httpResponseFactory;
-        readonly IConfigurationSetRegistry configCollection;
+        readonly IConfigurationModelRegistry configCollection;
         readonly IConfigurationSetModelPayloadMapper modelPayloadMapper;
         readonly IConfigurationClientService configClientService;
 
-        public ConfigurationSetModelEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigurationSetRegistry configCollection, IConfigurationClientService configClientService)
+        public ConfigurationSetModelEndpoint(IHttpResponseFactory httpResponseFactory, IConfigurationSetModelPayloadMapper modelPayloadMapper, IConfigurationModelRegistry configCollection, IConfigurationClientService configClientService)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.configCollection = configCollection;

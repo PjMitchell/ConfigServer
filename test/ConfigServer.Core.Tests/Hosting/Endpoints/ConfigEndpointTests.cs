@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting
         private readonly Mock<IConfigurationClientService> repository;
         private readonly Mock<IConfigurationService> configurationService;
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly ConfigurationSetRegistry configSetConfig;
+        private readonly ConfigurationModelRegistry configSetConfig;
         private readonly List<ConfigurationClient> clients;
         private readonly ConfigInstance<SimpleConfig> defaultConfig;
         private ConfigServerOptions options;
@@ -31,7 +31,7 @@ namespace ConfigServer.Core.Tests.Hosting
             repository.Setup(s => s.GetClientOrDefault(It.IsAny<string>()))
                 .Returns((string value) => Task.FromResult(clients.SingleOrDefault(s=> string.Equals(value, s.ClientId, StringComparison.OrdinalIgnoreCase))));
 
-            configSetConfig = new ConfigurationSetRegistry();
+            configSetConfig = new ConfigurationModelRegistry();
             var configSetDef = new ConfigurationSetModel<SimpleConfigSet>();
             configSetDef.GetOrInitialize(c=> c.Config);
             configSetConfig.AddConfigurationSet(configSetDef);
