@@ -2,6 +2,7 @@
 using ConfigServer.TextProvider.Core;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,8 +82,6 @@ namespace ConfigServer.Core.Tests.Providers
             var configurationAsList = configuration.ToList();
             Assert.Equal(1, configurationAsList.Count);
             Assert.Equal(23, configurationAsList[0].IntProperty);
-
-
         }
 
         [Fact]
@@ -97,6 +96,54 @@ namespace ConfigServer.Core.Tests.Providers
                 .ReturnsAsync(new SnapshotTextEntry[] { new SnapshotTextEntry { ConfigurationName = typeof(SimpleConfig).Name, ConfigurationJson = jsonPayload } });
             var result = await target.GetSnapshot(defaultEntry.Id, defaultIdentity);
             Assert.Equal(defaultEntry, result.Info, new SnapShotEqualityComparer());
+        }
+
+        [Fact]
+        public async Task Set_SavesConfiguration()
+        {
+            var expectedInstance = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 23 } , defaultIdentity);
+
+            List<SnapshotTextEntry> observedValue = new List<SnapshotTextEntry>();
+            connector.Setup(c => c.SetSnapshotEntries(defaultEntry.Id, It.IsAny<IEnumerable<SnapshotTextEntry>>()))
+                .Returns((string id, IEnumerable<SnapshotTextEntry> e) =>
+                {
+                    observedValue = e.ToList();
+                    return Task.FromResult(0);
+                });
+            var entry = new ConfigurationSnapshotEntry
+            {
+                Info = defaultEntry,
+                Configurations = new List<ConfigInstance> { expectedInstance }
+            };
+            await target.SaveSnapshot(entry);
+            Assert.Equal(1, observedValue.Count);
+            Assert.Equal(expectedInstance.Name, observedValue[0].ConfigurationName);
+            var jObject = JObject.Parse(observedValue[0].ConfigurationJson);
+            Assert.Equal(defaultIdentity.ServerVersion.ToString(), jObject.GetValue(nameof(ConfigStorageObject.ServerVersion)).ToString());
+            Assert.Equal(defaultIdentity.Client.ClientId, jObject.GetValue(nameof(ConfigStorageObject.ClientId)).ToString());
+            Assert.Equal(expectedInstance.Name, jObject.GetValue(nameof(ConfigStorageObject.ConfigName)).ToString());
+            Assert.Equal(23, jObject.GetValue(nameof(ConfigStorageObject.Config)).ToObject<SimpleConfig>().IntProperty);
+        }
+
+        [Fact]
+        public async Task Set_UpdatesRegistry()
+        {
+            var expectedInstance = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 23 }, defaultIdentity);
+
+            List<SnapshotEntryInfo> observedValue = new List<SnapshotEntryInfo>();
+            connector.Setup(c => c.SetSnapshotRegistryFileAsync(It.IsAny<string>()))
+                .Returns((string value) =>
+                {
+                    observedValue = JsonConvert.DeserializeObject<List<SnapshotEntryInfo>>(value);
+                    return Task.FromResult(0);
+                });
+            var entry = new ConfigurationSnapshotEntry
+            {
+                Info = defaultEntry,
+                Configurations = new List<ConfigInstance> { expectedInstance }
+            };
+            await target.SaveSnapshot(entry);
+            Assert.Equal(new[] { defaultEntry }, observedValue, new SnapShotEqualityComparer());
         }
 
         private ConfigStorageObject BuildStorageObject(ConfigInstance config)
