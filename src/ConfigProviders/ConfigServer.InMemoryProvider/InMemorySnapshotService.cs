@@ -16,6 +16,12 @@ namespace ConfigServer.InMemoryProvider
             source = new Dictionary<SnapshotEntryInfo, ICollection<ConfigInstance>>(new InfoComparer());
         }
 
+        public Task DeleteSnapshot(string snapshotId)
+        {
+            source.Remove(new SnapshotEntryInfo { Id = snapshotId });
+            return Task.FromResult(true);
+        }
+
         public Task<ConfigurationSnapshotEntry> GetSnapshot(string snapshotId, ConfigurationIdentity targetConfigurationIdentity)
         {
             var entry = source.SingleOrDefault(s => string.Equals(snapshotId, s.Key.Id));

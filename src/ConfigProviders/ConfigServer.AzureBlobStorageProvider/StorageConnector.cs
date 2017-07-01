@@ -63,11 +63,11 @@ namespace ConfigServer.AzureBlobStorageProvider
             return await entry.DownloadTextAsync();
         }
 
-        private async Task SetFileAsync(string location, string value)
+        private Task SetFileAsync(string location, string value)
         {
             var containerRef = client.GetContainerReference(container);
             var entry = containerRef.GetBlockBlobReference(location);
-            await entry.UploadTextAsync(value);
+            return entry.UploadTextAsync(value);
         }
 
         private async Task ArchiveIfExists(string configId, string instanceId, CloudBlobContainer containerRef, CloudBlockBlob existingFile)

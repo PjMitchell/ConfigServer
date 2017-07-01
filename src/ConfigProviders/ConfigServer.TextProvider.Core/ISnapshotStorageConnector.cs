@@ -37,5 +37,12 @@ namespace ConfigServer.TextProvider.Core
         /// <param name="entries">Entries for Id</param>
         /// <returns>Task from operation</returns>
         Task SetSnapshotEntries(string snapshotId, IEnumerable<SnapshotTextEntry> entries);
+
+        /// <summary>
+        /// Deletes Snapshot
+        /// </summary>
+        /// <param name="snapshotId">snapshot id</param>
+        /// <returns>Task from operation</returns>
+        Task DeleteSnapshot(string snapshotId);
     }
 }

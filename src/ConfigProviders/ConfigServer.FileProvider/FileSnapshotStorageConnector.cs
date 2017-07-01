@@ -28,10 +28,7 @@ namespace ConfigServer.FileProvider
         public Task SetSnapshotEntries(string snapshotId, IEnumerable<SnapshotTextEntry> entries)
         {
             var directory = GetSnapShotFolder(snapshotId);
-            foreach (FileInfo file in directory.GetFiles())
-            {
-                file.Delete();
-            }
+            DeleteSnaphot(directory);
             foreach (var entry in entries)
             {
                 File.WriteAllText($"{directory.Name}/{entry.ConfigurationName}.json", entry.ConfigurationJson);
@@ -39,6 +36,7 @@ namespace ConfigServer.FileProvider
 
             return Task.FromResult(true);
         }
+
 
         public Task<string> GetSnapshotRegistryFileAsync()
         {
@@ -56,6 +54,20 @@ namespace ConfigServer.FileProvider
             return Task.FromResult(true);
         }
 
+        public Task DeleteSnapshot(string snapshotId)
+        {
+            var directory = GetSnapShotFolder(snapshotId);
+            DeleteSnaphot(directory);
+            return Task.FromResult(true);
+        }
+
+        private static void DeleteSnaphot(DirectoryInfo directory)
+        {
+            foreach (FileInfo file in directory.GetFiles())
+            {
+                file.Delete();
+            }
+        }
         private static SnapshotTextEntry MapToTextEntry(string filePath)
         {
             return new SnapshotTextEntry(Path.GetFileNameWithoutExtension(filePath), File.ReadAllText(filePath));

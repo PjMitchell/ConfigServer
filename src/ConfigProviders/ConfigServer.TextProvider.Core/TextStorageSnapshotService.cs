@@ -82,6 +82,27 @@ namespace ConfigServer.TextProvider.Core
             }
         }
 
+        /// <summary>
+        /// Deletes snapshot
+        /// </summary>
+        /// <param name="snapshotId">snapshot id</param>
+        /// <returns>Task for operation</returns>
+        public async Task DeleteSnapshot(string snapshotId)
+        {
+            await locker.WaitAsync();
+            try
+            {
+                var snapshots = (await GetSnapshots()).Where(k => string.Equals(k.Id,snapshotId, StringComparison.OrdinalIgnoreCase));
+                await connector.SetSnapshotRegistryFileAsync(JsonConvert.SerializeObject(snapshots));
+            }
+            finally
+            {
+                locker.Release();
+            }
+            await connector.DeleteSnapshot(snapshotId);
+        }
+
+
         private SnapshotTextEntry Map(ConfigInstance config)
         {
             var configObject = ConfigStorageObjectHelper.BuildStorageObject(config);
@@ -112,5 +133,6 @@ namespace ConfigServer.TextProvider.Core
             newInstance.SetConfiguration(ConfigStorageObjectHelper.ParseConfigurationStoredObject(entry.ConfigurationJson, configInfo.ConfigType));
             return newInstance;
         }
+
     }
 }

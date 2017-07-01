@@ -28,5 +28,13 @@ namespace ConfigServer.Core
         /// <param name="snapshot">snapshot to saved</param>
         /// <returns>Task for operation</returns>
         Task SaveSnapshot(ConfigurationSnapshotEntry snapshot);
+
+        /// <summary>
+        /// Deletes snapshot
+        /// </summary>
+        /// <param name="snapshotId">snapshot id</param>
+        /// <returns>Task for operation</returns>
+        Task DeleteSnapshot(string snapshotId);
+
     }
 }
