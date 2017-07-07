@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigEnpoint : IEndpoint
+    internal class ConfigEndpoint : IEndpoint
     {
         readonly IConfigInstanceRouter router;
         readonly IConfigurationClientService configurationClientService;
         readonly IHttpResponseFactory httpResponseFactory;
 
-        public ConfigEnpoint(IConfigInstanceRouter router, IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory)
+        public ConfigEndpoint(IConfigInstanceRouter router, IConfigurationClientService configurationClientService, IHttpResponseFactory httpResponseFactory)
         {
             this.httpResponseFactory = httpResponseFactory;
             this.router = router;

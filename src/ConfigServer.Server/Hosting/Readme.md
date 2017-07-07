@@ -86,3 +86,19 @@ DELETE 'write'
 Required Claim: option.ClientAdminClaimType 
 GET 'read','write'
 DELETE 'write'
+
+### Config Snapshot ~/Snapshot
+
+
+POST Save snapshot
+/{snapShotId} DELETE: Deletes snapShot
+
+/Group/{clientGroupId} GET: Gets SnapshotIds for clientGroupId
+
+Required Claim: option.ClientAdminClaimType 
+GET DELETE 'configurator','admin'
+
+/{snapShotId}/to/{clientId}  Post: Pushes snapshot to client Id
+Requires Client Claim
+
+

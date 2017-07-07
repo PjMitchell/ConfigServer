@@ -32,7 +32,7 @@ namespace ConfigServer.FileProvider
             builder.ServiceCollection.AddTransient<IConfigProvider, TextStorageConfigurationRepository>();
             builder.ServiceCollection.AddTransient<IStorageConnector, FileStorageConnector>();
             builder.ServiceCollection.AddTransient<IConfigArchive, FileConfigArchive>();
-            builder.ServiceCollection.AddTransient<IConfigurationSnapshotService, TextStorageSnapshotService>();
+            builder.ServiceCollection.AddTransient<IConfigurationSnapshotRepository, TextStorageSnapshotRepository>();
             builder.ServiceCollection.AddTransient<ISnapshotStorageConnector, FileSnapshotStorageConnector>();
 
 

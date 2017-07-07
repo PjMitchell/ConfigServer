@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests.Hosting
 {
     public class ConfigEndpointTests
     {
-        private readonly ConfigEnpoint target;
+        private readonly ConfigEndpoint target;
         private readonly Mock<IConfigurationClientService> repository;
         private readonly Mock<IConfigurationService> configurationService;
         private readonly Mock<IHttpResponseFactory> responseFactory;
@@ -46,7 +46,7 @@ namespace ConfigServer.Core.Tests.Hosting
 
             responseFactory = new Mock<IHttpResponseFactory>();
             options = new ConfigServerOptions();
-            target = new ConfigEnpoint(new ConfigInstanceRouter(repository.Object, configurationService.Object, configSetConfig), repository.Object, responseFactory.Object);
+            target = new ConfigEndpoint(new ConfigInstanceRouter(repository.Object, configurationService.Object, configSetConfig), repository.Object, responseFactory.Object);
         }
 
         [Fact]

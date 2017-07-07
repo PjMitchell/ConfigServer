@@ -44,7 +44,7 @@ namespace ConfigServer.Server
                 .AddTransient<ConfigurationEditorEndpoint>()
                 .AddTransient<ConfigClientEndPoint>()
                 .AddTransient<ConfigManagerEndpoint>()
-                .AddTransient<ConfigEnpoint>()
+                .AddTransient<ConfigEndpoint>()
                 .AddTransient<DownloadEndpoint>()
                 .AddTransient<UploadEnpoint>()
                 .AddTransient<ResourceEndpoint>()
@@ -52,7 +52,8 @@ namespace ConfigServer.Server
                 .AddTransient<GuidGeneratorEndpoint>()
                 .AddTransient<ResourceArchiveEndpoint>()
                 .AddTransient<ConfigArchiveEndPoint>()
-                .AddTransient<PermissionEndpoint>();
+                .AddTransient<PermissionEndpoint>()
+                .AddTransient<SnapshotEndpoint>();
             return collection;
         }
 
@@ -64,7 +65,9 @@ namespace ConfigServer.Server
             collection.AddCommandHandler<UpdateConfigurationFromEditorCommand, UpdateConfigurationFromEditorCommandHandler>();
             collection.AddCommandHandler<UpdateConfigurationFromJsonUploadCommand, UpdateConfigurationFromJsonUploadCommandHandler>();
             collection.AddCommandHandler<UpdateConfigurationSetFromJsonUploadCommand, UpdateConfigurationSetFromJsonUploadCommandHandler>();
-            
+            collection.AddCommandHandler<DeleteSnapshotCommand, DeleteSnapshotCommandHandler>();
+            collection.AddCommandHandler<CreateSnapshotCommand, CreateSnapshotCommandHandler>();
+
             return collection;
         }
 

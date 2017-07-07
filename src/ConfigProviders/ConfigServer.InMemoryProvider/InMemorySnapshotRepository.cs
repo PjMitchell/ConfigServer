@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ConfigServer.InMemoryProvider
 {
-    internal class InMemorySnapshotService : IConfigurationSnapshotService
+    internal class InMemorySnapshotRepository : IConfigurationSnapshotRepository
     {
         private Dictionary<SnapshotEntryInfo, ICollection<ConfigInstance>> source;
 
-        public InMemorySnapshotService()
+        public InMemorySnapshotRepository()
         {
             source = new Dictionary<SnapshotEntryInfo, ICollection<ConfigInstance>>(new InfoComparer());
         }

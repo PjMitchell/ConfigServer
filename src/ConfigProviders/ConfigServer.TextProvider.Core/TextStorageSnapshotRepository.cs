@@ -14,18 +14,18 @@ namespace ConfigServer.TextProvider.Core
     /// <summary>
     /// Text storage Snapshot Service
     /// </summary>
-    public class TextStorageSnapshotService : IConfigurationSnapshotService
+    public class TextStorageSnapshotRepository : IConfigurationSnapshotRepository
     {
         private readonly ISnapshotStorageConnector connector;
         private readonly IConfigurationModelRegistry modelRegistry;
         private readonly static SemaphoreSlim locker = new SemaphoreSlim(1);
 
         /// <summary>
-        /// contructs new TextStorageSnapshotService
+        /// contructs new TextStorageSnapshotRepository
         /// </summary>
-        /// <param name="connector">Connector for TextStorageSnapshotService</param>
+        /// <param name="connector">Connector for TextStorageSnapshotRepository</param>
         /// <param name="modelRegistry">Model registry for app</param>
-        public TextStorageSnapshotService(ISnapshotStorageConnector connector, IConfigurationModelRegistry modelRegistry)
+        public TextStorageSnapshotRepository(ISnapshotStorageConnector connector, IConfigurationModelRegistry modelRegistry)
         {
             this.connector = connector;
             this.modelRegistry = modelRegistry;
@@ -42,7 +42,7 @@ namespace ConfigServer.TextProvider.Core
             var snapshots = await GetSnapshots();
             var correctsnapShot = snapshots.SingleOrDefault(s => string.Equals(s.Id, snapshotId, StringComparison.OrdinalIgnoreCase));
             var configs = await connector.GetSnapshotEntries(snapshotId);
-            var registrations = modelRegistry.GetConfigurationRegistrations().ToDictionary(k=> k.ConfigurationName, StringComparer.OrdinalIgnoreCase);
+            var registrations = modelRegistry.GetConfigurationRegistrations(true).ToDictionary(k=> k.ConfigurationName, StringComparer.OrdinalIgnoreCase);
             var configurationInstance = BuildConfigInstances(configs, registrations, targetConfigurationIdentity).ToArray();
             return new ConfigurationSnapshotEntry { Info = correctsnapShot, Configurations = configurationInstance };
         }

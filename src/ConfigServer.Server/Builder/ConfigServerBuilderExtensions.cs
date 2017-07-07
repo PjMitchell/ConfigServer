@@ -104,7 +104,7 @@ namespace ConfigServer.Server
             app.Map(HostPaths.ResourceArchive, client => client.UseEndpoint<ResourceArchiveEndpoint>(options));
             app.Map(HostPaths.Archive, client => client.UseEndpoint<ConfigArchiveEndPoint>(options));
             app.Map(HostPaths.UserPermissions, client => client.UseEndpoint<PermissionEndpoint>(options));
-            app.UseEndpoint<ConfigEnpoint>(options);
+            app.UseEndpoint<ConfigEndpoint>(options);
             
             return app;
         }

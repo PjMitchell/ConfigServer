@@ -94,9 +94,21 @@ namespace ConfigServer.Server
             return collection.Values.Single(s=> s.ContainsConfig(type));
         }
 
-        public IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations()
+        /// <summary>
+        /// Get Configuration Registrations
+        /// </summary>
+        /// <param name="filterOutReadonlyConfigurations">flags if readonly configruations are to be removed</param>
+        /// <returns>All Configuration Registrations</returns>
+        public IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations(bool filterOutReadonlyConfigurations = false)
         {
-            return collection.Values.SelectMany(setModels => setModels.Configs.Select(configModel => new ConfigurationRegistration(configModel.Type, configModel.Name, configModel.IsCollection)));
+            return filterOutReadonlyConfigurations
+                ? collection.Values.SelectMany(setModels => setModels.Configs.Select(MapToRegistration))
+                : collection.Values.SelectMany(setModels => setModels.Configs.Where(w=> !w.IsReadOnly).Select(MapToRegistration));
+        }
+
+        private static ConfigurationRegistration MapToRegistration(ConfigurationModel configModel)
+        {
+            return new ConfigurationRegistration(configModel.Type, configModel.Name, configModel.IsCollection);
         }
 
         /// <summary>

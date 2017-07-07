@@ -59,7 +59,8 @@ namespace ConfigServer.Server
         /// <summary>
         /// Get Configuration Registrations
         /// </summary>
+        /// <param name="filterOutReadonlyConfigurations">flags if readonly configruations are to be removed</param>
         /// <returns>All Configuration Registrations</returns>
-        IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations();
+        IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations(bool filterOutReadonlyConfigurations = false);
     }
 }

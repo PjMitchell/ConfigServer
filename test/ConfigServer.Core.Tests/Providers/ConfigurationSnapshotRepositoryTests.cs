@@ -12,21 +12,21 @@ using Xunit;
 
 namespace ConfigServer.Core.Tests.Providers
 {
-    public class ConfigurationSnapshotServiceTests
+    public class ConfigurationSnapshotRepositoryTests
     {
         private Mock<ISnapshotStorageConnector> connector;
         private Mock<IConfigurationModelRegistry> registry;
         private ConfigurationIdentity defaultIdentity;
-        private IConfigurationSnapshotService target;
+        private IConfigurationSnapshotRepository target;
         private SnapshotEntryInfo defaultEntry;
 
-        public ConfigurationSnapshotServiceTests()
+        public ConfigurationSnapshotRepositoryTests()
         {
             connector = new Mock<ISnapshotStorageConnector>();
             registry = new Mock<IConfigurationModelRegistry>();
             defaultIdentity = new ConfigurationIdentity(new ConfigurationClient("39aa8bb2-618b-4928-9c96-790f6dd5df63"), new Version(1, 0));
             defaultEntry = new SnapshotEntryInfo { Id = "39aa8bb2-218b-4928-9c96-790f6dd5df63", GroupId = "39aa8bb2-218b-4928-9c96-790f6dd5df69", Name = "1.0", TimeStamp = DateTime.UtcNow };
-            target = new TextStorageSnapshotService(connector.Object, registry.Object);
+            target = new TextStorageSnapshotRepository(connector.Object, registry.Object);
             var json = JsonConvert.SerializeObject(new object[] { defaultEntry});
             connector.Setup(c => c.GetSnapshotRegistryFileAsync())
                 .ReturnsAsync(json);
@@ -52,7 +52,7 @@ namespace ConfigServer.Core.Tests.Providers
         {
             var expectedInstance = new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = 23 }, defaultIdentity);
             var jsonPayload = JsonConvert.SerializeObject(BuildStorageObject(expectedInstance));
-            registry.Setup(r => r.GetConfigurationRegistrations())
+            registry.Setup(r => r.GetConfigurationRegistrations(true))
                 .Returns(() => new[] { new ConfigurationRegistration(typeof(SimpleConfig), typeof(SimpleConfig).Name, false) });
             
             connector.Setup(c => c.GetSnapshotEntries(defaultEntry.Id))
@@ -71,7 +71,7 @@ namespace ConfigServer.Core.Tests.Providers
         {
             var expectedInstance = new ConfigCollectionInstance<SimpleConfig>(new[] { new SimpleConfig { IntProperty = 23 } }, defaultIdentity);
             var jsonPayload = JsonConvert.SerializeObject(BuildStorageObject(expectedInstance));
-            registry.Setup(r => r.GetConfigurationRegistrations())
+            registry.Setup(r => r.GetConfigurationRegistrations(true))
                 .Returns(() => new[] { new ConfigurationRegistration(typeof(SimpleConfig), typeof(SimpleConfig).Name, true) });
             connector.Setup(c => c.GetSnapshotEntries(defaultEntry.Id))
                 .ReturnsAsync(new SnapshotTextEntry[] { new SnapshotTextEntry { ConfigurationName = typeof(SimpleConfig).Name, ConfigurationJson = jsonPayload } });
@@ -89,7 +89,7 @@ namespace ConfigServer.Core.Tests.Providers
         {
             var expectedInstance = new ConfigCollectionInstance<SimpleConfig>(new[] { new SimpleConfig { IntProperty = 23 } }, defaultIdentity);
             var jsonPayload = JsonConvert.SerializeObject(BuildStorageObject(expectedInstance));
-            registry.Setup(r => r.GetConfigurationRegistrations())
+            registry.Setup(r => r.GetConfigurationRegistrations(true))
                 .Returns(() => new[] { new ConfigurationRegistration(typeof(SimpleConfig), typeof(SimpleConfig).Name, true) });
             
             connector.Setup(c => c.GetSnapshotEntries(defaultEntry.Id))

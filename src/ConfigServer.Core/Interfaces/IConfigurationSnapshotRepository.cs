@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 namespace ConfigServer.Core
 {
     /// <summary>
-    /// Service for Configurations Snapshot to be implemented by the ClientProvider
+    /// Provider for Configurations Snapshot to be implemented by the ClientProvider
     /// </summary>
-    public interface IConfigurationSnapshotService
+    public interface IConfigurationSnapshotRepository
     {
         /// <summary>
         /// Get all snapshots
