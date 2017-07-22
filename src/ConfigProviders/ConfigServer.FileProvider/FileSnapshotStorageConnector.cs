@@ -31,7 +31,7 @@ namespace ConfigServer.FileProvider
             DeleteSnaphot(directory);
             foreach (var entry in entries)
             {
-                File.WriteAllText($"{directory.Name}/{entry.ConfigurationName}.json", entry.ConfigurationJson);
+                File.WriteAllText($"{directory.FullName}/{entry.ConfigurationName}.json", entry.ConfigurationJson);
             }
 
             return Task.FromResult(true);

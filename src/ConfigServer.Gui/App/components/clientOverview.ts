@@ -20,9 +20,10 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 
         <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)" [csIsConfigurator]="isConfigurator"></resource-overview>
 
-        <h3>ConfigurationSets <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> <snapshot-input></snapshot-input></h3>
-        <div class="break">
-        </div>
+        <h3>ConfigurationSets</h3>
+        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> 
+        <snapshot-input [csClientId]="clientId"></snapshot-input>
+        <div class="break"></div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
         <button type="button" class="btn btn-primary" (click)="back()">Back</button>

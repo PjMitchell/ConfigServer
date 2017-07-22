@@ -102,8 +102,8 @@ namespace ConfigServer.Server
         public IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations(bool filterOutReadonlyConfigurations = false)
         {
             return filterOutReadonlyConfigurations
-                ? collection.Values.SelectMany(setModels => setModels.Configs.Select(MapToRegistration))
-                : collection.Values.SelectMany(setModels => setModels.Configs.Where(w=> !w.IsReadOnly).Select(MapToRegistration));
+                ? collection.Values.SelectMany(setModels => setModels.Configs.Where(w => !w.IsReadOnly).Select(MapToRegistration))
+                : collection.Values.SelectMany(setModels => setModels.Configs.Select(MapToRegistration));
         }
 
         private static ConfigurationRegistration MapToRegistration(ConfigurationModel configModel)

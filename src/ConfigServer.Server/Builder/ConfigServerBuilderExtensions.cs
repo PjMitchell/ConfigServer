@@ -91,19 +91,20 @@ namespace ConfigServer.Server
                 FileProvider = provider
             });
             
-            app.Map(HostPaths.Manager, client => client.UseEndpoint<ConfigManagerEndpoint>(options));
-            app.Map(HostPaths.Clients, client => client.UseEndpoint<ConfigClientEndPoint>(options));
-            app.Map(HostPaths.ConfigurationSet, client => client.UseEndpoint<ConfigurationSetEndpoint>(options));
-            app.Map(HostPaths.ConfigurationEditor, client => client.UseEndpoint<ConfigurationEditorEndpoint>(options));
-            app.Map(HostPaths.ConfigurationSetModel, client => client.UseEndpoint<ConfigurationSetModelEndpoint>(options));
-            app.Map(HostPaths.Download, client => client.UseEndpoint<DownloadEndpoint>(options));
-            app.Map(HostPaths.Upload, client => client.UseEndpoint<UploadEnpoint>(options));
-            app.Map(HostPaths.Resource, client => client.UseEndpoint<ResourceEndpoint>(options));
-            app.Map(HostPaths.Group, client => client.UseEndpoint<ClientGroupEndpoint>(options));
-            app.Map(HostPaths.Guid, client => client.UseEndpoint<GuidGeneratorEndpoint>(options));
-            app.Map(HostPaths.ResourceArchive, client => client.UseEndpoint<ResourceArchiveEndpoint>(options));
-            app.Map(HostPaths.Archive, client => client.UseEndpoint<ConfigArchiveEndPoint>(options));
-            app.Map(HostPaths.UserPermissions, client => client.UseEndpoint<PermissionEndpoint>(options));
+            app.MapEndpoint<ConfigManagerEndpoint>(HostPaths.Manager, options);
+            app.MapEndpoint<ConfigClientEndPoint>(HostPaths.Clients, options);
+            app.MapEndpoint<ConfigurationSetEndpoint>(HostPaths.ConfigurationSet, options);
+            app.MapEndpoint<ConfigurationEditorEndpoint>(HostPaths.ConfigurationEditor, options);
+            app.MapEndpoint<ConfigurationSetModelEndpoint>(HostPaths.ConfigurationSetModel, options);
+            app.MapEndpoint<DownloadEndpoint>(HostPaths.Download, options);
+            app.MapEndpoint<UploadEnpoint>(HostPaths.Upload, options);
+            app.MapEndpoint<ResourceEndpoint>(HostPaths.Resource, options);
+            app.MapEndpoint<ClientGroupEndpoint>(HostPaths.Group, options);
+            app.MapEndpoint<GuidGeneratorEndpoint>(HostPaths.Guid, options);
+            app.MapEndpoint<ResourceArchiveEndpoint>(HostPaths.ResourceArchive, options);
+            app.MapEndpoint<ConfigArchiveEndPoint>(HostPaths.Archive, options);
+            app.MapEndpoint<PermissionEndpoint>(HostPaths.UserPermissions, options);
+            app.MapEndpoint<SnapshotEndpoint>(HostPaths.Snapshot, options);
             app.UseEndpoint<ConfigEndpoint>(options);
             
             return app;

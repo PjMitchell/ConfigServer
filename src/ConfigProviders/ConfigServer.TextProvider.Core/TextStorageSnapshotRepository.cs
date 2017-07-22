@@ -54,7 +54,7 @@ namespace ConfigServer.TextProvider.Core
         public async Task<IEnumerable<SnapshotEntryInfo>> GetSnapshots()
         {
             var json = await connector.GetSnapshotRegistryFileAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<SnapshotEntryInfo>>(json);
+            return JsonConvert.DeserializeObject<IEnumerable<SnapshotEntryInfo>>(json)?? Enumerable.Empty<SnapshotEntryInfo>();
         }
 
 
