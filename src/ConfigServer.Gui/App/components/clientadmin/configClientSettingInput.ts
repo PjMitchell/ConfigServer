@@ -1,5 +1,5 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
+import { IConfigurationClientSetting } from '../../interfaces/configurationClientSetting';
 
 @Component({
     selector: 'edit-clientsetting-input',

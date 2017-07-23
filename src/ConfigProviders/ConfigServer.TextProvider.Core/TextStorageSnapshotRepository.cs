@@ -92,7 +92,7 @@ namespace ConfigServer.TextProvider.Core
             await locker.WaitAsync();
             try
             {
-                var snapshots = (await GetSnapshots()).Where(k => string.Equals(k.Id,snapshotId, StringComparison.OrdinalIgnoreCase));
+                var snapshots = (await GetSnapshots()).Where(k => !string.Equals(k.Id,snapshotId, StringComparison.OrdinalIgnoreCase));
                 await connector.SetSnapshotRegistryFileAsync(JsonConvert.SerializeObject(snapshots));
             }
             finally

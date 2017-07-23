@@ -1,9 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-import { GuidGenerator } from '../dataservices/guid-generator';
-import { IConfigurationClient } from '../interfaces/configurationClient';
-import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+import { ConfigurationClientGroupDataService } from '../../dataservices/clientgroup-data.service';
+import { GuidGenerator } from '../../dataservices/guid-generator';
+import { IConfigurationClient } from '../../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
 
 @Component({
     template: `

@@ -11,18 +11,12 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 
 @Component({
     template: `
-        <div *ngIf="client">
-            <h2 id="client-name">{{client.name}}</h2>
-            <p id="client-id">Id: {{client.clientId}}</p>
-            <p id="client-env">{{client.enviroment}}</p>
-            <p id="client-desc">{{client.description}}</p>
-        </div>
-
+        <client-header [csClient]="client"></client-header>
         <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)" [csIsConfigurator]="isConfigurator"></resource-overview>
-
         <h3>ConfigurationSets</h3>
-        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> 
+        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button>
         <snapshot-input [csClientId]="clientId"></snapshot-input>
+        <button type="button" class="btn btn-primary" (click)="goToLoadSnapshot()">Load Snapshot</button>
         <div class="break"></div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
@@ -64,6 +58,10 @@ export class ClientOverviewComponent implements OnInit {
 
     public goToArchive() {
         this.router.navigate(['/configArchive', this.client.clientId]);
+    }
+
+    public goToLoadSnapshot() {
+        this.router.navigate(['/pushSnapshots', this.client.clientId]);
     }
 
     public back() {

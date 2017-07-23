@@ -1,8 +1,8 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ResourceDataService } from '../dataservices/resource-data.service';
-import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-import { IChildElement } from '../interfaces/htmlInterfaces';
-import { IResourceInfo } from '../interfaces/resourceInfo';
+import { ResourceDataService } from '../../dataservices/resource-data.service';
+import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
+import { IChildElement } from '../../interfaces/htmlInterfaces';
+import { IResourceInfo } from '../../interfaces/resourceInfo';
 
 @Component({
     selector: 'edit-clientgroup-input',

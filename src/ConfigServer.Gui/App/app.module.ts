@@ -4,22 +4,24 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { appRoutingProviders, routing } from './app.routing';
 import { AppShell } from './app.shell';
+import { EditClientSettingInputComponent } from './components/clientadmin/configClientSettingInput';
+import { CreateClientComponent } from './components/clientadmin/createClient';
+import { CreateClientGroupComponent } from './components/clientadmin/createClientGroup';
+import { EditClientComponent } from './components/clientadmin/editClient';
+import { EditClientGroupComponent } from './components/clientadmin/editClientGroup';
+import { EditClientGroupInputComponent } from './components/clientadmin/editClientGroupInput';
+import { EditClientInputComponent } from './components/clientadmin/editClientInput';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { ConfigurationInputComponent } from './components/clientConfigurationInput';
+import { ClientHeaderComponent } from "./components/clientHeader";
 import { OptionInputComponent } from './components/clientOptionInput';
 import { ClientOverviewComponent } from './components/clientOverview';
 import { ConfigArchiveComponent } from './components/configArchive';
-import { EditClientSettingInputComponent } from './components/configClientSettingInput';
 import { ConfigurationOverviewComponent } from './components/configurationOverview';
 import { ConfigurationSetComponent } from './components/configurationSetOverview';
 import { CopyResourceComponent } from './components/copyResource';
-import { CreateClientComponent } from './components/createClient';
-import { CreateClientGroupComponent } from './components/createClientGroup';
-import { EditClientComponent } from './components/editClient';
-import { EditClientGroupComponent } from './components/editClientGroup';
-import { EditClientGroupInputComponent } from './components/editClientGroupInput';
-import { EditClientInputComponent } from './components/editClientInput';
 import { GroupClientsComponent } from './components/groupClients';
+import { GroupHeaderComponent } from "./components/groupHeader";
 import { HomeComponent } from './components/home';
 import { ConfigurationPropertyBoolInputComponent } from './components/propertyinputs/clientPropertyBoolInput';
 import { ConfigurationPropertyCollectionInputComponent } from './components/propertyinputs/clientPropertyCollectionInput';
@@ -34,7 +36,9 @@ import { ConfigurationPropertyStringInputComponent } from './components/property
 import { ConfigurationPropertyComponent } from './components/propertyinputs/configProperty';
 import { ResourceArchiveComponent } from './components/resourceArchive';
 import { ResourceOverviewComponent } from './components/resourceOverview';
-import { SaveSnapshotInputComponent } from './components/saveSnapshotInput';
+import { PushSnapshotComponent } from "./components/snapshot/pushSnapshot";
+import { SaveSnapshotInputComponent } from './components/snapshot/saveSnapshotInput';
+import { SnapshotOverviewComponent } from "./components/snapshot/snapshotOverview";
 import { GroupImageFileUploaderComponent } from './components/uploaders/groupImageUploader';
 import { JsonFileUploaderComponent } from './components/uploaders/jsonFileUploader';
 import { ResourceFileUploaderComponent } from './components/uploaders/resourceFileUploader';
@@ -45,11 +49,11 @@ import { ConfigurationDataService } from './dataservices/config-data.service';
 import { ConfigurationSetDataService } from './dataservices/configset-data.service';
 import { GuidGenerator } from './dataservices/guid-generator';
 import { ResourceDataService } from './dataservices/resource-data.service';
+import { SnapshotDataService } from "./dataservices/snapshot-data.service";
 import { UploadDataService } from './dataservices/upload-data.service';
 import { UserPermissionService } from './dataservices/userpermission-data.service';
 import { ObjectToIteratorPipe } from './pipes/objectToIterable';
 import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
-import { SnapshotDataService } from "./dataservices/snapshot-data.service";
 
 @NgModule({
     bootstrap: [AppShell],
@@ -89,6 +93,10 @@ import { SnapshotDataService } from "./dataservices/snapshot-data.service";
         ConfigArchiveComponent,
         CopyResourceComponent,
         SaveSnapshotInputComponent,
+        SnapshotOverviewComponent,
+        PushSnapshotComponent,
+        GroupHeaderComponent,
+        ClientHeaderComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],
@@ -104,7 +112,7 @@ import { SnapshotDataService } from "./dataservices/snapshot-data.service";
         ResourceDataService,
         UploadDataService,
         UserPermissionService,
-        SnapshotDataService
+        SnapshotDataService,
         ],
 })
 

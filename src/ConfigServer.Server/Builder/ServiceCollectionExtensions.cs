@@ -67,7 +67,9 @@ namespace ConfigServer.Server
             collection.AddCommandHandler<UpdateConfigurationSetFromJsonUploadCommand, UpdateConfigurationSetFromJsonUploadCommandHandler>();
             collection.AddCommandHandler<DeleteSnapshotCommand, DeleteSnapshotCommandHandler>();
             collection.AddCommandHandler<CreateSnapshotCommand, CreateSnapshotCommandHandler>();
+            collection.AddCommandHandler<PushSnapshotToClientCommand, PushSnapshotToClientCommandHandler>();
 
+            
             return collection;
         }
 

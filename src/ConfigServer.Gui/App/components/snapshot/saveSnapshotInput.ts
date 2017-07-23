@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SnapshotDataService } from "../dataservices/snapshot-data.service";
+import { SnapshotDataService } from "../../dataservices/snapshot-data.service";
 @Component({
     selector: 'snapshot-input',
     template: `
@@ -17,10 +17,10 @@ export class SaveSnapshotInputComponent {
 
     public snapshot: string;
 
-    constructor(private dataService: SnapshotDataService){}
+    constructor(private dataService: SnapshotDataService) {}
 
     public save(): void {
         this.dataService.saveSnapShot({ clientId: this.clientId, name: this.snapshot });
-        this.snapshot = ''; 
+        this.snapshot = '';
     }
 }
