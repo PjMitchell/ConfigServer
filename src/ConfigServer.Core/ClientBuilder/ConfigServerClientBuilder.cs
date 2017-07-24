@@ -19,6 +19,7 @@ namespace ConfigServer.Core
             ServiceCollection = serviceCollection;
             ConfigurationRegistry = configurationCollection;
             ServiceCollection.AddSingleton(configurationCollection);
+            ServiceCollection.AddSingleton<IConfigurationRegistry>(configurationCollection);
         }
 
         /// <summary>

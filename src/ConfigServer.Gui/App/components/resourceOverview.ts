@@ -5,9 +5,10 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Component({
     selector: 'resource-overview',
     template: `
-        <h3>Resources <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button> <button type="button" class="btn btn-primary" *ngIf="isConfigurator" (click)="gotoCopy()">Copy</button></h3>
-        <div class="break">
-        </div>
+        <h3>Resources</h3>
+        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button>
+        <button type="button" class="btn btn-primary" *ngIf="isConfigurator" (click)="gotoCopy()">Copy</button>
+        <div class="break"></div>
         <div class="row">
             <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
                 <p>{{resource.name}}</p>

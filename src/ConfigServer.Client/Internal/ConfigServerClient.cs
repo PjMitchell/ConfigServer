@@ -13,7 +13,7 @@ namespace ConfigServer.Client
     /// </summary>
     public class ConfigServerClient : IConfigServer
     {
-        private readonly ConfigurationRegistry collection;
+        private readonly IConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly IHttpClientWrapper client;
         private readonly IMemoryCache cache;
@@ -26,7 +26,7 @@ namespace ConfigServer.Client
         /// <param name="memorycache">Memory cache</param>
         /// <param name="collection">Configuration Registry</param>
         /// <param name="options">ConfigServerClientOptions</param>
-        public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, ConfigurationRegistry collection, ConfigServerClientOptions options)
+        public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, IConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
             this.collection = collection;

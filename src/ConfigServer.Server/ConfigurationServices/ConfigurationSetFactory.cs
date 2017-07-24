@@ -18,9 +18,9 @@ namespace ConfigServer.Server
     {
         private readonly IConfigProvider configProvider;
         private readonly IOptionSetFactory optionSetFactory;
-        private readonly ConfigurationSetRegistry registry;
+        private readonly ConfigurationModelRegistry registry;
 
-        public ConfigurationSetFactory(IConfigProvider configProvider, IOptionSetFactory optionSetFactory, ConfigurationSetRegistry registry)
+        public ConfigurationSetFactory(IConfigProvider configProvider, IOptionSetFactory optionSetFactory, ConfigurationModelRegistry registry)
         {
             this.configProvider = configProvider;
             this.optionSetFactory = optionSetFactory;

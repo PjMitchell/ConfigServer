@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
     {
         readonly IConfigurationSetFactory target;
         Mock<IConfigProvider> mockConfigProvider;
-        ConfigurationSetRegistry registry;
+        ConfigurationModelRegistry registry;
         ConfigurationIdentity identity;
         List<ExternalOption> defaultOptions;
         List<OptionDependentOnAnotherOption> additionalOption;
@@ -23,7 +23,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         public ConfigurationSetFactoryTests()
         {
             identity = new ConfigurationIdentity(new ConfigurationClient("fbce468f-0950-4b5f-a7e1-8e24e746bb91"), new Version(1, 0));
-            registry = new ConfigurationSetRegistry();
+            registry = new ConfigurationModelRegistry();
             registry.AddConfigurationSet(new TestConfiguationModule().BuildConfigurationSetModel());
             defaultOptions = new List<ExternalOption>
             {

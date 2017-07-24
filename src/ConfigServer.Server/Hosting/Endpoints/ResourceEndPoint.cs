@@ -12,9 +12,9 @@ namespace ConfigServer.Server
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceStore resourceStore;
         private readonly IHttpResponseFactory httpResponseFactory;
-        private readonly IConfigurationSetRegistry registry;
+        private readonly IConfigurationModelRegistry registry;
         private const string clientGroupImagePath = "ClientGroupImages";
-        public ResourceEndpoint(IConfigurationClientService configClientService,IConfigurationSetRegistry registry, IResourceStore resourceStore, IHttpResponseFactory httpResponseFactory)
+        public ResourceEndpoint(IConfigurationClientService configClientService,IConfigurationModelRegistry registry, IResourceStore resourceStore, IHttpResponseFactory httpResponseFactory)
         {
             this.configClientService = configClientService;
             this.resourceStore = resourceStore;

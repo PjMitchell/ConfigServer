@@ -16,11 +16,11 @@ namespace ConfigServer.Server
     {
         readonly IConfigurationSetFactory factory;
         readonly IMemoryCache memoryCache;
-        readonly ConfigurationSetRegistry registry;
+        readonly ConfigurationModelRegistry registry;
         private const string cachePrefix = "ConfigServer_ConfigurationSetService_";
 
 
-        public ConfigurationSetService(IConfigurationSetFactory factory, IMemoryCache memoryCache, ConfigurationSetRegistry registry)
+        public ConfigurationSetService(IConfigurationSetFactory factory, IMemoryCache memoryCache, ConfigurationModelRegistry registry)
         {
             this.factory = factory;
             this.memoryCache = memoryCache;

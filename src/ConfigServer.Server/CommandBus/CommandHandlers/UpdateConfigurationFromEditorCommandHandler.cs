@@ -9,11 +9,11 @@ namespace ConfigServer.Server
     {
         private readonly IConfigurationService configurationService;
         private readonly IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper;
-        private readonly IConfigurationSetRegistry configSetRegistry;
+        private readonly IConfigurationModelRegistry configSetRegistry;
         private readonly IConfigurationValidator validator;
         private readonly IConfigRepository configRepository;
         private readonly IEventService eventService;
-        public UpdateConfigurationFromEditorCommandHandler(IConfigurationService configurationService, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, IConfigurationSetRegistry configSetRegistry, IConfigurationValidator validator, IConfigRepository configRepository, IEventService eventService)
+        public UpdateConfigurationFromEditorCommandHandler(IConfigurationService configurationService, IConfigurationUpdatePayloadMapper configurationUpdatePayloadMapper, IConfigurationModelRegistry configSetRegistry, IConfigurationValidator validator, IConfigRepository configRepository, IEventService eventService)
         {
             this.configurationService = configurationService;
             this.configurationUpdatePayloadMapper = configurationUpdatePayloadMapper;

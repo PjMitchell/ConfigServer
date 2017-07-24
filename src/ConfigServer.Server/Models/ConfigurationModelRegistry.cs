@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ConfigServer.Core;
 
 namespace ConfigServer.Server
 {
     /// <summary>
-    /// Registry of ConfigurationSets
+    /// Registry of ConfigurationSets Model
     /// </summary>
-    internal class ConfigurationSetRegistry : IConfigurationSetRegistry
+    internal class ConfigurationModelRegistry : IConfigurationModelRegistry
     {
         private readonly Dictionary<Type, ConfigurationSetModel> collection;
         private Version version;
@@ -16,7 +17,7 @@ namespace ConfigServer.Server
         /// <summary>
         /// Initializes new ConfigurationSetRegistry
         /// </summary>
-        public ConfigurationSetRegistry()
+        public ConfigurationModelRegistry()
         {
             collection = new Dictionary<Type, ConfigurationSetModel>();
             version = new Version(0, 0);
@@ -94,6 +95,23 @@ namespace ConfigServer.Server
         }
 
         /// <summary>
+        /// Get Configuration Registrations
+        /// </summary>
+        /// <param name="filterOutReadonlyConfigurations">flags if readonly configruations are to be removed</param>
+        /// <returns>All Configuration Registrations</returns>
+        public IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations(bool filterOutReadonlyConfigurations = false)
+        {
+            return filterOutReadonlyConfigurations
+                ? collection.Values.SelectMany(setModels => setModels.Configs.Where(w => !w.IsReadOnly).Select(MapToRegistration))
+                : collection.Values.SelectMany(setModels => setModels.Configs.Select(MapToRegistration));
+        }
+
+        private static ConfigurationRegistration MapToRegistration(ConfigurationModel configModel)
+        {
+            return new ConfigurationRegistration(configModel.Type, configModel.Name, configModel.IsCollection);
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the ConfigurationSetModels
         /// </summary>
         /// <returns>Enumerator for the ConfigurationSetCollection</returns>
@@ -106,5 +124,7 @@ namespace ConfigServer.Server
         {
             return collection.Values.GetEnumerator();
         }
+
+
     }
 }

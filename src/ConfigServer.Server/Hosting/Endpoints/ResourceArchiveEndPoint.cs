@@ -12,8 +12,8 @@ namespace ConfigServer.Server
         private readonly IConfigurationClientService configClientService;
         private readonly IResourceArchive resourceArchive;
         private readonly IHttpResponseFactory httpResponseFactory;
-        private readonly IConfigurationSetRegistry registry;
-        public ResourceArchiveEndpoint(IConfigurationClientService configClientService,IConfigurationSetRegistry registry, IResourceArchive resourceArchive, IHttpResponseFactory httpResponseFactory)
+        private readonly IConfigurationModelRegistry registry;
+        public ResourceArchiveEndpoint(IConfigurationClientService configClientService,IConfigurationModelRegistry registry, IResourceArchive resourceArchive, IHttpResponseFactory httpResponseFactory)
         {
             this.configClientService = configClientService;
             this.resourceArchive = resourceArchive;

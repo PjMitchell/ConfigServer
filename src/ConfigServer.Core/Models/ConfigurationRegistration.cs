@@ -49,7 +49,13 @@ namespace ConfigServer.Core
             return new ConfigurationRegistration(typeof(TConfig), name, true);
         }
 
-        private ConfigurationRegistration(Type type,string name, bool isCollection)
+        /// <summary>
+        /// Constructs new ConfigurationRegistration
+        /// </summary>
+        /// <param name="type">type of configuration</param>
+        /// <param name="name">Name of configurations</param>
+        /// <param name="isCollection">is collection type</param>
+        public ConfigurationRegistration(Type type,string name, bool isCollection)
         {
             ConfigurationName = name;
             ConfigType = type;

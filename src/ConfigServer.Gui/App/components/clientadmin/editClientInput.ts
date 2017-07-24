@@ -1,6 +1,6 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IConfigurationClient } from '../interfaces/configurationClient';
-import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
+import { IConfigurationClient } from '../../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
 
 @Component({
     selector: 'edit-client-input',

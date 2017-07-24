@@ -1,11 +1,11 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfigurationClientDataService } from '../dataservices/client-data.service';
-import { ConfigurationClientGroupDataService } from '../dataservices/clientgroup-data.service';
-import { GuidGenerator } from '../dataservices/guid-generator';
-import { IConfigurationClient } from '../interfaces/configurationClient';
-import { IConfigurationClientGroup } from '../interfaces/configurationClientGroup';
-import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
+import { ConfigurationClientDataService } from '../../dataservices/client-data.service';
+import { ConfigurationClientGroupDataService } from '../../dataservices/clientgroup-data.service';
+import { GuidGenerator } from '../../dataservices/guid-generator';
+import { IConfigurationClient } from '../../interfaces/configurationClient';
+import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
+import { IConfigurationClientSetting } from '../../interfaces/configurationClientSetting';
 
 @Component({
     template: `

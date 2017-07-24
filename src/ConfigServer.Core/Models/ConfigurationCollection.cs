@@ -7,7 +7,29 @@ namespace ConfigServer.Core
     /// <summary>
     /// Registry of configurations in a client
     /// </summary>
-    public class ConfigurationRegistry : IEnumerable<ConfigurationRegistration>
+    public interface IConfigurationRegistry : IEnumerable<ConfigurationRegistration>
+    {
+        /// <summary>
+        /// Gets Registration for type
+        /// </summary>
+        /// <param name="type">type of configuration expected in the registry</param>
+        /// <returns>ConfigurationRegistration for type</returns>
+        /// <exception cref="KeyNotFoundException">When type not found in registry</exception>
+        ConfigurationRegistration Get(Type type);
+
+        /// <summary>
+        /// Tries to get Registration for type
+        /// </summary>
+        /// <param name="type">Type of config being requested</param>
+        /// <param name="value">ConfigurationRegistration for type</param>
+        /// <returns>True if found, false if not</returns>
+        bool TryGet(Type type, out ConfigurationRegistration value);
+    }
+
+    /// <summary>
+    /// Registry of configurations in a client
+    /// </summary>
+    public class ConfigurationRegistry : IConfigurationRegistry
     {
         private readonly Dictionary<Type, ConfigurationRegistration> collection;
 

@@ -39,7 +39,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .ReturnsAsync(() => expectedClient);
             resourceStore = new Mock<IResourceArchive>();
             httpResponseFactory = new Mock<IHttpResponseFactory>();
-            var registry = new ConfigurationSetRegistry();
+            var registry = new ConfigurationModelRegistry();
             registry.SetVersion(version);
             target = new ResourceArchiveEndpoint(configClientService.Object, registry, resourceStore.Object, httpResponseFactory.Object);
             options = new ConfigServerOptions();

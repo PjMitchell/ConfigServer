@@ -2,7 +2,7 @@
   <Import Project="../../../common.props" />
   <PropertyGroup>
     <Description>Common Configuration repository that uses a storage connector that returns and accepts json string</Description>
-    <TargetFramework>netstandard1.0</TargetFramework>
+    <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>ConfigServer.TextProvider.Core</AssemblyName>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ConfigServer.Core\ConfigServer.Core.csproj" />
+    <ProjectReference Include="..\..\ConfigServer.Server\ConfigServer.Server.csproj" />
   </ItemGroup>
 </Project>

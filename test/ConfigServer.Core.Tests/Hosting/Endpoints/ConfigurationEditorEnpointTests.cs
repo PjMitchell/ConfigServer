@@ -17,7 +17,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private readonly Mock<IConfigurationSetModelPayloadMapper> modelPayloadMapper;
         private readonly Mock<IConfigInstanceRouter> configInstanceRouter;
         private readonly Mock<IConfigurationEditModelMapper> configurationEditModelMapper;
-        private readonly ConfigurationSetRegistry configCollection;
+        private readonly ConfigurationModelRegistry configCollection;
         private readonly Mock<IConfigurationClientService> configClientService;
         private readonly Mock<ICommandBus> commandBus;
         private const string valuePath = "Value";
@@ -38,7 +38,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             modelPayloadMapper = new Mock<IConfigurationSetModelPayloadMapper>();
             configInstanceRouter = new Mock<IConfigInstanceRouter>();
             configurationEditModelMapper = new Mock<IConfigurationEditModelMapper>();
-            configCollection = new ConfigurationSetRegistry();
+            configCollection = new ConfigurationModelRegistry();
             var configSetModel = new ConfigurationSetModel<SampleConfigSet>("Sample", "Sample description");
             configSetModel.GetOrInitialize(set => set.SampleConfig);
             configCollection.AddConfigurationSet(configSetModel);

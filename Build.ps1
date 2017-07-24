@@ -52,7 +52,9 @@ function Exec
 function ExecuteGulpTasks
 {
 	Push-Location "./src/ConfigServer.Gui"  
-	Write-Host "npm package restore"
+	Write-Host "Update npm"
+	& "npm" update npm -g
+	Write-Host "npm package restore"	
 	& "npm" install
 	if ($LastExitCode -ne 0) {
 		Write-Error "Npm package restore failed";

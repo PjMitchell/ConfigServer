@@ -7,7 +7,7 @@ namespace ConfigServer.Server
 {
     internal abstract class ConfigurationOptionModel : ConfigurationModel
     {
-        public ConfigurationOptionModel(string name, Type type, Type configurationSetType) : base(name, type, configurationSetType)
+        public ConfigurationOptionModel(string name, Type type, Type configurationSetType) : base(name, type, configurationSetType, true)
         {
         }
 

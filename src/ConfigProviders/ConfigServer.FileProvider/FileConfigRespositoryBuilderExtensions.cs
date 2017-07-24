@@ -26,12 +26,15 @@ namespace ConfigServer.FileProvider
             if (string.IsNullOrWhiteSpace(options.ConfigStorePath))
                 throw new ArgumentException($"{nameof(FileConfigRespositoryBuilderOptions.ConfigStorePath)} cannot be null or whitespace", nameof(options));
             builder.ServiceCollection.AddMemoryCache();
-            builder.ServiceCollection.Add(ServiceDescriptor.Singleton(options));
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigRepository, TextStorageConfigurationRepository>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigClientRepository, TextStorageConfigurationClientRepository>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigProvider, TextStorageConfigurationRepository>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IStorageConnector, FileStorageConnector>());
-            builder.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigArchive, FileConfigArchive>());
+            builder.ServiceCollection.AddSingleton(options);
+            builder.ServiceCollection.AddTransient<IConfigRepository, TextStorageConfigurationRepository>();
+            builder.ServiceCollection.AddTransient<IConfigClientRepository, TextStorageConfigurationClientRepository>();
+            builder.ServiceCollection.AddTransient<IConfigProvider, TextStorageConfigurationRepository>();
+            builder.ServiceCollection.AddTransient<IStorageConnector, FileStorageConnector>();
+            builder.ServiceCollection.AddTransient<IConfigArchive, FileConfigArchive>();
+            builder.ServiceCollection.AddTransient<IConfigurationSnapshotRepository, TextStorageSnapshotRepository>();
+            builder.ServiceCollection.AddTransient<ISnapshotStorageConnector, FileSnapshotStorageConnector>();
+
 
             return builder;
         }

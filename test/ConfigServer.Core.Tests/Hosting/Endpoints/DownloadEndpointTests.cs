@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         private static readonly Claim readClaim = new Claim(ConfigServerConstants.ClientAdminClaimType, ConfigServerConstants.ConfiguratorClaimValue);
         private readonly IEndpoint target;
         private readonly Mock<IHttpResponseFactory> responseFactory;
-        private readonly ConfigurationSetRegistry configCollection;
+        private readonly ConfigurationModelRegistry configCollection;
         private readonly Mock<IConfigurationSetService> configurationSetService;
         private readonly Mock<IConfigurationClientService> configClientService;
         private ConfigurationClient expectedClient;
@@ -26,7 +26,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         {
             var testconfigSet = new SampleConfigSet();
             var definition = testconfigSet.BuildConfigurationSetModel();
-            configCollection = new ConfigurationSetRegistry();
+            configCollection = new ConfigurationModelRegistry();
             configCollection.AddConfigurationSet(definition);
             responseFactory = new Mock<IHttpResponseFactory>();
             configurationSetService = new Mock<IConfigurationSetService>();

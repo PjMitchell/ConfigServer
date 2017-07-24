@@ -1,17 +1,19 @@
 ﻿
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CreateClientComponent } from './components/clientadmin/createClient';
+import { CreateClientGroupComponent } from './components/clientadmin/createClientGroup';
+import { EditClientComponent } from './components/clientadmin/editClient';
+import { EditClientGroupComponent } from './components/clientadmin/editClientGroup';
 import { ClientConfigShellComponent } from './components/clientConfigShell';
 import { ClientOverviewComponent } from './components/clientOverview';
 import { ConfigArchiveComponent } from './components/configArchive';
 import { CopyResourceComponent } from "./components/copyResource";
-import { CreateClientComponent } from './components/createClient';
-import { CreateClientGroupComponent } from './components/createClientGroup';
-import { EditClientComponent } from './components/editClient';
-import { EditClientGroupComponent } from './components/editClientGroup';
 import { GroupClientsComponent } from './components/groupClients';
 import { HomeComponent } from './components/home';
 import { ResourceArchiveComponent } from './components/resourceArchive';
+import { PushSnapshotComponent } from "./components/snapshot/pushSnapshot";
+import { SnapshotOverviewComponent } from './components/snapshot/snapshotOverview';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
@@ -26,6 +28,9 @@ const appRoutes: Routes = [
     { path: 'resourceArchive/:clientId', component: ResourceArchiveComponent },
     { path: 'configArchive/:clientId', component: ConfigArchiveComponent },
     { path: 'copyResource/:clientId', component: CopyResourceComponent },
+    { path: 'snapshots/:groupId', component: SnapshotOverviewComponent },
+    { path: 'pushSnapshots/:clientId', component: PushSnapshotComponent },
+
 ];
 
 export const appRoutingProviders: any[] = [

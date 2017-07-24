@@ -7,15 +7,9 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
 
 @Component({
     template: `
-            <div class="row">
-                <div class="col-sm-6 col-md-4">
-                    <div *ngIf="group.imagePath"><img id="group-image" class="img-responsive" src="Resource/ClientGroupImages/{{group.imagePath}}" /></div>
-                </div>
-                <div class="col-sm-6 col-md-8">
-                    <h3 id="group-title">Group: {{group.name}}</h3>
-                    <h4 id="group-id">Id: {{group.groupId}}</h4>
-                </div>
-            </div>
+            <group-header [csGroup]="group"></group-header>
+            <hr />
+                <button type="button" class="btn btn-primary" (click)="goToSnapshots()">Snapshots</button>
             <hr />
             <div class="row">
                 <div id="client-panel-{{client.clientId}}" class="col-sm-6 col-md-4 client-panel"  *ngFor="let client of clients">
@@ -76,6 +70,10 @@ export class GroupClientsComponent  implements OnInit {
 
     public editClient(clientId: string) {
         this.router.navigate(['/editClient', clientId]);
+    }
+
+    public goToSnapshots() {
+        this.router.navigate(['/snapshots', this.groupId]);
     }
 
     public back() {

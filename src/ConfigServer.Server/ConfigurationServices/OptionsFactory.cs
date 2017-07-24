@@ -32,9 +32,9 @@ namespace ConfigServer.Server
     internal class OptionSetFactory : IOptionSetFactory
     {
         private readonly IServiceProvider serviceProvider;
-        private readonly ConfigurationSetRegistry registry;
+        private readonly ConfigurationModelRegistry registry;
 
-        public OptionSetFactory(IServiceProvider serviceProvider, ConfigurationSetRegistry registry)
+        public OptionSetFactory(IServiceProvider serviceProvider, ConfigurationModelRegistry registry)
         {
             this.serviceProvider = serviceProvider;
             this.registry = registry;

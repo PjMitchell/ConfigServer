@@ -12,7 +12,7 @@ namespace ConfigServer.Core.Tests.Commands
     {
         private readonly Mock<IConfigurationService> configurationService;
         private readonly Mock<IConfigurationUpdatePayloadMapper> configurationUpdatePayloadMapper;
-        private readonly Mock<IConfigurationSetRegistry> configSetRegistry;
+        private readonly Mock<IConfigurationModelRegistry> configSetRegistry;
         private readonly Mock<IConfigRepository> configRepository;
         private readonly Mock<IEventService> eventService;
 
@@ -33,7 +33,7 @@ namespace ConfigServer.Core.Tests.Commands
             configurationUpdatePayloadMapper = new Mock<IConfigurationUpdatePayloadMapper>();
             configurationUpdatePayloadMapper.Setup(m => m.UpdateConfigurationInstance(It.IsAny<ConfigInstance>(),It.IsAny<string>(),It.IsAny<ConfigurationSetModel>()))
     .ReturnsAsync(() => new ConfigInstance<SampleConfig>());
-            configSetRegistry = new Mock<IConfigurationSetRegistry>();
+            configSetRegistry = new Mock<IConfigurationModelRegistry>();
             configSetRegistry.Setup(r => r.GetConfigSetForConfig(typeof(SampleConfig)))
                 .Returns(() => model);
             configurationService = new Mock<IConfigurationService>();

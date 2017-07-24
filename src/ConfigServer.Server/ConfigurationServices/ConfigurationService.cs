@@ -18,9 +18,9 @@ namespace ConfigServer.Server
     internal class ConfigurationService : IConfigurationService
     {
         private readonly IConfigurationSetService configurationSetService;
-        private readonly ConfigurationSetRegistry registry;
+        private readonly ConfigurationModelRegistry registry;
 
-        public ConfigurationService(IConfigurationSetService configurationSetService, ConfigurationSetRegistry registry)
+        public ConfigurationService(IConfigurationSetService configurationSetService, ConfigurationModelRegistry registry)
         {
             this.configurationSetService = configurationSetService;
             this.registry = registry;

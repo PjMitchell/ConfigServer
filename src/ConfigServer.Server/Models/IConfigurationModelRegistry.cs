@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ConfigServer.Server
 {
     /// <summary>
-    /// Registry of ConfigurationSets
+    /// Registry of Configuration Models
     /// </summary>
-    public interface IConfigurationSetRegistry : IEnumerable<ConfigurationSetModel>
+    public interface IConfigurationModelRegistry : IEnumerable<ConfigurationSetModel>
     {
         /// <summary>
         /// Gets version of configuration
@@ -54,5 +55,12 @@ namespace ConfigServer.Server
         /// <param name="type">configuration type to be queried</param>
         /// <returns>ConfigurationSetModel for Configuration type</returns>
         ConfigurationSetModel GetConfigSetForConfig(Type type);
+
+        /// <summary>
+        /// Get Configuration Registrations
+        /// </summary>
+        /// <param name="filterOutReadonlyConfigurations">flags if readonly configruations are to be removed</param>
+        /// <returns>All Configuration Registrations</returns>
+        IEnumerable<ConfigurationRegistration> GetConfigurationRegistrations(bool filterOutReadonlyConfigurations = false);
     }
 }

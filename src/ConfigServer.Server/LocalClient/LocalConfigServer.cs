@@ -12,8 +12,8 @@ namespace ConfigServer.Server
         private readonly IResourceStore resourceStore;
         private readonly Uri pathToConfigServer;
         private readonly IConfigurationClientService configurationClientService;
-        private readonly IConfigurationSetRegistry registry;
-        public LocalConfigServerClient(IConfigProvider configProvider,IConfigurationClientService configurationClientService, IConfigurationSetRegistry registry, IResourceStore resourceStore, string applicationId, Uri pathToConfigServer)
+        private readonly IConfigurationModelRegistry registry;
+        public LocalConfigServerClient(IConfigProvider configProvider,IConfigurationClientService configurationClientService, IConfigurationModelRegistry registry, IResourceStore resourceStore, string applicationId, Uri pathToConfigServer)
         {
             this.configProvider = configProvider;
             this.applicationId = applicationId;

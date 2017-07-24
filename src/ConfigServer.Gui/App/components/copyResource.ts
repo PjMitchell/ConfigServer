@@ -19,10 +19,10 @@ import { ISelectableResourceInfo } from '../interfaces/selectableResourceInfo';
         <div class="row" *ngIf="isClientInfoReady">
             <div *ngIf="sourceClient" class="col-sm-4 col-md-4">
                 <h4>Source</h4>
-                <h5 id="client-name">{{sourceClient.name}}</h5>
-                <p id="client-id">Id: {{sourceClient.clientId}}</p>
-                <p id="client-env">{{sourceClient.enviroment}}</p>
-                <p id="client-desc">{{sourceClient.description}}</p>
+                <h5 id="source-client-name">{{sourceClient.name}}</h5>
+                <p id="source-client-id">Id: {{sourceClient.clientId}}</p>
+                <p id="source-client-env">{{sourceClient.enviroment}}</p>
+                <p id="source-client-desc">{{sourceClient.description}}</p>
             </div>
             <div  *ngIf="clients.length > 0"   class="col-sm-4 col-md-4">
                 <select [(ngModel)]="targetClient"  class="form-control">
@@ -34,10 +34,10 @@ import { ISelectableResourceInfo } from '../interfaces/selectableResourceInfo';
             </div>
             <div *ngIf="targetClient" class="col-sm-4 col-md-4">
                 <h4>Target</h4>
-                <h5 id="client-name">{{targetClient.name}}</h5>
-                <p id="client-id">Id: {{targetClient.clientId}}</p>
-                <p id="client-env">{{targetClient.enviroment}}</p>
-                <p id="client-desc">{{targetClient.description}}</p>
+                <h5 id="target-client-name">{{targetClient.name}}</h5>
+                <p id="target-client-id">Id: {{targetClient.clientId}}</p>
+                <p id="target-client-env">{{targetClient.enviroment}}</p>
+                <p id="target-client-desc">{{targetClient.description}}</p>
             </div>
         </div>
         <hr />

@@ -15,6 +15,8 @@
         public const string Group = "/ClientGroup";
         public const string Guid = "/GenerateGuid";
         public const string UserPermissions = "/UserPermissions";
+        public const string Snapshot = "/Snapshot";
+
 
     }
 }

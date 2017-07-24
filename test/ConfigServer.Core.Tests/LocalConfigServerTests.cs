@@ -15,7 +15,7 @@ namespace ConfigServer.Core.Tests
         readonly IConfigRepository repository;
         readonly Mock<IConfigurationClientService> clientservice;
         readonly Mock<IResourceStore> resourceStore;
-        readonly Mock<IConfigurationSetRegistry> registry;
+        readonly Mock<IConfigurationModelRegistry> registry;
         readonly ConfigurationIdentity configIdentity = new ConfigurationIdentity(new ConfigurationClient("3E37AC18-A00F-47A5-B84E-C79E0823F6D4"), new Version(1, 0));
         private readonly Uri testUri = new Uri("https://localhost:30300/");
 
@@ -28,7 +28,7 @@ namespace ConfigServer.Core.Tests
             clientservice = new Mock<IConfigurationClientService>();
             clientservice.Setup(service => service.GetClientOrDefault(configIdentity.Client.ClientId))
                 .ReturnsAsync(configIdentity.Client);
-            registry = new Mock<IConfigurationSetRegistry>();
+            registry = new Mock<IConfigurationModelRegistry>();
             registry.Setup(s => s.GetVersion())
                 .Returns(() => configIdentity.ServerVersion);
             resourceStore = new Mock<IResourceStore>();

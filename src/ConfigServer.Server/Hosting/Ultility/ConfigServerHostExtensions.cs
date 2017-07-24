@@ -9,6 +9,11 @@ namespace ConfigServer.Server
 {
     internal static class ConfigServerHostExtensions
     {
+        public static IApplicationBuilder MapEndpoint<TEndpoint>(this IApplicationBuilder app,string path, ConfigServerOptions options) where TEndpoint : IEndpoint
+        {
+            return app.Map(path, client => client.UseEndpoint<TEndpoint>(options));
+        }
+
         public static IApplicationBuilder UseEndpoint<TEndpoint>(this IApplicationBuilder app, ConfigServerOptions options) where TEndpoint : IEndpoint
         {
             return app.Use((context, next) => HandleEndPoint<TEndpoint>(context, next, options));

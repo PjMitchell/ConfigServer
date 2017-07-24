@@ -33,6 +33,7 @@ button {
     border-bottom: 3px solid #646982;
     clear: both;
     margin-bottom: 5px;
+    margin-top: 1px;
 }
 
 .item {
@@ -105,4 +106,13 @@ table {
 .selectable-panel-selected {
     border: 2px solid #007700;
 }
+
+snapshot-input {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.snapshot-input-group {
+    width: 320px;
+} 
 

@@ -50,7 +50,7 @@ namespace ConfigServer.TextProvider.Core
             });
 
             if (!string.IsNullOrWhiteSpace(json))
-                result.SetConfiguration(ParseStoredObject(json, type, id));
+                result.SetConfiguration(ConfigStorageObjectHelper.ParseConfigurationStoredObject(json, type));
             return result;
         }
 
@@ -95,7 +95,7 @@ namespace ConfigServer.TextProvider.Core
             });
             var configType = BuildGenericType(typeof(List<>), type);
             if (!string.IsNullOrWhiteSpace(json))
-                 return (IEnumerable)ParseStoredObject(json, configType, id);
+                 return (IEnumerable)ConfigStorageObjectHelper.ParseConfigurationStoredObject(json, configType);
             return (IEnumerable)Activator.CreateInstance(configType);
         }
 
@@ -112,29 +112,14 @@ namespace ConfigServer.TextProvider.Core
             var configPath = config.IsCollection
                 ? GetCollectionConfigCacheKey(configId, config.ConfigurationIdentity.Client.ClientId)
                 : GetCacheKey(configId, config.ConfigurationIdentity.Client.ClientId);
-            var configText = JsonConvert.SerializeObject(BuildStorageObject(config), jsonSerializerSettings);
+            var configText = JsonConvert.SerializeObject(ConfigStorageObjectHelper.BuildStorageObject(config), jsonSerializerSettings);
             await storageConnector.SetConfigFileAsync(configId, config.ConfigurationIdentity.Client.ClientId, configText);
             memoryCache.Set<string>(cachePrefix + configPath, configText, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));            
         }
 
-        private ConfigStorageObject BuildStorageObject(ConfigInstance config)
-        {
-            return new ConfigStorageObject
-            {
-                ServerVersion = config.ConfigurationIdentity.ServerVersion.ToString(),
-                ClientId = config.ConfigurationIdentity.Client.ClientId,
-                ConfigName = config.Name,
-                TimeStamp = DateTime.UtcNow,
-                Config = config.GetConfiguration()
-            };
-        }
 
-        private object ParseStoredObject(string json,Type type, ConfigurationIdentity id)
-        {
-            var storageObject = JObject.Parse(json);
-            var result = storageObject.GetValue(nameof(ConfigStorageObject.Config)).ToObject(type);
-            return result;
-        }
+
+
 
         private string GetCacheKey(string configId, string clientId) => $"{clientId}_{configId}";
 
