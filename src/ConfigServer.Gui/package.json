@@ -19,8 +19,10 @@
         "tslint": "^5.1.0",
         "awesome-typescript-loader": "~3.2.2",
         "ajv": "~5.2.2",
+        "webpack": "3.5.5",
         "@types/jasmine": "2.5.41",
         "@types/core-js": "0.9.36"
+
     },
     "dependencies": {
         "@angular/core": "4.1.3",
