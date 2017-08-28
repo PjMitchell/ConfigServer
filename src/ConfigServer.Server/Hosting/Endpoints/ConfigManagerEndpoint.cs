@@ -55,16 +55,12 @@ namespace ConfigServer.Server
                 <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.css"">
                 <!-- 1. Load libraries -->
                 <!-- Polyfill(s) for older browsers -->
-                <script src = ""https://unpkg.com/core-js/client/shim.min.js"" ></script>
-                <script src=""https://unpkg.com/zone.js@0.6.25?main=browser""></script>
-                <script src = ""https://unpkg.com/reflect-metadata@0.1.3""></script>
-                <script src=""https://unpkg.com/systemjs@0.19.27/dist/system.src.js""></script>
+                <script src=""{basePath}/Assets/lib/shim.min.js""></script>
+                <script src = ""{basePath}/Assets/lib/zone.min.js"" ></script>
+                <script src=""{basePath}/Assets/lib/system.js""></script>
                 <!-- 2. Configure SystemJS -->
                 <script>
-                {Config(basePath)}
-                </script>
-                <script>
-                  System.import('{basePath}/Assets/app.min.js').catch(function(err) {{ console.error(err); }});
+                  System.import('{basePath}/Assets/app.js').catch(function(err) {{ console.error(err); }});
                 </script>
                 <base href=""{managerPath}"" />
             </head>
@@ -74,32 +70,5 @@ namespace ConfigServer.Server
             </body>
             </html>
             ";
-        private string Config(string basePath) => $@"
-            (function(global) {{
-                System.config({{
-        
-                    paths: {{
-                        // paths serve as alias
-                        'npm:': 'https://unpkg.com/'
-                    }},
-                    map: {{
-                        // angular bundles
-                        '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
-                        '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
-                        '@angular/compiler': 'npm:@angular/compiler/bundles/compiler.umd.js',
-                        '@angular/platform-browser': 'npm:@angular/platform-browser/bundles/platform-browser.umd.js',
-                        '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
-                        '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
-                        '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
-                        '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
-                        '@angular/upgrade': 'npm:@angular/upgrade/bundles/upgrade.umd.js',
-
-                        // other libraries
-                        'rxjs': 'npm:rxjs',
-                        'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api'
-
-                    }}
-                }});
-            }})(this);";
     }
 }

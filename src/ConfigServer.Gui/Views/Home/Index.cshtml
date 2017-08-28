@@ -10,12 +10,9 @@
     <link rel="stylesheet" href="Assets/styles.css">
     <!-- 1. Load libraries -->
     <!-- Polyfill(s) for older browsers -->
-    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script src="https://unpkg.com/zone.js@0.6.25?main=browser"></script>
-    <script src="https://unpkg.com/reflect-metadata@0.1.3"></script>
-    <script src="https://unpkg.com/systemjs@0.19.27/dist/system.src.js"></script>
-    <!-- 2. Configure SystemJS -->
-    <script src="Assets/systemjs.config.js"></script>
+    <script src="Assets/lib/shim.min.js"></script>
+    <script src="Assets/lib/zone.min.js"></script>
+    <script src="Assets/lib/system.js"></script>
     <script>
         System.import('Assets/app.js').catch(function(err){ console.error(err); });
     </script>

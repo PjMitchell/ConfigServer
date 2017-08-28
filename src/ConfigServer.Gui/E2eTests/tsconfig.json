@@ -1,5 +1,5 @@
 {
-  "compileOnSaveDefinition": false,
+    "compileOnSaveDefinition": false,
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -10,6 +10,8 @@
         "removeComments": false,
         "noImplicitAny": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "lib": [ "es2015", "dom" ]
     }
+   
 }

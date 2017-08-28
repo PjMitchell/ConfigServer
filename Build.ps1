@@ -75,26 +75,32 @@ function ExecuteGulpTasks
 		Write-Error "gulp tslint failed";
 		exit 1;
 	}
+	npm run build
 	Pop-Location
 }
 
-function CheckAssets {
-	if( (Test-Path .\src\ConfigServer.Server\Assets\styles.css) -eq $false) {
-		Write-Error "Asset styles.css not found";
-		exit 1;
-	}
-	if( (Test-Path .\src\ConfigServer.Gui\wwwroot\Assets\app.min.js) -eq $false) {
-		Write-Error "Asset app.min.js not found";
+function CopyItemWithAssert {
+	[CmdletBinding()]
+    param(
+        [Parameter(Position=0,Mandatory=1)][string]$path,
+        [Parameter(Position=1,Mandatory=0)][string]$target
+    )
+	Copy-Item $path $target
+	if( (Test-Path $path) -eq $false) {
+		Write-Error "Asset $path not found";
 		exit 1;
 	}
 }
 
 function copyAssets {
-	Copy-Item .\src\ConfigServer.Gui\wwwroot\Assets\app.min.js ./src/ConfigServer.Server\Assets
-		if( (Test-Path ./src/ConfigServer.Server\Assets\app.min.js) -eq $false) {
-		Write-Error "Asset app.min.js not found";
-		exit 1;
-	}
+	$assetPath = ./src/ConfigServer.Server\Assets
+	$assetLibPath = ./src/ConfigServer.Server\Assets\lib
+	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\app.js $assetPath
+	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\styles.css $assetPath
+	
+	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\lib\shim.min.js $assetLibPath
+	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\lib\system.js $assetLibPath
+	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\lib\zone.min.js $assetLibPath
 }
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
