@@ -101,8 +101,8 @@ function CopyItemWithAssert {
 }
 
 function CopyAssets {
-	$assetPath = .\src\ConfigServer.Server\Assets
-	$assetLibPath = .\src\ConfigServer.Server\Assets\lib
+	$assetPath = '.\src\ConfigServer.Server\Assets'
+	$assetLibPath = '.\src\ConfigServer.Server\Assets\lib'
 	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\app.js $assetPath
 	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\styles.css $assetPath
 	
