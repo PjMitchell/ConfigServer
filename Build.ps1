@@ -101,9 +101,8 @@ function CopyItemWithAssert {
 }
 
 function CopyAssets {
-	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
-	$assetPath = '.\src\ConfigServer.Server\Assets'
-	$assetLibPath = '.\src\ConfigServer.Server\Assets\lib'
+	$assetPath = '.\src\ConfigServer.Server\Assets\'
+	$assetLibPath = '.\src\ConfigServer.Server\Assets\lib\'
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
 	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\app.js $assetPath
 	CopyItemWithAssert .\src\ConfigServer.Gui\wwwroot\Assets\styles.css $assetPath
