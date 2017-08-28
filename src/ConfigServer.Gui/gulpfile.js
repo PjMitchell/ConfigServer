@@ -1,11 +1,8 @@
 ﻿var gulp = require('gulp'),
     tsc = require('gulp-typescript'),
     tslint = require('gulp-tslint'),
-    clean = require('gulp-clean'),
-    systemjsBuilder = require('gulp-systemjs-builder');
+    clean = require('gulp-clean');
 
-
-gulp.task('BuildPackageAssets', ['CopyWwwRootAssets'])
 
 gulp.task('BuildTs', function () {
     var tsProject = tsc.createProject('./App/tsconfig.json');
@@ -15,26 +12,21 @@ gulp.task('BuildTs', function () {
     return tsResult.js.pipe(gulp.dest('./App'));
 });
 
-gulp.task('build-sjs', ['BuildTs'], function  ()  {
-    var builder = systemjsBuilder();
-    builder.loadConfigSync('./App/systemjs.config.js');
-
-    builder.buildStatic('app', 'app.js', {
-                minify:false,
-                mangle: false
-    })
-        .pipe(gulp.dest('./wwwroot/Assets'));
-    builder.buildStatic('app', 'app.min.js',  {
-        minify: true,
-        mangle: true
-    })
-        .pipe(gulp.dest('./wwwroot/Assets'));
-})
-
-gulp.task('CopyWwwRootAssets', ['build-sjs'], function () {
+gulp.task('CopyWwwRootAssets', function () {
     
-    return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/app.min.js'])
+    return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/**/*.js'])
     .pipe(gulp.dest('../ConfigServer.Server/Assets'));
+});
+
+gulp.task('BuildPackageAssets', function () {
+
+    var source = [
+        'node_modules/zone.js/dist/zone.min.js',
+        'node_modules/core-js/client/shim.min.js',
+        'node_modules/systemjs/dist/system.js',
+    ];
+    return gulp.src(source)
+        .pipe(gulp.dest('./wwwroot/Assets/lib'));
 });
 
 gulp.task('CleanPackageAssets', function () {

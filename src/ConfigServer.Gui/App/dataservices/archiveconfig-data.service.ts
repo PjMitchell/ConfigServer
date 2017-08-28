@@ -14,22 +14,19 @@ export class ArchiveConfigService {
     public getArchivedConfig(clientId: string) {
         return this.http.get(this.configArchiveUrl + clientId)
             .toPromise()
-            .then((response) => this.mapInfoArray(response.json()))
-            .catch(this.handleError);
+            .then((response) => this.mapInfoArray(response.json()));
     }
 
     public deleteArchivedConfig(clientId: string, archiveConfigName: string) {
         return this.http.delete(this.configArchiveUrl + clientId + '/' + archiveConfigName)
             .toPromise()
-            .then((response) => this.handleSuccess(response))
-            .catch(this.handleError);
+            .then((response) => this.handleSuccess(response));
     }
 
     public deleteArchivedConfigBefore(clientId: string, date: Date): Promise<IHttpRequestResult> {
         return this.http.delete(this.configArchiveUrl + clientId + '?before=' + date.toISOString())
             .toPromise()
-            .then((response) => this.handleSuccess(response))
-            .catch(this.handleError);
+            .then((response) => this.handleSuccess(response));
     }
 
     private mapInfoArray(data: any): IArchivedConfigInfo[] {
