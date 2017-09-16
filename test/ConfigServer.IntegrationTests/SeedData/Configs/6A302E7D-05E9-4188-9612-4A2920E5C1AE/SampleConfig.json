@@ -1,0 +1,49 @@
+{
+    "ServerVersion": "1.0.0",
+    "ClientId": "6a302e7d-05e9-4188-9612-4a2920e5c1ae",
+    "ConfigName": "SampleConfig",
+    "TimeStamp": "2017-05-27T12:08:51.8923385Z",
+    "Config": {
+        "LlamaCapacity": 41,
+        "SpareLlamaCapacity": null,
+        "Name": "Name 2",
+        "StartDate": "2013-11-11T00:00:00",
+        "Decimal": 41.47,
+        "IsLlamaFarmer": true,
+        "Choice": 3,
+        "Option": {
+            "Id": 1,
+            "Description": "Option One"
+        },
+        "MoarOptions": [
+            {
+                "Id": 1,
+                "Description": "Option One"
+            },
+            {
+                "Id": 2,
+                "Description": "Option Two"
+            }
+        ],
+        "ListOfConfigs": [],
+        "OptionId": 1,
+        "OptionFromConfigSet": {
+            "Id": 1,
+            "Description": "One",
+            "Value": 24.4
+        },
+        "MoarOptionFromConfigSet": [
+            {
+                "Id": 1,
+                "Description": "One",
+                "Value": 24.4
+            },
+            {
+                "Id": 2,
+                "Description": "Two",
+                "Value": 12.4
+            }
+        ],
+        "MoarOptionValues": [ 1 ]
+    }
+}

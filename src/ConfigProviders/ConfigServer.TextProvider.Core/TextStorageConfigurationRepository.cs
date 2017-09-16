@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ConfigServer.TextProvider.Core
@@ -17,17 +16,14 @@ namespace ConfigServer.TextProvider.Core
     {
 
         readonly JsonSerializerSettings jsonSerializerSettings;
-        readonly IMemoryCache memoryCache;
         readonly IStorageConnector storageConnector;
-        private const string cachePrefix = "ConfigServer_ConfigRepository_";
 
         /// <summary>
         /// Initializes File store
         /// </summary>
-        public TextStorageConfigurationRepository(IMemoryCache memoryCache,IStorageConnector storageConnector)
+        public TextStorageConfigurationRepository(IStorageConnector storageConnector)
         {
             jsonSerializerSettings = new JsonSerializerSettings();
-            this.memoryCache = memoryCache;
             this.storageConnector = storageConnector;
         }
 
@@ -42,12 +38,8 @@ namespace ConfigServer.TextProvider.Core
         public async Task<ConfigInstance> GetAsync(Type type, ConfigurationIdentity id)
         {
             var configId = type.Name;
-            var configPath = GetCacheKey(configId, id.Client.ClientId);
             var result = ConfigFactory.CreateGenericInstance(type, id);
-            var json = await memoryCache.GetOrCreateAsync(cachePrefix + configPath, e => {
-                e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                return storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
-            });
+            var json = await storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
 
             if (!string.IsNullOrWhiteSpace(json))
                 result.SetConfiguration(ConfigStorageObjectHelper.ParseConfigurationStoredObject(json, type));
@@ -87,12 +79,8 @@ namespace ConfigServer.TextProvider.Core
         public async Task<IEnumerable> GetCollectionAsync(Type type, ConfigurationIdentity id)
         {
             var configId = type.Name;
-            var configPath = GetCollectionConfigCacheKey(configId, id.Client.ClientId);
+            var json = await storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
 
-            var json = await memoryCache.GetOrCreateAsync(cachePrefix + configPath, e => {
-                e.SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                return storageConnector.GetConfigFileAsync(type.Name, id.Client.ClientId);
-            });
             var configType = BuildGenericType(typeof(List<>), type);
             if (!string.IsNullOrWhiteSpace(json))
                  return (IEnumerable)ConfigStorageObjectHelper.ParseConfigurationStoredObject(json, configType);
@@ -109,21 +97,9 @@ namespace ConfigServer.TextProvider.Core
         public async Task UpdateConfigAsync(ConfigInstance config)
         {
             var configId = config.ConfigType.Name;
-            var configPath = config.IsCollection
-                ? GetCollectionConfigCacheKey(configId, config.ConfigurationIdentity.Client.ClientId)
-                : GetCacheKey(configId, config.ConfigurationIdentity.Client.ClientId);
             var configText = JsonConvert.SerializeObject(ConfigStorageObjectHelper.BuildStorageObject(config), jsonSerializerSettings);
-            await storageConnector.SetConfigFileAsync(configId, config.ConfigurationIdentity.Client.ClientId, configText);
-            memoryCache.Set<string>(cachePrefix + configPath, configText, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));            
+            await storageConnector.SetConfigFileAsync(configId, config.ConfigurationIdentity.Client.ClientId, configText);        
         }
-
-
-
-
-
-        private string GetCacheKey(string configId, string clientId) => $"{clientId}_{configId}";
-
-        private string GetCollectionConfigCacheKey(string configId, string clientId) => $"Collection_{clientId}_{configId}";
 
         private static Type BuildGenericType(Type genericType, params Type[] typeArgs)
         {

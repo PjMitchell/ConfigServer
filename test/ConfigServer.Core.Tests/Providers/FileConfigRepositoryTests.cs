@@ -24,8 +24,8 @@ namespace ConfigServer.Core.Tests
         {
             testdirectory = $"{AppDomain.CurrentDomain.BaseDirectory}/TestOutput/{Guid.NewGuid()}";
             var option = new FileConfigRespositoryBuilderOptions { ConfigStorePath = testdirectory };
-            target = new TextStorageConfigurationRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())),new FileStorageConnector(option));
-            clientTarget = new TextStorageConfigurationClientRepository(new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions())), new FileStorageConnector(option));
+            target = new TextStorageConfigurationRepository(new FileStorageConnector(option));
+            clientTarget = new TextStorageConfigurationClientRepository(new FileStorageConnector(option));
             client = new ConfigurationClient
             {
                 ClientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4",

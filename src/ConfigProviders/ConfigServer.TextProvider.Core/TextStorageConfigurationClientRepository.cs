@@ -1,10 +1,7 @@
 ﻿using ConfigServer.Core;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace ConfigServer.TextProvider.Core
@@ -15,17 +12,14 @@ namespace ConfigServer.TextProvider.Core
     public class TextStorageConfigurationClientRepository : IConfigClientRepository
     {
         readonly JsonSerializerSettings jsonSerializerSettings;
-        readonly IMemoryCache memoryCache;
         readonly IStorageConnector storageConnector;
-        private const string cachePrefix = "ConfigServer_ConfigClientRepository_";
 
         /// <summary>
         /// Initializes File store
         /// </summary>
-        public TextStorageConfigurationClientRepository(IMemoryCache memoryCache, IStorageConnector storageConnector)
+        public TextStorageConfigurationClientRepository(IStorageConnector storageConnector)
         {
             jsonSerializerSettings = new JsonSerializerSettings();
-            this.memoryCache = memoryCache;
             this.storageConnector = storageConnector;
         }
 
