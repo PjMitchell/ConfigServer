@@ -1,9 +1,8 @@
-﻿using ConfigServer.Gui.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConfigServer.Gui.Models
+namespace ConfigServer.TestModels
 {
     public class SampleConfig
     {

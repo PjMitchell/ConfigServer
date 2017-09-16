@@ -1,9 +1,7 @@
-﻿using ConfigServer.Core;
-using ConfigServer.Gui.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 
-namespace ConfigServer.Gui.Models
+namespace ConfigServer.TestModels
 {
     public class SampleConfigSet : ConfigurationSet<SampleConfigSet>
     {

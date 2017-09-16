@@ -2,7 +2,6 @@
 using ConfigServer.Server;
 using ConfigServer.TextProvider.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
 
 namespace ConfigServer.AzureBlobStorageProvider
@@ -27,7 +26,6 @@ namespace ConfigServer.AzureBlobStorageProvider
             if (options.Credentials == null)
                 throw new ArgumentException($"{nameof(options.Credentials)} cannot be null", nameof(options));
             
-            builder.ServiceCollection.AddMemoryCache();
             builder.ServiceCollection.AddSingleton(options);
             builder.ServiceCollection.AddTransient<IStorageConnector, StorageConnector>();
             builder.ServiceCollection.AddTransient<IConfigRepository, TextStorageConfigurationRepository>();

@@ -2,7 +2,6 @@
 using ConfigServer.TextProvider.Core;
 using ConfigServer.Server;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
 
 namespace ConfigServer.FileProvider
@@ -25,7 +24,6 @@ namespace ConfigServer.FileProvider
                 throw new ArgumentNullException(nameof(options));
             if (string.IsNullOrWhiteSpace(options.ConfigStorePath))
                 throw new ArgumentException($"{nameof(FileConfigRespositoryBuilderOptions.ConfigStorePath)} cannot be null or whitespace", nameof(options));
-            builder.ServiceCollection.AddMemoryCache();
             builder.ServiceCollection.AddSingleton(options);
             builder.ServiceCollection.AddTransient<IConfigRepository, TextStorageConfigurationRepository>();
             builder.ServiceCollection.AddTransient<IConfigClientRepository, TextStorageConfigurationClientRepository>();

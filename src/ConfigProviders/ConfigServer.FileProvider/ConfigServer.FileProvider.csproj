@@ -16,9 +16,6 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.2</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory">
-      <Version>1.1.1</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ConfigServer.Core\ConfigServer.Core.csproj" />
