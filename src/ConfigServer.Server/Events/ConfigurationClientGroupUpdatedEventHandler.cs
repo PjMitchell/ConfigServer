@@ -14,9 +14,8 @@ namespace ConfigServer.Server
         }
 
         public Task Handle(ConfigurationClientGroupUpdatedEvent arg)
-        {
-            clientService.HandleClientGroupUpdated(arg.GroupId);
-            return Task.FromResult(true);
+        {  
+            return clientService.HandleClientGroupUpdated(arg.GroupId);
         }
     }
 }

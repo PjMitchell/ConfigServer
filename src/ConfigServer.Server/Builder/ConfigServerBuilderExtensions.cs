@@ -41,16 +41,13 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="source">The IServiceCollection to add ConfigServer to</param>
         /// <returns>ConfigServer builder for further configuration</returns>
-        public static ConfigServerBuilder UseLocalConfigServer(this IServiceCollection source)
-        {
-            return new ConfigServerBuilder(source);
-        }
+        public static ConfigServerBuilder UseLocalConfigServer(this IServiceCollection source) => new ConfigServerBuilder(source);
 
         /// <summary>
         /// Adds ConfigSet to config model registry
         /// </summary>
         /// <typeparam name="TConfigSet">Type of config set to be added to registry</typeparam>
-        /// <param name="source">The IServiceCollection to add config set to</param>
+        /// <param name="source">The ConfigServerBuilder to add config set to</param>
         /// <returns>ConfigServer builder for further configuration</returns>
         public static ConfigServerBuilder UseConfigSet<TConfigSet>(this ConfigServerBuilder source) where TConfigSet : ConfigurationSet<TConfigSet>, new()
         {
@@ -59,6 +56,32 @@ namespace ConfigServer.Server
             source.AddConfigurationSet(definition);
             return source;
         }
+
+        /// <summary>
+        /// Adds CachingStrategy
+        /// </summary>
+        /// <typeparam name="TStrategy">Strategy to use</typeparam>
+        /// <param name="source">The ConfigServerBuildern to add the strategy to</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder UseCachingStrategy<TStrategy>(this ConfigServerBuilder source) where TStrategy : class, ICachingStrategy
+        {
+            source.ServiceCollection.AddTransient<ICachingStrategy, TStrategy>();
+            return source;
+        }
+
+        /// <summary>
+        /// Uses InMemory Caching strategy
+        /// </summary>
+        /// <param name="source">The ConfigServerBuildern to add the strategy to</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder UseInMemoryCachingStrategy(this ConfigServerBuilder source) => source.UseCachingStrategy<MemoryCachingStrategy>();
+
+        /// <summary>
+        /// Uses Distributed Caching strategy
+        /// </summary>
+        /// <param name="source">The ConfigServerBuildern to add the strategy to</param>
+        /// <returns>ConfigServer builder for further configuration</returns>
+        public static ConfigServerBuilder UseDistributedCachingStrategy(this ConfigServerBuilder source) => source.UseCachingStrategy<DistributedCachingStrategy>();
 
         /// <summary>
         /// Adds Local ConfigServer client to specified ServiceCollection  

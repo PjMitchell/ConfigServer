@@ -1,9 +1,7 @@
 ﻿using ConfigServer.Core;
-using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ConfigServer.Server
@@ -14,22 +12,22 @@ namespace ConfigServer.Server
         Task<IEnumerable<ConfigurationClientGroup>> GetGroups();
         Task<ConfigurationClient> GetClientOrDefault(string key);
         Task<ConfigurationClientGroup> GetClientGroupOrDefault(string key);
-        void HandleClientGroupUpdated(string groupId);
-        void HandleClientUpdated(string groupId);
+        Task HandleClientGroupUpdated(string groupId);
+        Task HandleClientUpdated(string groupId);
     }
 
     internal class ConfigurationClientService : IConfigurationClientService
     {
         private readonly IConfigClientRepository clientRepo;
-        private readonly IMemoryCache memoryCache;
+        private readonly ICachingStrategy cachingStrategy;
         private const string clientCache = "ConfigServer_ConfigurationClientService_Client";
         private const string clientGroupCache = "ConfigServer_ConfigurationClientService_ClientGroup";
 
 
-        public ConfigurationClientService(IConfigClientRepository clientRepo, IMemoryCache memoryCache)
+        public ConfigurationClientService(IConfigClientRepository clientRepo, ICachingStrategy cachingStrategy)
         {
             this.clientRepo = clientRepo;
-            this.memoryCache = memoryCache;
+            this.cachingStrategy = cachingStrategy;
         }
 
         public async Task<ConfigurationClientGroup> GetClientGroupOrDefault(string key)
@@ -60,19 +58,19 @@ namespace ConfigServer.Server
             return lookup.Values;
         }
 
-        public void HandleClientGroupUpdated(string groupId)
+        public Task HandleClientGroupUpdated(string groupId)
         {
-            memoryCache.Remove(clientGroupCache);
+            return cachingStrategy.Remove(clientGroupCache);
         }
 
-        public void HandleClientUpdated(string groupId)
+        public Task HandleClientUpdated(string groupId)
         {
-            memoryCache.Remove(clientCache);
+            return cachingStrategy.Remove(clientCache);
         }
 
         private Task<Dictionary<string, ConfigurationClient>> GetClientLookup()
         {
-            return memoryCache.GetOrCreateAsync(clientCache, async entry =>
+            return cachingStrategy.GetOrCreateAsync(clientCache, async () =>
             {
                 var clients = await clientRepo.GetClientsAsync();
                 return clients.ToDictionary(k => k.ClientId, StringComparer.OrdinalIgnoreCase);
@@ -81,7 +79,7 @@ namespace ConfigServer.Server
 
         private Task<Dictionary<string, ConfigurationClientGroup>> GetClientGroupLookup()
         {
-            return memoryCache.GetOrCreateAsync(clientGroupCache, async entry =>
+            return cachingStrategy.GetOrCreateAsync(clientGroupCache, async () =>
             {
                 var clientGroups = await clientRepo.GetClientGroupsAsync();
                 return clientGroups.ToDictionary(k => k.GroupId, StringComparer.OrdinalIgnoreCase);

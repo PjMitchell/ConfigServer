@@ -16,8 +16,7 @@ namespace ConfigServer.Server
 
         public Task Handle(ConfigurationUpdatedEvent arg)
         {
-            configurationSetService.HandleConfigurationUpdatedEvent(arg);
-            return Task.FromResult(true);
+            return configurationSetService.HandleConfigurationUpdatedEvent(arg);
         }
     }
 }

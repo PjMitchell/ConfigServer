@@ -12,8 +12,7 @@ namespace ConfigServer.Server
 
         public Task Handle(ConfigurationClientUpdatedEvent arg)
         {
-            clientService.HandleClientUpdated(arg.ClientId);
-            return Task.FromResult(true);
+            return clientService.HandleClientUpdated(arg.ClientId);
         }
     }
 }
