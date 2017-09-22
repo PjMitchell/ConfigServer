@@ -8,11 +8,11 @@ namespace ConfigServer.Server
     {
         public static IServiceCollection AddConfigServerServices(this IServiceCollection collection)
         {
-            collection.AddMemoryCache();
             collection.AddTransient<IHttpResponseFactory, HttpResponseFactory>();
             collection.AddTransient<IResourceStore, EmptyResourceStore>();
             collection.AddTransient<IResourceArchive, EmptyResourceArchive>();
-
+            collection.AddTransient<ICachingStrategy, NoCachingStrategy>();
+            
             collection.AddTransient<IConfigurationSetModelPayloadMapper, ConfigurationSetModelPayloadMapper>();
             collection.AddTransient<IConfigurationEditModelMapper, ConfigurationEditModelMapper>();
             collection.AddTransient<IConfigurationUpdatePayloadMapper, ConfigurationUpdatePayloadMapper>();
@@ -32,7 +32,6 @@ namespace ConfigServer.Server
             collection.AddConfigServerEndPoints()
                 .AddConfigServerCommandHandlers()
                 .AddConfigServerEventHandlers();
-
 
             return collection;
         }
@@ -68,7 +67,6 @@ namespace ConfigServer.Server
             collection.AddCommandHandler<DeleteSnapshotCommand, DeleteSnapshotCommandHandler>();
             collection.AddCommandHandler<CreateSnapshotCommand, CreateSnapshotCommandHandler>();
             collection.AddCommandHandler<PushSnapshotToClientCommand, PushSnapshotToClientCommandHandler>();
-
             
             return collection;
         }

@@ -26,9 +26,11 @@ namespace ConfigServer.IntegrationTests
             // This method gets called by the runtime. Use this method to add services to the container.
             public void ConfigureServices(IServiceCollection services)
             {
+                services.AddMemoryCache();
                 // Add framework services.
                 var configserverBuilder = services.AddConfigServer()
                     .WithVersion(new Version(1, 0, 0))
+                    .UseInMemoryCachingStrategy()
                     .UseConfigSet<SampleConfigSet>();
 
                 UseFileStorage(configserverBuilder);

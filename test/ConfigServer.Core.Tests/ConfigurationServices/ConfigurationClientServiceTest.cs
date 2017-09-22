@@ -31,8 +31,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
             clientRepo.Setup(r => r.GetClientsAsync()).ReturnsAsync(() => clients);
             clientRepo.Setup(r => r.GetClientGroupsAsync()).ReturnsAsync(() => groups);
 
-            memoryCache = new MemoryCache(Microsoft.Extensions.Options.Options.Create<MemoryCacheOptions>(new MemoryCacheOptions()));
-            target = new ConfigurationClientService(clientRepo.Object, memoryCache);
+            target = new ConfigurationClientService(clientRepo.Object, new NoCachingStrategy());
         }
 
         [Fact]

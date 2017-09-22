@@ -34,9 +34,11 @@ namespace ConfigServer.Gui
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddMemoryCache();
             // Add framework services.
             var configserverBuilder = services.AddConfigServer()
                 .WithVersion(new Version(1, 0, 0))
+                .UseInMemoryCachingStrategy()
                 .UseConfigSet<SampleConfigSet>();
 
             UseFileStorage(configserverBuilder);
@@ -54,7 +56,6 @@ namespace ConfigServer.Gui
             loggerFactory.AddDebug();
 
             app.UseDeveloperExceptionPage();
-            app.UseBrowserLink();
             app.Use(AddUserContext);
             app.UseStaticFiles(new StaticFileOptions()
             {

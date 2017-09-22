@@ -38,8 +38,10 @@ namespace ConfigServer.Sample.mvc
             //var groupId = "6C3E9253-8DB9-4C7D-AAFC-12391CB7B1C8";
             // Add framework services.
             services.AddMvc();
+            services.AddMemoryCache();
             services.AddConfigServer()
                 .WithVersion(new Version(1,0,0))
+                .UseInMemoryCachingStrategy()
                 .UseConfigSet<SampleConfigSet>()
                 .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = enviroment.ContentRootPath + "/FileStore/Configs" })
                 .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = enviroment.ContentRootPath + "/FileStore/Resources" })
