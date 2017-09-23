@@ -40,7 +40,7 @@ namespace ConfigServer.Core.Tests
                 .UseInMemoryProvider()
                 .UseLocalConfigServerClient(applicationId, testUri)
                 .WithConfig<SimpleConfig>();
-            var serviceProvider = builder.ServiceCollection.BuildServiceProvider();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetRequiredService<ConfigurationRegistry>();
             var regs = configRepo.ToList();
             Assert.Equal(1, regs.Count);

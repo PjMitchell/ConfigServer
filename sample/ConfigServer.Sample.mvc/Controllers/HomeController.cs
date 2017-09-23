@@ -10,17 +10,17 @@ namespace ConfigServer.Sample.mvc.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SampleConfig config;
-        private readonly IEnumerable<OptionFromConfigSet> options;
+        private readonly IConfigServer configServer;
 
         public HomeController(IConfigServer configServer)
         {
-            config = configServer.GetConfig<SampleConfig>();
-            options = configServer.GetCollectionConfig<OptionFromConfigSet>();
+            this.configServer = configServer;
         }
 
         public IActionResult Index()
         {
+            var config = configServer.GetConfigAsync<SampleConfig>().Result;
+            var options = configServer.GetCollectionConfigAsync<OptionFromConfigSet>().Result;
             return View(new ConfigViewModel { Config = config, Options = options});
         }
 

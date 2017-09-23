@@ -34,7 +34,7 @@ namespace ConfigServer.Client.Builder
             else
             {
                 var serviceProvider = context.RequestServices;
-                var server = serviceProvider.GetRequiredService<IConfigServer>();
+                var server = serviceProvider.GetRequiredService<IResourceServer>();
                 var response = await server.GetResourceAsync(pathParams[0]);
                 if (response.HasEntry)
                     await BuildFileResponse(context, response.Content, response.Name);

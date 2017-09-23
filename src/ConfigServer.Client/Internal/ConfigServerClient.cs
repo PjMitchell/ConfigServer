@@ -75,75 +75,6 @@ namespace ConfigServer.Client
                 : await GetOrAddCollectionConfigFromCache<TConfig>(registration).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Gets Configuration
-        /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
-        /// <returns>Configuration of specified type</returns>
-        public TConfig GetConfig<TConfig>() where TConfig : class, new()
-        {
-            return GetConfigAsync<TConfig>().Result;
-        }
-
-        /// <summary>
-        /// Gets Configuration that is a collection
-        /// </summary>
-        /// <typeparam name="TConfig">Type of configuration to be build</typeparam>
-        /// <returns>IEnumerable of configuration of specified type</returns>
-        public IEnumerable<TConfig> GetCollectionConfig<TConfig>() where TConfig : class, new()
-        {
-            return GetCollectionConfigAsync<TConfig>().Result;
-        }
-
-        /// <summary>
-        /// Builds Configuration
-        /// </summary>
-        /// <param name="type">Type of configuration to be build</param>
-        /// <returns>Configuration of specified type</returns>
-        public object GetConfig(Type type)
-        {
-            return GetConfigAsync(type).Result;
-        }
-
-        /// <summary>
-        /// Gets resource file
-        /// </summary>
-        /// <param name="name">Name of resource</param>
-        /// <returns>Resource response</returns>
-        public async Task<ResourceEntry> GetResourceAsync(string name)
-        {
-            var uri = GetResourceUri(name);
-            var response = await client.GetAsync(uri);
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                return new ResourceEntry { Name = name };
-
-            if (!response.IsSuccessStatusCode)
-                throw new ConfigServerCommunicationException(uri, response.StatusCode);
-
-            var content = await response.Content.ReadAsStringAsync();
-            return new ResourceEntry { Name = name, HasEntry = true, Content = await response.Content.ReadAsStreamAsync() }; ;
-        }
-
-        /// <summary>
-        /// Gets resource file
-        /// </summary>
-        /// <param name="name">Name of resource</param>
-        /// <returns>Resource response</returns>
-        public ResourceEntry GetResource(string name)
-        {
-            return GetResourceAsync(name).Result;
-        }
-
-        /// <summary>
-        /// Get resource uri
-        /// </summary>
-        /// <param name="name">Name of resource</param>
-        /// <returns>Resource uri</returns>
-        public Uri GetResourceUri(string name)
-        {
-            return new Uri($"{options.ConfigServer}/Resource/{options.ClientId}/{name}");
-        }
-
         private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>(ConfigurationRegistration registration) where TConfig : class, new()
         {
             return cache.GetOrCreateAsync(BuildCacheKey(typeof(TConfig)), cacheEntry =>
@@ -208,6 +139,4 @@ namespace ConfigServer.Client
         private string BuildCacheKey(Type type) => cachePrefix + type.Name;
 
     }
-
-
 }

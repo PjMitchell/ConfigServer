@@ -18,11 +18,18 @@ namespace ConfigServer.Client
         /// <returns>ConfigServer client builder for further configuration</returns>
         public static ConfigServerClientBuilder AddConfigServerClient(this IServiceCollection source, ConfigServerClientOptions options)
         {
-            var configurationCollection = new ConfigurationRegistry();
-            var builder = new ConfigServerClientBuilder(source, configurationCollection);
-            source.Add(ServiceDescriptor.Transient<IHttpClientWrapper>(r => new HttpClientWrapper(options.Authenticator)));
-            source.Add(ServiceDescriptor.Transient<IConfigServer>(r => new ConfigServerClient(r.GetService<IHttpClientWrapper>(),r.GetService<IMemoryCache>(), r.GetService<ConfigurationRegistry>(), options)));
-            return builder;
+            return SetUpBuilder(new ConfigServerClientBuilder(source), options);
+        }
+
+        /// <summary>
+        /// Adds ConfigServer client to specified ServiceCollection  
+        /// </summary>
+        /// <param name="source">The IServiceCollection to add ConfigServer client to</param>
+        /// <param name="options">Options for ConfigServer client</param>
+        /// <returns>ConfigServer client builder for further configuration</returns>
+        public static ConfigServerClientBuilder AddConfigServerClient(this IServiceCollectionWrapper source, ConfigServerClientOptions options)
+        {
+            return SetUpBuilder(new ConfigServerClientBuilder(source), options);
         }
 
         /// <summary>
@@ -49,6 +56,15 @@ namespace ConfigServer.Client
         {
             source.ConfigurationRegistry.AddRegistration(ConfigurationRegistration.BuildCollection<TConfig>(name));
             return source;
+        }
+
+        private static ConfigServerClientBuilder SetUpBuilder(ConfigServerClientBuilder builder, ConfigServerClientOptions options)
+        {
+            builder.AddSingleton(options);
+            builder.AddSingleton<IHttpClientWrapper>(new HttpClientWrapper(options.Authenticator));
+            builder.AddTransient<IConfigServer, ConfigServerClient>();
+            builder.AddTransient<IResourceServer, ResourceServerClient>();
+            return builder;
         }
     }
 }

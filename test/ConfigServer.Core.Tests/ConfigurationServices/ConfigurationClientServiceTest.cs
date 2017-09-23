@@ -13,7 +13,6 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
     public class ConfigurationClientServiceTest
     {
         readonly private Mock<IConfigClientRepository> clientRepo;
-        readonly private IMemoryCache memoryCache;
         readonly private IConfigurationClientService target;
         readonly private IEnumerable<ConfigurationClient> clients;
         readonly private IEnumerable<ConfigurationClientGroup> groups;
