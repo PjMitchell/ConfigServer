@@ -64,6 +64,10 @@ namespace ConfigServer.Client
             builder.AddSingleton<IHttpClientWrapper>(new HttpClientWrapper(options.Authenticator));
             builder.AddTransient<IConfigServer, ConfigServerClient>();
             builder.AddTransient<IResourceServer, ResourceServerClient>();
+            if (options.CacheOptions.IsDisabled)
+                builder.AddTransient<IClientCachingStrategy, NoCachingStrategy>();
+            else
+                builder.AddTransient<IClientCachingStrategy, MemoryClientCachingStrategy>();
             return builder;
         }
     }

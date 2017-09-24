@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 namespace ConfigServer.Client
 {
@@ -13,30 +12,15 @@ namespace ConfigServer.Client
         private readonly IConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly IHttpClientWrapper client;
-        private readonly IMemoryCache cache;
+        private readonly IClientCachingStrategy cache;
         private const string cachePrefix = "ConfigServer_";
 
-        public ConfigServerClient(IHttpClientWrapper client, IMemoryCache memorycache, IConfigurationRegistry collection, ConfigServerClientOptions options)
+        public ConfigServerClient(IHttpClientWrapper client, IClientCachingStrategy cache, IConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
             this.collection = collection;
             this.options = options;
-            if (memorycache == null && !options.CacheOptions.IsDisabled)
-                throw new ArgumentNullException(nameof(memorycache), "Caching is enabled, but IMemoryCache is not registered in service collection. Try adding \"services.AddMemoryCache()\" to startup file");
-            cache = memorycache;
-        }
-
-        public Task<object> GetConfigAsync(Type type)
-        {
-            return GetConfigAsync(type, options.ClientId);
-        }
-
-        public async Task<object> GetConfigAsync(Type type, string clientId)
-        {
-            var registration = GetRegistration(type);
-            return options.CacheOptions.IsDisabled
-                ? await GetConfigInternal(registration, clientId).ConfigureAwait(false)
-                : await GetOrAddConfigFromCache(registration, clientId).ConfigureAwait(false);
+            this.cache = cache;
         }
 
         public Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
@@ -49,6 +33,17 @@ namespace ConfigServer.Client
             return (TConfig)await GetConfigAsync(typeof(TConfig), clientId).ConfigureAwait(false);
         }
 
+        public Task<object> GetConfigAsync(Type type)
+        {
+            return GetConfigAsync(type, options.ClientId);
+        }
+
+        public async Task<object> GetConfigAsync(Type type, string clientId)
+        {
+            var registration = GetRegistration(type);
+            return await cache.GetOrCreateAsync(BuildCacheKey(registration.ConfigType, clientId), () => GetConfigInternal(registration, clientId)).ConfigureAwait(false);
+        }
+
         public Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
             return GetCollectionConfigAsync<TConfig>(options.ClientId);
@@ -58,34 +53,7 @@ namespace ConfigServer.Client
         {
             var type = typeof(TConfig);
             var registration = GetRegistration(type);
-
-            return options.CacheOptions.IsDisabled
-                ? await GetCollectionConfigInternal<TConfig>(registration, clientId).ConfigureAwait(false)
-                : await GetOrAddCollectionConfigFromCache<TConfig>(registration, clientId).ConfigureAwait(false);
-        }
-
-        private Task<IEnumerable<TConfig>> GetOrAddCollectionConfigFromCache<TConfig>(ConfigurationRegistration registration, string clientId) where TConfig : class, new()
-        {
-            return cache.GetOrCreateAsync(BuildCacheKey(typeof(TConfig)), cacheEntry =>
-            {
-                if (options.CacheOptions.AbsoluteExpiration.HasValue)
-                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
-                if (options.CacheOptions.SlidingExpiration.HasValue)
-                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetCollectionConfigInternal<TConfig>(registration, clientId);
-            });
-        }
-
-        private Task<object> GetOrAddConfigFromCache(ConfigurationRegistration registration, string clientId)
-        {
-            return cache.GetOrCreateAsync(BuildCacheKey(registration.ConfigType), cacheEntry =>
-            {
-                if (options.CacheOptions.AbsoluteExpiration.HasValue)
-                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.AbsoluteExpiration.Value);
-                if (options.CacheOptions.SlidingExpiration.HasValue)
-                    cacheEntry.SetAbsoluteExpiration(options.CacheOptions.SlidingExpiration.Value);
-                return GetConfigInternal(registration, clientId);
-            });
+            return await cache.GetOrCreateAsync(BuildCacheKey(typeof(TConfig), clientId), () => GetCollectionConfigInternal<TConfig>(registration, clientId)).ConfigureAwait(false);
         }
 
         private async Task<object> GetConfigInternal(ConfigurationRegistration registration, string clientId)
@@ -125,7 +93,7 @@ namespace ConfigServer.Client
             throw new InvalidConfigurationException(type);
         }
 
-        private string BuildCacheKey(Type type) => cachePrefix + type.Name;
+        private string BuildCacheKey(Type type, string clientId) => $"{cachePrefix}{clientId}_s{type.Name}";
 
     }
 }

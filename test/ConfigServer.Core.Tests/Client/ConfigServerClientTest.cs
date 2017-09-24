@@ -17,7 +17,6 @@ namespace ConfigServer.Core.Tests.Client
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
-        private readonly Mock<IMemoryCache> cache;
         private const string configRegisration = "AnotherConfigName";
 
 
@@ -31,8 +30,7 @@ namespace ConfigServer.Core.Tests.Client
             options.ConfigServer = "https://test.com/Config";
             options.CacheOptions.IsDisabled = true;
             clientWrapper = new Mock<IHttpClientWrapper>();
-            cache = new Mock<IMemoryCache>();
-            target = new ConfigServerClient(clientWrapper.Object, cache.Object, collection, options);
+            target = new ConfigServerClient(clientWrapper.Object, new NoCachingStrategy(), collection, options);
         }
         #region Object
         [Fact]
