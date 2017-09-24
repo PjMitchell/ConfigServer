@@ -1,6 +1,6 @@
 ﻿using ConfigServer.Client;
+using ConfigServer.Core;
 using ConfigServer.Sample.Models;
-using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -17,22 +17,21 @@ namespace ConfigServer.Core.Tests.Client
         private readonly ConfigurationRegistry collection;
         private readonly ConfigServerClientOptions options;
         private readonly Mock<IHttpClientWrapper> clientWrapper;
-        private readonly Mock<IMemoryCache> cache;
         private const string configRegisration = "AnotherConfigName";
-
+        private const string clientId = "1234-5678-1234";
 
         public ConfigServerClientTest()
         {
             collection = new ConfigurationRegistry();
             collection.AddRegistration(ConfigurationRegistration.Build<SimpleConfig>());
             collection.AddRegistration(ConfigurationRegistration.Build<SampleConfig>(configRegisration));
-            options = new ConfigServerClientOptions();
-            options.ClientId = "1234-5678-1234";
-            options.ConfigServer = "https://test.com/Config";
+            options = new ConfigServerClientOptions
+            {
+                ConfigServer = "https://test.com/Config"
+            };
             options.CacheOptions.IsDisabled = true;
             clientWrapper = new Mock<IHttpClientWrapper>();
-            cache = new Mock<IMemoryCache>();
-            target = new ConfigServerClient(clientWrapper.Object, cache.Object, collection, options);
+            target = new ConfigServerClient(clientWrapper.Object, new NoCachingStrategy(),new SingleClientIdProvider(clientId), collection, options);
         }
         #region Object
         [Fact]
@@ -137,15 +136,17 @@ namespace ConfigServer.Core.Tests.Client
 
         private bool CheckByName(Uri uri, string name)
         {
-            var expectedUri = new Uri($"{options.ConfigServer}/{options.ClientId}/{name}");
+            var expectedUri = new Uri($"{options.ConfigServer}/{clientId}/{name}");
             var result = uri.Equals(expectedUri);
             return result;
         }
 
         private HttpResponseMessage BuildResponse(object content)
         {
-            var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            response.Content = new StringContent(JsonConvert.SerializeObject(content, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+            var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(content, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }))
+            };
             return response;
         }
 

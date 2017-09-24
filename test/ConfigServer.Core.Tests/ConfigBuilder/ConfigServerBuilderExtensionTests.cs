@@ -2,7 +2,6 @@
 using System.Linq;
 using ConfigServer.InMemoryProvider;
 using Xunit;
-using System.Threading.Tasks;
 using ConfigServer.Server;
 using System;
 
@@ -40,8 +39,8 @@ namespace ConfigServer.Core.Tests
                 .UseInMemoryProvider()
                 .UseLocalConfigServerClient(applicationId, testUri)
                 .WithConfig<SimpleConfig>();
-            var serviceProvider = builder.ServiceCollection.BuildServiceProvider();
-            var configRepo = serviceProvider.GetRequiredService<ConfigurationRegistry>();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var configRepo = serviceProvider.GetRequiredService<IConfigurationRegistry>();
             var regs = configRepo.ToList();
             Assert.Equal(1, regs.Count);
             Assert.Equal(typeof(SimpleConfig).Name, regs[0].ConfigurationName);

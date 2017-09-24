@@ -9,71 +9,51 @@ namespace ConfigServer.Server
     {
         private readonly IConfigProvider configProvider;
         private readonly string applicationId;
-        private readonly IResourceStore resourceStore;
-        private readonly Uri pathToConfigServer;
         private readonly IConfigurationClientService configurationClientService;
         private readonly IConfigurationModelRegistry registry;
-        public LocalConfigServerClient(IConfigProvider configProvider,IConfigurationClientService configurationClientService, IConfigurationModelRegistry registry, IResourceStore resourceStore, string applicationId, Uri pathToConfigServer)
+
+        public LocalConfigServerClient(IConfigProvider configProvider,IConfigurationClientService configurationClientService, IConfigurationModelRegistry registry, LocalServerClientOptions options)
         {
             this.configProvider = configProvider;
-            this.applicationId = applicationId;
-            this.resourceStore = resourceStore;
-            this.pathToConfigServer = pathToConfigServer;
+            this.applicationId = options.ApplicationId;
             this.configurationClientService = configurationClientService;
             this.registry = registry;
         }
 
-        public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
+        public Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
-            var client = await configurationClientService.GetClientOrDefault(applicationId);
-            var config = await configProvider.GetCollectionAsync<TConfig>(new ConfigurationIdentity(client,registry.GetVersion())).ConfigureAwait(false);
+            return GetCollectionConfigAsync<TConfig>(applicationId);
+        }
+
+        public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>(string clientId) where TConfig : class, new()
+        {
+            var client = await configurationClientService.GetClientOrDefault(clientId);
+            var config = await configProvider.GetCollectionAsync<TConfig>(new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
             return config;
         }
 
-        public async Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
+        public Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
+        {
+            return GetConfigAsync<TConfig>(applicationId);
+        }
+
+        public async Task<TConfig> GetConfigAsync<TConfig>(string clientId) where TConfig : class, new()
         {
             var client = await configurationClientService.GetClientOrDefault(applicationId);
             var config = await configProvider.GetAsync<TConfig>(new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
             return config.Configuration;
         }
 
-        public async Task<object> GetConfigAsync(Type type)
+        public Task<object> GetConfigAsync(Type type)
+        {
+            return GetConfigAsync(type, applicationId);
+        }
+        
+        public async Task<object> GetConfigAsync(Type type, string clientId)
         {
             var client = await configurationClientService.GetClientOrDefault(applicationId);
             var config = await configProvider.GetAsync(type, new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
             return config.GetConfiguration();
-        }
-
-        public IEnumerable<TConfig> GetCollectionConfig<TConfig>() where TConfig : class, new()
-        {
-            return GetCollectionConfigAsync<TConfig>().Result;
-        }
-
-        public TConfig GetConfig<TConfig>() where TConfig : class, new()
-        {
-            
-            return GetConfigAsync<TConfig>().Result;
-        }
-
-        public object GetConfig(Type type)
-        {
-            return GetConfigAsync(type).Result;
-        }
-
-        public async Task<ResourceEntry> GetResourceAsync(string name)
-        {
-            var client = await configurationClientService.GetClientOrDefault(applicationId);
-            return await resourceStore.GetResource(name, new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
-        }
-
-        public ResourceEntry GetResource(string name)
-        {
-            return GetResourceAsync(name).Result;
-        }
-
-        public Uri GetResourceUri(string name)
-        {
-            return new Uri(pathToConfigServer, $"Resource/{applicationId}/{name}");
         }
     }
 }

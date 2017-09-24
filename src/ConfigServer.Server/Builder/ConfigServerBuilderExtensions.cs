@@ -92,9 +92,12 @@ namespace ConfigServer.Server
         /// <returns>ConfigServer client builder for further configuration of client</returns>
         public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, string applicationId, Uri configServeruri)
         {
-            var configurationCollection = new ConfigurationRegistry();
-            var builder = new ConfigServerClientBuilder(source.ServiceCollection, configurationCollection);
-            source.ServiceCollection.Add(ServiceDescriptor.Transient<IConfigServer>(r => new LocalConfigServerClient(r.GetService<IConfigProvider>(), r.GetService<IConfigurationClientService>(), r.GetService<IConfigurationModelRegistry>(), r.GetService<IResourceStore>(), applicationId, configServeruri)));
+
+            var builder = new ConfigServerClientBuilder(source.ServiceCollection);
+            var option = new LocalServerClientOptions(applicationId, configServeruri);
+            builder.AddSingleton(option);
+            builder.AddTransient<IConfigServer, LocalConfigServerClient>();
+            builder.AddTransient<IResourceServer, LocalResourceServerClient>();
             return builder;
         }
 

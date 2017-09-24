@@ -1,5 +1,4 @@
-﻿using ConfigServer.Core;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ConfigServer.Core
 {
@@ -9,27 +8,45 @@ namespace ConfigServer.Core
     /// </summary>
     public class ConfigServerClientBuilder
     {
+        private readonly IServiceCollectionWrapper serviceCollection;
+
         /// <summary>
         /// Initializes new ConfigServerClientBuilder
         /// </summary>
         /// <param name="serviceCollection">Application Service collection</param>
-        /// <param name="configurationCollection">Registry of configuration used by client</param>
-        public ConfigServerClientBuilder(IServiceCollection serviceCollection, ConfigurationRegistry configurationCollection)
+        public ConfigServerClientBuilder(IServiceCollectionWrapper serviceCollection)
         {
-            ServiceCollection = serviceCollection;
+            this.serviceCollection = serviceCollection;
+            var configurationCollection = new ConfigurationRegistry();
             ConfigurationRegistry = configurationCollection;
-            ServiceCollection.AddSingleton(configurationCollection);
-            ServiceCollection.AddSingleton<IConfigurationRegistry>(configurationCollection);
+            serviceCollection.AddSingleton<IConfigurationRegistry>(configurationCollection);
         }
 
         /// <summary>
-        /// ServiceCollection for builder
+        /// Initializes new ConfigServerClientBuilder
         /// </summary>
-        public IServiceCollection ServiceCollection { get; }
+        /// <param name="serviceCollection">Application Service collection</param>
+        public ConfigServerClientBuilder(IServiceCollection serviceCollection) : this(new ServiceCollectionWrapper(serviceCollection))
+        {
+        }
 
         /// <summary>
         /// ConfigurationRegistry for builder that forms a registry of available configurations types 
         /// </summary>
         public ConfigurationRegistry ConfigurationRegistry { get; }
+
+        /// <summary>
+        /// Add Transient service to builder
+        /// </summary>
+        /// <typeparam name="TInterface">Interface to implement</typeparam>
+        /// <typeparam name="TService">Implementation</typeparam>
+        public void AddTransient<TInterface, TService>() where TInterface : class where TService : class, TInterface => serviceCollection.AddTransient<TInterface, TService>();
+
+        /// <summary>
+        /// Add singleton service to builder
+        /// </summary>
+        /// <typeparam name="TService">Service</typeparam>
+        /// <param name="service">Service instance</param>
+        public void AddSingleton<TService>(TService service) where TService : class => serviceCollection.AddSingleton(service);
     }
 }

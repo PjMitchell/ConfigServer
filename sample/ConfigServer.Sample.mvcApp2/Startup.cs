@@ -18,9 +18,9 @@ namespace ConfigServer.Sample.mvcApp2
             services.AddMemoryCache();
             services.AddConfigServerClient(new ConfigServerClientOptions
             {
-                ClientId = "6A302E7D-05E9-4188-9612-4A2920E5C1AE",
                 ConfigServer = "http://localhost:58201/Config"
             })
+            .WithClientId("6A302E7D-05E9-4188-9612-4A2920E5C1AE")
             .WithConfig<SampleConfig>()
             .WithCollectionConfig<OptionFromConfigSet>();
         }
