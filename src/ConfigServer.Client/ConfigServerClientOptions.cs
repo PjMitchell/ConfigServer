@@ -5,10 +5,6 @@
     /// </summary>
     public class ConfigServerClientOptions
     {
-        /// <summary>
-        /// Identifier for application requesting the configuration
-        /// </summary>
-        public string ClientId { get; set; }
         
         /// <summary>
         /// Uri to ConfigServer

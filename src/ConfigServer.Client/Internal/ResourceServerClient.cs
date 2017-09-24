@@ -6,17 +6,19 @@ namespace ConfigServer.Client
     internal class ResourceServerClient : IResourceServer
     {
         private readonly ConfigServerClientOptions options;
+        private readonly IClientIdProvider clientIdProvider;
         private readonly IHttpClientWrapper client;
 
-        public ResourceServerClient(IHttpClientWrapper client, ConfigServerClientOptions options)
+        public ResourceServerClient(IHttpClientWrapper client, ConfigServerClientOptions options, IClientIdProvider clientIdProvider)
         {
             this.client = client;
             this.options = options;
+            this.clientIdProvider = clientIdProvider;
         }
 
         public Task<ResourceEntry> GetResourceAsync(string name)
         {
-            return GetResourceAsync(name, options.ClientId);
+            return GetResourceAsync(name, clientIdProvider.GetCurrentClientId());
         }
 
         public async Task<ResourceEntry> GetResourceAsync(string name, string clientId)
@@ -35,7 +37,7 @@ namespace ConfigServer.Client
 
         public Uri GetResourceUri(string name)
         {
-            return GetResourceUri(name, options.ClientId);
+            return GetResourceUri(name, clientIdProvider.GetCurrentClientId());
         }
 
         public Uri GetResourceUri(string name, string clientId)

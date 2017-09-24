@@ -13,19 +13,21 @@ namespace ConfigServer.Client
         private readonly ConfigServerClientOptions options;
         private readonly IHttpClientWrapper client;
         private readonly IClientCachingStrategy cache;
+        private readonly IClientIdProvider clientIdProvider;
         private const string cachePrefix = "ConfigServer_";
 
-        public ConfigServerClient(IHttpClientWrapper client, IClientCachingStrategy cache, IConfigurationRegistry collection, ConfigServerClientOptions options)
+        public ConfigServerClient(IHttpClientWrapper client, IClientCachingStrategy cache,IClientIdProvider clientIdProvider, IConfigurationRegistry collection, ConfigServerClientOptions options)
         {
             this.client = client;
             this.collection = collection;
             this.options = options;
             this.cache = cache;
+            this.clientIdProvider = clientIdProvider;
         }
 
         public Task<TConfig> GetConfigAsync<TConfig>() where TConfig : class, new()
         {
-            return GetConfigAsync<TConfig>(options.ClientId);
+            return GetConfigAsync<TConfig>(clientIdProvider.GetCurrentClientId());
         }
 
         public async Task<TConfig> GetConfigAsync<TConfig>(string clientId) where TConfig : class, new()
@@ -35,7 +37,7 @@ namespace ConfigServer.Client
 
         public Task<object> GetConfigAsync(Type type)
         {
-            return GetConfigAsync(type, options.ClientId);
+            return GetConfigAsync(type, clientIdProvider.GetCurrentClientId());
         }
 
         public async Task<object> GetConfigAsync(Type type, string clientId)
@@ -46,7 +48,7 @@ namespace ConfigServer.Client
 
         public Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>() where TConfig : class, new()
         {
-            return GetCollectionConfigAsync<TConfig>(options.ClientId);
+            return GetCollectionConfigAsync<TConfig>(clientIdProvider.GetCurrentClientId());
         }
 
         public async Task<IEnumerable<TConfig>> GetCollectionConfigAsync<TConfig>(string clientId) where TConfig : class, new()
