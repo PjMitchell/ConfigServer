@@ -20,7 +20,12 @@ namespace ConfigServer.Server
             this.registry = registry;
         }
 
-        public async Task<ResourceEntry> GetResourceAsync(string name)
+        public Task<ResourceEntry> GetResourceAsync(string name)
+        {
+            return GetResourceAsync(name, applicationId);
+        }
+
+        public async Task<ResourceEntry> GetResourceAsync(string name, string clientId)
         {
             var client = await configurationClientService.GetClientOrDefault(applicationId);
             return await resourceStore.GetResource(name, new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
@@ -28,7 +33,12 @@ namespace ConfigServer.Server
 
         public Uri GetResourceUri(string name)
         {
-            return new Uri(pathToConfigServer, $"Resource/{applicationId}/{name}");
+            return GetResourceUri(name, applicationId);
+        }
+
+        public Uri GetResourceUri(string name, string clientId)
+        {
+            return new Uri(pathToConfigServer, $"Resource/{clientId}/{name}");
         }
     }
 }

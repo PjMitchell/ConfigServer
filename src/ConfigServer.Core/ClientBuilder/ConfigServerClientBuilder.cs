@@ -31,11 +31,16 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
+        /// ConfigurationRegistry for builder that forms a registry of available configurations types 
+        /// </summary>
+        public ConfigurationRegistry ConfigurationRegistry { get; }
+
+        /// <summary>
         /// Add Transient service to builder
         /// </summary>
         /// <typeparam name="TInterface">Interface to implement</typeparam>
         /// <typeparam name="TService">Implementation</typeparam>
-        public void AddTransient<TInterface, TService>() where TInterface : class where TService : class, TInterface => serviceCollection.AddTransient<TInterface,TService>();
+        public void AddTransient<TInterface, TService>() where TInterface : class where TService : class, TInterface => serviceCollection.AddTransient<TInterface, TService>();
 
         /// <summary>
         /// Add singleton service to builder
@@ -43,10 +48,5 @@ namespace ConfigServer.Core
         /// <typeparam name="TService">Service</typeparam>
         /// <param name="service">Service instance</param>
         public void AddSingleton<TService>(TService service) where TService : class => serviceCollection.AddSingleton(service);
-
-        /// <summary>
-        /// ConfigurationRegistry for builder that forms a registry of available configurations types 
-        /// </summary>
-        public ConfigurationRegistry ConfigurationRegistry { get; }
     }
 }

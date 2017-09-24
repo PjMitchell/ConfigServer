@@ -96,8 +96,8 @@ namespace ConfigServer.Server
             var builder = new ConfigServerClientBuilder(source.ServiceCollection);
             var option = new LocalServerClientOptions(applicationId, configServeruri);
             builder.AddSingleton(option);
-            source.ServiceCollection.AddTransient<IConfigServer, LocalConfigServerClient>();
-            source.ServiceCollection.AddTransient<IResourceServer, LocalResourceServerClient>();
+            builder.AddTransient<IConfigServer, LocalConfigServerClient>();
+            builder.AddTransient<IResourceServer, LocalResourceServerClient>();
             return builder;
         }
 

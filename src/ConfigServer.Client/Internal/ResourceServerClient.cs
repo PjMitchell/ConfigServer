@@ -1,7 +1,6 @@
 ﻿using ConfigServer.Core;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 namespace ConfigServer.Client
 {
     internal class ResourceServerClient : IResourceServer
@@ -15,14 +14,14 @@ namespace ConfigServer.Client
             this.options = options;
         }
 
-        /// <summary>
-        /// Gets resource file
-        /// </summary>
-        /// <param name="name">Name of resource</param>
-        /// <returns>Resource response</returns>
-        public async Task<ResourceEntry> GetResourceAsync(string name)
+        public Task<ResourceEntry> GetResourceAsync(string name)
         {
-            var uri = GetResourceUri(name);
+            return GetResourceAsync(name, options.ClientId);
+        }
+
+        public async Task<ResourceEntry> GetResourceAsync(string name, string clientId)
+        {
+            var uri = GetResourceUri(name, clientId);
             var response = await client.GetAsync(uri);
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return new ResourceEntry { Name = name };
@@ -33,15 +32,15 @@ namespace ConfigServer.Client
             var content = await response.Content.ReadAsStringAsync();
             return new ResourceEntry { Name = name, HasEntry = true, Content = await response.Content.ReadAsStreamAsync() }; ;
         }
-        
-        /// <summary>
-        /// Get resource uri
-        /// </summary>
-        /// <param name="name">Name of resource</param>
-        /// <returns>Resource uri</returns>
+
         public Uri GetResourceUri(string name)
         {
-            return new Uri($"{options.ConfigServer}/Resource/{options.ClientId}/{name}");
+            return GetResourceUri(name, options.ClientId);
+        }
+
+        public Uri GetResourceUri(string name, string clientId)
+        {
+            return new Uri($"{options.ConfigServer}/Resource/{clientId}/{name}");
         }
     }
 }
