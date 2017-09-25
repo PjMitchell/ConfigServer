@@ -15,8 +15,7 @@ namespace ConfigServer.Core.Tests
         readonly Mock<IConfigurationModelRegistry> registry;
         const string clientId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
         readonly ConfigurationIdentity configIdentity = new ConfigurationIdentity(new ConfigurationClient(clientId), new Version(1, 0));
-        private readonly LocalServerClientOptions options = new LocalServerClientOptions(clientId, new Uri("https://localhost:30300/"));
-
+        
         public LocalConfigServerTests()
         {
             var configurationCollection = new ConfigurationRegistry();
@@ -37,7 +36,7 @@ namespace ConfigServer.Core.Tests
         {
             var expected = 23;
             await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = expected }, configIdentity));
-            var localServer = new LocalConfigServerClient(repository, clientservice.Object, registry.Object, options);
+            var localServer = new LocalConfigServerClient(repository, clientservice.Object, registry.Object, new SingleClientIdProvider(clientId));
             var config =await localServer.GetConfigAsync<SimpleConfig>();
             Assert.Equal(expected, config.IntProperty);
         }
@@ -47,7 +46,7 @@ namespace ConfigServer.Core.Tests
         {
             var expected = 23;
             await repository.UpdateConfigAsync(new ConfigInstance<SimpleConfig>(new SimpleConfig { IntProperty = expected },configIdentity));
-            var localServer = new LocalConfigServerClient(repository, clientservice.Object, registry.Object, options);
+            var localServer = new LocalConfigServerClient(repository, clientservice.Object, registry.Object, new SingleClientIdProvider(clientId));
             var config = await localServer.GetConfigAsync(typeof(SimpleConfig));
             var castedConfig = (SimpleConfig)config;
             Assert.Equal(expected, castedConfig.IntProperty);

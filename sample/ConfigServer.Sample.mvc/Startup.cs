@@ -45,7 +45,8 @@ namespace ConfigServer.Sample.mvc
                 .UseConfigSet<SampleConfigSet>()
                 .UseFileConfigProvider(new FileConfigRespositoryBuilderOptions { ConfigStorePath = enviroment.ContentRootPath + "/FileStore/Configs" })
                 .UseFileResourceProvider(new FileResourceRepositoryBuilderOptions { ResourceStorePath = enviroment.ContentRootPath + "/FileStore/Resources" })
-                .UseLocalConfigServerClient(applicationId, new Uri("http://localhost:58201/Config"))
+                .UseLocalConfigServerClient(new Uri("http://localhost:58201/Config"))
+                .WithClientId(applicationId)
                 .WithConfig<SampleConfig>()
                 .WithCollectionConfig<OptionFromConfigSet>();
 

@@ -23,7 +23,8 @@ namespace ConfigServer.Core.Tests
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             var builder = serviceCollection.AddConfigServer()
                 .UseInMemoryProvider()
-                .UseLocalConfigServerClient(applicationId, testUri)
+                .UseLocalConfigServerClient(testUri)
+                .WithClientId(applicationId)
                 .WithConfig<SimpleConfig>();
             var regs = builder.ConfigurationRegistry.ToList();
             Assert.Equal(1, regs.Count);
@@ -37,7 +38,8 @@ namespace ConfigServer.Core.Tests
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             var builder = serviceCollection.AddConfigServer()
                 .UseInMemoryProvider()
-                .UseLocalConfigServerClient(applicationId, testUri)
+                .UseLocalConfigServerClient(testUri)
+                .WithClientId(applicationId)
                 .WithConfig<SimpleConfig>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetRequiredService<IConfigurationRegistry>();

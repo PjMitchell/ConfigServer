@@ -90,11 +90,11 @@ namespace ConfigServer.Server
         /// <param name="applicationId">Identifier for application requesting the configuration</param>
         /// <param name="configServeruri">Identifier for application requesting the configuration</param>
         /// <returns>ConfigServer client builder for further configuration of client</returns>
-        public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, string applicationId, Uri configServeruri)
+        public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, Uri configServeruri)
         {
 
             var builder = new ConfigServerClientBuilder(source.ServiceCollection);
-            var option = new LocalServerClientOptions(applicationId, configServeruri);
+            var option = new LocalServerClientOptions(configServeruri);
             builder.AddSingleton(option);
             builder.AddTransient<IConfigServer, LocalConfigServerClient>();
             builder.AddTransient<IResourceServer, LocalResourceServerClient>();
