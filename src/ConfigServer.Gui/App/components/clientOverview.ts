@@ -79,7 +79,7 @@ export class ClientOverviewComponent implements OnInit {
             this.isConfigurator = true;
         } else if (permission.clientConfiguratorClaims.length !== 0 &&  permission.clientConfiguratorClaims.some((value) => value === this.client.configuratorClaim)) {
             this.isConfigurator = true;
-        }else {
+        } else {
             this.isConfigurator = false;
         }
         if (this.isConfigurator) {

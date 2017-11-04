@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileStore\Configs\" />
-    <Folder Include="FileStore\Resources\" />
     <Folder Include="wwwroot\Assets\img\" />
     <Folder Include="wwwroot\Assets\lib\" />
   </ItemGroup>
