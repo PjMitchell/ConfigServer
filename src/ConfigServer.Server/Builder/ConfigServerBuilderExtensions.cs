@@ -87,7 +87,6 @@ namespace ConfigServer.Server
         /// Adds Local ConfigServer client to specified ServiceCollection  
         /// </summary>
         /// <param name="source">The ConfigServerBuilder to add local ConfigServer client to</param>
-        /// <param name="applicationId">Identifier for application requesting the configuration</param>
         /// <param name="configServeruri">Identifier for application requesting the configuration</param>
         /// <returns>ConfigServer client builder for further configuration of client</returns>
         public static ConfigServerClientBuilder UseLocalConfigServerClient(this ConfigServerBuilder source, Uri configServeruri)

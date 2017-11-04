@@ -1,5 +1,4 @@
 ﻿using ConfigServer.Core;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConfigServer.Client
