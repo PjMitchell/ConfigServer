@@ -34,8 +34,6 @@ namespace ConfigServer.Sample.mvc
         public void ConfigureServices(IServiceCollection services)
         {
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
-            //var application2Id = "6A302E7D-05E9-4188-9612-4A2920E5C1AE";
-            //var groupId = "6C3E9253-8DB9-4C7D-AAFC-12391CB7B1C8";
             // Add framework services.
             services.AddMvc();
             services.AddMemoryCache();
