@@ -121,14 +121,6 @@ Adding remote client to application
 Consuming configuration
 
 ```csharp
-        public HomeController(IConfigServer configServer)
-        {
-            config = configServer.GetConfig<SampleConfig>();
-            options = configServer.GetCollectionConfig<OptionFromConfigSet>();
-        }
-```
-
-```csharp
         public async Task<IActionResult> Index()
         {
             var config = await configProvider.GetConfigAsync<SampleConfig>();
