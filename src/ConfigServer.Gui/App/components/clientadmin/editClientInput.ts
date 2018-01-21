@@ -8,13 +8,13 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-name-input" placeholder="Name" value="{{csClient.name}}">
+                <input matInput id="client-name-input" placeholder="Name" [(ngModel)]="csClient.name">
             </mat-form-field>
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
               <mat-select placeholder="Group" [(value)]="csClient.group">
-                <mat-option *ngFor="let group of csExistingGroups" [value]="group.groupId">
+                <mat-option *ngFor="let group of csExistingGroups" [(ngModel)]="group.groupId">
                   {{ group.name }}
                 </mat-option>
               </mat-select>
@@ -22,7 +22,7 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-enviroment-input" placeholder="Enviroment" value="{{csClient.enviroment}}" [matAutocomplete]="auto">
+                <input matInput id="client-enviroment-input" placeholder="Enviroment" [(ngModel)]="csClient.enviroment" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete">
                   <mat-option *ngFor="let existingEnviroment of existingEnviroments" [value]="existingEnviroment">
                     {{existingEnviroment}}
@@ -32,17 +32,17 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-description-input" placeholder="Description" value="{{csClient.description}}">
+                <input matInput id="client-description-input" placeholder="Description" [(ngModel)]="csClient.description">
             </mat-form-field>
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-readclaim-input" placeholder="Read claim" value="{{csClient.readclaim}}">
+                <input matInput id="client-readclaim-input" placeholder="Read claim" [(ngModel)]="csClient.readclaim">
             </mat-form-field>
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-configuratorclaim-input" placeholder="Configurator claim" value="{{csClient.configuratorClaim}}">
+                <input matInput id="client-configuratorclaim-input" placeholder="Configurator claim" [(ngModel)]="csClient.configuratorClaim">
             </mat-form-field>
         </div>
     </div>

@@ -10,7 +10,7 @@ import { IResourceInfo } from '../../interfaces/resourceInfo';
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="group-name-input" placeholder="Name" value="{{csClientGroup.name}}">
+                <input matInput id="group-name-input" placeholder="Name" [(ngModel)]="csClientGroup.name">
             </mat-form-field>
             <div *ngIf="csClientGroup.imagePath" class="thumbnail"><img class="img-responsive" src="Resource/ClientGroupImages/{{csClientGroup.imagePath}}" /></div>
             <h4>Upload image:</h4>

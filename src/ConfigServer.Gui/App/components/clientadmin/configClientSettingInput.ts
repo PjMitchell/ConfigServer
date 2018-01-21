@@ -18,12 +18,12 @@ import { IConfigurationClientSetting } from '../../interfaces/configurationClien
                 <tr *ngFor="let item of csSettings" class="clientsetting-row">
                     <td>
                         <mat-form-field class="full-width">
-                            <input matInput class="clientsetting-row-key" [(value)]="item.key" (change)="onKeyChange()">
+                            <input matInput class="clientsetting-row-key" [(ngModel)]="item.key" (change)="onKeyChange()">
                         </mat-form-field>
                     </td>
                     <td>
                         <mat-form-field class="full-width">
-                            <input matInput class="clientsetting-row-value" [(value)]="item.value">
+                            <input matInput class="clientsetting-row-value" [(ngModel)]="item.value">
                         </mat-form-field>
                     </td>
                     <td class="column-btn">
