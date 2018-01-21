@@ -4,7 +4,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>ConfigServer.Gui</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>

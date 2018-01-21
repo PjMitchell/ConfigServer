@@ -48,8 +48,8 @@ export class JsonFileUploaderComponent implements OnInit {
         if (files && files.length === 1) {
             const fileToUpload = files.item(0);
             const reader = new FileReader();
-            reader.onloadend = (e) => {
-                reader.removeEventListener('onloadend');
+            const delegate = (e: ProgressEvent) => {
+                reader.removeEventListener('onloadend', delegate, null);
                 const data = reader.result as string;
                 try {
                     const result = JSON.parse(data);
@@ -60,6 +60,7 @@ export class JsonFileUploaderComponent implements OnInit {
                 this.form.nativeElement.reset();
                 this.setFileNameToDefault();
             };
+            reader.onloadend = delegate;
             this.message = '';
             reader.readAsText(fileToUpload);
         }
