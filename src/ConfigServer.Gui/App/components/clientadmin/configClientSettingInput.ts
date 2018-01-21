@@ -1,4 +1,5 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Subject } from 'rxjs';
 import { IConfigurationClientSetting } from '../../interfaces/configurationClientSetting';
 
 @Component({
@@ -16,10 +17,14 @@ import { IConfigurationClientSetting } from '../../interfaces/configurationClien
                 </tr>
                 <tr *ngFor="let item of csSettings" class="clientsetting-row">
                     <td>
-                        <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()" class="form-control clientsetting-row-key">
+                        <mat-form-field class="full-width">
+                            <input matInput class="clientsetting-row-key" [(value)]="item.key" (change)="onKeyChange()">
+                        </mat-form-field>
                     </td>
                     <td>
-                        <input [(ngModel)]="item.value" type="text"  class="form-control clientsetting-row-value">
+                        <mat-form-field class="full-width">
+                            <input matInput class="clientsetting-row-value" [(value)]="item.value">
+                        </mat-form-field>
                     </td>
                     <td class="column-btn">
                         <button type="button" class="btn btn-danger clientsetting-row-delete" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
@@ -38,7 +43,7 @@ export class EditClientSettingInputComponent {
     public csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input()
     public csSettings: IConfigurationClientSetting[];
-
+    
     constructor() {
         this.csIsValid = true;
         this.csSettings = new Array<IConfigurationClientSetting>();

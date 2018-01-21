@@ -22,10 +22,12 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-enviroment-input" placeholder="Enviroment" value="{{csClient.enviroment}}" list="enviroments">
-                <datalist id="enviroments">
-                    <option *ngFor="let existingEnviroment of existingEnviroments" value="{{existingEnviroment}}">
-                </datalist>
+                <input matInput id="client-enviroment-input" placeholder="Enviroment" value="{{csClient.enviroment}}" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let existingEnviroment of existingEnviroments" [value]="existingEnviroment">
+                    {{existingEnviroment}}
+                  </mat-option>
+                </mat-autocomplete>
             </mat-form-field>
         </div>
         <div class="col-sm-6 col-md-4">
