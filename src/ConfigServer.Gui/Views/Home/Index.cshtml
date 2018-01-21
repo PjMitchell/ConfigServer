@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Assets/lib/deeppurple-amber.css" rel="stylesheet" />
     <link rel="stylesheet" href="Assets/styles.css">
     <!-- 1. Load libraries -->
     <!-- Polyfill(s) for older browsers -->
@@ -16,7 +17,7 @@
     <script src="~/Systemjs.config.js"></script>
 
     <script>
-        System.import('Assets/app.js').catch(function (err) { console.error(err); });
+        System.import('./app').catch(function (err) { console.error(err); });
     </script>
     <base href="/" />
 </head>

@@ -9,12 +9,12 @@ gulp.task('BuildTs', function () {
     var tsResult = tsProject.src()
         .pipe(tsProject());
 
-    return tsResult.js.pipe(gulp.dest('./App'));
+    return tsResult.js.pipe(gulp.dest('./wwwroot/App'));
 });
 
 gulp.task('CopyWwwRootAssets', function () {
     
-    return gulp.src(['./wwwroot/Assets/*.css', './wwwroot/Assets/**/*.js'])
+    return gulp.src(['./wwwroot/Assets/**/*.css', './wwwroot/Assets/**/*.js'])
     .pipe(gulp.dest('../ConfigServer.Server/Assets'));
 });
 
@@ -24,6 +24,7 @@ gulp.task('BuildPackageAssets', function () {
         'node_modules/zone.js/dist/zone.min.js',
         'node_modules/core-js/client/shim.min.js',
         'node_modules/systemjs/dist/system.js',
+        'node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css'
     ];
     return gulp.src(source)
         .pipe(gulp.dest('./wwwroot/Assets/lib'));
