@@ -4,9 +4,12 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 @Component({
     selector: 'enum-input',
     template: `
-    <select class="form-control" [(ngModel)]="csConfig[csDefinition.propertyName]">
-        <option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</option>
-    </select>
+    <mat-form-field class="full-width">
+        <mat-select placeholder="{{csDefinition.propertyDisplayName}}" [(value)]="csConfig[csDefinition.propertyName]">
+            <mat-option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</mat-option>
+        </mat-select>
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>
 `,
 })
 export class ConfigurationPropertyEnumInputComponent {

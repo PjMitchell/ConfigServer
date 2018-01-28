@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { appRoutingProviders, routing } from './app.routing';
 import { AppShell } from './app.shell';
-import { MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatAutocompleteModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EditClientSettingInputComponent } from './components/clientadmin/configClientSettingInput';
 import { CreateClientComponent } from './components/clientadmin/createClient';
@@ -102,7 +102,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
     ],
-    imports: [BrowserModule, routing, HttpModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatOptionModule, MatSelectModule, MatAutocompleteModule],
+    imports: [BrowserModule, routing, HttpModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatOptionModule, MatSelectModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule],
     providers: [
         appRoutingProviders,
         ArchiveConfigService,

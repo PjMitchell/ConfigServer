@@ -4,9 +4,12 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 @Component({
     selector: 'multiple-option-input',
     template: `
-    <select class="form-control" multiple [(ngModel)]="csConfig[csDefinition.propertyName]">
-        <option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</option>
-    </select>
+    <mat-form-field class="full-width">
+        <mat-select placeholder="{{csDefinition.propertyDisplayName}}" [(value)]="csConfig[csDefinition.propertyName]" multiple>
+            <mat-option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</mat-option>
+        </mat-select>
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>
 `,
 })
 export class ConfigurationPropertyMultipleOptionInputComponent {

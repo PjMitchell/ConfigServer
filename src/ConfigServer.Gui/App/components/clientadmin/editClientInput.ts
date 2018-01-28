@@ -14,7 +14,7 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
               <mat-select placeholder="Group" [(value)]="csClient.group">
-                <mat-option *ngFor="let group of csExistingGroups" [(ngModel)]="group.groupId">
+                <mat-option *ngFor="let group of csExistingGroups" [value]="group.groupId">
                   {{ group.name }}
                 </mat-option>
               </mat-select>

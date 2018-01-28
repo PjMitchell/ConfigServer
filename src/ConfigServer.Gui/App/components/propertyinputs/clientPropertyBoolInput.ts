@@ -4,10 +4,13 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 @Component({
     selector: 'bool-input',
     template: `
-    <select class="form-control" [(ngModel)]="csConfig[csDefinition.propertyName]">
-        <option [value]="true">True</option>
-        <option [value]="false">False</option>
-    </select>
+    <mat-form-field class="full-width">
+        <mat-select placeholder="{{csDefinition.propertyDisplayName}}" [(value)]="csConfig[csDefinition.propertyName]">
+            <mat-option [value]="true">True</mat-option>
+            <mat-option [value]="false">False</mat-option>
+        </mat-select>
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>
 `,
 })
 export class ConfigurationPropertyBoolInputComponent {

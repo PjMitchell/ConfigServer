@@ -3,8 +3,12 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 
 @Component({
     selector: 'string-input',
-    template: `<input class="form-control" [(ngModel)]="csConfig[csDefinition.propertyName]" type="text" pattern="{{csDefinition.validationDefinition.pattern}}" maxlength="{{csDefinition.validationDefinition.maxLength}}">`,
-})
+    template: `
+    <mat-form-field class="full-width">
+        <input matInput [(ngModel)]="csConfig[csDefinition.propertyName]" type="text" placeholder="{{csDefinition.propertyDisplayName}}" pattern="{{csDefinition.validationDefinition.pattern}}" maxlength="{{csDefinition.validationDefinition.maxLength}}" required="{{csDefinition.validationDefinition.isRequired}}">
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>
+`})
 export class ConfigurationPropertyStringInputComponent {
     @Input()
     public csDefinition: IConfigurationPropertyPayload;

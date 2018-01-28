@@ -5,26 +5,18 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
 @Component({
     selector: 'date-input',
     template: `
-    <input class="form-control"  type="date" #input value="{{inputDate | date:'yyyy-MM-dd'}}" min="{{csDefinition.validationDefinition.min | date:'yyyy-MM-dd'}}" max="{{csDefinition.validationDefinition.max | date:'yyyy-MM-dd'}}" (blur)="onBlur()" required="{{csDefinition.validationDefinition.isRequired}}">`,
+    <mat-form-field class="full-width">
+        <input matInput [(ngModel)]="csConfig[csDefinition.propertyName]" [matDatepicker]="picker" placeholder="{{csDefinition.propertyDisplayName}}" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>`,
 })
-export class ConfigurationPropertyDateInputComponent implements OnInit {
+export class ConfigurationPropertyDateInputComponent {
     @Input()
     public csDefinition: IConfigurationPropertyPayload;
     @Input()
     public csConfig: any;
     @Output()
     public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild('input')
-    public input: IChildElement<HTMLInputElement>;
-
-    public inputDate: string;
-
-    public ngOnInit() {
-        this.inputDate = this.csConfig[this.csDefinition.propertyName];
-    }
-
-    public onBlur() {
-        this.csConfig[this.csDefinition.propertyName] = this.input.nativeElement.value;
-        this.csConfigChange.emit(this.csConfig);
-    }
 }

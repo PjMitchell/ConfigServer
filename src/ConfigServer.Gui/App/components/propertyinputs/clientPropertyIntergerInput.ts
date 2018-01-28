@@ -4,8 +4,10 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 @Component({
     selector: 'interger-input',
     template: `
-    <input class="form-control" name="{{csDefinition.propertyName}}" [(ngModel)]="csConfig[csDefinition.propertyName]" type="number" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
-`,
+    <mat-form-field class="full-width">
+        <input matInput [(ngModel)]="csConfig[csDefinition.propertyName]" type= "number" placeholder="{{csDefinition.propertyDisplayName}}" min="{{csDefinition.validationDefinition.min}}" max="{{csDefinition.validationDefinition.max}}" required="{{csDefinition.validationDefinition.isRequired}}">
+        <mat-hint>{{csDefinition.propertyDescription}}</mat-hint>
+    </mat-form-field>`,
 })
 export class ConfigurationPropertyIntergerInputComponent {
     @Input()
@@ -15,3 +17,4 @@ export class ConfigurationPropertyIntergerInputComponent {
     @Output()
     public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
 }
+
