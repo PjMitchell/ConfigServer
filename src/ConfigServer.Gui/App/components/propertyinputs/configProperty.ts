@@ -5,7 +5,7 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
     selector: 'config-property',
     template: `
             <div [class.col-md-3]="!isCollection" [class.col-md-12]="isCollection" style="min-height:140px">
-                <config-property-item [csDefinition]="csDefinition" [(csConfig)]="csConfig">
+                <config-property-item [csDefinition]="csDefinition" [(csConfig)]="csConfig" [csHasInfo]="!isCollection">
                 </config-property-item>
             </div>
 `})
