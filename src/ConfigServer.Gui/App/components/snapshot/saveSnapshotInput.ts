@@ -6,7 +6,7 @@ import { SnapshotDataService } from "../../dataservices/snapshot-data.service";
         <div class="input-group snapshot-input-group">
             <input name="text" class="form-control" type="text" [(ngModel)]="snapshot" placeholder="Enter name">
             <span class="input-group-btn">
-                <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!snapshot">Save Snapshot</button>
+                <button type="button" mat-raised-button color="primary" (click)="save()" [disabled]="!snapshot">Save Snapshot</button>
             </span>
         </div>
 `,

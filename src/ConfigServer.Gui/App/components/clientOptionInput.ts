@@ -8,7 +8,7 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
             <tr>
                 <th *ngFor="let p of csModel.property | toIterator">{{p.propertyDisplayName}}</th>
                 <th class="column-btn">
-                    <button type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
+                    <app-icon-button color="accent" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></app-icon-button>
                 </th>
             </tr>
             <tr *ngFor="let item of csCollection;let i= index">
@@ -17,7 +17,7 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
                         </config-property-item>
                 </td>
                 <td class="column-btn">
-                    <button type="button" class="btn btn-danger" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                    <app-icon-button color="warn" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
                 </td>
             </tr>
         </table>

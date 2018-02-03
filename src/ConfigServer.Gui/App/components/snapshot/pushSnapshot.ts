@@ -16,9 +16,11 @@ import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
         <div  class="row">
             <client-header [csClient]="client"></client-header>
             <h3>Load snapshot</h3>
-            <select id="snapshot-input" class="form-control" [(ngModel)]="selectedSnapshot">
-                <option *ngFor="let p of snapshots" [ngValue]="p">{{p.name}}</option>
-            </select>
+            <mat-form-field id="snapshot-input" class="full-width">
+                <mat-select [(value)]="selectedSnapshot">
+                    <mat-option *ngFor="let snapshot of snapshots" [value]="snapshot">{{snapshot.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <div *ngIf="selectedSnapshot" >
                 <p>Created:{{selectedSnapshot.timeStamp | date:"MM/dd/yy" }}</p>
             </div>
@@ -26,7 +28,7 @@ import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
         </div>
         <div  *ngFor="let configurationSet of configurationSets">
             <div  class="row">
-                <h3>{{configurationSet.name}} <button type="button" class="btn btn-primary" (click)="toggleConfigSet(configurationSet)">All</button></h3>
+                <h3>{{configurationSet.name}} <button type="button" mat-raised-button color="primary" (click)="toggleConfigSet(configurationSet)">All</button></h3>
             </div>
             <div class="row">
                 <div *ngFor="let config of configurationSet.configs" class="col-sm-6 col-md-4 selectable-panel" [ngClass]="{'selectable-panel-selected': config.isSelected}"
@@ -38,8 +40,8 @@ import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
         </div>
         <hr />
         <div  class="row">
-            <button type="button" class="btn btn-primary" (click)="pushSnapshot()"  [disabled]="!canPushSnapShot || !selectedSnapshot">Push snaphot to client</button>
-            <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+            <button type="button" mat-raised-button color="primary" (click)="pushSnapshot()"  [disabled]="!canPushSnapShot || !selectedSnapshot">Push snaphot to client</button>
+            <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
         </div>
 `,
 })

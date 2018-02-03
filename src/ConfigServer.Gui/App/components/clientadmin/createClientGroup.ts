@@ -13,8 +13,8 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
             <edit-clientgroup-input [(csClientGroup)]="group"></edit-clientgroup-input>
             <hr />
             <div>
-               <button type="button"  class="btn btn-primary"(click)="back()">Back</button>
-               <button id="save-btn" [disabled]="isDisabled" type="button" class="btn btn-success" (click)="create()">Create</button>
+               <button type="button"  mat-raised-button color="primary"(click)="back()">Back</button>
+               <button id="save-btn" [disabled]="isDisabled" type="button" mat-raised-button color="accent" (click)="create()">Create</button>
             </div>
         </div>
 `,

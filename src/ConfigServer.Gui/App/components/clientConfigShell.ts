@@ -31,8 +31,8 @@ import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDef
             </div>
             <div class="break"></div>
             <div >
-                <button type="button" class="btn btn-primary" (click)="back()">Back</button>
-                <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" class="btn btn-primary" (click)="save()">Save</button>
+                <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+                <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" mat-raised-button color="accent" (click)="save()">Save</button>
             </div>
         </form>
 `,

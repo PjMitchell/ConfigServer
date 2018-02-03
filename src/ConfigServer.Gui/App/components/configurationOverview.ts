@@ -10,8 +10,8 @@ import { IConfigurationModelSummary } from '../interfaces/configurationModelSumm
                 <h4 class="config-name">{{config.displayName}}</h4>
                 <p class="config-description">Description: {{config.description}}</p>
                 <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
-                <button type="button" class="btn btn-primary" (click)="downloadConfig(configurationSetId,config.id)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
-                <button type="button" class="btn btn-primary config-edit-btn" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
+                <app-icon-button  color="primary" (click)="downloadConfig(configurationSetId,config.id)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></app-icon-button>
+                <button type="button" class="config-edit-btn" mat-raised-button color="primary" (click)="goToConfig(configurationSetId,config.id)">Edit</button>
             </div>
 `,
 })

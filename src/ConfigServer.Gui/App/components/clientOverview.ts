@@ -14,13 +14,13 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
         <client-header [csClient]="client"></client-header>
         <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)" [csIsConfigurator]="isConfigurator"></resource-overview>
         <h3>ConfigurationSets</h3>
-        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button>
+        <button type="button" mat-raised-button color="primary" (click)="goToArchive()">Archive</button>
         <snapshot-input [csClientId]="clientId"></snapshot-input>
-        <button type="button" class="btn btn-primary" (click)="goToLoadSnapshot()">Load Snapshot</button>
+        <button type="button" mat-raised-button color="primary" (click)="goToLoadSnapshot()">Load Snapshot</button>
         <div class="break"></div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
-        <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+        <button type="button" mat-raised-button color="primary" (click)="back()"></button>
 `,
 })
 export class ClientOverviewComponent implements OnInit {

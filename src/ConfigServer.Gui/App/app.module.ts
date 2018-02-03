@@ -1,11 +1,13 @@
 ﻿import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { MatAutocompleteModule, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatNativeDateModule, MatOptionModule, MatSelectModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { appRoutingProviders, routing } from './app.routing';
 import { AppShell } from './app.shell';
-import { MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule } from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DeleteBeforeComponent } from './components/buttons/deleteBeforeButton.component';
+import { IconButtonComponent } from './components/buttons/iconButton.component';
 import { EditClientSettingInputComponent } from './components/clientadmin/configClientSettingInput';
 import { CreateClientComponent } from './components/clientadmin/createClient';
 import { CreateClientGroupComponent } from './components/clientadmin/createClientGroup';
@@ -101,8 +103,23 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ClientHeaderComponent,
         ObjectToIteratorPipe,
         ObjectToKeyValuePairsPipe,
+        IconButtonComponent,
+        DeleteBeforeComponent,
     ],
-    imports: [BrowserModule, routing, HttpModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule, MatOptionModule, MatSelectModule, MatAutocompleteModule, MatDatepickerModule, MatNativeDateModule],
+    imports: [
+        BrowserModule,
+        routing,
+        HttpModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        BrowserAnimationsModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatAutocompleteModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule],
     providers: [
         appRoutingProviders,
         ArchiveConfigService,

@@ -6,15 +6,15 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
     selector: 'resource-overview',
     template: `
         <h3>Resources</h3>
-        <button type="button" class="btn btn-primary" (click)="goToArchive()">Archive</button>
-        <button type="button" class="btn btn-primary" *ngIf="isConfigurator" (click)="gotoCopy()">Copy</button>
+        <button type="button" mat-raised-button color="primary" (click)="goToArchive()">Archive</button>
+        <button type="button" mat-raised-button color="primary" *ngIf="isConfigurator" (click)="gotoCopy()">Copy</button>
         <div class="break"></div>
         <div class="row">
             <div *ngFor="let resource of resources" class="col-sm-6 col-md-4" >
                 <p>{{resource.name}}</p>
                 <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
-                <button type="button" class="btn btn-primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
-                <button type="button" class="btn btn-primary" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                <app-icon-button color="primary" (click)="downloadResource(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></app-icon-button>
+                <app-icon-button color="warn" (click)="delete(resource.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
             </div>
         </div>
         <hr />

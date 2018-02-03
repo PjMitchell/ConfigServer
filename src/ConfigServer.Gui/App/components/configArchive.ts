@@ -23,36 +23,27 @@ import { IChildElement } from '../interfaces/htmlInterfaces';
                         Created:{{config.timeStamp | date:"MM/dd/yy" }} <br/>
                         Archived:{{config.archiveTimeStamp | date:"MM/dd/yy" }}
                     </p>
-                    <button type="button" class="btn btn-primary" *ngIf="canDownloadArchive" (click)="downloadConfig(config.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></button>
-                    <button type="button" class="btn btn-primary" *ngIf="canDeleteArchives" (click)="delete(config.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                    <app-icon-button color="primary" *ngIf="canDownloadArchive" (click)="downloadConfig(config.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></app-icon-button>
+                    <app-icon-button color="primary" *ngIf="canDeleteArchives" (click)="delete(config.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
                 </div>
             </div>
         </div>
         <hr />
         <div class="row" *ngIf="canDeleteArchives">
-            <div class="input-group col-sm-4 col-md-3"  >
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-primary" (click)="deleteBefore()">Delete before</button>
-                </span>
-                <input class="form-control"  type="date" #input value="{{inputDate | date:'yyyy-MM-dd'}}"  (blur)="onBlur()">
-            </div>
+            <app-delete-before-button class="col-sm-4 col-md-3" (onDeleteBefore)="deleteBefore($event)"></app-delete-before-button>
         </div>
         <hr />
         <div class="row">
-            <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+            <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
         </div>
 `,
 })
 export class ConfigArchiveComponent implements OnInit {
     public groupedConfigs: Array<IGroup<string, IArchivedConfigInfo>>;
     public clientId: string;
-    public inputDate: Date;
-    @ViewChild('input')
-    public input: IChildElement<HTMLInputElement>;
     public canDeleteArchives = false;
     public canDownloadArchive = false;
     constructor(private dataService: ArchiveConfigService, private permissionService: UserPermissionService, private route: ActivatedRoute, private router: Router) {
-        this.inputDate = new Date();
     }
 
     public ngOnInit() {
@@ -80,17 +71,13 @@ export class ConfigArchiveComponent implements OnInit {
         await this.updateArchiveList();
     }
 
-    public async deleteBefore() {
-        await this.dataService.deleteArchivedConfigBefore(this.clientId, this.inputDate);
+    public async deleteBefore(date: Date) {
+        await this.dataService.deleteArchivedConfigBefore(this.clientId, date);
         await this.updateArchiveList();
     }
 
     public back() {
         this.router.navigate(['/client/' + this.clientId]);
-    }
-
-    public onBlur() {
-        this.inputDate = new Date(this.input.nativeElement.value);
     }
 
     private async updateArchiveList() {

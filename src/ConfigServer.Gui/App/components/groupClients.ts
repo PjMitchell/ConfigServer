@@ -9,7 +9,7 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
     template: `
             <group-header [csGroup]="group"></group-header>
             <hr />
-                <button type="button" class="btn btn-primary" (click)="goToSnapshots()">Snapshots</button>
+                <button type="button" mat-raised-button color="primary" (click)="goToSnapshots()">Snapshots</button>
             <hr />
             <div class="row">
                 <div id="client-panel-{{client.clientId}}" class="col-sm-6 col-md-4 client-panel"  *ngFor="let client of clients">
@@ -18,12 +18,12 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
                         <p class="client-id">Id: {{client.clientId}}</p>
                         <p class="client-enviroment">{{client.enviroment}}</p>
                         <p class="client-description">{{client.description}}</p>
-                        <button id="manage-client-btn-{{client.clientId}}" type="button" class="btn btn-primary" (click)="goToClient(client.clientId)">Manage configurations</button>
-                        <button id="edit-client-btn-{{client.clientId}}" *ngIf="canEditClients" type="button" class="btn btn-primary" (click)="editClient(client.clientId)">Edit client</button>
+                        <button id="manage-client-btn-{{client.clientId}}" type="button" mat-raised-button color="primary" (click)="goToClient(client.clientId)">Manage configurations</button>
+                        <button id="edit-client-btn-{{client.clientId}}" *ngIf="canEditClients" type="button" mat-raised-button color="primary" (click)="editClient(client.clientId)">Edit client</button>
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+            <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
 `,
 })
 export class GroupClientsComponent  implements OnInit {
