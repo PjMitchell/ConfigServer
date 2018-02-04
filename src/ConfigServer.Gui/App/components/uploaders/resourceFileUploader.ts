@@ -3,22 +3,21 @@ import { ResourceDataService } from '../../dataservices/resource-data.service';
 import { IChildElement } from '../../interfaces/htmlInterfaces';
 @Component({
     selector: 'resource-file-uploader',
+    styles: ['.upload-btn { cursor:pointer;}'],
     template: `
     <div>
         <form #form>
-            <div class="input-group">
-                <span class="input-group-btn">
-                    <div class="fileUpload btn btn-primary">
+            <mat-form-field class="full-width">
+                <input matInput [(ngModel)]="fileName" name="filename" type="text" placeholder=" Upload resource">
+                <div matPrefix class="fileUpload" style="margin-right:5px;">
                         <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
                         <input type="file" #input name="upload" class="upload" (change)="fileChanged()">
-                    </div>
-                </span>
-                <input name="filename" class="form-control" type="text" [(ngModel)]="fileName">
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></button>
-                </span>
-            </div>
-            <p *ngIf="!isValidFilename" style="color:red;">file name is not valid</p>
+                </div>
+                <div type="button" matSuffix mat-raised-button color="primary" (click)="upload()" class="upload-btn"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></div>
+                <mat-error *ngIf="!isValidFilename">
+                    file name is not valid
+                </mat-error>
+            </mat-form-field>
         </form>
     </div>
 `,

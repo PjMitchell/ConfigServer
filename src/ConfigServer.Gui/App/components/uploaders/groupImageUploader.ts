@@ -6,20 +6,14 @@ import { IChildElement } from '../../interfaces/htmlInterfaces';
     selector: 'group-image-file-uploader',
     template: `
         <form #form>
-            <div class="input-group">
-            <span class="input-group-btn">
-                <div class="fileUpload btn btn-primary">
+            <mat-form-field class="full-width">
+                <div (click)="onFileNameClicked()"><input matInput [(ngModel)]="fileName" name="filename" type="text" disabled="true"></div>
+                <div matPrefix class="fileUpload" style="margin-right:5px;">
                     <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
                     <input type="file" #input name="upload" accept="image/*" class="upload" (change)="fileChanged()">
                 </div>
-            </span>
-            <span class="input-group-addon upload-text" (click)="onFileNameClicked()">
-                {{fileName}}
-            </span>
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-primary" (click)="upload()"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></button>
-            </span>
-            </div>
+                <div type="button" matSuffix mat-raised-button color="primary" (click)="upload()" class="upload-btn"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></div>
+            </mat-form-field>
         </form>
 `,
 })

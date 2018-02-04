@@ -3,12 +3,10 @@ import { SnapshotDataService } from "../../dataservices/snapshot-data.service";
 @Component({
     selector: 'snapshot-input',
     template: `
-        <div class="input-group snapshot-input-group">
-            <input name="text" class="form-control" type="text" [(ngModel)]="snapshot" placeholder="Enter name">
-            <span class="input-group-btn">
-                <button type="button" mat-raised-button color="primary" (click)="save()" [disabled]="!snapshot">Save Snapshot</button>
-            </span>
-        </div>
+        <mat-form-field class="full-width snapshot-input-group">
+            <input matInput [(ngModel)]="snapshot" type="text" placeholder="Snapshot name">
+            <button type="button" matSuffix mat-raised-button color="primary" (click)="save()" [disabled]="!snapshot">Save Snapshot</button>
+        </mat-form-field>
 `,
 })
 export class SaveSnapshotInputComponent {

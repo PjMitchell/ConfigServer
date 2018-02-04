@@ -20,7 +20,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
         <div class="break"></div>
         <configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
         </configSet-overview>
-        <button type="button" mat-raised-button color="primary" (click)="back()"></button>
+        <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
 `,
 })
 export class ClientOverviewComponent implements OnInit {
