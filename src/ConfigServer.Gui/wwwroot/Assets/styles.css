@@ -49,12 +49,6 @@ button {
     border-bottom: 3px solid #646982;
 }
 
-.ng-invalid:not(form) {
-    border-color: #f03241;
-    border-width: 1px 1px 1px 5px;
-    border-style: solid;
-}
-
 .errorMessage {
     color: #f03241
 }

@@ -1,5 +1,5 @@
 ﻿import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MatAutocompleteModule, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatNativeDateModule, MatOptionModule, MatSelectModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
@@ -119,7 +119,8 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         MatAutocompleteModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        MatButtonModule],
+        MatButtonModule,
+        ReactiveFormsModule],
     providers: [
         appRoutingProviders,
         ArchiveConfigService,
