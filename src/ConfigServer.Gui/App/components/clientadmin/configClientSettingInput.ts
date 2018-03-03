@@ -43,7 +43,7 @@ export class EditClientSettingInputComponent {
     public csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input()
     public csSettings: IConfigurationClientSetting[];
-    
+
     constructor() {
         this.csIsValid = true;
         this.csSettings = new Array<IConfigurationClientSetting>();

@@ -12,8 +12,8 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
                 </th>
             </tr>
             <tr *ngFor="let item of csCollection;let i= index">
-                <td *ngFor="let itemProperty of csModel.property | toIterator">
-                    <config-property-item [csDefinition]="itemProperty" [(csConfig)]="csCollection[i]">
+                <td *ngFor="let itemProperty of csModel.property | toIterator;let c= index">
+                    <config-property-item [csDefinition]="itemProperty" [(csConfig)]="csCollection[i]" (onIsValidChanged)="onValidChanged(i,c, $event)">
                         </config-property-item>
                 </td>
                 <td class="column-btn">
@@ -30,7 +30,10 @@ export class OptionInputComponent {
     public csCollection: any[];
     @Output()
     public csCollectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+    @Output()
+    public onIsValidChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+    private validation: boolean[][] = new Array<boolean[]>();
     public add() {
         const newItem = new Object();
         const keys = Object.keys(this.csModel.property);
@@ -47,5 +50,13 @@ export class OptionInputComponent {
 
     public customTrackBy(index: number, obj: any): any {
         return index;
+    }
+
+    private onValidChanged(row: number, column: number, isValid: boolean) {
+        if (!this.validation[row]) {
+            this.validation[row] = new Array<boolean>();
+        }
+        this.validation[row][column] = isValid;
+        this.onIsValidChanged.emit(this.validation.every((value) => value.every((innerValue) => innerValue)));
     }
 }

@@ -12,8 +12,8 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
         </th>
     </tr>
     <tr *ngFor="let item of collection;let i= index">
-        <td *ngFor="let itemProperty of csDefinition.childProperty | toIterator">
-            <config-property-item [csDefinition]="itemProperty" [(csConfig)]="collection[i]">
+        <td *ngFor="let itemProperty of csDefinition.childProperty | toIterator;let c= index">
+            <config-property-item [csDefinition]="itemProperty" [(csConfig)]="collection[i]" (onIsValidChanged)="onValidChanged(i,c, $event)">
             </config-property-item>
         </td>
         <td class="column-btn">
@@ -30,8 +30,11 @@ export class ConfigurationPropertyCollectionInputComponent implements OnInit {
     public csConfig: any;
     @Output()
     public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output()
+    public onIsValidChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
     public collection: any[];
 
+    private validation: boolean[][] = new Array<boolean[]>();
     public ngOnInit() {
         this.collection = this.csConfig[this.csDefinition.propertyName];
     }
@@ -52,5 +55,13 @@ export class ConfigurationPropertyCollectionInputComponent implements OnInit {
 
     public customTrackBy(index: number, obj: any): any {
         return index;
+    }
+
+    private onValidChanged(row: number, column: number, isValid: boolean) {
+        if (!this.validation[row]) {
+            this.validation[row] = new Array<boolean>();
+        }
+        this.validation[row][column] = isValid;
+        this.onIsValidChanged.emit(this.validation.every((value) => value.every((innerValue) => innerValue)));
     }
 }

@@ -25,8 +25,8 @@ import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDef
         <form #configForm="ngForm">
             <div *ngIf="configModel && config">
                 <div [ngSwitch]="configurationModelType" >
-                    <config-input *ngSwitchCase="'config'" [csModel]="configModel" [(csConfig)]="config" ></config-input>
-                    <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [(csCollection)]="config"></config-option-input>
+                    <config-input *ngSwitchCase="'config'" [csModel]="configModel" [(csConfig)]="config" (onIsValidChanged)="handleOnValidChanged($event)"></config-input>
+                    <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [(csCollection)]="config" (onIsValidChanged)="handleOnValidChanged($event)"></config-option-input>
                 </div>
             </div>
             <div class="break"></div>
@@ -103,5 +103,9 @@ export class ClientConfigShellComponent implements OnInit {
             .then((result) => {
                 this.config = result;
             });
+    }
+
+    private handleOnValidChanged(isValid: boolean) {
+        this.isDisabled = !isValid;
     }
 }

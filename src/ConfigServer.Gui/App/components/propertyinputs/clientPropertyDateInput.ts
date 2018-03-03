@@ -19,6 +19,8 @@ export class ConfigurationPropertyDateInputComponent {
     public csHasInfo: boolean;
     @Output()
     public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output()
+    public onIsValidChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
     public formValue = new FormControl();
     public minValue = new Date(-8640000000000000);
     public maxValue = new Date(8640000000000000);
@@ -52,7 +54,8 @@ export class ConfigurationPropertyDateInputComponent {
         }
     }
 
-    private currentSubscription: Subscription;
+    private currentValueSubscription: Subscription;
+    private currentIsValidSubscription: Subscription;
 
     public getErrorMessage() {
         return this.formValue.hasError('required') ? 'You must enter a value' : '';
@@ -62,12 +65,18 @@ export class ConfigurationPropertyDateInputComponent {
         if (!this.csDefinition || !this.csConfig) {
             return;
         }
-        if (this.currentSubscription) {
-            this.currentSubscription.unsubscribe();
+        if (this.currentValueSubscription) {
+            this.currentValueSubscription.unsubscribe();
         }
         this.formValue.setValue(this.csConfig[this.csDefinition.propertyName]);
-        this.currentSubscription = this.formValue.valueChanges.subscribe((value) => {
+        this.currentValueSubscription = this.formValue.valueChanges.subscribe((value) => {
             this.csConfig[this.csDefinition.propertyName] = value;
+        });
+        if (this.currentIsValidSubscription) {
+            this.currentIsValidSubscription.unsubscribe();
+        }
+        this.currentIsValidSubscription = this.formValue.statusChanges.subscribe((value) => {
+            this.onIsValidChanged.emit(value === "VALID");
         });
     }
     private setValidators() {
