@@ -16,6 +16,7 @@ import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
                 <app-icon-button color="primary" (click)="deleteSnapshot(snapshot.id)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
             </div>
         </div>
+        <hr />
         <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
 `,
 })

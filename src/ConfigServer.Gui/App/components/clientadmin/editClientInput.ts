@@ -4,6 +4,7 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
 
 @Component({
     selector: 'edit-client-input',
+    styles: ['mat-form-field { height: 66px; }'],
     template: `
     <div class="row">
         <div class="col-sm-6 col-md-4">
