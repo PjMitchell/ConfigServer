@@ -7,6 +7,7 @@ branches:
 install:
   - ps: appveyor DownloadFile https://go.microsoft.com/fwlink/?linkid=839640 -FileName "c:\dotnetsdk.exe"
   - cmd: call c:\dotnetsdk.exe /quiet
+  - npm -g install npm@latest
 
 nuget:  
   disable_publish_on_pr: true
