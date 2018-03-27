@@ -1,7 +1,8 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
+import { PropertyInputBase } from './propertyInputBase';
 
 @Component({
     selector: 'date-input',
@@ -14,72 +15,21 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
         <mat-error *ngIf="formValue.invalid">{{getErrorMessage()}}</mat-error>
     </mat-form-field>`,
 })
-export class ConfigurationPropertyDateInputComponent {
-    @Input()
-    public csHasInfo: boolean;
-    @Output()
-    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
-    @Output()
-    public onIsValidChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
+export class ConfigurationPropertyDateInputComponent extends PropertyInputBase {
+
     public formValue = new FormControl();
     public minValue = new Date(-8640000000000000);
     public maxValue = new Date(8640000000000000);
 
-    private _definition: IConfigurationPropertyPayload;
-    @Input()
-    public get csDefinition() {
-        return this._definition;
+    constructor(formBuilder: FormBuilder) {
+        super(formBuilder);
     }
-    public set csDefinition(value: IConfigurationPropertyPayload) {
-        this._definition = value;
-        this.setValidators();
-        this.setValue();
-    }
-
-    private _config: any;
-    @Input()
-    public get csConfig() {
-        return this._config;
-    }
-    public set csConfig(value: any) {
-        this._config = value;
-        this.setValue();
-    }
-
-    get placeholder(): string {
-        if (this.csHasInfo) {
-            return this.csDefinition.propertyDisplayName;
-        } else {
-            return '';
-        }
-    }
-
-    private currentValueSubscription: Subscription;
-    private currentIsValidSubscription: Subscription;
 
     public getErrorMessage() {
         return this.formValue.hasError('required') ? 'You must enter a value' : '';
     }
 
-    private setValue() {
-        if (!this.csDefinition || !this.csConfig) {
-            return;
-        }
-        if (this.currentValueSubscription) {
-            this.currentValueSubscription.unsubscribe();
-        }
-        this.formValue.setValue(this.csConfig[this.csDefinition.propertyName]);
-        this.currentValueSubscription = this.formValue.valueChanges.subscribe((value) => {
-            this.csConfig[this.csDefinition.propertyName] = value;
-        });
-        if (this.currentIsValidSubscription) {
-            this.currentIsValidSubscription.unsubscribe();
-        }
-        this.currentIsValidSubscription = this.formValue.statusChanges.subscribe((value) => {
-            this.onIsValidChanged.emit(value === "VALID");
-        });
-    }
-    private setValidators() {
+    protected getValidators() {
         const validators = new Array<ValidatorFn>();
         if (this._definition.validationDefinition.isRequired) {
             validators.push(Validators.required);
@@ -92,6 +42,6 @@ export class ConfigurationPropertyDateInputComponent {
         if (max) {
             this.maxValue = new Date(max as string);
         }
-        this.formValue.setValidators(validators);
+        return validators;
     }
 }

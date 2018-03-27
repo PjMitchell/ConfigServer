@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../dataservices/client-data.service';
 import { ConfigurationDataService } from '../dataservices/config-data.service';
@@ -25,14 +25,14 @@ import { IConfigurationSetModelPayload } from "../interfaces/configurationSetDef
         <form #configForm="ngForm">
             <div *ngIf="configModel && config">
                 <div [ngSwitch]="configurationModelType" >
-                    <config-input *ngSwitchCase="'config'" [csModel]="configModel" [(csConfig)]="config" (onIsValidChanged)="handleOnValidChanged($event)"></config-input>
-                    <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [(csCollection)]="config" (onIsValidChanged)="handleOnValidChanged($event)"></config-option-input>
+                    <config-input *ngSwitchCase="'config'" [csModel]="configModel" [csConfig]="config" [parentForm]="form" ></config-input>
+                    <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [csCollection]="config" [parentForm]="form" ></config-option-input>
                 </div>
             </div>
             <div class="break"></div>
             <div >
                 <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
-                <button *ngIf="configModel && config" [disabled]="isDisabled" type="button" mat-raised-button color="accent" (click)="save()">Save</button>
+                <button *ngIf="configModel && config" [disabled]="form.invalid || isDisabled" type="button" mat-raised-button color="accent" (click)="save()">Save</button>
             </div>
         </form>
 `,
@@ -48,8 +48,9 @@ export class ClientConfigShellComponent implements OnInit {
     public configModel: IConfigurationModelPayload;
     public uploadMessage: string;
     public configurationModelType: 'config' | 'option';
-    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private uploadDataService: UploadDataService, private route: ActivatedRoute, private router: Router) {
-
+    public form: FormGroup;
+    constructor(private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private configDataService: ConfigurationDataService, private uploadDataService: UploadDataService, private route: ActivatedRoute, private router: Router, private formBuilder: FormBuilder) {
+        this.form = this.formBuilder.group({});
     }
 
     public ngOnInit(): void {
@@ -103,9 +104,5 @@ export class ClientConfigShellComponent implements OnInit {
             .then((result) => {
                 this.config = result;
             });
-    }
-
-    private handleOnValidChanged(isValid: boolean) {
-        this.isDisabled = !isValid;
     }
 }

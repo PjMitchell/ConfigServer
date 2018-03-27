@@ -52,6 +52,7 @@ namespace ConfigServer.Server
                 <meta charset=""UTF-8"">
                 <meta name = ""viewport"" content=""width=device-width, initial-scale=1"">
                 <link href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" rel=""stylesheet"" />
+                <link href=""{basePath}/Assets/lib/deeppurple-amber.css"" rel=""stylesheet"" />
                 <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.css"">
                 <!-- 1. Load libraries -->
                 <!-- Polyfill(s) for older browsers -->

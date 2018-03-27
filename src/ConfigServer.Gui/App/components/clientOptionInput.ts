@@ -1,4 +1,5 @@
-﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { IConfigurationModelPayload } from '../interfaces/configurationModelPayload';
 
 @Component({
@@ -13,8 +14,7 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
             </tr>
             <tr *ngFor="let item of csCollection;let i= index">
                 <td *ngFor="let itemProperty of csModel.property | toIterator;let c= index">
-                    <config-property-item [csDefinition]="itemProperty" [(csConfig)]="csCollection[i]" (onIsValidChanged)="onValidChanged(i,c, $event)">
-                        </config-property-item>
+                    <config-property-item [csDefinition]="itemProperty" [csConfig]="csCollection[i]" [parentForm]="collectionForms.controls[i]" [csHasInfo]="false"></config-property-item>
                 </td>
                 <td class="column-btn">
                     <app-icon-button color="warn" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
@@ -23,17 +23,26 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
         </table>
 `,
 })
-export class OptionInputComponent {
+export class OptionInputComponent implements OnInit {
     @Input()
     public csModel: IConfigurationModelPayload;
     @Input()
     public csCollection: any[];
-    @Output()
-    public csCollectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
-    @Output()
-    public onIsValidChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Input()
+    public parentForm: FormGroup;
+    public collection: any[];
+    public collectionForms: FormArray;
+    constructor(private formBuilder: FormBuilder) {
+        this.collectionForms = formBuilder.array([]);
+    }
 
-    private validation: boolean[][] = new Array<boolean[]>();
+    public ngOnInit() {
+        this.csCollection.forEach((value, i) => {
+            this.collectionForms.setControl(i, this.formBuilder.group({}));
+        });
+        this.parentForm.setControl("root", this.collectionForms);
+    }
+
     public add() {
         const newItem = new Object();
         const keys = Object.keys(this.csModel.property);
@@ -41,22 +50,17 @@ export class OptionInputComponent {
             newItem[value] = '';
         });
         this.csCollection.push(newItem);
+        const index = this.collection.indexOf(newItem);
+        this.collectionForms.setControl(index, this.formBuilder.group({}));
     }
 
     public remove(item: any) {
         const index = this.csCollection.indexOf(item);
         this.csCollection.splice(index, 1);
+        this.collectionForms.controls.splice(index, 1);
     }
 
     public customTrackBy(index: number, obj: any): any {
         return index;
-    }
-
-    private onValidChanged(row: number, column: number, isValid: boolean) {
-        if (!this.validation[row]) {
-            this.validation[row] = new Array<boolean>();
-        }
-        this.validation[row][column] = isValid;
-        this.onIsValidChanged.emit(this.validation.every((value) => value.every((innerValue) => innerValue)));
     }
 }
