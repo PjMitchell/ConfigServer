@@ -52,8 +52,6 @@ function Exec
 function ExecuteGulpTasks
 {
 	Push-Location "./src/ConfigServer.Gui"  
-	Write-Host "Update npm"
-	& "npm" update npm -g
 	Write-Host "npm package restore"	
 	& "npm" install
 	if ($LastExitCode -ne 0) {

@@ -1,30 +1,47 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
-import { IChildElement } from '../../interfaces/htmlInterfaces';
+import { PropertyInputBase } from './propertyInputBase';
 
 @Component({
     selector: 'date-input',
     template: `
-    <input class="form-control"  type="date" #input value="{{inputDate | date:'yyyy-MM-dd'}}" min="{{csDefinition.validationDefinition.min | date:'yyyy-MM-dd'}}" max="{{csDefinition.validationDefinition.max | date:'yyyy-MM-dd'}}" (blur)="onBlur()" required="{{csDefinition.validationDefinition.isRequired}}">`,
+    <mat-form-field class="full-width">
+        <input matInput [formControl]="formValue" [matDatepicker]="picker" placeholder="{{placeholder}}" [min]="minValue" [max]="maxValue">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-hint *ngIf="csHasInfo">{{csDefinition.propertyDescription}}</mat-hint>
+        <mat-error *ngIf="formValue.invalid">{{getErrorMessage()}}</mat-error>
+    </mat-form-field>`,
 })
-export class ConfigurationPropertyDateInputComponent implements OnInit {
-    @Input()
-    public csDefinition: IConfigurationPropertyPayload;
-    @Input()
-    public csConfig: any;
-    @Output()
-    public csConfigChange: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild('input')
-    public input: IChildElement<HTMLInputElement>;
+export class ConfigurationPropertyDateInputComponent extends PropertyInputBase {
 
-    public inputDate: string;
+    public formValue = new FormControl();
+    public minValue = new Date(-8640000000000000);
+    public maxValue = new Date(8640000000000000);
 
-    public ngOnInit() {
-        this.inputDate = this.csConfig[this.csDefinition.propertyName];
+    constructor(formBuilder: FormBuilder) {
+        super(formBuilder);
     }
 
-    public onBlur() {
-        this.csConfig[this.csDefinition.propertyName] = this.input.nativeElement.value;
-        this.csConfigChange.emit(this.csConfig);
+    public getErrorMessage() {
+        return this.formValue.hasError('required') ? 'You must enter a value' : '';
+    }
+
+    protected getValidators() {
+        const validators = new Array<ValidatorFn>();
+        if (this._definition.validationDefinition.isRequired) {
+            validators.push(Validators.required);
+        }
+        const min = this._definition.validationDefinition.min;
+        if (min) {
+            this.minValue = new Date(min as string);
+        }
+        const max = this._definition.validationDefinition.max;
+        if (max) {
+            this.maxValue = new Date(max as string);
+        }
+        return validators;
     }
 }

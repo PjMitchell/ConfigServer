@@ -1,4 +1,5 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Subject } from 'rxjs';
 import { IConfigurationClientSetting } from '../../interfaces/configurationClientSetting';
 
 @Component({
@@ -11,18 +12,22 @@ import { IConfigurationClientSetting } from '../../interfaces/configurationClien
                     <th>Key</th>
                     <th>Value</th>
                     <th class="column-btn">
-                        <button id="clientsetting-input-add-btn" type="button" class="btn btn-success" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></button>
+                        <app-icon-button id="clientsetting-input-add-btn" color="accent" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></app-icon-button>
                     </th>
                 </tr>
                 <tr *ngFor="let item of csSettings" class="clientsetting-row">
                     <td>
-                        <input [(ngModel)]="item.key" type="text" (change)="onKeyChange()" class="form-control clientsetting-row-key">
+                        <mat-form-field class="full-width">
+                            <input matInput class="clientsetting-row-key" [(ngModel)]="item.key" (change)="onKeyChange()">
+                        </mat-form-field>
                     </td>
                     <td>
-                        <input [(ngModel)]="item.value" type="text"  class="form-control clientsetting-row-value">
+                        <mat-form-field class="full-width">
+                            <input matInput class="clientsetting-row-value" [(ngModel)]="item.value">
+                        </mat-form-field>
                     </td>
                     <td class="column-btn">
-                        <button type="button" class="btn btn-danger clientsetting-row-delete" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                        <app-icon-button class="clientsetting-row-delete" color="warn" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
                     </td>
                 </tr>
             </table>

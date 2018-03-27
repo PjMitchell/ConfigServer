@@ -41,18 +41,12 @@ button {
     border: 1px solid #646982;
     margin: 4px;
     padding: 3px;
-    max-width: 400px
+    width: 100%;
 }
 
 .group {
     margin: 5px 0;
     border-bottom: 3px solid #646982;
-}
-
-.ng-invalid:not(form) {
-    border-color: #f03241;
-    border-width: 1px 1px 1px 5px;
-    border-style: solid;
 }
 
 .errorMessage {
@@ -115,4 +109,8 @@ snapshot-input {
 .snapshot-input-group {
     width: 320px;
 } 
+
+.full-width {
+    width:100%;
+}
 

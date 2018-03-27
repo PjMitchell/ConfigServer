@@ -25,9 +25,11 @@ import { ISelectableResourceInfo } from '../interfaces/selectableResourceInfo';
                 <p id="source-client-desc">{{sourceClient.description}}</p>
             </div>
             <div  *ngIf="clients.length > 0"   class="col-sm-4 col-md-4">
-                <select [(ngModel)]="targetClient"  class="form-control">
-                    <option *ngFor="let client of clients" [ngValue]="client">{{client.name}}</option>
-                </select>
+                <mat-form-field class="full-width">
+                    <mat-select [(value)]="targetClient">
+                        <mat-option *ngFor="let client of clients" [value]="client">{{client.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
             <div  *ngIf="clients.length === 0"   class="col-sm-4 col-md-4">
                 <p>No targets found</p>
@@ -50,7 +52,8 @@ import { ISelectableResourceInfo } from '../interfaces/selectableResourceInfo';
         </div>
         <hr />
         <div class="row">
-            <button type="button" class="btn btn-primary" (click)="back()">Back</button> <button type="button" class="btn btn-primary" [disabled]="isDisabled" (click)="copy()">Copy to target</button>
+            <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+            <button type="button" mat-raised-button color="primary" [disabled]="isDisabled" (click)="copy()">Copy to target</button>
         </div>
 `,
 })

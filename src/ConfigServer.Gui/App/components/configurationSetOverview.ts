@@ -15,7 +15,7 @@ import { IConfigurationSetSummary } from '../interfaces/configurationSetSummary'
             <div class="row">
                 <div class="col-sm-6 col-md-4" >
                     <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfigSet($event)"></json-file-uploader>
-                    <button type="button" class="btn btn-primary" (click)="downloadConfigSet(configurationSet.configurationSetId)"> <span class="glyphicon-btn glyphicon glyphicon-download-alt"></span> </button>
+                    <app-icon-button color="primary" (click)="downloadConfigSet(configurationSet.configurationSetId)"> <span class="glyphicon-btn glyphicon glyphicon-download-alt"></span> </app-icon-button>
                 </div>
             </div>
             <h3>Configurations</h3>

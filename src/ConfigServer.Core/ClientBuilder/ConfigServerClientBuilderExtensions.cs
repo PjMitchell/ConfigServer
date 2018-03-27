@@ -17,7 +17,7 @@ namespace ConfigServer.Core
         /// <returns>ConfigServer client builder for further configuration</returns>
         public static ConfigServerClientBuilder WithClientId(this ConfigServerClientBuilder source, string clientId)
         {
-            source.AddSingleton(new SingleClientIdProvider(clientId));
+            source.AddSingleton<IClientIdProvider>(new SingleClientIdProvider(clientId));
             return source;
         }
 

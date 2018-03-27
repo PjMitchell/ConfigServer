@@ -13,10 +13,11 @@ import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
             <div *ngFor="let snapshot of snapshots" class="col-sm-6 col-md-4" >
                 <p>{{snapshot.name}}</p>
                 <p>Created:{{snapshot.timeStamp | date:"MM/dd/yy" }}</p>
-                <button type="button" class="btn btn-primary" (click)="deleteSnapshot(snapshot.id)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></button>
+                <app-icon-button color="primary" (click)="deleteSnapshot(snapshot.id)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
             </div>
         </div>
-        <button type="button" class="btn btn-primary" (click)="back()">Back</button>
+        <hr />
+        <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
 `,
 })
 export class SnapshotOverviewComponent implements OnInit {

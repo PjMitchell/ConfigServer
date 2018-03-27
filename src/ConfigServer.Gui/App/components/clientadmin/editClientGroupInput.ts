@@ -9,8 +9,9 @@ import { IResourceInfo } from '../../interfaces/resourceInfo';
     template: `
     <div class="row">
         <div class="col-sm-6 col-md-4">
-            <h4>Name:</h4>
-            <input id="group-name-input" [(ngModel)]="csClientGroup.name" type="text" class="form-control">
+            <mat-form-field class="full-width">
+                <input matInput id="group-name-input" placeholder="Name" [(ngModel)]="csClientGroup.name">
+            </mat-form-field>
             <div *ngIf="csClientGroup.imagePath" class="thumbnail"><img class="img-responsive" src="Resource/ClientGroupImages/{{csClientGroup.imagePath}}" /></div>
             <h4>Upload image:</h4>
             <group-image-file-uploader (onUpload)="onImageUploaded($event)"></group-image-file-uploader>

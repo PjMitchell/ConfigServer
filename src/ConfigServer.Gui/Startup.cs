@@ -11,6 +11,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.TestModels;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace ConfigServer.Gui
 {
@@ -66,6 +68,15 @@ namespace ConfigServer.Gui
                     context.Context.Response.Headers["Expires"] = "-1";
                 }
             });
+            var path = "node_modules";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(env.ContentRootPath, path)
+                    ),
+                RequestPath = "/" + path
+            });
+
 
             app.UseMvc(routes =>
             {
