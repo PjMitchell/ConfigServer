@@ -10,14 +10,10 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="App\components\NewFolder\**" />
     <Compile Remove="wwwroot\Assets\css\**" />
     <Content Remove="App\**\*.js;App\**\*.js.map" />
-    <Content Remove="App\components\NewFolder\**" />
     <Content Remove="wwwroot\Assets\css\**" />
-    <EmbeddedResource Remove="App\components\NewFolder\**" />
     <EmbeddedResource Remove="wwwroot\Assets\css\**" />
-    <None Remove="App\components\NewFolder\**" />
     <None Remove="wwwroot\Assets\css\**" />
   </ItemGroup>
   <ItemGroup>
