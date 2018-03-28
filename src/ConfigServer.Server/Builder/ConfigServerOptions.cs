@@ -33,5 +33,10 @@
         /// Required Claim value defined by each client 
         /// </summary>
         public string ClientConfiguratorClaimType { get; set; } = ConfigServerConstants.ClientConfiguratorClaimType;
+
+        /// <summary>
+        /// Url to Themes css for the config management screen. See Angular Material themes
+        /// </summary>
+        public string ThemeUrl { get; set; }
     }
 }

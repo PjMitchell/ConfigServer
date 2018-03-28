@@ -73,8 +73,8 @@ namespace ConfigServer.Sample.mvc
                 ClientAdminClaimType = string.Empty,
                 ClientConfiguratorClaimType = string.Empty,
                 ClientReadClaimType = string.Empty,
-                AllowAnomynousAccess = true
-
+                AllowAnomynousAccess = true,
+                ThemeUrl = "/css/indigo-pink.css"
             }));
             app.Map("/Resource", innerApp => innerApp.UseResourceServer());
             app.UseMvc(routes =>

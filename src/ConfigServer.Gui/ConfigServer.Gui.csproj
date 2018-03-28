@@ -36,7 +36,6 @@
     </DotNetCliToolReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App\components\NewFolder\" />
     <Folder Include="FileStore\Configs\" />
     <Folder Include="wwwroot\Assets\img\" />
     <Folder Include="wwwroot\Assets\lib\" />

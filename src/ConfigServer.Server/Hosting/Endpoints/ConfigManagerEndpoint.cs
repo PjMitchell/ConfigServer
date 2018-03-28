@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace ConfigServer.Server
             var basePath = GetBasePath(managerPath);
             if (!CheckMethodAndAuthentication(context, options))
                 return Task.FromResult(true);
-            return context.Response.WriteAsync(Shell(basePath, managerPath));
+            return context.Response.WriteAsync(Shell(basePath, managerPath, options));
         }
 
         private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
@@ -45,14 +44,14 @@ namespace ConfigServer.Server
             return trimmedBasePath;
         }
 
-        private string Shell(string basePath, string managerPath) => $@"
+        private string Shell(string basePath, string managerPath, ConfigServerOptions options) => $@"
             <html>
             <head>
                 <title>Configuration manager</title>
                 <meta charset=""UTF-8"">
                 <meta name = ""viewport"" content=""width=device-width, initial-scale=1"">
                 <link href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" rel=""stylesheet"" />
-                <link href=""{basePath}/Assets/lib/deeppurple-amber.css"" rel=""stylesheet"" />
+                <link href=""{GetThemeUrl(basePath, options)}"" rel=""stylesheet"" />
                 <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.css"">
                 <!-- 1. Load libraries -->
                 <!-- Polyfill(s) for older browsers -->
@@ -71,5 +70,11 @@ namespace ConfigServer.Server
             </body>
             </html>
             ";
+        private static string GetThemeUrl(string basePath, ConfigServerOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.ThemeUrl))
+                return $"{basePath}/Assets/lib/deeppurple-amber.css";
+            return options.ThemeUrl;
+        }
     }
 }
