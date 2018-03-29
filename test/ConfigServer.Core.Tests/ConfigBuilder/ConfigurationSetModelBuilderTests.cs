@@ -111,6 +111,19 @@ namespace ConfigServer.Core.Tests
         }
 
         [Fact]
+        public void CanBuildModel_WithOption_HasUniqueKey()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            var name = "test";
+            var descript = "test descript";
+
+            builder.Options(x => x.OptionsOne, x => x.Id, x => x.Value, name, descript);
+            var setModel = builder.Build();
+            var configModel = setModel.Get<OptionOne>();
+            Assert.Equal(nameof(OptionOne.Id), configModel.KeyPropertyName);
+        }
+
+        [Fact]
         public void CanBuildModel_WithOption_StringKey_HasDefaultValues()
         {
             var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
@@ -153,6 +166,19 @@ namespace ConfigServer.Core.Tests
         }
 
         [Fact]
+        public void CanBuildModel_WithOption_StringKey_HasUniqueKey()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            var name = "test";
+            var descript = "test descript";
+
+            builder.Options(x => x.OptionsTwo, x => x.Id, x => x.Value, name, descript);
+            var setModel = builder.Build();
+            var configModel = setModel.Get<OptionTwo>();
+            Assert.Equal(nameof(OptionTwo.Id), configModel.KeyPropertyName);
+        }
+
+        [Fact]
         public void CanBuildModel_WithOption_LongKey_HasDefaultValues()
         {
             var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
@@ -192,6 +218,19 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(typeof(OptionThree), configModel.Type);
             Assert.Equal(descript, configModel.ConfigurationDescription);
             Assert.Equal(name, configModel.ConfigurationDisplayName);
+        }
+
+        [Fact]
+        public void CanBuildModel_WithOption_LongKey_HasUniqueKey()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            var name = "test";
+            var descript = "test descript";
+
+            builder.Options(x => x.OptionsThree, x => x.Key, x => x.Description, name, descript);
+            var setModel = builder.Build();
+            var configModel = setModel.Get<OptionThree>();
+            Assert.Equal(nameof(OptionThree.Key), configModel.KeyPropertyName);
         }
 
         [Fact]

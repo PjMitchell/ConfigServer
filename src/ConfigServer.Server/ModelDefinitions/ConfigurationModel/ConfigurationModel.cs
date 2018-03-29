@@ -100,6 +100,11 @@ namespace ConfigServer.Server
         /// Is collection model
         /// </summary>
         public bool IsCollection { get; }
+
+        /// <summary>
+        /// Property of collection model that is used for unique key
+        /// </summary>
+        public string KeyPropertyName { get; set; }
     }
 
     internal class ConfigurationModel<TConfiguration, TConfigurationSet> : ConfigurationModel where TConfigurationSet : ConfigurationSet where TConfiguration : class, new()

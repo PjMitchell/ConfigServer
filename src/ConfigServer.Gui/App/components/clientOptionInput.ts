@@ -1,6 +1,7 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { IConfigurationModelPayload } from '../interfaces/configurationModelPayload';
+import { uniqueKey } from '../validators/collectionValidator';
 
 @Component({
     selector: 'config-option-input',
@@ -21,22 +22,25 @@ import { IConfigurationModelPayload } from '../interfaces/configurationModelPayl
                 </td>
             </tr>
         </table>
+        <div *ngIf="collectionForms" >
+            <p class="errorMessage"  *ngIf="!collectionForms.valid">{{getErrorMessage()}}</p>
+        </div>
 `,
 })
 export class OptionInputComponent implements OnInit {
     @Input()
     public csModel: IConfigurationModelPayload;
     @Input()
-    public csCollection: any[];
+    public csCollection: any[] = new Array<any>();
     @Input()
     public parentForm: FormGroup;
-    public collection: any[];
     public collectionForms: FormArray;
     constructor(private formBuilder: FormBuilder) {
         this.collectionForms = formBuilder.array([]);
     }
 
     public ngOnInit() {
+        this.collectionForms.setValidators(uniqueKey(this.csModel.keyPropertyName));
         this.csCollection.forEach((value, i) => {
             this.collectionForms.setControl(i, this.formBuilder.group({}));
         });
@@ -50,7 +54,7 @@ export class OptionInputComponent implements OnInit {
             newItem[value] = '';
         });
         this.csCollection.push(newItem);
-        const index = this.collection.indexOf(newItem);
+        const index = this.csCollection.indexOf(newItem);
         this.collectionForms.setControl(index, this.formBuilder.group({}));
     }
 
@@ -62,5 +66,12 @@ export class OptionInputComponent implements OnInit {
 
     public customTrackBy(index: number, obj: any): any {
         return index;
+    }
+
+    public getErrorMessage() {
+        if (this.collectionForms) {
+            return this.collectionForms.hasError('duplicate') ? 'Duplicate Keys:' + this.collectionForms.getError('duplicate') : '';
+        }
+        return '';
     }
 }
