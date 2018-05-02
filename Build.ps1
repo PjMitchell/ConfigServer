@@ -109,7 +109,8 @@ function CopyAssets {
 	Write-Host "Copying Assets/lib from ConfigServer.Gui to ConfigServer.Server"
 	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\shim.min.js' $assetLibPath
 	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\system.js' $assetLibPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\zone.min.js' $assetLibPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\zone.min.js' $assetLibPath	
+	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\deeppurple-amber.css' $assetPath
 }
 
 function AssertAssets {
@@ -119,6 +120,7 @@ function AssertAssets {
 	AssertPath '.\src\ConfigServer.Server\Assets\lib\shim.min.js' 
 	AssertPath '.\src\ConfigServer.Server\Assets\lib\system.js' 
 	AssertPath '.\src\ConfigServer.Server\Assets\lib\zone.min.js'
+	AssertPath '.\src\ConfigServer.Server\Assets\lib\deeppurple-amber.css'
 }
 
 if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
