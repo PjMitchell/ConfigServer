@@ -44,6 +44,7 @@ namespace ConfigServer.Server
                 Name = model.ConfigurationDisplayName,
                 Description = model.ConfigurationDescription,
                 IsOption = model is ConfigurationOptionModel,
+                KeyPropertyName = model?.KeyPropertyName?.ToLowerCamelCase(),
                 Property = BuildProperties(model.ConfigurationProperties,configIdentity,requiredConfigurationSets)
             };
         }

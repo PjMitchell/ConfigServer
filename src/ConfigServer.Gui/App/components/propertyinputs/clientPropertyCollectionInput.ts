@@ -1,6 +1,7 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
+import { uniqueKey } from '../../validators/collectionValidator';
 
 @Component({
     selector: 'collection-input',
@@ -22,6 +23,9 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
         </td>
     </tr>
 </table>
+<div *ngIf="collectionForms" >
+    <p class="errorMessage"  *ngIf="!collectionForms.valid">{{getErrorMessage()}}</p>
+</div>
 `,
 })
 export class ConfigurationPropertyCollectionInputComponent implements OnInit {
@@ -39,6 +43,9 @@ export class ConfigurationPropertyCollectionInputComponent implements OnInit {
 
     public ngOnInit() {
         const collection: any[] = this.csConfig[this.csDefinition.propertyName];
+        if (this.csDefinition.keyPropertyName) {
+            this.collectionForms.setValidators(uniqueKey(this.csDefinition.keyPropertyName));
+        }
         collection.forEach((value, i) => {
             this.collectionForms.setControl(i, this.formBuilder.group({}));
         });
@@ -65,5 +72,12 @@ export class ConfigurationPropertyCollectionInputComponent implements OnInit {
 
     public customTrackBy(index: number, obj: any): any {
         return index;
+    }
+
+    public getErrorMessage() {
+        if (this.collectionForms) {
+            return this.collectionForms.hasError('duplicate') ? 'Duplicate Keys:' + this.collectionForms.getError('duplicate') : '';
+        }
+        return '';
     }
 }
