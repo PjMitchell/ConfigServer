@@ -31,7 +31,7 @@ function CopyAssets {
 	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\shim.min.js' $assetLibPath
 	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\system.js' $assetLibPath
 	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\zone.min.js' $assetLibPath	
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\deeppurple-amber.css' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\deeppurple-amber.css' $assetLibPath
 }
 
 function AssertAssets {
