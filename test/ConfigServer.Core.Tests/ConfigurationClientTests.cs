@@ -37,7 +37,7 @@ namespace ConfigServer.Core.Tests
             client.Settings.Add(setting.Key, setting);
             var json = JsonConvert.SerializeObject(client);
             var result = JsonConvert.DeserializeObject<ConfigurationClient>(json);
-            Assert.Equal(1,result.Settings.Count);
+            Assert.Single(result.Settings);
             Assert.True(result.Settings.ContainsKey(key));
             Assert.True(result.Settings.ContainsKey(key.ToUpper()));
 

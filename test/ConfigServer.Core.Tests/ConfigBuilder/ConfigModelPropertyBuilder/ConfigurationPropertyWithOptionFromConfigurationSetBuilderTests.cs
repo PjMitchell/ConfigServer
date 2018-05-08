@@ -54,7 +54,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             target.PropertyWithOption(x => x.Option, (TestConfiguationModule provider) => provider.Options);
             var result = target.Build();
             var def = GetPropertyWithOption(result);
-            Assert.Equal(null, def.PropertyDescription);
+            Assert.Null(def.PropertyDescription);
             Assert.Equal("Option", def.PropertyDisplayName);
         }
 
@@ -65,7 +65,7 @@ namespace ConfigServer.Core.Tests.ConfigBuilder
             var result = target.Build();
             var def = GetPropertyWithOption(result);
             var dependency = def.GetDependencies().ToList();
-            Assert.Equal(1, dependency.Count);
+            Assert.Single(dependency);
             Assert.Equal(typeof(TestConfiguationModule), dependency[0].ConfigurationSet);
             Assert.Equal(nameof(TestConfiguationModule.Options), dependency[0].PropertyPath);
         }

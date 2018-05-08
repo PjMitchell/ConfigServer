@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5473CDED-F05D-4D3E-898F-61113F316D13}"
 EndProject
@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
-		Build.ps1 = Build.ps1
+		Build-CopyAssets.ps1 = Build-CopyAssets.ps1
 		common.props = common.props
 		global.json = global.json
 		LICENSE.txt = LICENSE.txt
@@ -46,11 +46,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.TextProvider.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.Client.Builder", "src\ConfigServer.Client.Builder\ConfigServer.Client.Builder.csproj", "{24A78F07-BD99-4969-AB6F-0B6A15F4C2E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigServer.IntegrationTests", "test\ConfigServer.IntegrationTests\ConfigServer.IntegrationTests.csproj", "{EB20A70A-E737-4181-A35F-9B84BADCFB19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.IntegrationTests", "test\ConfigServer.IntegrationTests\ConfigServer.IntegrationTests.csproj", "{EB20A70A-E737-4181-A35F-9B84BADCFB19}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "models", "models", "{D7CE84ED-0483-4DC2-8730-67564020976B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigServer.TestModels", "models\ConfigServer.TestModels\ConfigServer.TestModels.csproj", "{70EFD234-0A6D-4827-AE22-DAF69449EBE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigServer.TestModels", "models\ConfigServer.TestModels\ConfigServer.TestModels.csproj", "{70EFD234-0A6D-4827-AE22-DAF69449EBE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

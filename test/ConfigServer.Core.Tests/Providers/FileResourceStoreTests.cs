@@ -95,8 +95,8 @@ namespace ConfigServer.Core.Tests
             var result = await target.GetResourceCatalogue(configId);
 
             Assert.Equal(2, result.Count());
-            Assert.Equal(1, result.Where(f => f.Name == request1.Name).Count());
-            Assert.Equal(1, result.Where(f => f.Name == request2.Name).Count());
+            Assert.Single(result.Where(f => f.Name == request1.Name));
+            Assert.Single(result.Where(f => f.Name == request2.Name));
 
         }
         [Fact]
@@ -159,7 +159,7 @@ namespace ConfigServer.Core.Tests
 
             var result = await target.GetResourceCatalogue(configId2);
 
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
             Assert.Equal(request.Name, result.First().Name);
         }
 
@@ -181,7 +181,7 @@ namespace ConfigServer.Core.Tests
 
             var result = await target.GetResourceCatalogue(configId);
 
-            Assert.Equal(0, result.Where(f => f.Name == request.Name).Count());
+            Assert.Empty(result.Where(f => f.Name == request.Name));
 
         }
     }

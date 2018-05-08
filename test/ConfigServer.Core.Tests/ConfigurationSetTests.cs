@@ -16,7 +16,7 @@ namespace ConfigServer.Core.Tests
             var definition = configSet.BuildConfigurationSetModel();
 
             Assert.NotNull(definition);
-            Assert.Equal(1, definition.Configs.Count());
+            Assert.Single(definition.Configs);
 
             var model = definition.Configs.Single();
 

@@ -44,7 +44,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 .Callback((HttpContext c,object arg) => summaries =((IEnumerable<ConfigurationSetSummary>)arg).ToList())
                 .Returns(()=> Task.FromResult(true));
             await target.Handle(testContext, options);
-            Assert.Equal(1, summaries.Count);
+            Assert.Single(summaries);
             var summary = summaries.Single();
             var model = configCollection.Single();
             Assert.Equal(model.ConfigSetType.Name, summary.ConfigurationSetId);

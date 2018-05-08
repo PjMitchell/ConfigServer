@@ -81,7 +81,7 @@ namespace ConfigServer.Core.Tests
         {
             await clientTarget.UpdateClientAsync(client);
             var result = (await clientTarget.GetClientsAsync()).ToList();
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             Assert.Equal(client.ClientId, result[0].ClientId);
             Assert.Equal(client.Name, result[0].Name);
             Assert.Equal(client.Description, result[0].Description);
@@ -96,7 +96,7 @@ namespace ConfigServer.Core.Tests
             await clientTarget.UpdateClientAsync(clientUpdated);
 
             var result = (await clientTarget.GetClientsAsync()).ToList();
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             Assert.Equal(client.ClientId, result[0].ClientId);
             Assert.Equal(clientUpdated.Name, result[0].Name);
             Assert.Equal(clientUpdated.Description, result[0].Description);
@@ -134,8 +134,8 @@ namespace ConfigServer.Core.Tests
             await target.UpdateConfigAsync(config);
             var result = await target.GetCollectionAsync<SimpleConfig>(configId);
             Assert.Equal(2, result.Count());
-            Assert.True(result.Any(a => a.IntProperty == testValue));
-            Assert.True(result.Any(a => a.IntProperty == testValue2));
+            Assert.Contains(result, a => a.IntProperty == testValue);
+            Assert.Contains(result, a => a.IntProperty == testValue2);
 
 
         }
@@ -157,8 +157,8 @@ namespace ConfigServer.Core.Tests
             await target.UpdateConfigAsync(config);
             var result = (IEnumerable<SimpleConfig>)(await target.GetCollectionAsync(typeof(SimpleConfig), configId));
             Assert.Equal(2, result.Count());
-            Assert.True(result.Any(a => a.IntProperty == testValue));
-            Assert.True(result.Any(a => a.IntProperty == testValue2));
+            Assert.Contains(result, a => a.IntProperty == testValue);
+            Assert.Contains(result, a => a.IntProperty == testValue2);
         }
     }
 }

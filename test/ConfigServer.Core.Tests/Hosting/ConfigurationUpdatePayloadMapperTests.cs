@@ -106,7 +106,7 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
             var result = (SampleConfig)response.GetConfiguration();
-            Assert.Equal(1, result.ListOfConfigs.Count);
+            Assert.Single(result.ListOfConfigs);
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);
             Assert.Equal(updatedSample.ListOfConfigs[0].Value, result.ListOfConfigs[0].Value);
 

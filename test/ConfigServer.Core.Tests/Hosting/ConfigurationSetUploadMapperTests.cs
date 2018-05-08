@@ -74,7 +74,7 @@ namespace ConfigServer.Core.Tests.Hosting
             var json = $"{{\"ConfigOne\":{jsonOne}}}";
             
             var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k => k.Key, v => v.Value);
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
             Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);
@@ -92,7 +92,7 @@ namespace ConfigServer.Core.Tests.Hosting
             var json = $"{{\"ConfigOne\":{jsonOne},\"Meta\":{jsonOne}}}";
 
             var result = target.MapConfigurationSetUpload(json, model).ToDictionary(k => k.Key, v => v.Value);
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             var configOne = result[nameof(TestConfigurationSet.ConfigOne)] as TestConfigOne;
             Assert.NotNull(configOne);
             Assert.Equal(configSet.ConfigOne.Value.IntProperty, configOne.IntProperty);

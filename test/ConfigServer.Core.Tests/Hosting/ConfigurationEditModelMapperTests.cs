@@ -104,7 +104,7 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
-            Assert.Equal(1, listOfConfigs.Count());
+            Assert.Single(listOfConfigs);
             Assert.Equal(sample.ListOfConfigs[0].Name, listOfConfigs.First().Name);
             Assert.Equal(sample.ListOfConfigs[0].Value, listOfConfigs.First().Value);
 
@@ -117,8 +117,8 @@ namespace ConfigServer.Core.Tests.Hosting
             var listOfConfigs = response.ListOfConfigs as IEnumerable<dynamic>;
 
             var moarOptions = response.MoarOptions as IEnumerable<dynamic>;
-            Assert.Equal(0, listOfConfigs.Count());
-            Assert.Equal(0, moarOptions.Count());
+            Assert.Empty(listOfConfigs);
+            Assert.Empty(moarOptions);
         }
     }
 
