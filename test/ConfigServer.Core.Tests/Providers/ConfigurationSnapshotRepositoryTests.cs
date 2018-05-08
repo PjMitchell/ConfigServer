@@ -80,7 +80,7 @@ namespace ConfigServer.Core.Tests.Providers
             var configuration = result.Configurations.Single().GetConfiguration() as IEnumerable<SimpleConfig>;
             Assert.NotNull(configuration);
             var configurationAsList = configuration.ToList();
-            Assert.Equal(1, configurationAsList.Count);
+            Assert.Single(configurationAsList);
             Assert.Equal(23, configurationAsList[0].IntProperty);
         }
 
@@ -116,7 +116,7 @@ namespace ConfigServer.Core.Tests.Providers
                 Configurations = new List<ConfigInstance> { expectedInstance }
             };
             await target.SaveSnapshot(entry);
-            Assert.Equal(1, observedValue.Count);
+            Assert.Single(observedValue);
             Assert.Equal(expectedInstance.Name, observedValue[0].ConfigurationName);
             var jObject = JObject.Parse(observedValue[0].ConfigurationJson);
             Assert.Equal(defaultIdentity.ServerVersion.ToString(), jObject.GetValue(nameof(ConfigStorageObject.ServerVersion)).ToString());

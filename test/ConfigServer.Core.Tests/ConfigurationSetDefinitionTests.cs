@@ -14,7 +14,7 @@ namespace ConfigServer.Core.Tests
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
 
-            Assert.Equal(0, result.Configs.Count());
+            Assert.Empty(result.Configs);
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace ConfigServer.Core.Tests
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
             var gotValue = result.GetOrInitialize(typeof(SimpleConfigSet).GetProperty(nameof(SimpleConfigSet.Config)));
-            Assert.Equal(1, result.Configs.Count());
+            Assert.Single(result.Configs);
             Assert.Equal(result.Configs.Single(), gotValue);
         }
 
@@ -33,7 +33,7 @@ namespace ConfigServer.Core.Tests
             var gotValue = result.GetOrInitialize(c => c.Config);
             var gotValue2 = result.GetOrInitialize(c => c.Config);
 
-            Assert.Equal(1, result.Configs.Count());
+            Assert.Single(result.Configs);
             Assert.True(ReferenceEquals(gotValue, gotValue2));
         }
 
@@ -42,7 +42,7 @@ namespace ConfigServer.Core.Tests
         {
             var result = new ConfigurationSetModel<SimpleConfigSet>();
             var gotValue = result.GetOrInitialize<SimpleConfig>(c=> c.Config);
-            Assert.Equal(1, result.Configs.Count());
+            Assert.Single(result.Configs);
             Assert.Equal(result.Configs.Single(), gotValue);
         }
 
@@ -70,7 +70,7 @@ namespace ConfigServer.Core.Tests
         public void Throws_IfConfigTYpeNotFound()
         {
             var target = new ConfigurationSetModel<SimpleConfigSet>();
-            Assert.Throws(typeof(ConfigurationModelNotFoundException),()=> target.Get<SimpleConfig>());
+            Assert.Throws<ConfigurationModelNotFoundException>(()=> target.Get<SimpleConfig>());
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace ConfigServer.Core.Tests
             var result = new ConfigurationSetModel<SimpleConfigSet>();
             var gotValue = result.GetOrInitialize(c => c.Config);
 
-            Assert.Equal(1, result.Configs.Count());
+            Assert.Single(result.Configs);
             Assert.Equal(typeof(int), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyType);
             Assert.Equal("Int Property", gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].PropertyDisplayName);
             Assert.Equal(nameof(SimpleConfig.IntProperty), gotValue.ConfigurationProperties[nameof(SimpleConfig.IntProperty)].ConfigurationPropertyName);

@@ -27,7 +27,7 @@ namespace ConfigServer.Core.Tests
                 .WithClientId(applicationId)
                 .WithConfig<SimpleConfig>();
             var regs = builder.ConfigurationRegistry.ToList();
-            Assert.Equal(1, regs.Count);
+            Assert.Single(regs);
             Assert.Equal(typeof(SimpleConfig).Name, regs[0].ConfigurationName);
         }
 
@@ -44,7 +44,7 @@ namespace ConfigServer.Core.Tests
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var configRepo = serviceProvider.GetRequiredService<IConfigurationRegistry>();
             var regs = configRepo.ToList();
-            Assert.Equal(1, regs.Count);
+            Assert.Single(regs);
             Assert.Equal(typeof(SimpleConfig).Name, regs[0].ConfigurationName);
         }
     }

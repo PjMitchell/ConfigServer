@@ -70,7 +70,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
 
             await target.Handle(context, options);
             Assert.NotNull(observed);
-            Assert.Equal(1, observed.Count);
+            Assert.Single(observed);
             AssertClient(observed[0], client);
         }
 

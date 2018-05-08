@@ -49,7 +49,7 @@ namespace ConfigServer.Core.Tests.Commands
             configs.Add(sampleConfigInstance);
             var command = new PushSnapshotToClientCommand { SnapshotId = snapShotId, TargetClient = client, ConfigsToCopy = new string[] { sampleConfigInstance.Name } };
             var result = await target.Handle(command);
-            Assert.Equal(true, result.IsSuccessful);
+            Assert.True(result.IsSuccessful);
             configRepository.Verify(c => c.UpdateConfigAsync(sampleConfigInstance), Times.Once);
         }
 
@@ -60,7 +60,7 @@ namespace ConfigServer.Core.Tests.Commands
             configs.Add(sampleConfigInstance);
             var command = new PushSnapshotToClientCommand { SnapshotId = snapShotId, TargetClient = client, ConfigsToCopy = new string[] { sampleConfigInstance.Name } };
             var result = await target.Handle(command);
-            Assert.Equal(true, result.IsSuccessful);
+            Assert.True(result.IsSuccessful);
             eventService.Verify(c => c.Publish(It.Is<ConfigurationUpdatedEvent>(e=> e.ConfigurationType == sampleConfigInstance.ConfigType && e.Identity.Client.Equals(client) && e.Identity.ServerVersion.Equals(version))), Times.Once);
         }
 
@@ -75,7 +75,7 @@ namespace ConfigServer.Core.Tests.Commands
 
             var command = new PushSnapshotToClientCommand { SnapshotId = snapShotId, TargetClient = client, ConfigsToCopy = new string[] { sampleConfigInstance.Name } };
             var result = await target.Handle(command);
-            Assert.Equal(true, result.IsSuccessful);
+            Assert.True(result.IsSuccessful);
             configRepository.Verify(c => c.UpdateConfigAsync(sampleConfigInstance), Times.Once);
             configRepository.Verify(c => c.UpdateConfigAsync(notThisConfigInstance), Times.Never);
 

@@ -33,7 +33,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(this, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.InvalidConfigType(model.Type), result.Errors.Single());
         }
 
@@ -43,7 +43,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(null, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.InvalidConfigType(model.Type), result.Errors.Single());
         }
 
@@ -60,7 +60,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.LessThanMin(nameof(SampleConfig.LlamaCapacity), min), result.Errors.Single());
 
         }
@@ -92,7 +92,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.LessThanMin(nameof(SampleConfig.SpareLlamaCapacity), min), result.Errors.Single());
 
         }
@@ -123,7 +123,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.LessThanMin(nameof(SampleConfig.Decimal), min), result.Errors.Single());
 
         }
@@ -155,7 +155,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.LessThanMin(nameof(SampleConfig.StartDate), min), result.Errors.Single());
 
         }
@@ -189,7 +189,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.GreaterThanMax(nameof(SampleConfig.LlamaCapacity), max), result.Errors.Single());
 
         }
@@ -221,7 +221,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.GreaterThanMax(nameof(SampleConfig.Decimal), max), result.Errors.Single());
 
         }
@@ -253,7 +253,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.GreaterThanMax(nameof(SampleConfig.StartDate), max), result.Errors.Single());
 
         }
@@ -286,7 +286,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.GreaterThanMaxLength(nameof(SampleConfig.Name), max), result.Errors.Single());
 
         }
@@ -318,7 +318,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.MatchesPattern(nameof(SampleConfig.Name), pattern), result.Errors.Single());
 
         }
@@ -348,7 +348,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.Option)), result.Errors.Single());
 
         }
@@ -382,7 +382,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.MoarOptions)), result.Errors.Single());
 
         }
@@ -424,7 +424,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.GreaterThanMax(nameof(ListConfig.Value), max), result.Errors.Single());
 
         }
@@ -464,7 +464,7 @@ namespace ConfigServer.Core.Tests.Validators
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal(ValidationStrings.DuplicateKeys(nameof(SampleConfig.ListOfConfigs), 2), result.Errors.Single());
         }
 

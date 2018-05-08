@@ -61,7 +61,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
                 });
             await target.Handle(context, options);
 
-            Assert.Equal(1, observed.Length);
+            Assert.Single(observed);
             Assert.Equal(snapshots[0].Id, observed[0].Id);
             Assert.Equal(groupId, observed[0].GroupId);
             Assert.Equal(snapshots[0].Name, observed[0].Name);
