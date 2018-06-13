@@ -9,9 +9,16 @@ namespace ConfigServer.Server
     {
         public static IEnumerable<KeyValuePair<string, ConfigurationPropertyModelBase>> GetDefaultConfigProperties(Type model)
         {
-            foreach (PropertyInfo writeProperty in model.GetProperties().Where(IsPrimitiveProperty))
+            foreach (PropertyInfo property in model.GetProperties())
             {
-                yield return new KeyValuePair<string, ConfigurationPropertyModelBase>(writeProperty.Name, Build(writeProperty, model));
+                var typeInfo = property.PropertyType.GetTypeInfo();
+
+                if (!property.CanWrite)
+                    continue;
+                if(IsPrimitiveProperty(property, typeInfo))
+                    yield return new KeyValuePair<string, ConfigurationPropertyModelBase>(property.Name, Build(property, model));
+                else if(property.HasAttribute<ConfigurationClassAttribute>())
+                    yield return new KeyValuePair<string, ConfigurationPropertyModelBase>(property.Name, BuildClassModel(property, model));
             }
         }
 
@@ -26,10 +33,9 @@ namespace ConfigServer.Server
             return propertyModel;
         }
 
-        private static bool IsPrimitiveProperty(PropertyInfo info)
+        private static bool IsPrimitiveProperty(PropertyInfo info, TypeInfo typeInfo)
         {
-            var typeInfo = info.PropertyType.GetTypeInfo();
-            return info.CanWrite && (typeInfo.IsPrimitive 
+            return (typeInfo.IsPrimitive 
                 || info.PropertyType == typeof(string) 
                 || info.PropertyType == typeof(DateTime)
                 || typeInfo.IsEnum
