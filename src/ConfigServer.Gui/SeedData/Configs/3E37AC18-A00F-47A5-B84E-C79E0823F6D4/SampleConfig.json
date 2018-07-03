@@ -48,6 +48,10 @@
                 "Value": 2.4
             }
         ],
-        "MoarOptionValues": [ 2, 4 ]
+        "MoarOptionValues": [ 2, 4 ],
+        "NestedClass": {
+            "Count": 23,
+            "Description":  "A description"
+        }
     }
 }

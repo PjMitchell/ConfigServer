@@ -8,8 +8,8 @@ using Xunit;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Moq;
-using ConfigServer.Sample.Models;
 using ConfigServer.Core.Tests.TestModels;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -29,7 +29,7 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             configurationSet = new Mock<IConfigurationSetService>();
             configurationSet.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
-                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
+                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<OptionFromConfigSet>(OptionFromConfigSet.Options, o => o.Id.ToString(), o => o.Description) });
 
             target = new ConfigurationEditModelMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();

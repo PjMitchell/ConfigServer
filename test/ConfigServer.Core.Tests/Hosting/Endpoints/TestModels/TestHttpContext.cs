@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features;
 using System.Security.Claims;
 using System.Threading;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace ConfigServer.Core.Tests
 {

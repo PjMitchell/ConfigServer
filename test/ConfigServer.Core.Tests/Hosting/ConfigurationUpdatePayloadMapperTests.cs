@@ -1,5 +1,4 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -11,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using ConfigServer.Core.Tests.TestModels;
 using Moq;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -30,7 +30,10 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             configurationSet = new Mock<IConfigurationSetService>();
             configurationSet.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
-                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
+                .ReturnsAsync(() => new SampleConfigSet {
+                    Options = new OptionSet<OptionFromConfigSet>(OptionFromConfigSet.Options, o => o.Id.ToString(), o => o.Description),
+                    OptionFromProvider = new OptionSet<Option>(OptionProvider.Options, o=>o.Id.ToString(), o => o.Description)
+                });
 
             target = new ConfigurationUpdatePayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();
@@ -44,7 +47,10 @@ namespace ConfigServer.Core.Tests.Hosting
                 Name = "Name 1",
                 Option = OptionProvider.OptionOne,
                 MoarOptions = new List<Option> { OptionProvider.OptionOne, OptionProvider.OptionThree },
-                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } }
+                OptionFromConfigSet = null,
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
+                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } },
+                NestedClass = new NestedClass { Count = 23, Description = "Test"}
             };
 
             updatedSample = new SampleConfig
@@ -57,6 +63,8 @@ namespace ConfigServer.Core.Tests.Hosting
                 Name = "Name 2",
                 Option = OptionProvider.OptionTwo,
                 MoarOptions = new List<Option> { OptionProvider.OptionTwo, OptionProvider.OptionThree },
+                OptionFromConfigSet = null,
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
                 ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "Two plus Two", Value = 5 } }
             };
             dynamic updatedValue = new ExpandoObject();

@@ -22,6 +22,22 @@ namespace ConfigServer.Server
             }
         }
 
+        private static ConfigurationPropertyModelBase BuildClassModel(PropertyInfo property, Type parentType)
+        {
+            if (!IsValidClassProperty(property.PropertyType))
+                throw new InvalidOperationException($"Nested Class property {property.Name} on {parentType} does not have a parameterless constructor");
+            var definitionType = ReflectionHelpers.BuildGenericType(typeof(ConfigurationClassPropertyDefinition<>), property.PropertyType);
+            var constructor = definitionType.GetConstructors().Single();
+            var propertyModel = (ConfigurationClassPropertyDefinition)constructor.Invoke(new object[] { property.Name, property.PropertyType, parentType });
+            propertyModel.ConfigurationProperties = GetDefaultConfigProperties(propertyModel.PropertyType).ToDictionary(k => k.Key, v => v.Value);
+            return propertyModel;
+        }
+
+        private static bool IsValidClassProperty(Type propertyType)
+        {
+            return propertyType.GetConstructor(new Type[0]) != null;
+        }
+
         public static ConfigurationPropertyModelBase Build(PropertyInfo propertyInfo, Type parentType) => Build(propertyInfo.Name, propertyInfo.PropertyType, parentType);
 
         public static ConfigurationPropertyModelBase Build(string propertyName, Type type, Type parentType)

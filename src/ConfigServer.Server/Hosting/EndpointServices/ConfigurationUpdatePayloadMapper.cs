@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ConfigServer.Server
 {
@@ -74,10 +75,22 @@ namespace ConfigServer.Server
                     return GetConfigPropertyValueFromInput(source, (IMultipleOptionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Collection:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
+                case ConfigurationPropertyType.Class:
+                    return GetConfigPropertyValueFromInput(source, (ConfigurationClassPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 default:
                     return GetConfigPropertyValueFromInput(source, propertyModel);
 
             }
+        }
+
+        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationClassPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        {
+            
+            var propertySource = (JObject)source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase());
+            if (propertySource == null)
+                return null;
+            var result = propertyModel.NewItemInstance();
+            return UpdateObject(result,propertySource,propertyModel.ConfigurationProperties,configIdentity,requiredConfigurationSets);
         }
 
         private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyModelBase propertyModel)
@@ -91,7 +104,9 @@ namespace ConfigServer.Server
 
         private object GetOptionConfigPropertyValueFromInput(JObject source, IOptionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
-            var key = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).ToObject<string>();
+            if (!source.TryGetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase(), out var token))
+                return null;
+            var key = token.ToObject<string>();
             IOptionSet optionSet = optionSetFactory.Build(propertyModel, configIdentity, requiredConfigurationSets);
             object option = null;
             optionSet.TryGetValue(key, out option);
@@ -109,7 +124,7 @@ namespace ConfigServer.Server
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
             var optionSet = optionSetFactory.Build(propertyModel, configIdentity, requiredConfigurationSets);
-            foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).Select(s => s.ToObject(propertyModel.PropertyType)))
+            foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase())?.Select(s => s.ToObject(propertyModel.PropertyType))?? Enumerable.Empty<object>())
             {
                 if (optionSet.ContainsKey(key))
                     collectionBuilder.Add(key);
@@ -121,10 +136,9 @@ namespace ConfigServer.Server
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
             var optionSet = optionSetFactory.Build(propertyModel, configIdentity, requiredConfigurationSets);
-            foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()).Select(s => s.ToObject<string>()))
+            foreach (var key in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase())?.Select(s => s.ToObject<string>()) ?? Enumerable.Empty<string>())
             {
-                object option = null;
-                if (optionSet.TryGetValue(key, out option))
+                if (optionSet.TryGetValue(key, out var option))
                     collectionBuilder.Add(option);
             }
             return collectionBuilder.Collection;

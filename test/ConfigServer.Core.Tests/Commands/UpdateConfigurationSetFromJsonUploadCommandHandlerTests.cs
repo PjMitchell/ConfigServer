@@ -1,12 +1,9 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using ConfigServer.Server.Validation;
+using ConfigServer.TestModels;
 using Moq;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -48,9 +45,9 @@ namespace ConfigServer.Core.Tests.Commands
             {
                 LlamaCapacity = 23
             };
-            var options = new List<Option>
+            var options = new List<OptionFromConfigSet>
             {
-                new Option{ Id = 1, Description = "One"}
+                new OptionFromConfigSet{ Id = 1, Description = "One"}
             };
             
             var input = new UpdateConfigurationSetFromJsonUploadCommand(expectedIdentity, typeof(SampleConfigSet), jsonPayload);
@@ -59,7 +56,14 @@ namespace ConfigServer.Core.Tests.Commands
 
             var result = await target.Handle(input);
             Assert.True(result.IsSuccessful);
-            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => config.LlamaCapacity == ((ConfigInstance<SampleConfig>)c).Configuration.LlamaCapacity)));
+            configRepository.Verify(repo => repo.UpdateConfigAsync(It.Is<ConfigInstance>(c => DoesMatch(c, config))));
+        }
+
+        private bool DoesMatch(ConfigInstance c, SampleConfig testConfig)
+        {
+            if (c is ConfigInstance<SampleConfig> castConfig)
+                return testConfig.LlamaCapacity == castConfig.Configuration.LlamaCapacity;
+            return false;
         }
 
         [Fact]
@@ -69,9 +73,9 @@ namespace ConfigServer.Core.Tests.Commands
             {
                 LlamaCapacity = 23
             };
-            var options = new List<Option>
+            var options = new List<OptionFromConfigSet>
             {
-                new Option{ Id = 1, Description = "One"}
+                new OptionFromConfigSet{ Id = 1, Description = "One"}
             };
 
             var input = new UpdateConfigurationSetFromJsonUploadCommand(expectedIdentity, typeof(SampleConfigSet), jsonPayload);
@@ -89,9 +93,9 @@ namespace ConfigServer.Core.Tests.Commands
             {
                 LlamaCapacity = 23
             };
-            var options = new List<Option>
+            var options = new List<OptionFromConfigSet>
             {
-                new Option{ Id = 1, Description = "One"}
+                new OptionFromConfigSet{ Id = 1, Description = "One"}
             };
 
             var input = new UpdateConfigurationSetFromJsonUploadCommand(expectedIdentity, typeof(SampleConfigSet), jsonPayload);
@@ -110,9 +114,9 @@ namespace ConfigServer.Core.Tests.Commands
             {
                 LlamaCapacity = 23
             };
-            var options = new List<Option>
+            var options = new List<OptionFromConfigSet>
             {
-                new Option{ Id = 1, Description = "One"}
+                new OptionFromConfigSet{ Id = 1, Description = "One"}
             };
 
             var input = new UpdateConfigurationSetFromJsonUploadCommand(expectedIdentity, typeof(SampleConfigSet), jsonPayload);
@@ -132,9 +136,9 @@ namespace ConfigServer.Core.Tests.Commands
             {
                 LlamaCapacity = 23
             };
-            var options = new List<Option>
+            var options = new List<OptionFromConfigSet>
             {
-                new Option{ Id = 1, Description = "One"}
+                new OptionFromConfigSet{ Id = 1, Description = "One"}
             };
 
             var input = new UpdateConfigurationSetFromJsonUploadCommand(expectedIdentity, typeof(SampleConfigSet), jsonPayload);
@@ -150,7 +154,7 @@ namespace ConfigServer.Core.Tests.Commands
             Assert.Equal(string.Join(Environment.NewLine,new ValidationResult(new[] { validationResult, validationResult }).Errors), result.ErrorMessage);
         }
 
-        private IEnumerable<KeyValuePair<string, object>> BuildConfigs(SampleConfig config, List<Option> options)
+        private IEnumerable<KeyValuePair<string, object>> BuildConfigs(SampleConfig config, List<OptionFromConfigSet> options)
         {
             yield return new KeyValuePair<string, object>(nameof(SampleConfigSet.SampleConfig), config);
             yield return new KeyValuePair<string, object>(nameof(SampleConfigSet.Options), options);

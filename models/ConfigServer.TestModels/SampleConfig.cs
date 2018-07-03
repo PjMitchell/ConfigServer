@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigServer.Server;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,8 +22,9 @@ namespace ConfigServer.TestModels
         public OptionFromConfigSet OptionFromConfigSet { get; set; }
         public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
         public List<int> MoarOptionValues { get; set; }
+        [ConfigurationClass]
+        public NestedClass NestedClass { get; set; }
     }
-
 
     public enum Choice
     {

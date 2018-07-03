@@ -1,10 +1,7 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
-using Microsoft.AspNetCore.Http;
+﻿using ConfigServer.Server;
+using ConfigServer.TestModels;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;

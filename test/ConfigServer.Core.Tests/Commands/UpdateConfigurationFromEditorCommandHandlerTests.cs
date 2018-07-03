@@ -1,6 +1,6 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using ConfigServer.Server.Validation;
+using ConfigServer.TestModels;
 using Moq;
 using System;
 using System.Threading.Tasks;

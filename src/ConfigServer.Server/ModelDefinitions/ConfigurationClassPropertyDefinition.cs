@@ -30,7 +30,7 @@ namespace ConfigServer.Server
     internal class ConfigurationClassPropertyDefinition<TConfig> : ConfigurationClassPropertyDefinition where TConfig : new()
     {
 
-        internal ConfigurationClassPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType) : base(propertyName, propertyType, parentPropertyType)
+        public ConfigurationClassPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType) : base(propertyName, propertyType, parentPropertyType)
         {
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
         }

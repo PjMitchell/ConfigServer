@@ -1,8 +1,8 @@
 ﻿using ConfigServer.Server;
-using ConfigServer.Sample.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.TestModels
 {
@@ -13,19 +13,12 @@ namespace ConfigServer.Core.Tests.TestModels
             return model.BuildOptionSet(configIdentity, new OptionProvider());
         }
 
-        public IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, IEnumerable<ConfigurationSet> configurationSets)
-        {
-            var configurationSet = configurationSets.SingleOrDefault(r => r.GetType() == definition.ConfigurationSetType);
-            return Build(definition,configurationSet);
-        }
-
-        public IOptionSet Build(ConfigurationPropertyWithOptionModelDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
+        public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationSet configurationSet) => definition.GetOptionSet(configurationSet);
 
         public IOptionSet Build(IOptionPropertyDefinition definition, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
-            if (definition is ConfigurationPropertyWithOptionModelDefinition optionModelDefinition)
-                return Build(optionModelDefinition, configurationSets);
-            throw new InvalidOperationException($"Could not build option set for definition type of {definition.GetType()}");
+            var configurationSet = configurationSets.SingleOrDefault(r => r.GetType() == definition.ConfigurationSetType);
+            return Build(definition, configurationSet);
         }
 
 
