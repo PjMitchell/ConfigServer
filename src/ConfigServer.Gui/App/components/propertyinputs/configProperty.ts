@@ -5,7 +5,7 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 @Component({
     selector: 'config-property',
     template: `
-            <div [class.col-md-3]="!isCollection" [class.col-md-12]="isCollection" style="min-height:140px">
+            <div [class.col-md-3]="!fullWidth" [class.col-md-12]="fullWidth" style="min-height:140px">
                 <config-property-item [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" [csHasInfo]="!isCollection">
                 </config-property-item>
             </div>
@@ -13,7 +13,9 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 export class ConfigurationPropertyComponent {
     @Input()
     public csConfig: any;
+    public fullWidth: boolean;
     public isCollection: boolean;
+
     @Input()
     public parentForm: FormGroup;
 
@@ -23,5 +25,6 @@ export class ConfigurationPropertyComponent {
     set csDefinition(value: IConfigurationPropertyPayload) {
         this._csDefinition = value;
         this.isCollection = this._csDefinition.propertyType === 'Collection';
+        this.fullWidth = this.isCollection || this._csDefinition.propertyType === 'Class';
     }
 }

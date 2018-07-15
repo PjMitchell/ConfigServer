@@ -6,14 +6,14 @@ import { uniqueKey } from '../../validators/collectionValidator';
 @Component({
     selector: 'class-input',
     template: `
-<div>
-    <div>
+<div style="margin-left:-15px;">
+    <div style="margin-left:15px;">
         <h3>{{csDefinition.propertyDisplayName}}</h3>
         <p>{{csDefinition.propertyDescription}}</p>
     </div>
-    <config-property class="configProperty" *ngFor="let item of csModel.property | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="csConfig" [(parentForm)]="classForm" (onIsValidChanged)="onValidChanged(i, $event)">
+    <config-property class="configProperty" *ngFor="let item of csDefinition.childProperty | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="csConfig" [(parentForm)]="classForm" (onIsValidChanged)="onValidChanged(i, $event)">
             </config-property>
-    </div>
+</div>
 `,
 })
 export class ConfigurationPropertyClassInputComponent implements OnInit {

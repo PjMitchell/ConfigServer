@@ -120,7 +120,7 @@ namespace ConfigServer.Server
         {
             var nestedProperty = propertyModel.GetPropertyValue(source);
             if (nestedProperty == null)
-                return null;
+                nestedProperty = propertyModel.NewItemInstance();
             var itemValue = BuildObject(nestedProperty, propertyModel.ConfigurationProperties);
             return itemValue;
         }

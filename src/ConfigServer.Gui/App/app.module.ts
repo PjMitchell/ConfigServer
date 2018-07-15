@@ -28,6 +28,7 @@ import { GroupClientsComponent } from './components/groupClients';
 import { GroupHeaderComponent } from "./components/groupHeader";
 import { HomeComponent } from './components/home';
 import { ConfigurationPropertyBoolInputComponent } from './components/propertyinputs/clientPropertyBoolInput';
+import { ConfigurationPropertyClassInputComponent } from './components/propertyinputs/clientPropertyClassInput';
 import { ConfigurationPropertyCollectionInputComponent } from './components/propertyinputs/clientPropertyCollectionInput';
 import { ConfigurationPropertyDateInputComponent } from './components/propertyinputs/clientPropertyDateInput';
 import { ConfigurationPropertyEnumInputComponent } from './components/propertyinputs/clientPropertyEnumInput';
@@ -82,6 +83,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ConfigurationPropertyOptionInputComponent,
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
+        ConfigurationPropertyClassInputComponent,
         GroupClientsComponent,
         ResourceFileUploaderComponent,
         GroupImageFileUploaderComponent,
