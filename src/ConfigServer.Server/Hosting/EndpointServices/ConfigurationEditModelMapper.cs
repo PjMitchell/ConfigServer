@@ -72,6 +72,8 @@ namespace ConfigServer.Server
                     return GetPropertyValue(source, (IMultipleOptionPropertyDefinition)propertyModel);
                 case ConfigurationPropertyType.Collection:
                     return GetPropertyValue(source, (ConfigurationCollectionPropertyDefinition)propertyModel);
+                case ConfigurationPropertyType.Class:
+                    return GetPropertyValue(source, (ConfigurationClassPropertyDefinition)propertyModel);
                 default:
                     return propertyModel.GetPropertyValue(source); 
             }
@@ -112,6 +114,15 @@ namespace ConfigServer.Server
             }
 
             return result;
+        }
+
+        private object GetPropertyValue(object source, ConfigurationClassPropertyDefinition propertyModel)
+        {
+            var nestedProperty = propertyModel.GetPropertyValue(source);
+            if (nestedProperty == null)
+                return null;
+            var itemValue = BuildObject(nestedProperty, propertyModel.ConfigurationProperties);
+            return itemValue;
         }
     }
 }
