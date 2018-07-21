@@ -1,7 +1,6 @@
 ﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { IConfigurationPropertyPayload } from "../../interfaces/configurationPropertyPayload";
-import { uniqueKey } from '../../validators/collectionValidator';
 
 @Component({
     selector: 'class-input',
@@ -11,7 +10,7 @@ import { uniqueKey } from '../../validators/collectionValidator';
         <h3>{{csDefinition.propertyDisplayName}}</h3>
         <p>{{csDefinition.propertyDescription}}</p>
     </div>
-    <config-property class="configProperty" *ngFor="let item of csDefinition.childProperty | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="csConfig" [(parentForm)]="classForm" (onIsValidChanged)="onValidChanged(i, $event)">
+    <config-property class="configProperty" *ngFor="let item of csDefinition.childProperty | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="classConfig" [(parentForm)]="classForm" (onIsValidChanged)="onValidChanged(i, $event)">
             </config-property>
 </div>
 `,
