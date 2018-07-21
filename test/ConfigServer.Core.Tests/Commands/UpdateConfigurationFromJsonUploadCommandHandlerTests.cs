@@ -1,12 +1,10 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using ConfigServer.Server.Validation;
+using ConfigServer.TestModels;
 using Moq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 

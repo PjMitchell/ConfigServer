@@ -1,6 +1,5 @@
 ﻿using ConfigServer.Client;
-using ConfigServer.Core;
-using ConfigServer.Sample.Models;
+using ConfigServer.TestModels;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

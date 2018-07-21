@@ -21,6 +21,8 @@ namespace ConfigServer.Server
                     return ConfigurationPropertyType.Option;
                 case ConfigurationCollectionPropertyDefinition input:
                     return GetPropertyType(input);
+                case ConfigurationClassPropertyDefinition input:
+                    return ConfigurationPropertyType.Class;
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {propertyModel.GetType().Name}");
             }
@@ -92,6 +94,8 @@ namespace ConfigServer.Server
         public const string MultipleOption = "MultipleOption";
 
         public const string Collection = "Collection";
+
+        public const string Class = "Class";
 
         public const string Unacceptable = "Unacceptable";
     }

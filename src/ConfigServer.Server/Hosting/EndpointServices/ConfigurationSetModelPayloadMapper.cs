@@ -79,6 +79,8 @@ namespace ConfigServer.Server
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 case ConfigurationCollectionPropertyDefinition input:
                     return BuildProperty(input, configIdentity,requiredConfigurationSets);
+                case ConfigurationClassPropertyDefinition input:
+                    return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 default:
                     throw new InvalidOperationException($"Could not handle ConfigurationPropertyModelBase of type {value.GetType().Name}");
             }
@@ -125,7 +127,19 @@ namespace ConfigServer.Server
             };
         }
 
-        
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationClassPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        {
+            return new ConfigurationPropertyPayload
+            {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
+                PropertyDisplayName = value.PropertyDisplayName,
+                PropertyType = ConfigurationPropertyType.Class,
+                PropertyDescription = value.PropertyDescription,
+                ChildProperty = BuildProperties(value.ConfigurationProperties, configIdentity, requiredConfigurationSets)
+            };
+        }
+
+
         private Dictionary<string, string> BuildEnumOption(Type propertyType)
         {
             return GetEnumValues(propertyType).ToDictionary(k => k.Key.ToString(), v=> v.Value);

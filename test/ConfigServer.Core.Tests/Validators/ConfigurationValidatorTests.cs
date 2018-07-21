@@ -1,5 +1,4 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server.Validation;
+﻿using ConfigServer.Server.Validation;
 using ConfigServer.Server;
 using System.Linq;
 using Xunit;
@@ -8,6 +7,7 @@ using ConfigServer.Core.Tests.TestModels;
 using System.Collections.Generic;
 using Moq;
 using System.Threading.Tasks;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.Validators
 {
@@ -23,7 +23,7 @@ namespace ConfigServer.Core.Tests.Validators
             configIdentity = new ConfigurationIdentity(new ConfigurationClient("TestId"), new Version(1, 0));
             service = new Mock<IConfigurationSetService>();
             service.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
-                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
+                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<OptionFromConfigSet>(OptionFromConfigSet.Options, o => o.Id.ToString(), o => o.Description) });
             target = new ConfigurationValidator(new TestOptionSetFactory(), service.Object);
         }
 
@@ -342,14 +342,14 @@ namespace ConfigServer.Core.Tests.Validators
         {
             var sample = new SampleConfig
             {
-                Option = new Option { Id = 5, Description = "Option Four" }
+                OptionFromConfigSet = new OptionFromConfigSet { Id = 5, Description = "Option Four" }
             };
-            modelBuilder.PropertyWithOption(p=> p.Option,(SampleConfigSet provider) => provider.Options);
+            modelBuilder.PropertyWithOption(p=> p.OptionFromConfigSet,(SampleConfigSet provider) => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Single(result.Errors);
-            Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.Option)), result.Errors.Single());
+            Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.OptionFromConfigSet)), result.Errors.Single());
 
         }
 
@@ -358,9 +358,9 @@ namespace ConfigServer.Core.Tests.Validators
         {
             var sample = new SampleConfig
             {
-                Option = OptionProvider.OptionOne
+                OptionFromConfigSet = OptionFromConfigSet.OptionOne
             };
-            modelBuilder.PropertyWithOption(p=> p.Option,(SampleConfigSet set) => set.Options);
+            modelBuilder.PropertyWithOption(p=> p.OptionFromConfigSet, (SampleConfigSet set) => set.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
@@ -372,18 +372,18 @@ namespace ConfigServer.Core.Tests.Validators
         {
             var sample = new SampleConfig
             {
-                MoarOptions = new List<Option>
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>
                 {
-                    new Option { Id = 5, Description = "Option Four" },
-                    OptionProvider.OptionOne
+                    new OptionFromConfigSet { Id = 5, Description = "Option Four" },
+                    OptionFromConfigSet.OptionOne
                 }
             };
-            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptions,(SampleConfigSet provider) => provider.Options);
+            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptionFromConfigSet,(SampleConfigSet provider) => provider.Options);
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);
             Assert.False(result.IsValid);
             Assert.Single(result.Errors);
-            Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.MoarOptions)), result.Errors.Single());
+            Assert.Equal(ValidationStrings.OptionNotFound(nameof(SampleConfig.MoarOptionFromConfigSet)), result.Errors.Single());
 
         }
 
@@ -392,14 +392,14 @@ namespace ConfigServer.Core.Tests.Validators
         {
             var sample = new SampleConfig
             {
-                MoarOptions = new List<Option>
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>
                 {
-                    OptionProvider.OptionThree,
-                    OptionProvider.OptionOne
+                    OptionFromConfigSet.OptionThree,
+                    OptionFromConfigSet.OptionOne
                 }
 
             };
-            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (SampleConfigSet provider) => provider.Options);
+            modelBuilder.PropertyWithMultipleOptions(p => p.MoarOptionFromConfigSet, (SampleConfigSet provider) => provider.Options);
 
             var model = modelBuilder.Build();
             var result = await target.Validate(sample, model, configIdentity);

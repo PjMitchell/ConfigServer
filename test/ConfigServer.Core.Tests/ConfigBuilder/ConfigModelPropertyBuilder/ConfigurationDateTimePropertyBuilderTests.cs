@@ -10,7 +10,7 @@ namespace ConfigServer.Core.Tests
 
         public ConfigurationDateTimePropertyBuilderTests()
         {
-            target = new ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet>(new ConfigurationModel<DateTimeTestClass, TestConfigSet>(nameof(TestConfigSet.DateTime), c=> c.DateTime, (set, c) => set.DateTime = c));
+            target = new ConfigurationModelBuilder<DateTimeTestClass, TestConfigSet>(new ConfigurationModel<DateTimeTestClass, TestConfigSet>(nameof(TestConfigSet.DateTime), c => c.DateTime, (set, c) => set.DateTime = c));
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace ConfigServer.Core.Tests
         [Fact]
         public void CanBuildModelDefinition_PropertyWithMaxValueValidation()
         {
-            var max = new DateTime(2013, 10,10);
+            var max = new DateTime(2013, 10, 10);
             target.Property(x => x.DateTimeProperty)
                 .WithMaxValue(max);
             var result = target.Build();

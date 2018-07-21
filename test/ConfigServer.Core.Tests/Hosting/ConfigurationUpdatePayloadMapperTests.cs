@@ -1,5 +1,4 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -11,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using ConfigServer.Core.Tests.TestModels;
 using Moq;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.Hosting
 {
@@ -30,7 +30,10 @@ namespace ConfigServer.Core.Tests.Hosting
         {
             configurationSet = new Mock<IConfigurationSetService>();
             configurationSet.Setup(r => r.GetConfigurationSet(typeof(SampleConfigSet), It.IsAny<ConfigurationIdentity>()))
-                .ReturnsAsync(() => new SampleConfigSet { Options = new OptionSet<Option>(OptionProvider.Options, o => o.Id.ToString(), o => o.Description) });
+                .ReturnsAsync(() => new SampleConfigSet {
+                    Options = new OptionSet<OptionFromConfigSet>(OptionFromConfigSet.Options, o => o.Id.ToString(), o => o.Description),
+                    OptionFromProvider = new OptionSet<Option>(OptionProvider.Options, o=>o.Id.ToString(), o => o.Description)
+                });
 
             target = new ConfigurationUpdatePayloadMapper(new TestOptionSetFactory(), new PropertyTypeProvider(), configurationSet.Object);
             definition = new SampleConfigSet().BuildConfigurationSetModel();
@@ -44,7 +47,10 @@ namespace ConfigServer.Core.Tests.Hosting
                 Name = "Name 1",
                 Option = OptionProvider.OptionOne,
                 MoarOptions = new List<Option> { OptionProvider.OptionOne, OptionProvider.OptionThree },
-                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } }
+                OptionFromConfigSet = null,
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
+                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } },
+                NestedClass = new NestedClass { Count = 23, Description = "Test"}
             };
 
             updatedSample = new SampleConfig
@@ -57,7 +63,10 @@ namespace ConfigServer.Core.Tests.Hosting
                 Name = "Name 2",
                 Option = OptionProvider.OptionTwo,
                 MoarOptions = new List<Option> { OptionProvider.OptionTwo, OptionProvider.OptionThree },
-                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "Two plus Two", Value = 5 } }
+                OptionFromConfigSet = null,
+                MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
+                ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "Two plus Two", Value = 5 } },
+                NestedClass = new NestedClass { Count = 37, Description = "Test2"}
             };
             dynamic updatedValue = new ExpandoObject();
             updatedValue.Choice = updatedSample.Choice;
@@ -69,6 +78,7 @@ namespace ConfigServer.Core.Tests.Hosting
             updatedValue.Option = updatedSample.Option.Id;
             updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s => s.Id).ToList();
             updatedValue.ListOfConfigs = updatedSample.ListOfConfigs;
+            updatedValue.NestedClass = updatedSample.NestedClass;
             var serilaisationSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             objectJson = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
         }
@@ -101,6 +111,7 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(updatedSample.MoarOptions.Count, result.MoarOptions.Count);
             Assert.Equal(updatedSample.MoarOptions.Select(s => s.Description), result.MoarOptions.Select(s => s.Description));
         }
+
         [Fact]
         public async Task UpdatesListOfConfigsValues()
         {
@@ -109,6 +120,17 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Single(result.ListOfConfigs);
             Assert.Equal(updatedSample.ListOfConfigs[0].Name, result.ListOfConfigs[0].Name);
             Assert.Equal(updatedSample.ListOfConfigs[0].Value, result.ListOfConfigs[0].Value);
+
+        }
+
+        [Fact]
+        public async Task UpdatesNestedConfigsValues()
+        {
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
+            var result = (SampleConfig)response.GetConfiguration();
+            Assert.Single(result.ListOfConfigs);
+            Assert.Equal(updatedSample.NestedClass.Description, result.NestedClass.Description);
+            Assert.Equal(updatedSample.NestedClass.Count, result.NestedClass.Count);
 
         }
 

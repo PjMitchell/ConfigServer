@@ -14,16 +14,19 @@ namespace ConfigServer.TestModels
 
     public class OptionProvider : IOptionProvider
     {
+        public static readonly Option OptionOne = new Option { Id = 1, Description = "Option One" };
+        public static readonly Option OptionTwo = new Option { Id = 2, Description = "Option Two" };
+        public static readonly Option OptionThree = new Option { Id = 3, Description = "Option Three" };
+        public static readonly Option OptionFour = new Option { Id = 4, Description = "Option Four" };
+
         public ICollection<Option> GetOptions()
         {
-            return new List<Option>
-            {
-                new Option { Id = 1, Description = "Option One" },
-                new Option { Id = 2, Description = "Option Two" },
-                new Option { Id = 3, Description = "Option Three" },
-                new Option { Id = 4, Description = "Option Four" }
-
-            };
+            return Options.ToList();
         }
+
+        public static IEnumerable<Option> Options => new List<Option>
+            {
+                OptionOne,OptionTwo, OptionThree, OptionFour
+            };
     }
 }

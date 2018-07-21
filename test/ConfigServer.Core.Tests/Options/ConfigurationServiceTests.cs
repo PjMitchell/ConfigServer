@@ -1,9 +1,9 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
 using System;
+using ConfigServer.TestModels;
 
 namespace ConfigServer.Core.Tests.Options
 {

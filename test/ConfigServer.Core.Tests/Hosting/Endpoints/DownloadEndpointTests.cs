@@ -1,5 +1,5 @@
-﻿using ConfigServer.Sample.Models;
-using ConfigServer.Server;
+﻿using ConfigServer.Server;
+using ConfigServer.TestModels;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Collections.Generic;
@@ -94,7 +94,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var configSet = new SampleConfigSet
             {
                 SampleConfig = new Config<SampleConfig>(new SampleConfig { LlamaCapacity = 23 }),
-                Options = new OptionSet<Option>(new[] { new Option { Id = 1, Description = "One"}, new Option { Id = 2, Description = "Two"} }, o=> o.Id.ToString(), o=> o.Description)
+                Options = new OptionSet<OptionFromConfigSet>(new[] { new OptionFromConfigSet { Id = 1, Description = "One"}, new OptionFromConfigSet { Id = 2, Description = "Two"} }, o=> o.Id.ToString(), o=> o.Description)
             };
             configurationSetService.Setup(s => s.GetConfigurationSet(typeof(SampleConfigSet), It.Is<ConfigurationIdentity>(i => i.Client.Equals(expectedClient))))
                 .ReturnsAsync(() => configSet);
@@ -107,7 +107,7 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             var sampleConfig = payload.SampleConfig as SampleConfig;
             Assert.NotNull(sampleConfig);
             Assert.Equal(configSet.SampleConfig.Value.LlamaCapacity, sampleConfig.LlamaCapacity);
-            var options = payload.Options as IEnumerable<Option>;
+            var options = payload.Options as IEnumerable<OptionFromConfigSet>;
             Assert.NotNull(options);
             Assert.Equal(configSet.Options.Select(s=>s), options);
 

@@ -26,7 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk">
-      <Version>15.6.2</Version>
+      <Version>15.7.2</Version>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
     <PackageReference Include="xunit.runner.visualstudio">
@@ -46,6 +46,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\models\ConfigServer.TestModels\ConfigServer.TestModels.csproj" />
     <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.AzureBlobStorageProvider\ConfigServer.AzureBlobStorageProvider.csproj" />
     <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.FileProvider\ConfigServer.FileProvider.csproj" />
     <ProjectReference Include="..\..\src\ConfigProviders\ConfigServer.InMemoryProvider\ConfigServer.InMemoryProvider.csproj" />

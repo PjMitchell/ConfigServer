@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using System.Collections;
-using ConfigServer.Sample.Models;
 using ConfigServer.Core.Tests.TestModels;
 using System;
+using ConfigServer.TestModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConfigServer.Core.Tests.ConfigurationServices
 {
@@ -18,7 +19,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         ConfigurationIdentity identity;
         List<ExternalOption> defaultOptions;
         List<OptionDependentOnAnotherOption> additionalOption;
-        SampleConfig defaultConfig;
+        TestConfig defaultConfig;
 
         public ConfigurationSetFactoryTests()
         {
@@ -39,13 +40,13 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                 .Returns(() => Task.FromResult<IEnumerable>(defaultOptions));
             mockConfigProvider.Setup(test => test.GetCollectionAsync(typeof(OptionDependentOnAnotherOption), It.IsAny<ConfigurationIdentity>()))
                 .Returns(() => Task.FromResult<IEnumerable>(additionalOption));
-            defaultConfig = new SampleConfig
+            defaultConfig = new TestConfig
             {
                 LlamaCapacity = 23,
                 ExternalOption = defaultOptions[0]                
             };
-            var instance = new ConfigInstance<SampleConfig>(defaultConfig, identity);
-            mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
+            var instance = new ConfigInstance<TestConfig>(defaultConfig, identity);
+            mockConfigProvider.Setup(test => test.GetAsync(typeof(TestConfig), identity))
                .Returns(() => Task.FromResult<ConfigInstance>(instance));
             target = new ConfigurationSetFactory(mockConfigProvider.Object, new TestOptionSetFactory(), registry);
         }
@@ -98,13 +99,13 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         [Fact]
         public async Task Build_PopulatesConfig_WithCorrectOptionValue()
         {
-            var config = new SampleConfig
+            var config = new TestConfig
             {
                 LlamaCapacity = 23,
                 ExternalOption = new ExternalOption { Id = defaultOptions[0].Id, Description = "Not this one" }
             };
-            var instance = new ConfigInstance<SampleConfig>(config, identity);
-            mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
+            var instance = new ConfigInstance<TestConfig>(config, identity);
+            mockConfigProvider.Setup(test => test.GetAsync(typeof(TestConfig), identity))
                    .Returns(() => Task.FromResult<ConfigInstance>(instance));
 
             var configSet = (TestConfiguationModule)await target.BuildConfigSet(typeof(TestConfiguationModule), identity);
@@ -117,7 +118,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
         [Fact]
         public async Task CheckOptionsAreUpdated()
         {
-            var config = new SampleConfig
+            var config = new TestConfig
             {
                 Option = new Option { Id = 1, Description = "Not the right description" },
                 MoarOptions = new List<Option>
@@ -126,8 +127,8 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                     OptionProvider.OptionTwo
                 }
             };
-            var instance = new ConfigInstance<SampleConfig>(config, identity);
-            mockConfigProvider.Setup(test => test.GetAsync(typeof(SampleConfig), identity))
+            var instance = new ConfigInstance<TestConfig>(config, identity);
+            mockConfigProvider.Setup(test => test.GetAsync(typeof(TestConfig), identity))
                    .Returns(() => Task.FromResult<ConfigInstance>(instance));
             var configSet = (TestConfiguationModule)await target.BuildConfigSet(typeof(TestConfiguationModule), identity);
             Assert.Equal(config.Option.Description, OptionProvider.OptionOne.Description);
@@ -151,7 +152,7 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
             public OptionSet<Option> OptionsFromProvider { get; set; }
 
             public OptionSet<OptionDependentOnAnotherOption> OptionDependentOnAnotherOption { get; set; }
-            public Config<SampleConfig> TestConfig { get; set; }
+            public Config<TestConfig> TestConfig { get; set; }
 
             protected override void OnModelCreation(ConfigurationSetModelBuilder<TestConfiguationModule> modelBuilder)
             {
@@ -167,7 +168,32 @@ namespace ConfigServer.Core.Tests.ConfigurationServices
                 configBuilder.PropertyWithMultipleOptions(p => p.MoarOptions, (TestConfiguationModule provider) => provider.OptionsFromProvider);
             }
         }
+        private class TestConfig
+        {
+            public int LlamaCapacity { get; set; }
+            public int? SpareLlamaCapacity { get; set; }
+            public string Name { get; set; }
+            public DateTime StartDate { get; set; }
+            public decimal Decimal { get; set; }
+            [Display(Name = "Is Llama farmer?", Description = "Is this a Llama farmer")]
+            public bool IsLlamaFarmer { get; set; }
+            public Choice Choice { get; set; }
+            public Option Option { get; set; }
+            public List<Option> MoarOptions { get; set; }
+            public List<ListConfig> ListOfConfigs { get; set; }
+            public int OptionId { get; set; }
+            public OptionFromConfigSet OptionFromConfigSet { get; set; }
+            public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
+            public List<int> MoarOptionValues { get; set; }
+            public ExternalOption ExternalOption { get; set; }
+        }
 
+        private class ExternalOption
+        {
+            public int Id { get; set; }
+            public string Description { get; set; }
+
+        }
         private class OptionDependentOnAnotherOption
         {
             public int Id { get; set; }

@@ -1,6 +1,5 @@
 ﻿using ConfigServer.Server;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Linq;
 using Xunit;
 
