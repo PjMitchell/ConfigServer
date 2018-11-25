@@ -114,6 +114,28 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
         }
 
         [Fact]
+        public async Task Get_ClientResource_GetsClientResource_WithAnomynousAccesss()
+        {
+            var resourceName = "File.txt";
+            var testContext = TestHttpContextBuilder.CreateForPath($"/{clientId}/{resourceName}")
+                .TestContext;
+            var expectedResource = new ResourceEntry
+            {
+                HasEntry = true,
+                Content = new MemoryStream(),
+                Name = resourceName
+            };
+            expectedClient.ConfiguratorClaim = string.Empty;
+            expectedClient.ReadClaim = string.Empty;
+
+            resourceStore.Setup(r => r.GetResource(resourceName, ItMatchesClient(expectedClient)))
+                .ReturnsAsync(() => expectedResource);
+            option.AllowAnomynousAccess =true;
+            await target.Handle(testContext, option);
+            httpResponseFactory.Verify(f => f.BuildFileResponse(testContext, expectedResource.Content, expectedResource.Name));
+        }
+
+        [Fact]
         public async Task Get_ClientResource_ReturnsNotFoundIfNotFound()
         {
             var resourceName = "File.txt";
@@ -140,7 +162,6 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             await target.Handle(testContext, option);
             httpResponseFactory.Verify(f => f.BuildStatusResponse(testContext, 403));
         }
-
 
         [Fact]
         public async Task Post_ClientResource_UploadsResources()

@@ -110,7 +110,7 @@ namespace ConfigServer.Server
             }
 
             if (string.IsNullOrWhiteSpace(option.ClientReadClaimType) || string.IsNullOrWhiteSpace(client.ReadClaim) || string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
-                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+                return source.ChallengeAuthentication(option.AllowManagerAnomynousAccess || option.AllowAnomynousAccess, responseFactory);
 
             //If we have an expected claim then we do not want to allow anomynous
             if (!source.ChallengeAuthentication(false, responseFactory))
@@ -134,7 +134,7 @@ namespace ConfigServer.Server
             }
 
             if (string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
-                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+                return source.ChallengeAuthentication(option.AllowManagerAnomynousAccess, responseFactory);
 
             //If we have an expected claim then we do not want to allow anomynous
             if (!source.ChallengeAuthentication(false, responseFactory))
@@ -158,7 +158,7 @@ namespace ConfigServer.Server
             }
 
             if (string.IsNullOrWhiteSpace(option.ClientAdminClaimType) ||string.IsNullOrWhiteSpace(option.ClientConfiguratorClaimType) || string.IsNullOrWhiteSpace(client.ConfiguratorClaim))
-                return source.ChallengeAuthentication(option.AllowAnomynousAccess, responseFactory);
+                return source.ChallengeAuthentication(option.AllowManagerAnomynousAccess, responseFactory);
 
             //If we have an expected claim then we do not want to allow anomynous
             if (!source.ChallengeAuthentication(false, responseFactory))
