@@ -24,13 +24,14 @@ namespace ConfigServer.Server
 
         public async Task Handle(HttpContext context, ConfigServerOptions options)
         {
+            var pathParams = context.ToPathParams();
+
             // /{id}
             // /{id}/{resource}
             // /{id}/to/{id}
-            if (!CheckMethodAndAuthentication(context, options))
+            if (!CheckMethodAndAuthentication(context, options, pathParams))
                 return;
 
-            var pathParams = context.ToPathParams();
             if (pathParams.Length == 0 || pathParams.Length > 3)
             {
                 httpResponseFactory.BuildNotFoundStatusResponse(context);
@@ -169,15 +170,15 @@ namespace ConfigServer.Server
             return clientIdentity;
         }
 
-        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options)
+        private bool CheckMethodAndAuthentication(HttpContext context, ConfigServerOptions options, string[] pathParams)
         {
             if (context.Request.Method == "GET")
             {
-                return context.ChallengeAuthentication(options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeAuthentication(pathParams.Length == 2? options.AllowAnomynousAccess : options.AllowManagerAnomynousAccess, httpResponseFactory);
             }
             if(context.Request.Method == "POST" || context.Request.Method == "DELETE")
             {
-                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowAnomynousAccess, httpResponseFactory);
+                return context.ChallengeUser(options.ClientAdminClaimType, new HashSet<string>(new[] { ConfigServerConstants.AdminClaimValue, ConfigServerConstants.ConfiguratorClaimValue }, StringComparer.OrdinalIgnoreCase), options.AllowManagerAnomynousAccess, httpResponseFactory);
             }
             else
             {

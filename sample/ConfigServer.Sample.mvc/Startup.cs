@@ -73,6 +73,7 @@ namespace ConfigServer.Sample.mvc
                 ClientAdminClaimType = string.Empty,
                 ClientConfiguratorClaimType = string.Empty,
                 ClientReadClaimType = string.Empty,
+                AllowManagerAnomynousAccess = true,
                 AllowAnomynousAccess = true,
                 ThemeUrl = "/css/indigo-pink.css"
             }));

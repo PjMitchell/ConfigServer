@@ -171,5 +171,61 @@ namespace ConfigServer.Core.Tests.Hosting.Endpoints
             Assert.False(permission.HasClientConfiguratorClaim);
         }
 
+        [Fact]
+        public async Task CorrectlyMapsManagerAnomynousAccess()
+        {
+            var context = TestHttpContextBuilder.CreateForPath("")
+                .TestContext;
+            UserPermissions permission = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<UserPermissions>()))
+                .Returns((HttpContext c, UserPermissions p) => {
+                    permission = p;
+                    return Task.FromResult(true);
+                });
+            var anomynousOption = new ConfigServerOptions
+            {
+                AllowManagerAnomynousAccess = true,
+                AllowAnomynousAccess = true,
+                ClientAdminClaimType = string.Empty,
+                ClientReadClaimType = string.Empty,
+                ClientConfiguratorClaimType = string.Empty
+            };
+
+            await target.Handle(context, anomynousOption);
+            Assert.NotNull(permission);
+            Assert.True(permission.CanAccessClientAdmin);
+            Assert.True(permission.CanEditClients);
+            Assert.True(permission.CanEditGroups);
+            Assert.True(permission.CanDeleteArchives);
+        }
+
+        [Fact]
+        public async Task CorrectlyMapsAnomynousAccess()
+        {
+            var context = TestHttpContextBuilder.CreateForPath("")
+                .TestContext;
+            UserPermissions permission = null;
+            factory.Setup(f => f.BuildJsonResponse(context, It.IsAny<UserPermissions>()))
+                .Returns((HttpContext c, UserPermissions p) => {
+                    permission = p;
+                    return Task.FromResult(true);
+                });
+            var anomynousOption = new ConfigServerOptions
+            {
+                AllowManagerAnomynousAccess = false,
+                AllowAnomynousAccess = true,
+                ClientAdminClaimType = string.Empty,
+                ClientReadClaimType = string.Empty,
+                ClientConfiguratorClaimType = string.Empty
+            };
+
+            await target.Handle(context, anomynousOption);
+            Assert.NotNull(permission);
+            Assert.False(permission.CanAccessClientAdmin);
+            Assert.False(permission.CanEditClients);
+            Assert.False(permission.CanEditGroups);
+            Assert.False(permission.CanDeleteArchives);
+        }
+
     }
 }

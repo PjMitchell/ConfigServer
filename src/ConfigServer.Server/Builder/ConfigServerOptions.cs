@@ -6,7 +6,12 @@
     public class ConfigServerOptions
     {
         /// <summary>
-        /// Allows Anomynous access if no required claims have been specified
+        /// Allows Anomynous access for config manager if no required claims have been specified
+        /// </summary>
+        public bool AllowManagerAnomynousAccess { get; set; }
+
+        /// <summary>
+        /// Allows Anomynous access for config if no required claims have been specified
         /// </summary>
         public bool AllowAnomynousAccess { get; set; }
 

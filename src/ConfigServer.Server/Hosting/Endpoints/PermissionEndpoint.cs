@@ -55,6 +55,14 @@ namespace ConfigServer.Server
         private UserPermissions GetPermissionFromPrincipal(ClaimsPrincipal user, ConfigServerOptions options)
         {
             var result = new UserPermissions();
+            if(AllowAnomynousClientAdmin(options))
+            {
+                result.CanAccessClientAdmin = true;
+                result.CanEditClients = true;
+                result.CanEditGroups = true;
+                result.CanDeleteArchives = true;
+            }
+
             if(user.HasClaim(s=> s.Type.Equals(options.ClientAdminClaimType, StringComparison.OrdinalIgnoreCase) && ConfigServerConstants.AdminClaimValue.Equals(s.Value, StringComparison.OrdinalIgnoreCase)))
             {
                 result.CanAccessClientAdmin = true;
@@ -70,6 +78,11 @@ namespace ConfigServer.Server
                 .Select(s => s.Value)
                 .ToArray();
             return result;
+        }
+
+        private bool AllowAnomynousClientAdmin(ConfigServerOptions options)
+        {
+            return options.AllowManagerAnomynousAccess && string.IsNullOrWhiteSpace(options.ClientAdminClaimType);
         }
     }
 }

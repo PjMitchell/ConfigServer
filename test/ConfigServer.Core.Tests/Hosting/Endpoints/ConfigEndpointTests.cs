@@ -113,6 +113,17 @@ namespace ConfigServer.Core.Tests.Hosting
             responseFactory.Verify(r => r.BuildJsonResponse(context, It.IsAny<object>()), Times.AtLeastOnce());
         }
 
+        [Fact]
+        public async Task CallsResponseFactoryWithConfig_WhenAllowAnomymous()
+        {
+
+            var context = TestHttpContextBuilder.CreateForPath($"/{clients[0].ClientId}/{nameof(SimpleConfig)}")
+               .TestContext;
+            options.AllowAnomynousAccess = true;
+            await target.Handle(context, options);
+            responseFactory.Verify(r => r.BuildJsonResponse(context, It.IsAny<object>()), Times.AtLeastOnce());
+        }
+
         private Claim GetReadClaim(string value)
         {
             return new Claim(options.ClientReadClaimType, value);
