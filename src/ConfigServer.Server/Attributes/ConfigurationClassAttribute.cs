@@ -6,7 +6,7 @@ namespace ConfigServer.Server
     /// Marks class for Configuration model builder
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class ConfigurationClassAttribute : Attribute
-    {
+    public class ConfigurationClassAttribute : ConfigurationPropertyAttribute
+    { 
     }
 }

@@ -5,19 +5,15 @@ using System.Text;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationPropertyWithMultipleOptionValuesModelDefinition<TConfigSet, TOption,TValue, TValueCollection> : ConfigurationPropertyWithMultipleOptionValuesModelDefinition where TValueCollection : ICollection<TValue>
+    internal class ConfigurationPropertyWithMultipleOptionValuesModelDefinition<TConfigurationSet, TOption,TValue, TValueCollection> : ConfigurationPropertyWithMultipleOptionValuesModelDefinition where TValueCollection : ICollection<TValue> where TConfigurationSet : ConfigurationSet
     {
-        readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
-        readonly Func<TOption, TValue> valueSelector;
-        readonly string optionPath;
+        readonly IConfigurationSetOptionValueProvider<TConfigurationSet, TOption, TValue> optionProvider;
         readonly ConfigurationDependency[] dependency;
 
-        internal ConfigurationPropertyWithMultipleOptionValuesModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, Func<TOption, TValue> valueSelector, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TValue), propertyParentType)
+        public ConfigurationPropertyWithMultipleOptionValuesModelDefinition(IConfigurationSetOptionValueProvider<TConfigurationSet, TOption, TValue> optionProvider, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigurationSet), typeof(TValue), propertyParentType)
         {
             this.optionProvider = optionProvider;
-            this.optionPath = optionPath;
-            this.valueSelector = valueSelector;
-            dependency = new[] { new ConfigurationDependency(typeof(TConfigSet), optionPath) };
+            dependency = new[] { new ConfigurationDependency(typeof(TConfigurationSet), optionProvider.OptionPropertyName) };
         }
 
         public override CollectionBuilder GetCollectionBuilder() => new CollectionBuilder<TValue>(typeof(TValueCollection));
@@ -26,11 +22,11 @@ namespace ConfigServer.Server
 
         public override IOptionSet GetOptionSet(object configurationSet)
         {
-            var castedConfigurationSet = (TConfigSet)configurationSet;
-            return optionProvider(castedConfigurationSet);
+            var castedConfigurationSet = (TConfigurationSet)configurationSet;
+            return optionProvider.GetOptions(castedConfigurationSet);
         }
 
-        public override object GetValueFromOption(object option) => valueSelector((TOption)option);
+        public override object GetValueFromOption(object option) => optionProvider.GetOptionValue((TOption)option);
     }
 
     internal abstract class ConfigurationPropertyWithMultipleOptionValuesModelDefinition : ConfigurationPropertyWithOptionValueModelDefinition, IMultipleOptionPropertyDefinition

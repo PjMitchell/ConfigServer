@@ -1,27 +1,26 @@
-﻿using System;
+﻿using ConfigServer.Core;
+using System;
 using System.Collections.Generic;
 
 namespace ConfigServer.Server
 {
-    internal class ConfigurationPropertyWithOptionModelDefinition<TConfigSet, TOption> : ConfigurationPropertyWithOptionModelDefinition
+    internal class ConfigurationPropertyWithOptionModelDefinition<TConfigurationSet, TOption> : ConfigurationPropertyWithOptionModelDefinition where TConfigurationSet : ConfigurationSet
     {
-        readonly Func<TConfigSet, OptionSet<TOption>> optionProvider;
-        readonly string optionPath;
+        readonly IConfigurationSetOptionProvider<TConfigurationSet, TOption> optionProvider;
         readonly ConfigurationDependency[] dependency;
 
-        internal ConfigurationPropertyWithOptionModelDefinition(Func<TConfigSet, OptionSet<TOption>> optionProvider, string optionPath, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigSet), typeof(TOption), propertyParentType)
+        public ConfigurationPropertyWithOptionModelDefinition(IConfigurationSetOptionProvider<TConfigurationSet, TOption> optionProvider, string propertyName, Type propertyParentType) : base(propertyName, typeof(TConfigurationSet), typeof(TOption), propertyParentType)
         {
             this.optionProvider = optionProvider;
-            this.optionPath = optionPath;
-            dependency = new[] { new ConfigurationDependency(typeof(TConfigSet), optionPath) };
+            dependency = new[] { new ConfigurationDependency(typeof(TConfigurationSet), optionProvider.OptionPropertyName) };
         }
 
         public override IEnumerable<ConfigurationDependency> GetDependencies() => dependency;
 
         public override IOptionSet GetOptionSet(object configurationSet)
         {
-            var castedConfigurationSet = (TConfigSet)configurationSet;
-            return optionProvider(castedConfigurationSet);
+            var castedConfigurationSet = (TConfigurationSet)configurationSet;
+            return optionProvider.GetOptions(castedConfigurationSet);
         }
 
     }

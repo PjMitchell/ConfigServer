@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ConfigServer.Server;
+using System.Collections.Generic;
 
 namespace ConfigServer.TestModels
 {
@@ -27,4 +28,13 @@ namespace ConfigServer.TestModels
                 OptionOne,OptionTwo, OptionThree, OptionFour
             };
     }
+
+    public class OptionFromConfigSetOptionProvider : ConfigurationSetOptionValueProvider<SampleConfigSet, OptionFromConfigSet, int>
+    {
+        public OptionFromConfigSetOptionProvider() : base((SampleConfigSet set) => set.Options, (OptionFromConfigSet o) => o.Id)
+        {
+
+        }
+    }
+    
 }
