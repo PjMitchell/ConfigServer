@@ -18,7 +18,6 @@
         "ajv": "~5.2.2",
         "webpack": "3.5.5",
         "@types/jasmine": "2.5.41"
-
     },
     "dependencies": {
         "@angular/core": "5.2.1",
@@ -37,12 +36,8 @@
         "zone.js": "0.8.17",
         "reflect-metadata": "0.1.10",
         "systemjs": "0.20.18"
-
     },
     "scripts": {
         "build": "webpack"
     }
-
 }
-
-

@@ -11,6 +11,8 @@ namespace ConfigServer.Server
     /// </summary>
     public abstract class ConfigurationPropertyModelBase : IPropertyDefinition
     {
+        private readonly PropertyInfo configPropertyInfo;
+
         /// <summary>
         /// Initialize ConfigurationPropertyModel with property name
         /// </summary>
@@ -25,6 +27,7 @@ namespace ConfigServer.Server
             ApplyValuesFromAttribute(propertyName);
             if(string.IsNullOrWhiteSpace(PropertyDisplayName))
                 PropertyDisplayName = PropertyNameParser.SplitCamelCase(propertyName);
+            configPropertyInfo = ParentPropertyType.GetProperty(ConfigurationPropertyName);
         }
 
         private void ApplyValuesFromAttribute(string propertyName)
@@ -70,14 +73,14 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="config">Instance of configuration</param>
         /// <returns>Value of property from instance of configuration</returns>
-        public object GetPropertyValue(object config) => ParentPropertyType.GetProperty(ConfigurationPropertyName).GetValue(config);
+        public object GetPropertyValue(object config) => configPropertyInfo.GetValue(config);
 
         /// <summary>
         /// Sets property value from configuration model
         /// </summary>
         /// <param name="config">Instance of configuration</param>
         /// <param name="value">Inserted valus</param>
-        public virtual void SetPropertyValue(object config, object value) => ParentPropertyType.GetProperty(ConfigurationPropertyName).SetValue(config, value);
+        public virtual void SetPropertyValue(object config, object value) => configPropertyInfo.SetValue(config, value);
 
         /// <summary>
         /// Gets Dependencies for property

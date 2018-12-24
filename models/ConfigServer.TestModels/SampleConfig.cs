@@ -19,8 +19,13 @@ namespace ConfigServer.TestModels
         public List<Option> MoarOptions { get; set; }
         public List<ListConfig> ListOfConfigs { get; set; }
         public int OptionId { get; set; }
+        [Display(Description = "Options from the option set")]
+        [Option(typeof(OptionFromConfigSetOptionProvider))]
         public OptionFromConfigSet OptionFromConfigSet { get; set; }
+        [Display(Description = "More options from the option set")]
+        [Option(typeof(OptionFromConfigSetOptionProvider))]
         public List<OptionFromConfigSet> MoarOptionFromConfigSet { get; set; }
+        [OptionValue(typeof(OptionFromConfigSetOptionProvider))]
         public List<int> MoarOptionValues { get; set; }
         [ConfigurationClass]
         public NestedClass NestedClass { get; set; }
