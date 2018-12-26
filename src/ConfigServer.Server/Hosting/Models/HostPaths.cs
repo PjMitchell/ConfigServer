@@ -4,6 +4,7 @@
     {
         public const string Manager = "/Manager";
         public const string Clients = "/Clients";
+        public const string Tags = "/Tags";        
         public const string ConfigurationSet = "/ConfigurationSet";
         public const string ConfigurationEditor = "/ConfigurationEditor";
         public const string ConfigurationSetModel = "/ConfigurationSetModel";

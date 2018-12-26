@@ -52,7 +52,8 @@ namespace ConfigServer.Server
                 .AddTransient<ResourceArchiveEndpoint>()
                 .AddTransient<ConfigArchiveEndPoint>()
                 .AddTransient<PermissionEndpoint>()
-                .AddTransient<SnapshotEndpoint>();
+                .AddTransient<SnapshotEndpoint>()
+                .AddTransient<TagEndpoint>();            
             return collection;
         }
 

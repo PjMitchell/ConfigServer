@@ -8,6 +8,7 @@ namespace ConfigServer.Server
         public ConfigurationClientPayload()
         {
             Settings = new List<ConfigurationClientSetting>();
+            Tags = new List<Tag>();
         }
         public string ClientId { get; set; }
         public string Name { get; set; }
@@ -17,5 +18,7 @@ namespace ConfigServer.Server
         public string ReadClaim { get; set; }
         public string ConfiguratorClaim { get; set; }
         public List<ConfigurationClientSetting> Settings { get; set; }
+        public List<Tag> Tags { get; set; }
+
     }
 }

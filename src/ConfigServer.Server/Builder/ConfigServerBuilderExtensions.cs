@@ -129,6 +129,7 @@ namespace ConfigServer.Server
             app.MapEndpoint<ResourceArchiveEndpoint>(HostPaths.ResourceArchive, options);
             app.MapEndpoint<ConfigArchiveEndPoint>(HostPaths.Archive, options);
             app.MapEndpoint<PermissionEndpoint>(HostPaths.UserPermissions, options);
+            app.MapEndpoint<TagEndpoint>(HostPaths.Tags, options);
             app.MapEndpoint<SnapshotEndpoint>(HostPaths.Snapshot, options);
             app.UseEndpoint<ConfigEndpoint>(options);
             

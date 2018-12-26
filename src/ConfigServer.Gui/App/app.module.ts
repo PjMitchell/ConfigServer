@@ -59,6 +59,7 @@ import { UploadDataService } from './dataservices/upload-data.service';
 import { UserPermissionService } from './dataservices/userpermission-data.service';
 import { ObjectToIteratorPipe } from './pipes/objectToIterable';
 import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
+import { TagDataService } from './dataservices/tag-data.service';
 
 @NgModule({
     bootstrap: [AppShell],
@@ -135,6 +136,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         UploadDataService,
         UserPermissionService,
         SnapshotDataService,
+        TagDataService,
         ],
 })
 

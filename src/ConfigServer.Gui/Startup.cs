@@ -41,7 +41,8 @@ namespace ConfigServer.Gui
             var configserverBuilder = services.AddConfigServer()
                 .WithVersion(new Version(1, 0, 0))
                 .UseInMemoryCachingStrategy()
-                .UseConfigSet<SampleConfigSet>();
+                .UseConfigSet<SampleConfigSet>()
+                .UseConfigSet<SampleConfigSetRequiringTag>();
 
             UseFileStorage(configserverBuilder);
             // Comment line above and uncomment line below to test azure blob storage provider
