@@ -3,7 +3,7 @@
 export interface IConfigurationSetSummary {
     configurationSetId: string;
     name: string;
-    description: string;    
+    description: string;
     requiredClientTag: string;
     configs: IConfigurationModelSummary[];
 }

@@ -8,7 +8,7 @@ import { IConfigurationClient } from '../interfaces/configurationClient';
 import { IConfigurationClientSetting } from '../interfaces/configurationClientSetting';
 import { IConfigurationSetSummary } from '../interfaces/configurationSetSummary';
 import { IResourceInfo } from '../interfaces/resourceInfo';
-import { Tag } from '../interfaces/tag';
+import { ITag } from '../interfaces/tag';
 
 @Component({
     template: `
@@ -41,7 +41,7 @@ export class ClientOverviewComponent implements OnInit {
             readClaim: '',
             configuratorClaim: '',
             settings: new Array<IConfigurationClientSetting>(),
-            tags: new Array<Tag>()
+            tags: new Array<ITag>(),
         };
         this.configurationSets = new Array<IConfigurationSetSummary>();
         this.resources = new Array<IResourceInfo>();
@@ -85,14 +85,14 @@ export class ClientOverviewComponent implements OnInit {
             this.isConfigurator = false;
         }
         if (this.isConfigurator) {
-            let unfilteredConfigurationSets = await this.configSetDataService.getConfigurationSets();
-            this.configurationSets = unfilteredConfigurationSets.filter((value) => this.isAvailableConfigurationSetForClient(value,this.client))
+            const unfilteredConfigurationSets = await this.configSetDataService.getConfigurationSets();
+            this.configurationSets = unfilteredConfigurationSets.filter((value) => this.isAvailableConfigurationSetForClient(value, this.client));
             this.resources = await this.resourceDataService.getClientResourceInfo(clientId);
         }
     }
     private isAvailableConfigurationSetForClient(value: IConfigurationSetSummary, client: IConfigurationClient): any {
-        if(value.requiredClientTag) {
-            return client.tags.some((item) => item.value === value.requiredClientTag)
+        if (value.requiredClientTag) {
+            return client.tags.some((item) => item.value === value.requiredClientTag);
         }
         return true;
     }

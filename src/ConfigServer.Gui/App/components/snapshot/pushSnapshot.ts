@@ -10,7 +10,7 @@ import { IConfigurationClientSetting } from "../../interfaces/configurationClien
 import { IConfigurationSetSummary } from "../../interfaces/configurationSetSummary";
 import { ISelectableConfigurationModelSummary } from "../../interfaces/selectableConfigurationModelSummary";
 import { ISnapshotInfo } from "../../interfaces/snapshotInfo";
-import { Tag } from '../../interfaces/tag';
+import { ITag } from '../../interfaces/tag';
 
 @Component({
     template: `
@@ -57,7 +57,7 @@ export class PushSnapshotComponent implements OnInit {
     constructor(private dataService: SnapshotDataService, private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private route: ActivatedRoute, private router: Router) {
         this.snapshots = new Array<ISnapshotInfo>();
         this.configurationSets = new Array<IConfigurationSetSummary>();
-        this.client = { clientId: '', group: '', name: '', description: '', enviroment: '', readClaim: '', configuratorClaim: '', settings: new Array<IConfigurationClientSetting>(), tags: new Array<Tag>() };
+        this.client = { clientId: '', group: '', name: '', description: '', enviroment: '', readClaim: '', configuratorClaim: '', settings: new Array<IConfigurationClientSetting>(), tags: new Array<ITag>() };
         this.canPushSnapShot = false;
     }
 

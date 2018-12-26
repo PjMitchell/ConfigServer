@@ -2,10 +2,10 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationClientDataService } from '../../dataservices/client-data.service';
 import { ConfigurationClientGroupDataService } from '../../dataservices/clientgroup-data.service';
+import { TagDataService } from '../../dataservices/tag-data.service';
 import { IConfigurationClient } from '../../interfaces/configurationClient';
 import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
-import { Tag } from '../../interfaces/tag';
-import { TagDataService } from '../../dataservices/tag-data.service';
+import { ITag } from '../../interfaces/tag';
 
 @Component({
     template: `
@@ -25,11 +25,11 @@ export class EditClientComponent implements OnInit {
     public client: IConfigurationClient;
     public clients: IConfigurationClient[];
     public groups: IConfigurationClientGroup[];
-    public tags: Tag[];
+    public tags: ITag[];
     public clientId: string;
     public isDisabled: boolean = false;
     public isValid: boolean = true;
-    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService,private tagDataService: TagDataService, private route: ActivatedRoute, private router: Router) {
+    constructor(private clientDataService: ConfigurationClientDataService, private clientGroupDataService: ConfigurationClientGroupDataService, private tagDataService: TagDataService, private route: ActivatedRoute, private router: Router) {
     }
 
     public ngOnInit() {
@@ -39,7 +39,7 @@ export class EditClientComponent implements OnInit {
                 .then((returnedClient) => this.onAllClientsReturned(returnedClient));
         });
         this.clientGroupDataService.getClientGroups().then((grp) => {this.groups = grp; });
-        this.tagDataService.getTags().then((results) => {this.tags = results;})
+        this.tagDataService.getTags().then((results) => {this.tags = results; });
     }
 
     public onAllClientsReturned(returnedClients: IConfigurationClient[]) {

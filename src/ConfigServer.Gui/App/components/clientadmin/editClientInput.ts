@@ -1,7 +1,7 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IConfigurationClient } from '../../interfaces/configurationClient';
 import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
-import { Tag } from '../../interfaces/tag';
+import { ITag } from '../../interfaces/tag';
 
 @Component({
     selector: 'edit-client-input',
@@ -73,7 +73,7 @@ export class EditClientInputComponent {
     @Input()
     public csExistingGroups: IConfigurationClientGroup[];
     @Input()
-    public csAvailableTags: Tag[];
+    public csAvailableTags: ITag[];
     public existingEnviroments: string[];
     private _csIsValid: boolean;
     @Input()
@@ -97,6 +97,10 @@ export class EditClientInputComponent {
         this.existingEnviroments = new Array<string>();
     }
 
+    public compareTags(t1: ITag, t2: ITag): boolean {
+        return t1 && t2 ? t1.value === t2.value : t1 === t2;
+    }
+
     private toDistinct(values: string[]) {
         const set = new Object();
         values.forEach((value) => {
@@ -104,9 +108,5 @@ export class EditClientInputComponent {
         });
         const keys = Object.keys(set);
         return keys.filter((value) => value !== "null");
-    }
-
-    public compareTags(t1: Tag, t2: Tag): boolean {
-        return t1 && t2 ? t1.value === t2.value : t1 === t2;
     }
 }

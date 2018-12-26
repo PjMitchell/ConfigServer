@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import { IConfigurationClient } from '../interfaces/configurationClient';
-import { Tag } from '../interfaces/tag';
+import { ITag } from '../interfaces/tag';
 
 @Injectable()
 export class TagDataService {
@@ -10,7 +10,7 @@ export class TagDataService {
 
     constructor(private http: Http) { }
 
-    public getTags(): Promise<Tag[]> {
+    public getTags(): Promise<ITag[]> {
         return this.http.get(this.tagsUrl)
             .toPromise()
             .then((response) => response.json() as IConfigurationClient[])
