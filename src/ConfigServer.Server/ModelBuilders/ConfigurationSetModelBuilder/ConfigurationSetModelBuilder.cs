@@ -346,6 +346,12 @@ namespace ConfigServer.Server
             return definition;
         }
 
+        /// <summary>
+        /// Sets required client tag for configuration set
+        /// </summary>
+        /// <param name="value">Required client tag value</param>
+        public void SetRequiredClientTag(string value) => definition.RequiredClientTag = new Tag { Value = value };
+
         private ConfigurationModelBuilder<TOption, TConfigurationSet> OptionsInternal<TOption>(Expression<Func<TConfigurationSet, OptionSet<TOption>>> optionSelector, Func<TOption, string> keySelector, Func<TOption, object> descriptionSelector, string displayName, string description, string keyProperty) where TOption : class, new()
         {
 

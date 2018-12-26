@@ -15,6 +15,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -33,6 +35,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -51,6 +55,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -68,6 +74,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -87,6 +95,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -104,6 +114,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -123,6 +135,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -140,6 +154,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -158,6 +174,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -175,6 +193,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -194,6 +214,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>
@@ -211,6 +233,8 @@ namespace ConfigServer.Server
         /// </summary>
         /// <typeparam name="TConfiguration">Option Type</typeparam>
         /// <typeparam name="TOptionProvider">Option provider Type</typeparam>
+        /// <typeparam name="TConfigurationSet">ConfigurationSet type</typeparam>
+        /// <param name="source">ConfigurationSetModelBuilder</param> 
         /// <param name="expression">Path to Options</param>
         /// <param name="keySelector">Option Key Selector</param>
         /// <param name="descriptionSelector">Option Description Selector</param>

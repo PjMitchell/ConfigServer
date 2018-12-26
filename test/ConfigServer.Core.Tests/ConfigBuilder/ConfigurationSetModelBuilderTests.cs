@@ -8,6 +8,8 @@ namespace ConfigServer.Core.Tests
     {
         private const string setName = "Sample name";
         private const string setDescription = "Sample Description";
+        private const string requiredTag = "I need this tag";
+
 
 
         [Fact]
@@ -249,6 +251,35 @@ namespace ConfigServer.Core.Tests
             Assert.Equal(options[1].Value, optionSet["2"].Value);
 
         }
+
+        [Fact]
+        public void CanBuildModel_WithDefaultTag()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            var model = builder.Build();
+            Assert.Null(model.RequiredClientTag);
+
+        }
+
+        [Fact]
+        public void CanBuildModel_CanAddTag()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSet>(setName, setDescription);
+            builder.SetRequiredClientTag(requiredTag);
+            var model = builder.Build();
+            Assert.NotNull(model.RequiredClientTag);
+            Assert.Equal(requiredTag, model.RequiredClientTag.Value);
+        }
+
+        [Fact]
+        public void CanBuildModel_WithTagFromAttribute()
+        {
+            var builder = new ConfigurationSetModelBuilder<TestConfigSetWithTag>(setName, setDescription);
+            var model = builder.Build();
+            Assert.NotNull(model.RequiredClientTag);
+            Assert.Equal(requiredTag, model.RequiredClientTag.Value);
+
+        }
         #endregion
 
         private class TestConfigSet : ConfigurationSet<TestConfigSet>
@@ -261,6 +292,17 @@ namespace ConfigServer.Core.Tests
             public Config<SimpleConfig> Sample { get; set; }
 
             public TestConfigSet() : base(setName, setDescription)
+            {
+
+            }
+        }
+
+        [RequiredClientTag(requiredTag)]
+        private class TestConfigSetWithTag : ConfigurationSet<TestConfigSetWithTag>
+        {
+            public Config<SimpleConfig> Sample { get; set; }
+
+            public TestConfigSetWithTag() : base(setName, setDescription)
             {
 
             }

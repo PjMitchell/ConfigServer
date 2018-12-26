@@ -24,6 +24,7 @@ namespace ConfigServer.Core
         {
             ClientId = clientId;
             Settings = new Dictionary<string, ConfigurationClientSetting>(StringComparer.OrdinalIgnoreCase);
+            Tags = new List<Tag>();
         }
 
 
@@ -69,6 +70,10 @@ namespace ConfigServer.Core
         /// </summary>
         public Dictionary<string, ConfigurationClientSetting> Settings { get; }
 
+        /// <summary>
+        /// Client tags
+        /// </summary>
+        public List<Tag> Tags { get; set; }
 
         /// <summary>
         /// Determines whether this instance and another specified object have the same value.
