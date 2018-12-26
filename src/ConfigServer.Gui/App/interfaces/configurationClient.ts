@@ -1,4 +1,5 @@
 ﻿import { IConfigurationClientSetting} from './configurationClientSetting';
+import { ITag } from './tag';
 export interface IConfigurationClient {
     clientId: string;
     name: string;
@@ -8,4 +9,5 @@ export interface IConfigurationClient {
     readClaim: string;
     configuratorClaim: string;
     settings: IConfigurationClientSetting[];
+    tags: ITag[];
 }

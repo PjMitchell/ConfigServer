@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using ConfigServer.Core;
-using ConfigServer.Server.Validation;
 using System;
 
 namespace ConfigServer.Server
@@ -53,6 +52,7 @@ namespace ConfigServer.Server
                 ConfigurationSetId = model.ConfigSetType.Name,
                 Name = model.Name,
                 Description = model.Description,
+                RequiredClientTag = model.RequiredClientTag?.Value,
                 Configs = model.Configs.Where(w=> !w.IsReadOnly)
                     .Select(MapToSummary)
                     .ToList()

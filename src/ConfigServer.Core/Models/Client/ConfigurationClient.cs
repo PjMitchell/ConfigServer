@@ -24,6 +24,7 @@ namespace ConfigServer.Core
         {
             ClientId = clientId;
             Settings = new Dictionary<string, ConfigurationClientSetting>(StringComparer.OrdinalIgnoreCase);
+            Tags = new List<Tag>();
         }
 
 
@@ -69,11 +70,15 @@ namespace ConfigServer.Core
         /// </summary>
         public Dictionary<string, ConfigurationClientSetting> Settings { get; }
 
+        /// <summary>
+        /// Client tags
+        /// </summary>
+        public List<Tag> Tags { get; set; }
 
         /// <summary>
         /// Determines whether this instance and another specified object have the same value.
         /// </summary>
-        /// <param name="obj">The string to compare to this instance.</param>
+        /// <param name="obj">The object to compare to this instance.</param>
         /// <returns>true if the value of the value parameter is the same as the value of this instance; otherwise, false. If value is null, the method returns false.</returns>
         public override bool Equals(object obj)
         {
@@ -82,7 +87,7 @@ namespace ConfigServer.Core
         }
 
         /// <summary>
-        /// Returns the hash code for this string.
+        /// Returns the hash code for this object.
         /// </summary>
         /// <returns> A 32-bit signed integer hash code.</returns>
         public override int GetHashCode() => ClientId == null? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(ClientId);

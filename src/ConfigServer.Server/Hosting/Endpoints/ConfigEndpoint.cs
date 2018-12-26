@@ -47,7 +47,7 @@ namespace ConfigServer.Server
             else
             {
                 httpResponseFactory.BuildMethodNotAcceptedStatusResponse(context);
-                return false; ;
+                return false;
             }
         }
     }

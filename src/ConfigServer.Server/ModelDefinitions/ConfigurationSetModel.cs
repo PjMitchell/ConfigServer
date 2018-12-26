@@ -27,7 +27,11 @@ namespace ConfigServer.Server
         {
             ConfigSetType = configSetType;
             Name = name;
-            Description = description;
+            Description = description;    
+            var tagValue = configSetType.SingleAttributeOrDefault<RequiredClientTagAttribute>();
+            RequiredClientTag = tagValue == null
+                ? null
+                : new Tag { Value = tagValue.TagValue };
             configurationModels = new Dictionary<Type, ConfigurationModel>();
         }
 
@@ -45,6 +49,11 @@ namespace ConfigServer.Server
         /// ConfigInstance set description
         /// </summary>
         public string Description { get; }
+
+        /// <summary>
+        /// Required client tag
+        /// </summary>
+        public Tag RequiredClientTag { get; set; }
 
         /// <summary>
         /// Gets a configuration model by type

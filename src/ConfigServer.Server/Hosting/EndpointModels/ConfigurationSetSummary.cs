@@ -19,6 +19,8 @@ namespace ConfigServer.Server
         /// </summary>
         public string Description { get; set; }
 
+        public string RequiredClientTag { get; set; }
+
         public ICollection<ConfigurationModelSummary> Configs { get; set; }
     }
 }

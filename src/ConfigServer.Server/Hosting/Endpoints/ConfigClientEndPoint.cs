@@ -112,7 +112,8 @@ namespace ConfigServer.Server
                 Enviroment = payload.Enviroment,
                 ReadClaim = payload.ReadClaim,
                 ConfiguratorClaim = payload.ConfiguratorClaim,
-                Settings = new List<ConfigurationClientSetting>(payload.Settings.Values)
+                Settings = new List<ConfigurationClientSetting>(payload.Settings.Values),
+                Tags = payload.Tags
             };
             return result;
 

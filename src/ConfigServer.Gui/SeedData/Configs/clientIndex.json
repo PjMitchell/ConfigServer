@@ -1,16 +1,1 @@
-[
-    {
-        "ClientId": "3e37ac18-a00f-47a5-b84e-c79e0823f6d4",
-        "Name": "Mvc App Live",
-        "Group": "6c3e9253-8db9-4c7d-aafc-12391cb7b1c8",
-        "Enviroment": "Live",
-        "Description": "Application"
-    },
-    {
-        "ClientId": "6a302e7d-05e9-4188-9612-4a2920e5c1ae",
-        "Name": "Mvc App Test",
-        "Group": "6c3e9253-8db9-4c7d-aafc-12391cb7b1c8",
-        "Enviroment": "UAT",
-        "Description": "Application"
-    }
-]
+[{"ClientId":"3e37ac18-a00f-47a5-b84e-c79e0823f6d4","Name":"Mvc App Live","Group":"6c3e9253-8db9-4c7d-aafc-12391cb7b1c8","Enviroment":"Live","Description":"Application","ReadClaim":null,"ConfiguratorClaim":null,"Settings":{},"Tags":[{"Value":"Has Restricted ConfigSet"}]},{"ClientId":"6a302e7d-05e9-4188-9612-4a2920e5c1ae","Name":"Mvc App Test","Group":"6c3e9253-8db9-4c7d-aafc-12391cb7b1c8","Enviroment":"UAT","Description":"Application","ReadClaim":null,"ConfiguratorClaim":null,"Settings":{},"Tags":[]}]

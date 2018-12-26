@@ -1,6 +1,7 @@
 ﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IConfigurationClient } from '../../interfaces/configurationClient';
 import { IConfigurationClientGroup } from '../../interfaces/configurationClientGroup';
+import { ITag } from '../../interfaces/tag';
 
 @Component({
     selector: 'edit-client-input',
@@ -46,6 +47,15 @@ import { IConfigurationClientGroup } from '../../interfaces/configurationClientG
                 <input matInput id="client-configuratorclaim-input" placeholder="Configurator claim" [(ngModel)]="csClient.configuratorClaim">
             </mat-form-field>
         </div>
+        <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+          <mat-select placeholder="Tag" [(value)]="csClient.tags" multiple [compareWith]="compareTags">
+            <mat-option *ngFor="let tag of csAvailableTags" [value]="tag">
+              {{ tag.value }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    </div>
     </div>
     <hr/>
     <edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>
@@ -62,6 +72,8 @@ export class EditClientInputComponent {
     public csIsValidChange: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input()
     public csExistingGroups: IConfigurationClientGroup[];
+    @Input()
+    public csAvailableTags: ITag[];
     public existingEnviroments: string[];
     private _csIsValid: boolean;
     @Input()
@@ -83,6 +95,10 @@ export class EditClientInputComponent {
     constructor() {
         this.csExistingGroups = new Array<IConfigurationClientGroup>();
         this.existingEnviroments = new Array<string>();
+    }
+
+    public compareTags(t1: ITag, t2: ITag): boolean {
+        return t1 && t2 ? t1.value === t2.value : t1 === t2;
     }
 
     private toDistinct(values: string[]) {

@@ -40,6 +40,11 @@
     <Folder Include="wwwroot\Assets\img\" />
     <Folder Include="wwwroot\Assets\lib\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="SeedData\Configs\clientIndex.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>

@@ -55,6 +55,7 @@ import { ConfigurationSetDataService } from './dataservices/configset-data.servi
 import { GuidGenerator } from './dataservices/guid-generator';
 import { ResourceDataService } from './dataservices/resource-data.service';
 import { SnapshotDataService } from "./dataservices/snapshot-data.service";
+import { TagDataService } from './dataservices/tag-data.service';
 import { UploadDataService } from './dataservices/upload-data.service';
 import { UserPermissionService } from './dataservices/userpermission-data.service';
 import { ObjectToIteratorPipe } from './pipes/objectToIterable';
@@ -135,6 +136,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         UploadDataService,
         UserPermissionService,
         SnapshotDataService,
+        TagDataService,
         ],
 })
 
