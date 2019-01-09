@@ -50,7 +50,9 @@ namespace ConfigServer.Core.Tests.Hosting
                 OptionFromConfigSet = null,
                 MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
                 ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } },
-                NestedClass = new NestedClass { Count = 23, Description = "Test"}
+                NestedClass = new NestedClass { Count = 23, Description = "Test"},
+                ListOfInts = new List<int> { 1, 2, 3 },
+                ListOfStrings = new List<string> { "Hello", "World" },
             };
 
             updatedSample = new SampleConfig
@@ -66,7 +68,9 @@ namespace ConfigServer.Core.Tests.Hosting
                 OptionFromConfigSet = null,
                 MoarOptionFromConfigSet = new List<OptionFromConfigSet>(),
                 ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "Two plus Two", Value = 5 } },
-                NestedClass = new NestedClass { Count = 37, Description = "Test2"}
+                NestedClass = new NestedClass { Count = 37, Description = "Test2"},
+                ListOfInts = new List<int> { 1, 3, 4 },
+                ListOfStrings = new List<string> { "Bye", "World" },
             };
             dynamic updatedValue = new ExpandoObject();
             updatedValue.Choice = updatedSample.Choice;
@@ -79,6 +83,8 @@ namespace ConfigServer.Core.Tests.Hosting
             updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s => s.Id).ToList();
             updatedValue.ListOfConfigs = updatedSample.ListOfConfigs;
             updatedValue.NestedClass = updatedSample.NestedClass;
+            updatedValue.ListOfInts = updatedSample.ListOfInts;
+            updatedValue.ListOfStrings = updatedSample.ListOfStrings;
             var serilaisationSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             objectJson = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
         }
@@ -93,6 +99,15 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(updatedSample.Decimal, result.Decimal);
             Assert.Equal(updatedSample.LlamaCapacity, result.LlamaCapacity);
             Assert.Equal(updatedSample.Name, result.Name);
+        }
+
+        [Fact]
+        public async Task UpdatesPrimitiveCollectionValues()
+        {
+            var response = await target.UpdateConfigurationInstance(new ConfigInstance<SampleConfig>(sample, clientId), objectJson, definition);
+            var result = (SampleConfig)response.GetConfiguration();
+            Assert.Equal(updatedSample.ListOfStrings, result.ListOfStrings);
+            Assert.Equal(updatedSample.ListOfInts, result.ListOfInts);
         }
 
         [Fact]

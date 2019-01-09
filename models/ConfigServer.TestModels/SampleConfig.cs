@@ -29,6 +29,8 @@ namespace ConfigServer.TestModels
         public List<int> MoarOptionValues { get; set; }
         [ConfigurationClass]
         public NestedClass NestedClass { get; set; }
+        public List<int> ListOfInts { get; set; }
+        public List<string> ListOfStrings { get; set; }
     }
 
     public enum Choice

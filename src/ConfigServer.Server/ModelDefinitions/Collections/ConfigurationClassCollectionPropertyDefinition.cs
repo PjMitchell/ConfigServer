@@ -7,10 +7,10 @@ using System.Reflection;
 namespace ConfigServer.Server
 {
 
-    internal abstract class ConfigurationCollectionPropertyDefinition : ConfigurationPropertyModelBase
+    internal abstract class ConfigurationClassCollectionPropertyDefinition : ConfigurationPropertyModelBase
     {
 
-        protected ConfigurationCollectionPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType, Type collectionType) : base(propertyName, propertyType, parentPropertyType)
+        protected ConfigurationClassCollectionPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType, Type collectionType) : base(propertyName, propertyType, parentPropertyType)
         {
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
             CollectionType = collectionType;
@@ -61,10 +61,10 @@ namespace ConfigServer.Server
         public override IEnumerable<ConfigurationDependency> GetDependencies() => ConfigurationProperties.Values.SelectMany(v => v.GetDependencies());
     }
 
-    internal class ConfigurationCollectionPropertyDefinition<TConfig> : ConfigurationCollectionPropertyDefinition where TConfig : new()
+    internal class ConfigurationClassCollectionPropertyDefinition<TConfig> : ConfigurationClassCollectionPropertyDefinition where TConfig : new()
     {
 
-        internal ConfigurationCollectionPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType, Type collectionType) : base(propertyName, propertyType, parentPropertyType, collectionType)
+        internal ConfigurationClassCollectionPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType, Type collectionType) : base(propertyName, propertyType, parentPropertyType, collectionType)
         {
             ConfigurationProperties = new Dictionary<string, ConfigurationPropertyModelBase>();
         }

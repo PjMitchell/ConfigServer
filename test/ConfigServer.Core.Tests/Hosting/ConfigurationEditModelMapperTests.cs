@@ -44,7 +44,10 @@ namespace ConfigServer.Core.Tests.Hosting
                 Option = OptionProvider.OptionOne,
                 MoarOptions = new List<Option> { OptionProvider.OptionOne, OptionProvider.OptionThree },
                 ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "One", Value = 23 } },
-                NestedClass = new NestedClass { Count = 23, Description = "Test" }
+                NestedClass = new NestedClass { Count = 23, Description = "Test" },
+                ListOfInts = new List<int> { 1,2,3},
+                ListOfStrings = new List<string> { "Hello", "World" },
+
             };
 
             updatedSample = new SampleConfig
@@ -58,7 +61,9 @@ namespace ConfigServer.Core.Tests.Hosting
                 Option = OptionProvider.OptionTwo,
                 MoarOptions = new List<Option> { OptionProvider.OptionTwo, OptionProvider.OptionThree },
                 ListOfConfigs = new List<ListConfig> { new ListConfig { Name = "Two plus Two", Value = 5 } },
-                NestedClass = new NestedClass { Count = 37, Description = "Test2" }
+                NestedClass = new NestedClass { Count = 37, Description = "Test2" },
+                ListOfInts = new List<int> { 1, 3, 4 },
+                ListOfStrings = new List<string> { "Bye", "World" },
             };
             dynamic updatedValue = new ExpandoObject();
             updatedValue.Choice = updatedSample.Choice;
@@ -71,6 +76,9 @@ namespace ConfigServer.Core.Tests.Hosting
             updatedValue.MoarOptions = updatedSample.MoarOptions.Select(s => s.Id).ToList();
             updatedValue.ListOfConfigs = updatedSample.ListOfConfigs;
             updatedValue.NestedClass = updatedSample.NestedClass;
+            updatedValue.ListOfInts = updatedSample.ListOfInts;
+            updatedValue.ListOfStrings = updatedSample.ListOfStrings;
+
 
             var serilaisationSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             var json = JsonConvert.SerializeObject(updatedValue, serilaisationSetting);
@@ -86,6 +94,14 @@ namespace ConfigServer.Core.Tests.Hosting
             Assert.Equal(sample.Decimal, response.Decimal);
             Assert.Equal(sample.LlamaCapacity, response.LlamaCapacity);
             Assert.Equal(sample.Name, response.Name);
+        }
+
+        [Fact]
+        public void MapsPrimitiveCollectionValues()
+        {
+            var response = (dynamic)target.MapToEditConfig(new ConfigInstance<SampleConfig>(sample, clientId), definition.Get<SampleConfig>());
+            Assert.Equal(sample.ListOfStrings, response.ListOfStrings);
+            Assert.Equal(sample.ListOfInts, response.ListOfInts);
         }
 
         [Fact]

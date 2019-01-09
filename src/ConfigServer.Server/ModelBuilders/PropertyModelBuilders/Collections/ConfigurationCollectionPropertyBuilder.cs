@@ -8,11 +8,11 @@ namespace ConfigServer.Server
     /// Property Builder for a property that is a collection
     /// </summary>
     /// <typeparam name="TConfig">Type of object in collection</typeparam>
-    public class ConfigurationCollectionPropertyBuilder<TConfig> : IModelWithProperties<TConfig>
+    public class ConfigurationClassCollectionPropertyBuilder<TConfig> : ConfigurationPropertyModelBuilder<ConfigurationClassCollectionPropertyBuilder<TConfig>>, IModelWithProperties<TConfig> 
     {
-        private readonly ConfigurationCollectionPropertyDefinition definition;
+        private readonly ConfigurationClassCollectionPropertyDefinition definition;
 
-        internal ConfigurationCollectionPropertyBuilder(ConfigurationCollectionPropertyDefinition definition)
+        internal ConfigurationClassCollectionPropertyBuilder(ConfigurationClassCollectionPropertyDefinition definition) :base(definition)
         {
             this.definition = definition;
         }
@@ -27,23 +27,23 @@ namespace ConfigServer.Server
         /// </summary>
         /// <param name="expression">Path to Unique key</param>
         /// <returns>Builder</returns>
-        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, int>> expression) => WithUniqueKeyInternal(expression);
+        public ConfigurationClassCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, int>> expression) => WithUniqueKeyInternal(expression);
 
         /// <summary>
         /// Declares a Unique key for Collection model
         /// </summary>
         /// <param name="expression">Path to Unique key</param>
         /// <returns>Builder</returns>
-        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, long>> expression) => WithUniqueKeyInternal(expression);
+        public ConfigurationClassCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, long>> expression) => WithUniqueKeyInternal(expression);
 
         /// <summary>
         /// Declares a Unique key for Collection model
         /// </summary>
         /// <param name="expression">Path to Unique key</param>
         /// <returns>Builder</returns>
-        public ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, string>> expression) => WithUniqueKeyInternal(expression);
+        public ConfigurationClassCollectionPropertyBuilder<TConfig> WithUniqueKey(Expression<Func<TConfig, string>> expression) => WithUniqueKeyInternal(expression);
 
-        private ConfigurationCollectionPropertyBuilder<TConfig> WithUniqueKeyInternal(LambdaExpression expression)
+        private ConfigurationClassCollectionPropertyBuilder<TConfig> WithUniqueKeyInternal(LambdaExpression expression)
         {
             var propertyName = ExpressionHelper.GetPropertyNameFromExpression(expression);
             definition.HasUniqueKey = true;

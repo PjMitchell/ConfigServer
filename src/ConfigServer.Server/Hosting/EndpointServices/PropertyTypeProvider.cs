@@ -19,8 +19,10 @@ namespace ConfigServer.Server
                     return ConfigurationPropertyType.MultipleOption;
                 case IOptionPropertyDefinition input:
                     return ConfigurationPropertyType.Option;
-                case ConfigurationCollectionPropertyDefinition input:
-                    return GetPropertyType(input);
+                case ConfigurationClassCollectionPropertyDefinition input:
+                    return ConfigurationPropertyType.Collection;
+                case ConfigurationPrimitiveCollectionPropertyDefinition input:
+                    return ConfigurationPropertyType.PrimitiveCollection;
                 case ConfigurationClassPropertyDefinition input:
                     return ConfigurationPropertyType.Class;
                 default:
@@ -43,11 +45,6 @@ namespace ConfigServer.Server
             if (typeof(Enum).IsAssignableFrom(definition.PropertyType))
                 return ConfigurationPropertyType.Enum;
             return ConfigurationPropertyType.Unacceptable;
-        }
-
-        private string GetPropertyType(ConfigurationCollectionPropertyDefinition definition)
-        {
-            return ConfigurationPropertyType.Collection;
         }
 
         private static bool IsIntergerType(Type type)
@@ -94,7 +91,7 @@ namespace ConfigServer.Server
         public const string MultipleOption = "MultipleOption";
 
         public const string Collection = "Collection";
-
+        public const string PrimitiveCollection = "PrimitiveCollection";
         public const string Class = "Class";
 
         public const string Unacceptable = "Unacceptable";

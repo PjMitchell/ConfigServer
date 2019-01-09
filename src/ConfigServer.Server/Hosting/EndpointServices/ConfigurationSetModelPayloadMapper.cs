@@ -77,7 +77,7 @@ namespace ConfigServer.Server
                     return BuildProperty(input);
                 case IOptionPropertyDefinition input:
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
-                case ConfigurationCollectionPropertyDefinition input:
+                case ConfigurationClassCollectionPropertyDefinition input:
                     return BuildProperty(input, configIdentity,requiredConfigurationSets);
                 case ConfigurationClassPropertyDefinition input:
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
@@ -114,7 +114,7 @@ namespace ConfigServer.Server
             };
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationClassCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationPropertyPayload
             {

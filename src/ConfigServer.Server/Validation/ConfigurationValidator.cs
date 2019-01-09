@@ -67,7 +67,7 @@ namespace ConfigServer.Server.Validation
                     return ValidateProperty(target, propertyModel, configIdentity,configurationSets);
                 case IOptionPropertyDefinition propertyModel:
                     return ValidateProperty(target, propertyModel, configIdentity, configurationSets);
-                case ConfigurationCollectionPropertyDefinition propertyModel:
+                case ConfigurationClassCollectionPropertyDefinition propertyModel:
                     return ValidateProperty(target, propertyModel, configIdentity,configurationSets);
                 default:
                     return ValidationResult.CreateValid();
@@ -134,7 +134,7 @@ namespace ConfigServer.Server.Validation
             return new ValidationResult(errors);
         }
 
-        private ValidationResult ValidateProperty(object target, ConfigurationCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
+        private ValidationResult ValidateProperty(object target, ConfigurationClassCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> configurationSets)
         {
             var results = new List<ValidationResult>();
             var propertyValue = propertyModel.GetPropertyValue(target) as IEnumerable;
