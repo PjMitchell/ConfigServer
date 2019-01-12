@@ -56,6 +56,10 @@ export class ConfigurationPropertyIntergerCollectionInputComponent implements On
         });
         this.parentForm.setControl(this.csDefinition.propertyName, this.collectionForms);
         this.collection = collection;
+        this.collectionForms.valueChanges.subscribe((value) => {
+            this.collection = value;
+            this.csConfig[this.csDefinition.propertyName] = value;
+        });
     }
 
     public add() {
