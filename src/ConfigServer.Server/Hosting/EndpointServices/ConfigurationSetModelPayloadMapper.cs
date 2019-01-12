@@ -79,6 +79,8 @@ namespace ConfigServer.Server
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 case ConfigurationClassCollectionPropertyDefinition input:
                     return BuildProperty(input, configIdentity,requiredConfigurationSets);
+                case ConfigurationPrimitiveCollectionPropertyDefinition input:
+                    return BuildProperty(input);
                 case ConfigurationClassPropertyDefinition input:
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 default:
@@ -98,6 +100,20 @@ namespace ConfigServer.Server
                 ValidationDefinition = value.ValidationRules,
                 PropertyDescription = value.PropertyDescription,
                 Options = propertyType == ConfigurationPropertyType.Enum? BuildEnumOption(value.PropertyType) : new Dictionary<string, string>()
+            };
+        }
+
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPrimitiveCollectionPropertyDefinition value)
+        {
+            var propertyType = propertyTypeProvider.GetPropertyType(value);
+
+            return new ConfigurationPropertyPayload
+            {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
+                PropertyDisplayName = value.PropertyDisplayName,
+                PropertyType = propertyType,
+                PropertyDescription = value.PropertyDescription,
+                Options = propertyType == ConfigurationPropertyType.Enum ? BuildEnumOption(value.PropertyType) : new Dictionary<string, string>()
             };
         }
 

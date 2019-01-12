@@ -75,7 +75,7 @@ namespace ConfigServer.Server
                     return GetConfigPropertyValueFromInput(source, (IMultipleOptionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Collection:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationClassCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
-                case ConfigurationPropertyType.PrimitiveCollection:
+                case var type when( type == ConfigurationPropertyType.StringCollection || type == ConfigurationPropertyType.IntergerCollection):
                     return GetConfigPropertyValueFromInput(source, (ConfigurationPrimitiveCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Class:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationClassPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);

@@ -34,6 +34,7 @@ import { ConfigurationPropertyDateInputComponent } from './components/propertyin
 import { ConfigurationPropertyEnumInputComponent } from './components/propertyinputs/clientPropertyEnumInput';
 import { ConfigurationPropertyFloatInputComponent } from './components/propertyinputs/clientPropertyFloatInput';
 import { ConfigurationPropertyInputComponent } from './components/propertyinputs/clientPropertyInput';
+import { ConfigurationPropertyIntergerCollectionInputComponent } from './components/propertyinputs/clientPropertyIntergerCollectionInput';
 import { ConfigurationPropertyIntergerInputComponent } from './components/propertyinputs/clientPropertyIntergerInput';
 import { ConfigurationPropertyMultipleOptionInputComponent} from './components/propertyinputs/clientPropertyMultipleOptionInput';
 import { ConfigurationPropertyOptionInputComponent } from './components/propertyinputs/clientPropertyOptionInput';
@@ -85,6 +86,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ConfigurationPropertyMultipleOptionInputComponent,
         ConfigurationPropertyCollectionInputComponent,
         ConfigurationPropertyClassInputComponent,
+        ConfigurationPropertyIntergerCollectionInputComponent,
         GroupClientsComponent,
         ResourceFileUploaderComponent,
         GroupImageFileUploaderComponent,

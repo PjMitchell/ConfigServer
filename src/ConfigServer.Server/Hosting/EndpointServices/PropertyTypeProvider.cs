@@ -22,7 +22,7 @@ namespace ConfigServer.Server
                 case ConfigurationClassCollectionPropertyDefinition input:
                     return ConfigurationPropertyType.Collection;
                 case ConfigurationPrimitiveCollectionPropertyDefinition input:
-                    return ConfigurationPropertyType.PrimitiveCollection;
+                    return GetPropertyType(input);
                 case ConfigurationClassPropertyDefinition input:
                     return ConfigurationPropertyType.Class;
                 default:
@@ -44,6 +44,15 @@ namespace ConfigServer.Server
                 return ConfigurationPropertyType.DateTime;
             if (typeof(Enum).IsAssignableFrom(definition.PropertyType))
                 return ConfigurationPropertyType.Enum;
+            return ConfigurationPropertyType.Unacceptable;
+        }
+
+        private string GetPropertyType(ConfigurationPrimitiveCollectionPropertyDefinition definition)
+        {
+            if (IsIntergerType(definition.PropertyType))
+                return ConfigurationPropertyType.IntergerCollection;
+            if (definition.PropertyType == typeof(string))
+                return ConfigurationPropertyType.StringCollection;
             return ConfigurationPropertyType.Unacceptable;
         }
 
@@ -91,7 +100,9 @@ namespace ConfigServer.Server
         public const string MultipleOption = "MultipleOption";
 
         public const string Collection = "Collection";
-        public const string PrimitiveCollection = "PrimitiveCollection";
+        public const string StringCollection = "StringCollection";
+        public const string IntergerCollection = "IntergerCollection";
+
         public const string Class = "Class";
 
         public const string Unacceptable = "Unacceptable";
