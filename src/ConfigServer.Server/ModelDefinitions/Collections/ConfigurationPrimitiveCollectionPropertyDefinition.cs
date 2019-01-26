@@ -10,6 +10,7 @@ namespace ConfigServer.Server
         protected ConfigurationPrimitiveCollectionPropertyDefinition(string propertyName, Type propertyType, Type parentPropertyType, Type collectionType) : base(propertyName, propertyType, parentPropertyType)
         {
             CollectionType = collectionType;
+            ValidationRules = new ConfigurationPropertyValidationDefinition();
         }
 
         /// <summary>
@@ -18,9 +19,9 @@ namespace ConfigServer.Server
         public Type CollectionType { get; }
 
         /// <summary>
-        /// Indicates If a collection has a unique key
+        /// Validation rules for property
         /// </summary>
-        public bool HasUniqueKey { get; set; }
+        public ConfigurationPropertyValidationDefinition ValidationRules { get; }
 
 
         /// <summary>

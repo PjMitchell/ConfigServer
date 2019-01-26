@@ -4,7 +4,7 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
 import { uniqueItem } from '../../validators/collectionValidator';
 
 @Component({
-    selector: 'interger-collection-input',
+    selector: 'string-collection-input',
     template: `
 <table>
     <tr>
@@ -16,7 +16,7 @@ import { uniqueItem } from '../../validators/collectionValidator';
     <tr *ngFor="let item of collection;let i= index">
         <td>
             <mat-form-field class="full-width">
-                <input matInput  placeholder="" [formControl]="collectionForms.controls[i]" type= "number">
+                <input matInput  placeholder="" [formControl]="collectionForms.controls[i]" type= "text">
                 <mat-error *ngIf="collectionForms.controls[i].invalid">{{getErrorMessage(i)}}</mat-error>
             </mat-form-field>
         </td>
@@ -30,7 +30,7 @@ import { uniqueItem } from '../../validators/collectionValidator';
 </div>
 `,
 })
-export class ConfigurationPropertyIntergerCollectionInputComponent implements OnInit {
+export class ConfigurationPropertyStringCollectionInputComponent implements OnInit {
     @Input()
     public csDefinition: IConfigurationPropertyPayload;
     @Input()
@@ -79,8 +79,8 @@ export class ConfigurationPropertyIntergerCollectionInputComponent implements On
 
     public getItemErrorMessage(index: number) {
         return this.collectionForms[index].hasError('required') ? 'You must enter a value' :
-            this.collectionForms[index].hasError('min') ? 'Value must be greater than ' + this.csDefinition.validationDefinition.min :
-            this.collectionForms[index].hasError('max') ? 'Value must be less than ' + this.csDefinition.validationDefinition.max :
+            this.collectionForms[index].hasError('maxLength') ? 'Value must be fewer than ' + this.csDefinition.validationDefinition.maxLength + ' char' :
+            this.collectionForms[index].hasError('pattern') ? 'Value match ' + this.csDefinition.validationDefinition.pattern :
                 '';
     }
 
@@ -113,13 +113,13 @@ export class ConfigurationPropertyIntergerCollectionInputComponent implements On
         if (this.csDefinition.validationDefinition.isRequired) {
             validators.push(Validators.required);
         }
-        const min = this.csDefinition.validationDefinition.min;
-        if (min || min === 0) {
-            validators.push(Validators.min(min as number));
+        const pattern = this.csDefinition.validationDefinition.pattern;
+        if (pattern) {
+            validators.push(Validators.pattern(pattern));
         }
-        const max = this.csDefinition.validationDefinition.max;
+        const max = this.csDefinition.validationDefinition.maxLength;
         if (max || max === 0) {
-            validators.push(Validators.max(max as number));
+            validators.push(Validators.maxLength(max as number));
         }
         return validators;
     }

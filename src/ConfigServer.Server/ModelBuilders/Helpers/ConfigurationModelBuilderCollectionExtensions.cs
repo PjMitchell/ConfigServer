@@ -44,7 +44,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">collection selector</param>
         /// <returns>ConfigurationCollectionPropertyBuilder for selected property</returns>
-        public static ConfigurationPrimitiveCollectionPropertyBuilder Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<int>>> expression) => source.PrimitiveCollection(expression);
+        public static ConfigurationIntegerCollectionPropertyBuilder<int> Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<int>>> expression) => source.IntegerPrimitiveCollection(expression);
 
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">collection selector</param>
         /// <returns>ConfigurationCollectionPropertyBuilder for selected property</returns>
-        public static ConfigurationPrimitiveCollectionPropertyBuilder Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<long>>> expression) => source.PrimitiveCollection(expression);
+        public static ConfigurationIntegerCollectionPropertyBuilder<long> Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<long>>> expression) => source.IntegerPrimitiveCollection(expression);
 
         /// <summary>
         /// Gets ConfigurationCollectionPropertyBuilder for a collection
@@ -63,9 +63,9 @@ namespace ConfigServer.Server
         /// <param name="source">model with property</param>
         /// <param name="expression">collection selector</param>
         /// <returns>ConfigurationCollectionPropertyBuilder for selected property</returns>
-        public static ConfigurationPrimitiveCollectionPropertyBuilder Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<string>>> expression) => source.PrimitiveCollection(expression);
+        public static ConfigurationStringCollectionPropertyBuilder Collection<TModel>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<string>>> expression) => source.StringPrimitiveCollection(expression);
 
-        private static ConfigurationPrimitiveCollectionPropertyBuilder PrimitiveCollection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression)
+        private static ConfigurationStringCollectionPropertyBuilder StringPrimitiveCollection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression)
         {
             var body = ExpressionHelper.GetExpressionBody(expression);
             ConfigurationPropertyModelBase value;
@@ -78,10 +78,27 @@ namespace ConfigServer.Server
                 value = definition;
                 source.ConfigurationProperties[value.ConfigurationPropertyName] = value;
             }
-            var builder = new ConfigurationPrimitiveCollectionPropertyBuilder((ConfigurationPrimitiveCollectionPropertyDefinition)value);
+            var builder = new ConfigurationStringCollectionPropertyBuilder((ConfigurationPrimitiveCollectionPropertyDefinition)value);
             return builder;
         }
-               
+
+        private static ConfigurationIntegerCollectionPropertyBuilder<TConfig> IntegerPrimitiveCollection<TModel, TConfig>(this IModelWithProperties<TModel> source, Expression<Func<TModel, ICollection<TConfig>>> expression) where TConfig : IComparable
+        {
+            var body = ExpressionHelper.GetExpressionBody(expression);
+            ConfigurationPropertyModelBase value;
+            if (!source.ConfigurationProperties.TryGetValue(body.Member.Name, out value) || !(value is ConfigurationPrimitiveCollectionPropertyDefinition))
+            {
+                var type = body.Type;
+                if (type == typeof(ICollection<TConfig>))
+                    type = typeof(List<TConfig>);
+                var definition = new ConfigurationPrimitiveCollectionPropertyDefinition<TConfig>(body.Member.Name, typeof(TConfig), typeof(TModel), type);
+                value = definition;
+                source.ConfigurationProperties[value.ConfigurationPropertyName] = value;
+            }
+            var builder = new ConfigurationIntegerCollectionPropertyBuilder<TConfig>((ConfigurationPrimitiveCollectionPropertyDefinition)value);
+            return builder;
+        }
+
         private static void ApplyDefaultPropertyDefinitions(ConfigurationClassCollectionPropertyDefinition model)
         {
             foreach (var kvp in ConfigurationPropertyModelDefinitionFactory.GetDefaultConfigProperties(model.PropertyType))

@@ -112,6 +112,7 @@ namespace ConfigServer.Server
                 PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
                 PropertyDisplayName = value.PropertyDisplayName,
                 PropertyType = propertyType,
+                ValidationDefinition = value.ValidationRules,
                 PropertyDescription = value.PropertyDescription,
                 Options = propertyType == ConfigurationPropertyType.Enum ? BuildEnumOption(value.PropertyType) : new Dictionary<string, string>()
             };

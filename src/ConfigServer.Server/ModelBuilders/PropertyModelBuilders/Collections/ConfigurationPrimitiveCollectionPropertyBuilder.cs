@@ -1,4 +1,6 @@
-﻿namespace ConfigServer.Server
+﻿using System;
+
+namespace ConfigServer.Server
 {
     /// <summary>
     /// Property Builder for a property that is a collection
@@ -19,7 +21,7 @@
         /// <returns>Builder</returns>
         public ConfigurationPrimitiveCollectionPropertyBuilder HasUniqueValues(bool hasUniqueValues = true)
         {
-            definition.HasUniqueKey = true;
+            definition.ValidationRules.AllowDuplicates = hasUniqueValues;
             return this;
         }
     }

@@ -31,5 +31,10 @@ namespace ConfigServer.Server
         /// Is property Required
         /// </summary>
         public bool IsRequired { get; set; }
+
+        /// <summary>
+        /// Is property Required
+        /// </summary>
+        public bool AllowDuplicates { get; set; }
     }
 }

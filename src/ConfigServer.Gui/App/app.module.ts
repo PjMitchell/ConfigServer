@@ -38,6 +38,7 @@ import { ConfigurationPropertyIntergerCollectionInputComponent } from './compone
 import { ConfigurationPropertyIntergerInputComponent } from './components/propertyinputs/clientPropertyIntergerInput';
 import { ConfigurationPropertyMultipleOptionInputComponent} from './components/propertyinputs/clientPropertyMultipleOptionInput';
 import { ConfigurationPropertyOptionInputComponent } from './components/propertyinputs/clientPropertyOptionInput';
+import { ConfigurationPropertyStringCollectionInputComponent } from './components/propertyinputs/clientPropertyStringCollectionInput';
 import { ConfigurationPropertyStringInputComponent } from './components/propertyinputs/clientPropertyStringInput';
 import { ConfigurationPropertyComponent } from './components/propertyinputs/configProperty';
 import { ResourceArchiveComponent } from './components/resourceArchive';
@@ -87,6 +88,7 @@ import { ObjectToKeyValuePairsPipe } from './pipes/objectToKeyValuePairsPipe';
         ConfigurationPropertyCollectionInputComponent,
         ConfigurationPropertyClassInputComponent,
         ConfigurationPropertyIntergerCollectionInputComponent,
+        ConfigurationPropertyStringCollectionInputComponent,
         GroupClientsComponent,
         ResourceFileUploaderComponent,
         GroupImageFileUploaderComponent,
