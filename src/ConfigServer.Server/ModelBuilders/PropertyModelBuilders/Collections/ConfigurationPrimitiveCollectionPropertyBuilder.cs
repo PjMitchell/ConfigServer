@@ -21,7 +21,7 @@ namespace ConfigServer.Server
         /// <returns>Builder</returns>
         public ConfigurationPrimitiveCollectionPropertyBuilder HasUniqueValues(bool hasUniqueValues = true)
         {
-            definition.ValidationRules.AllowDuplicates = hasUniqueValues;
+            definition.ValidationRules.AllowDuplicates = !hasUniqueValues;
             return this;
         }
     }

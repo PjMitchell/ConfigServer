@@ -63,7 +63,7 @@ export class ConfigurationPropertyIntergerCollectionInputComponent implements On
 
     public remove(index: number) {
         this.collection.splice(index, 1);
-        this.collectionForms.controls.splice(index, 1);
+        this.collectionForms.removeAt(index);
     }
 
     public customTrackBy(index: number, obj: any): any {
@@ -95,10 +95,6 @@ export class ConfigurationPropertyIntergerCollectionInputComponent implements On
         });
         this.parentForm.setControl(this.csDefinition.propertyName, this.collectionForms);
         this.collection = collection;
-        this.collectionForms.valueChanges.subscribe((value) => {
-            this.collection = value;
-            this.csConfig[this.csDefinition.propertyName] = value;
-        });
         if (this.csDefinition.validationDefinition && !this.csDefinition.validationDefinition.allowDuplicates) {
             this.collectionForms.setValidators(uniqueItem());
         }

@@ -83,7 +83,7 @@ export class ClientConfigShellComponent implements OnInit {
 
     public save() {
         this.isDisabled = true;
-        this.configDataService.postConfig(this.clientId, this.configurationId, this.config)
+        this.configDataService.postConfig(this.clientId, this.configurationId, this.form.value)
             .then((result) => {
                 if (result.suceeded) {
                     this.back();

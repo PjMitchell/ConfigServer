@@ -19,7 +19,7 @@
         /// <returns>Builder</returns>
         public ConfigurationStringCollectionPropertyBuilder HasUniqueValues(bool hasUniqueValues = true)
         {
-            definition.ValidationRules.AllowDuplicates = hasUniqueValues;
+            definition.ValidationRules.AllowDuplicates = !hasUniqueValues;
             return this;
         }
 

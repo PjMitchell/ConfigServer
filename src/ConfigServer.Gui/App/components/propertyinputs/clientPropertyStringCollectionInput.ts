@@ -35,7 +35,7 @@ export class ConfigurationPropertyStringCollectionInputComponent implements OnIn
     public csDefinition: IConfigurationPropertyPayload;
     @Input()
     public parentForm: FormGroup;
-    public collection: any[];
+    public collection: string[];
     public collectionForms: FormArray;
     private _config: any;
     @Input()
@@ -56,14 +56,14 @@ export class ConfigurationPropertyStringCollectionInputComponent implements OnIn
     }
 
     public add() {
-        const newItem = 0;
+        const newItem = '';
         const index = this.collection.push(newItem) - 1;
         this.collectionForms.setControl(index, this.buildControl(newItem) );
     }
 
     public remove(index: number) {
         this.collection.splice(index, 1);
-        this.collectionForms.controls.splice(index, 1);
+        this.collectionForms.removeAt(index);
     }
 
     public customTrackBy(index: number, obj: any): any {
@@ -85,9 +85,9 @@ export class ConfigurationPropertyStringCollectionInputComponent implements OnIn
     }
 
     private setupForm() {
-        let collection: number[] = this.csConfig[this.csDefinition.propertyName];
+        let collection: string[] = this.csConfig[this.csDefinition.propertyName];
         if (!collection) {
-            collection = new Array<number>();
+            collection = new Array<string>();
         }
 
         collection.forEach((value, i) => {
@@ -95,16 +95,12 @@ export class ConfigurationPropertyStringCollectionInputComponent implements OnIn
         });
         this.parentForm.setControl(this.csDefinition.propertyName, this.collectionForms);
         this.collection = collection;
-        this.collectionForms.valueChanges.subscribe((value) => {
-            this.collection = value;
-            this.csConfig[this.csDefinition.propertyName] = value;
-        });
         if (this.csDefinition.validationDefinition && !this.csDefinition.validationDefinition.allowDuplicates) {
             this.collectionForms.setValidators(uniqueItem());
         }
     }
 
-    private buildControl(value: number) {
+    private buildControl(value: string) {
         return this.formBuilder.control(value, this.getValidators());
     }
 
