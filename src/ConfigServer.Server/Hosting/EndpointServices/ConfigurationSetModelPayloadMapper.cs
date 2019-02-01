@@ -77,8 +77,10 @@ namespace ConfigServer.Server
                     return BuildProperty(input);
                 case IOptionPropertyDefinition input:
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
-                case ConfigurationCollectionPropertyDefinition input:
+                case ConfigurationClassCollectionPropertyDefinition input:
                     return BuildProperty(input, configIdentity,requiredConfigurationSets);
+                case ConfigurationPrimitiveCollectionPropertyDefinition input:
+                    return BuildProperty(input);
                 case ConfigurationClassPropertyDefinition input:
                     return BuildProperty(input, configIdentity, requiredConfigurationSets);
                 default:
@@ -101,6 +103,21 @@ namespace ConfigServer.Server
             };
         }
 
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationPrimitiveCollectionPropertyDefinition value)
+        {
+            var propertyType = propertyTypeProvider.GetPropertyType(value);
+
+            return new ConfigurationPropertyPayload
+            {
+                PropertyName = value.ConfigurationPropertyName.ToLowerCamelCase(),
+                PropertyDisplayName = value.PropertyDisplayName,
+                PropertyType = propertyType,
+                ValidationDefinition = value.ValidationRules,
+                PropertyDescription = value.PropertyDescription,
+                Options = propertyType == ConfigurationPropertyType.Enum ? BuildEnumOption(value.PropertyType) : new Dictionary<string, string>()
+            };
+        }
+
         private ConfigurationPropertyPayload BuildProperty(IOptionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var optionSet = optionSetFactory.Build(value, configIdentity, requiredConfigurationSets);
@@ -114,7 +131,7 @@ namespace ConfigServer.Server
             };
         }
 
-        private ConfigurationPropertyPayload BuildProperty(ConfigurationCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        private ConfigurationPropertyPayload BuildProperty(ConfigurationClassCollectionPropertyDefinition value, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             return new ConfigurationPropertyPayload
             {

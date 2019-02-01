@@ -4,4 +4,5 @@ export interface IConfigurationPropertyValidationDefinition {
     maxLength?: number;
     pattern: string;
     isRequired: boolean;
+    allowDuplicates: boolean;
 }

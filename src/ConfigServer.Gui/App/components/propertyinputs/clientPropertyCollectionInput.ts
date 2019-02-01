@@ -67,7 +67,7 @@ export class ConfigurationPropertyCollectionInputComponent implements OnInit {
     public remove(item: any) {
         const index = this.collection.indexOf(item);
         this.collection.splice(index, 1);
-        this.collectionForms.controls.splice(index, 1);
+        this.collectionForms.removeAt(index);
     }
 
     public customTrackBy(index: number, obj: any): any {

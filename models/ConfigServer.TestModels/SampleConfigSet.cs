@@ -44,6 +44,10 @@ namespace ConfigServer.TestModels
                 .WithUniqueKey(x=>x.Name);
             configBuilder.PropertyWithOptionValue(p => p.OptionId, (SampleConfigSet set) => set.OptionFromProvider, option => option.Id);
 
+            configBuilder.Collection(p => p.ListOfInts).HasUniqueValues();
+            configBuilder.Collection(p => p.ListOfStrings).HasUniqueValues();
+
+
 
             modelBuilder.Options(s => s.Options, o=> o.Id, o=> o.Description, "Options", "Options for sample config");
             modelBuilder.Options(s => s.OptionFromProvider, o => o.Id, o => o.Description , (IOptionProvider optionProvider) => optionProvider.GetOptions(), "Options", "Options for sample config");

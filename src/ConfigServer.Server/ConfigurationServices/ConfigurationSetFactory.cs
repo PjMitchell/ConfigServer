@@ -95,7 +95,7 @@ namespace ConfigServer.Server
 
             switch (model)
             {
-                case ConfigurationCollectionPropertyDefinition collectionProperty:
+                case ConfigurationClassCollectionPropertyDefinition collectionProperty:
                     UpdateOptions(source, collectionProperty, configurationSets, configIdentity);
                     break;
                 case IMultipleOptionPropertyDefinition optionFromSetProperty:
@@ -157,7 +157,7 @@ namespace ConfigServer.Server
 
 
 
-        private void UpdateOptions(object source, ConfigurationCollectionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
+        private void UpdateOptions(object source, ConfigurationClassCollectionPropertyDefinition model, IEnumerable<ConfigurationSet> configurationSets, ConfigurationIdentity configIdentity)
         {
             var items = model.GetPropertyValue(source) as IEnumerable;
             if (items == null)

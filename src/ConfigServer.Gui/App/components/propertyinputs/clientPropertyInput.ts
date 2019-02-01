@@ -15,6 +15,8 @@ import { IConfigurationPropertyPayload } from "../../interfaces/configurationPro
         <option-input *ngSwitchCase="'Option'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" [csHasInfo]="csHasInfo"></option-input>
         <multiple-option-input *ngSwitchCase="'MultipleOption'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" [csHasInfo]="csHasInfo"></multiple-option-input>
         <collection-input *ngSwitchCase="'Collection'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" ></collection-input>
+        <string-collection-input *ngSwitchCase="'StringCollection'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" ></string-collection-input>
+        <interger-collection-input *ngSwitchCase="'IntergerCollection'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" ></interger-collection-input>
         <class-input *ngSwitchCase="'Class'" [csDefinition]="csDefinition" [csConfig]="csConfig" [parentForm]="parentForm" ></class-input>
         <div *ngSwitchDefault>Not Acceptable</div>
     </div>

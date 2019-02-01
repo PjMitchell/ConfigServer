@@ -71,7 +71,7 @@ namespace ConfigServer.Server
                 case ConfigurationPropertyType.MultipleOption:
                     return GetPropertyValue(source, (IMultipleOptionPropertyDefinition)propertyModel);
                 case ConfigurationPropertyType.Collection:
-                    return GetPropertyValue(source, (ConfigurationCollectionPropertyDefinition)propertyModel);
+                    return GetPropertyValue(source, (ConfigurationClassCollectionPropertyDefinition)propertyModel);
                 case ConfigurationPropertyType.Class:
                     return GetPropertyValue(source, (ConfigurationClassPropertyDefinition)propertyModel);
                 default:
@@ -102,7 +102,7 @@ namespace ConfigServer.Server
             return result;
         }
 
-        private object GetPropertyValue(object source, ConfigurationCollectionPropertyDefinition propertyModel)
+        private object GetPropertyValue(object source, ConfigurationClassCollectionPropertyDefinition propertyModel)
         {
             var collection = propertyModel.GetPropertyValue(source) as IEnumerable ?? new List<object>();
 

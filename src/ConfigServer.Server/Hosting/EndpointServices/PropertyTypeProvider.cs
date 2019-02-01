@@ -19,7 +19,9 @@ namespace ConfigServer.Server
                     return ConfigurationPropertyType.MultipleOption;
                 case IOptionPropertyDefinition input:
                     return ConfigurationPropertyType.Option;
-                case ConfigurationCollectionPropertyDefinition input:
+                case ConfigurationClassCollectionPropertyDefinition input:
+                    return ConfigurationPropertyType.Collection;
+                case ConfigurationPrimitiveCollectionPropertyDefinition input:
                     return GetPropertyType(input);
                 case ConfigurationClassPropertyDefinition input:
                     return ConfigurationPropertyType.Class;
@@ -45,9 +47,13 @@ namespace ConfigServer.Server
             return ConfigurationPropertyType.Unacceptable;
         }
 
-        private string GetPropertyType(ConfigurationCollectionPropertyDefinition definition)
+        private string GetPropertyType(ConfigurationPrimitiveCollectionPropertyDefinition definition)
         {
-            return ConfigurationPropertyType.Collection;
+            if (IsIntergerType(definition.PropertyType))
+                return ConfigurationPropertyType.IntergerCollection;
+            if (definition.PropertyType == typeof(string))
+                return ConfigurationPropertyType.StringCollection;
+            return ConfigurationPropertyType.Unacceptable;
         }
 
         private static bool IsIntergerType(Type type)
@@ -94,6 +100,8 @@ namespace ConfigServer.Server
         public const string MultipleOption = "MultipleOption";
 
         public const string Collection = "Collection";
+        public const string StringCollection = "StringCollection";
+        public const string IntergerCollection = "IntergerCollection";
 
         public const string Class = "Class";
 

@@ -74,7 +74,9 @@ namespace ConfigServer.Server
                 case ConfigurationPropertyType.MultipleOption:
                     return GetConfigPropertyValueFromInput(source, (IMultipleOptionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Collection:
-                    return GetConfigPropertyValueFromInput(source, (ConfigurationCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
+                    return GetConfigPropertyValueFromInput(source, (ConfigurationClassCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
+                case var type when( type == ConfigurationPropertyType.StringCollection || type == ConfigurationPropertyType.IntergerCollection):
+                    return GetConfigPropertyValueFromInput(source, (ConfigurationPrimitiveCollectionPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 case ConfigurationPropertyType.Class:
                     return GetConfigPropertyValueFromInput(source, (ConfigurationClassPropertyDefinition)propertyModel, configIdentity, requiredConfigurationSets);
                 default:
@@ -93,6 +95,7 @@ namespace ConfigServer.Server
             return UpdateObject(result,propertySource,propertyModel.ConfigurationProperties,configIdentity,requiredConfigurationSets);
         }
 
+ 
         private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPropertyModelBase propertyModel)
         {
             var propertyValue = source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase());
@@ -144,7 +147,20 @@ namespace ConfigServer.Server
             return collectionBuilder.Collection;
         }
 
-        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationPrimitiveCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
+        {
+
+            var collectionBuilder = propertyModel.GetCollectionBuilder();
+            foreach (var item in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()))
+            {
+                var result = item.ToObject(propertyModel.PropertyType);
+                collectionBuilder.Add(result);
+            }
+            return collectionBuilder.Collection;
+        }
+
+
+        private object GetConfigPropertyValueFromInput(JObject source, ConfigurationClassCollectionPropertyDefinition propertyModel, ConfigurationIdentity configIdentity, IEnumerable<ConfigurationSet> requiredConfigurationSets)
         {
             var collectionBuilder = propertyModel.GetCollectionBuilder();
             foreach (var item in source.GetValue(propertyModel.ConfigurationPropertyName.ToLowerCamelCase()))
