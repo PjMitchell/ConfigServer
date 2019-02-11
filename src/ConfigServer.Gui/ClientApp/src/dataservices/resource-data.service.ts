@@ -6,7 +6,7 @@ import { IResourceInfo } from '../interfaces/resourceInfo';
 @Injectable()
 export class ResourceDataService {
     private resourceUrl = 'Resource/';  // URL to web api
-    private resourceArchiveUrl = 'ResourceArchive/';  // URL to web api
+    private resourceArchiveUrl = 'Manager/Api/ResourceArchive/';  // URL to web api
 
     constructor(private http: Http) { }
 

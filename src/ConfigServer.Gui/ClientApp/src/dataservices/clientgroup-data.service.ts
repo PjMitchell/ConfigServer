@@ -6,7 +6,7 @@ import { IConfigurationClientGroup } from '../interfaces/configurationClientGrou
 
 @Injectable()
 export class ConfigurationClientGroupDataService {
-    private clientGroupsUrl = 'ClientGroup';  // URL to web api
+    private clientGroupsUrl = 'Manager/Api/ClientGroup';  // URL to web api
 
     constructor(private http: Http) { }
 

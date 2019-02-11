@@ -7,7 +7,7 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class ConfigurationDataService {
 
-    private configSetModelUrl = 'ConfigurationEditor/';  // URL to web api
+    private configSetModelUrl = 'Manager/Api/ConfigurationEditor/';  // URL to web api
 
     constructor(private http: Http) { }
     public getConfig(clientId: string, configId: string): Promise<any> {

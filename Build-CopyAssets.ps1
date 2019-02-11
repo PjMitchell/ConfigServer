@@ -21,27 +21,20 @@ function CopyItemWithAssert {
 
 function CopyAssets {
 	$assetPath = '.\src\ConfigServer.Server\Assets'
-	$assetLibPath = '.\src\ConfigServer.Server\Assets\lib'
-	New-Item -Path $assetPath -type directory
-	New-Item -Path $assetLibPath -type directory
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\app.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\styles.css' $assetPath
-	Write-Host "Copying Assets/lib from ConfigServer.Gui to ConfigServer.Server"
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\shim.min.js' $assetLibPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\system.js' $assetLibPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\zone.min.js' $assetLibPath	
-	CopyItemWithAssert '.\src\ConfigServer.Gui\wwwroot\Assets\lib\deeppurple-amber.css' $assetLibPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\inline.bundle.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\polyfills.bundle.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\main.bundle.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\styles.bundle.css' $assetPath
+
 }
 
 function AssertAssets {
 	Write-Host "Checking asset have been generated and copied"
-	AssertPath '.\src\ConfigServer.Server\Assets\app.js'
-	AssertPath '.\src\ConfigServer.Server\Assets\styles.css'	
-	AssertPath '.\src\ConfigServer.Server\Assets\lib\shim.min.js' 
-	AssertPath '.\src\ConfigServer.Server\Assets\lib\system.js' 
-	AssertPath '.\src\ConfigServer.Server\Assets\lib\zone.min.js'
-	AssertPath '.\src\ConfigServer.Server\Assets\lib\deeppurple-amber.css'
+	AssertPath '.\src\ConfigServer.Server\Assets\inline.bundle.js'
+	AssertPath '.\src\ConfigServer.Server\Assets\polyfills.bundle.js'	
+	AssertPath '.\src\ConfigServer.Server\Assets\main.bundle.js' 
+	AssertPath '.\src\ConfigServer.Server\Assets\styles.bundle.css' 
 }
 
 CopyAssets

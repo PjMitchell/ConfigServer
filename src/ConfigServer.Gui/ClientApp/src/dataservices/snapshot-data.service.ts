@@ -6,31 +6,32 @@ import { ISnapshotInfo } from "../interfaces/snapshotInfo";
 
 @Injectable()
 export class SnapshotDataService {
+    private snapshotPath = 'Manager/Api/Snapshot';
     constructor(private http: Http) { }
 
     public saveSnapShot(request: ICreateSnapshotRequest): Promise<IHttpRequestResult> {
-        return this.http.post('Snapshot', request)
+        return this.http.post(this.snapshotPath, request)
             .toPromise()
             .then((response) => this.handlePostSuccess(response))
             .catch(this.handleError);
     }
 
     public getSnapshots(groupId: string): Promise<ISnapshotInfo[]> {
-        return this.http.get('Snapshot/Group/' + groupId)
+        return this.http.get(this.snapshotPath + '/Group/' + groupId)
             .toPromise()
             .then((response) => this.mapSnapshotInfoArray(response.json() as ISnapshotInfoPayload[]))
             .catch(this.handleError);
     }
 
     public deleteSnapShot(snapshotId: string): Promise<IHttpRequestResult> {
-        return this.http.delete('Snapshot/' + snapshotId)
+        return this.http.delete(this.snapshotPath + '/' + snapshotId)
             .toPromise()
             .then((response) => this.handlePostSuccess(response))
             .catch(this.handleError);
     }
 
     public pushSnapshotToClient(snapshotId: string, clientId: string, configsToCopy: string[]) {
-        return this.http.post('Snapshot/' + snapshotId + '/to/' + clientId, { configsToCopy })
+        return this.http.post(this.snapshotPath + '/' + snapshotId + '/to/' + clientId, { configsToCopy })
             .toPromise()
             .then((response) => this.handlePostSuccess(response))
             .catch(this.handleError);

@@ -5,7 +5,7 @@ import { IConfigurationClient } from '../interfaces/configurationClient';
 
 @Injectable()
 export class ConfigurationClientDataService {
-    private clientsUrl = 'Clients';  // URL to web api
+    private clientsUrl = 'Manager/Api/Clients';  // URL to web api
 
     constructor(private http: Http) { }
 

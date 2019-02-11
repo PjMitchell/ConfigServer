@@ -7,8 +7,8 @@ import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class ConfigurationSetDataService {
-    private configSetUrl = 'ConfigurationSet';  // URL to web api
-    private configSetModelUrl = 'ConfigurationSetModel/';  // URL to web api
+    private configSetUrl = 'Manager/Api/ConfigurationSet';  // URL to web api
+    private configSetModelUrl = 'Manager/Api/ConfigurationSetModel/';  // URL to web api
 
     constructor(private http: Http) { }
 

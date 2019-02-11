@@ -9,14 +9,14 @@ export class UserPermissionService {
     constructor(private http: Http) { }
 
     public getPermission(): Promise<IUserPermissions> {
-        return this.http.get('UserPermissions')
+        return this.http.get('Manager/Api/UserPermissions')
             .toPromise()
             .then((response) => response.json() as IUserPermissions)
             .catch(this.handleError);
     }
 
     public getPermissionForClient(client: string): Promise<IUserClientPermissions> {
-        return this.http.get('UserPermissions/' + client)
+        return this.http.get('Manager/Api/UserPermissions/' + client)
             .toPromise()
             .then((response) => response.json() as IUserClientPermissions)
             .catch(this.handleError);

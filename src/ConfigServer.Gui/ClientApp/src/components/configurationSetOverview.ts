@@ -38,7 +38,7 @@ export class ConfigurationSetComponent {
     }
 
     public downloadConfigSet(configurationSetId: string) {
-        window.open('download/' + this.clientId + '/' + configurationSetId + '.json');
+        window.open('Manager/Api/Download/' + this.clientId + '/' + configurationSetId + '.json');
     }
 
     public uploadConfigSet(value: any): void {

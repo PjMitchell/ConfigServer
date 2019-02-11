@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class ArchiveConfigService {
 
-    private configArchiveUrl = 'Archive/';  // URL to web api
+    private configArchiveUrl = 'Manager/Api/Archive/';  // URL to web api
     constructor(private http: Http) { }
 
     public getArchivedConfig(clientId: string) {

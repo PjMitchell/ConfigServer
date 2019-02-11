@@ -39,7 +39,7 @@ import { ITag } from '../../interfaces/tag';
         </div>
         <div class="col-sm-6 col-md-4">
             <mat-form-field class="full-width">
-                <input matInput id="client-readclaim-input" placeholder="Read claim" [(ngModel)]="csClient.readclaim">
+                <input matInput id="client-readclaim-input" placeholder="Read claim" [(ngModel)]="csClient.readClaim">
             </mat-form-field>
         </div>
         <div class="col-sm-6 col-md-4">

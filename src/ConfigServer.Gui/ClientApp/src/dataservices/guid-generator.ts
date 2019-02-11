@@ -7,7 +7,7 @@ export class GuidGenerator {
     constructor(private http: Http) { }
 
     public getGuid(): Promise<string> {
-        return this.http.post('GenerateGuid', null)
+        return this.http.post('Manager/Api/GenerateGuid', null)
             .toPromise()
             .then((response) => response.json() as string)
             .catch(this.handleError);

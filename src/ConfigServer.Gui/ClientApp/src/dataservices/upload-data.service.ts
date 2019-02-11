@@ -5,9 +5,9 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class UploadDataService {
 
-    private configUrl = 'Upload/Configuration/';  // URL to web api
-    private configSetUrl = 'Upload/ConfigurationSet/';  // URL to web api
-    private configEditorUrl = 'Upload/Editor/';  // URL to web api
+    private configUrl = 'Manager/Api/Upload/Configuration/';  // URL to web api
+    private configSetUrl = 'Manager/Api/Upload/ConfigurationSet/';  // URL to web api
+    private configEditorUrl = 'Manager/Api/Upload/Editor/';  // URL to web api
 
     constructor(private http: Http) { }
 

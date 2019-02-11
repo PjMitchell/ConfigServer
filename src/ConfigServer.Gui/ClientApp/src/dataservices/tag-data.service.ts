@@ -6,7 +6,7 @@ import { ITag } from '../interfaces/tag';
 
 @Injectable()
 export class TagDataService {
-    private tagsUrl = 'Tags';  // URL to web api
+    private tagsUrl = 'Manager/Api/Tags';  // URL to web api
 
     constructor(private http: Http) { }
 

@@ -33,7 +33,7 @@ export class ConfigurationOverviewComponent {
     }
 
     public downloadConfig(configurationSetId: string, configId: string) {
-        window.open('download/' + this.clientId + '/' + configurationSetId + '/' + configId + '.json');
+        window.open('Manager/Api/Download/' + this.clientId + '/' + configurationSetId + '/' + configId + '.json');
     }
 
     public uploadConfig(value: any): void {

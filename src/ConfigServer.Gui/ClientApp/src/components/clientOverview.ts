@@ -13,7 +13,7 @@ import { ITag } from '../interfaces/tag';
 @Component({
     template: `
         <client-header [csClient]="client"></client-header>
-        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged($event)" [csIsConfigurator]="isConfigurator"></resource-overview>
+        <resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged()" [csIsConfigurator]="isConfigurator"></resource-overview>
         <h3>ConfigurationSets</h3>
         <button type="button" mat-raised-button color="primary" (click)="goToArchive()">Archive</button>
         <snapshot-input [csClientId]="clientId"></snapshot-input>

@@ -254,3 +254,5 @@ ModelManifest.xml
 **/ConfigServer.Gui/FileStore/
 **/ConfigServer.Sample.mvc/FileStore/
 **/ConfigServer.Server/Assets/
+
+**/ConfigServer.Gui/ClientApp/dist

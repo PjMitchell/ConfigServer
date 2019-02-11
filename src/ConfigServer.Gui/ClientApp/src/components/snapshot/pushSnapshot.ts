@@ -52,14 +52,15 @@ export class PushSnapshotComponent implements OnInit {
     public selectedSnapshot: ISnapshotInfo;
     public configurationSets: IConfigurationSetSummary[];
     public client: IConfigurationClient;
+    public canPushSnapShot: boolean;
     private clientId: string;
-    private canPushSnapShot: boolean;
     constructor(private dataService: SnapshotDataService, private clientDataService: ConfigurationClientDataService, private configSetDataService: ConfigurationSetDataService, private route: ActivatedRoute, private router: Router) {
         this.snapshots = new Array<ISnapshotInfo>();
         this.configurationSets = new Array<IConfigurationSetSummary>();
         this.client = { clientId: '', group: '', name: '', description: '', enviroment: '', readClaim: '', configuratorClaim: '', settings: new Array<IConfigurationClientSetting>(), tags: new Array<ITag>() };
         this.canPushSnapShot = false;
     }
+
 
     public ngOnInit() {
         this.route.params.forEach((value) => {
