@@ -1,0 +1,19 @@
+<div id="configset-overview-{{configurationSet.configurationSetId}}" class="group configset-overview">
+    <div class="row">
+        <div class="col-sm-6 col-md-8" >
+            <h3 class="configset-name">{{configurationSet.name}}</h3>
+            <p class="configset-description">Description: {{configurationSet.description}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-4" >
+            <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfigSet($event)"></json-file-uploader>
+            <app-icon-button color="primary" (click)="downloadConfigSet(configurationSet.configurationSetId)"> <span class="glyphicon-btn glyphicon glyphicon-download-alt"></span> </app-icon-button>
+        </div>
+    </div>
+    <h3>Configurations</h3>
+    <div class="row">
+        <config-overview *ngFor="let config of configurationSet.configs" class="col-sm-6 col-md-4" [csConfig]="config" [csClientId]="clientId" [csConfigurationSetId]="configurationSet.configurationSetId">
+        </config-overview>
+    </div>
+</div>

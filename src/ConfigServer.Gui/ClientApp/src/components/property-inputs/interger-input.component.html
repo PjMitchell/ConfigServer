@@ -1,0 +1,5 @@
+<mat-form-field class="full-width">
+    <input matInput  placeholder="{{placeholder}}" [formControl]="formValue" type= "number">
+    <mat-hint *ngIf="csHasInfo">{{csDefinition.propertyDescription}}</mat-hint>
+    <mat-error *ngIf="formValue.invalid">{{getErrorMessage()}}</mat-error>
+</mat-form-field>

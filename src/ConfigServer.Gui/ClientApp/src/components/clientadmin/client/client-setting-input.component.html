@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <table id="clientsetting-input">
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+                <th class="column-btn">
+                    <app-icon-button id="clientsetting-input-add-btn" color="accent" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></app-icon-button>
+                </th>
+            </tr>
+            <tr *ngFor="let item of csSettings" class="clientsetting-row">
+                <td>
+                    <mat-form-field class="full-width">
+                        <input matInput class="clientsetting-row-key" [(ngModel)]="item.key" (change)="onKeyChange()">
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="full-width">
+                        <input matInput class="clientsetting-row-value" [(ngModel)]="item.value">
+                    </mat-form-field>
+                </td>
+                <td class="column-btn">
+                    <app-icon-button class="clientsetting-row-delete" color="warn" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h4 class="errorMessage" *ngIf="!csIsValid">Duplicate Keys</h4>
+<div>

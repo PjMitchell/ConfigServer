@@ -1,19 +1,19 @@
 ﻿
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreateClientComponent } from './components/clientadmin/createClient';
-import { CreateClientGroupComponent } from './components/clientadmin/createClientGroup';
-import { EditClientComponent } from './components/clientadmin/editClient';
-import { EditClientGroupComponent } from './components/clientadmin/editClientGroup';
-import { ClientConfigShellComponent } from './components/clientConfigShell';
-import { ClientOverviewComponent } from './components/clientOverview';
-import { ConfigArchiveComponent } from './components/configArchive';
-import { CopyResourceComponent } from "./components/copyResource";
-import { GroupClientsComponent } from './components/groupClients';
-import { HomeComponent } from './components/home';
-import { ResourceArchiveComponent } from './components/resourceArchive';
-import { PushSnapshotComponent } from "./components/snapshot/pushSnapshot";
-import { SnapshotOverviewComponent } from './components/snapshot/snapshotOverview';
+import { ClientConfigShellComponent } from './components/client-config-shell.component';
+import { ClientOverviewComponent } from './components/client-overview.component';
+import { CreateClientGroupComponent } from './components/clientadmin/client-group/create-client-group.component';
+import { EditClientGroupComponent } from './components/clientadmin/client-group/edit-client-group.component';
+import { CreateClientComponent } from './components/clientadmin/client/create-client.component';
+import { EditClientComponent } from './components/clientadmin/client/edit-client.component';
+import { ConfigArchiveComponent } from './components/config-archive.component';
+import { CopyResourceComponent } from "./components/copy-resource.component";
+import { GroupClientsComponent } from './components/group-clients.component';
+import { HomeComponent } from './components/home.component';
+import { ResourceArchiveComponent } from './components/resource-archive.component';
+import { PushSnapshotComponent } from "./components/snapshot/push-snapshot.component";
+import { SnapshotOverviewComponent } from './components/snapshot/snapshot-overview.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },

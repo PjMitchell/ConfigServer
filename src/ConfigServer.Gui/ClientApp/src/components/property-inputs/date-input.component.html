@@ -1,0 +1,7 @@
+<mat-form-field class="full-width">
+    <input matInput [formControl]="formValue" [matDatepicker]="picker" placeholder="{{placeholder}}" [min]="minValue" [max]="maxValue">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-hint *ngIf="csHasInfo">{{csDefinition.propertyDescription}}</mat-hint>
+    <mat-error *ngIf="formValue.invalid">{{getErrorMessage()}}</mat-error>
+</mat-form-field>

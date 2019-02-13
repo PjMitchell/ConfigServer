@@ -1,0 +1,10 @@
+<client-header [csClient]="client"></client-header>
+<resource-overview  [csClientId]="clientId" [csResources]="resources" (onResourcesChanged)="onResourcesChanged()" [csIsConfigurator]="isConfigurator"></resource-overview>
+<h3>ConfigurationSets</h3>
+<button type="button" mat-raised-button color="primary" (click)="goToArchive()">Archive</button>
+<snapshot-input [csClientId]="clientId"></snapshot-input>
+<button type="button" mat-raised-button color="primary" (click)="goToLoadSnapshot()">Load Snapshot</button>
+<div class="break"></div>
+<configSet-overview class="group" *ngFor="let configurationSet of configurationSets" [csClientId]="client.clientId" [csConfigurationSet]="configurationSet" >
+</configSet-overview>
+<button type="button" mat-raised-button color="primary" (click)="back()">Back</button>

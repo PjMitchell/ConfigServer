@@ -1,0 +1,4 @@
+<div class="row">
+    <config-property class="configProperty" *ngFor="let item of csModel.property | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="csConfig" [(parentForm)]="parentForm" (onIsValidChanged)="onValidChanged(i, $event)">
+    </config-property>
+</div>

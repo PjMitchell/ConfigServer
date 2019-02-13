@@ -1,0 +1,10 @@
+<h2>Edit client</h2>
+    <h4 id="client-id" *ngIf="client">{{client.clientId}}</h4>
+<div *ngIf="client && groups">
+    <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [csAvailableTags]="tags" [(csIsValid)]="isValid"></edit-client-input>
+    <hr />
+    <div>
+        <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+        <button id="save-btn" type="button" mat-raised-button color="accent" [disabled]="isDisabled || !isValid" (click)="save()">Save</button>
+    </div>
+</div>

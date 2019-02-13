@@ -1,0 +1,6 @@
+<mat-form-field class="full-width">
+    <mat-select placeholder="{{placeholder}}" [compareWith]="compareFn" [formControl]="formValue" multiple>
+        <mat-option *ngFor="let p of csDefinition.options | toKeyValuePairs" [value]="p.key">{{p.value}}</mat-option>
+    </mat-select>
+    <mat-hint *ngIf="csHasInfo">{{csDefinition.propertyDescription}}</mat-hint>
+</mat-form-field>

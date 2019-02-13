@@ -1,0 +1,28 @@
+<div class="row">
+    <h3>Config Archive</h3>
+</div>
+<div class="row" *ngFor="let group of groupedConfigs">
+    <div class="row">
+        <h4>{{group.key}}</h4>
+    </div>
+    <div class="row" groupedConfigs>
+        <div *ngFor="let config of group.items" class="col-sm-6 col-md-4" >
+            <h5>{{config.name}}</h5>
+            <p>
+                ServerVersion:{{config.serverVersion}} <br/>
+                Created:{{config.timeStamp | date:"MM/dd/yy" }} <br/>
+                Archived:{{config.archiveTimeStamp | date:"MM/dd/yy" }}
+            </p>
+            <app-icon-button color="primary" *ngIf="canDownloadArchive" (click)="downloadConfig(config.name)"><span class="glyphicon-btn glyphicon glyphicon-download-alt"></span></app-icon-button>
+            <app-icon-button color="primary" *ngIf="canDeleteArchives" (click)="delete(config.name)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row" *ngIf="canDeleteArchives">
+    <app-delete-before-button class="col-sm-4 col-md-3" (onDeleteBefore)="deleteBefore($event)"></app-delete-before-button>
+</div>
+<hr />
+<div class="row">
+    <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+</div>

@@ -62,7 +62,8 @@
           "options": {
             "tsConfig": "src/tsconfig.app.json",
             "exclude": [
-              "**/node_modules/**"
+              "**/node_modules/**",
+              "./src/polyfills.ts"
             ]
           }
         }

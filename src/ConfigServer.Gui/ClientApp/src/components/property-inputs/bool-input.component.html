@@ -1,0 +1,7 @@
+<mat-form-field class="full-width">
+    <mat-select placeholder="{{placeholder}}" [formControl]="formValue">
+        <mat-option [value]="true">True</mat-option>
+        <mat-option [value]="false">False</mat-option>
+    </mat-select>
+    <mat-hint *ngIf="csHasInfo">{{csDefinition.propertyDescription}}</mat-hint>
+</mat-form-field>
