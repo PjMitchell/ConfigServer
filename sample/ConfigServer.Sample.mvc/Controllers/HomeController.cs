@@ -17,10 +17,10 @@ namespace ConfigServer.Sample.mvc.Controllers
             this.configServer = configServer;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var config = configServer.GetConfigAsync<SampleConfig>().Result;
-            var options = configServer.GetCollectionConfigAsync<OptionFromConfigSet>().Result;
+            var config = await configServer.GetConfigAsync<SampleConfig>();
+            var options = await configServer.GetCollectionConfigAsync<OptionFromConfigSet>();
             return View(new ConfigViewModel { Config = config, Options = options});
         }
 

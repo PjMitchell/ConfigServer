@@ -52,15 +52,15 @@ namespace ConfigServer.Server
                 <meta name = ""viewport"" content=""width=device-width, initial-scale=1"">
                 <link href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" rel=""stylesheet"" />
                 <link href=""{GetThemeUrl(basePath, options)}"" rel=""stylesheet"" />
-                <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.bundle.css"">
+                <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.css"">
                 <base href=""{managerPath}"" />
             </head>
             <!-- 3. Display the application -->
             <body>
                 <config-server-shell>Loading...</config-server-shell>
-                <script type=""text/javascript"" src=""{basePath}/Assets/inline.bundle.js""></script>
-                <script type = ""text/javascript"" src=""{basePath}/Assets/polyfills.bundle.js""></script>
-                <script type = ""text/javascript"" src=""{basePath}/Assets/main.bundle.js""></script>
+                <script type=""text/javascript"" src=""{basePath}/Assets/runtime.js""></script>
+                <script type = ""text/javascript"" src=""{basePath}/Assets/polyfills.js""></script>
+                <script type = ""text/javascript"" src=""{basePath}/Assets/main.js""></script>
             </body>
             </html>
             ";

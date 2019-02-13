@@ -36,6 +36,10 @@ namespace ConfigServer.Sample.mvc
             var applicationId = "3E37AC18-A00F-47A5-B84E-C79E0823F6D4";
             // Add framework services.
             services.AddMvc();
+            services.AddLogging(b => {
+                b.AddConsole();
+                b.AddDebug();
+            });
             services.AddMemoryCache();
             services.AddConfigServer()
                 .WithVersion(new Version(1,0,0))
@@ -52,11 +56,8 @@ namespace ConfigServer.Sample.mvc
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();

@@ -22,19 +22,19 @@ function CopyItemWithAssert {
 function CopyAssets {
 	$assetPath = '.\src\ConfigServer.Server\Assets'
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\inline.bundle.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\polyfills.bundle.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\main.bundle.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\styles.bundle.css' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\runtime.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\polyfills.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\main.js' $assetPath
+	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\styles.css' $assetPath
 
 }
 
 function AssertAssets {
 	Write-Host "Checking asset have been generated and copied"
-	AssertPath '.\src\ConfigServer.Server\Assets\inline.bundle.js'
-	AssertPath '.\src\ConfigServer.Server\Assets\polyfills.bundle.js'	
-	AssertPath '.\src\ConfigServer.Server\Assets\main.bundle.js' 
-	AssertPath '.\src\ConfigServer.Server\Assets\styles.bundle.css' 
+	AssertPath '.\src\ConfigServer.Server\Assets\runtime.js'
+	AssertPath '.\src\ConfigServer.Server\Assets\polyfills.js'	
+	AssertPath '.\src\ConfigServer.Server\Assets\main.js' 
+	AssertPath '.\src\ConfigServer.Server\Assets\styles.css' 
 }
 
 CopyAssets
