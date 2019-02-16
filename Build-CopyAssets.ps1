@@ -20,14 +20,14 @@ function CopyItemWithAssert {
 	$targetPath = $targetDir + "\" + $file
 	Write-Host "Copy Path:"  $path 
 	AssertPath $path
-	Copy-Item $path $targetDir
+	Copy-Item $path -Destination $targetDir
 	Write-Host "To Path:"  $targetPath
 	AssertPath $targetPath
 }
 
 function CopyAssets {
-	$assetPath = '.\src\ConfigServer.Server\Assets'
-	$sourcePath = '.\src\ConfigServer.Gui\ClientApp\dist'
+	$assetPath = Convert-Path '.\src\ConfigServer.Server\Assets'
+	$sourcePath = Convert-Path '.\src\ConfigServer.Gui\ClientApp\dist'
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
 	CopyItemWithAssert $sourcePath $assetPath 'runtime.js' 
 	CopyItemWithAssert $sourcePath $assetPath 'polyfills.js'
