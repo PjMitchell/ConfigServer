@@ -12,20 +12,27 @@ function AssertPath {
 function CopyItemWithAssert {
 	[CmdletBinding()]
     param(
-        [Parameter(Position=0,Mandatory=1)][string]$path,
-        [Parameter(Position=1,Mandatory=0)][string]$target
+        [Parameter(Position=0,Mandatory=1)][string]$sourceDir,
+        [Parameter(Position=1,Mandatory=0)][string]$targetDir,
+		[Parameter(Position=2,Mandatory=0)][string]$file
     )
-	Copy-Item $path $target
+	$path = $sourceDir + "\" + $file
+	$targetPath = $targetDir + "\" + $file
+	Write-Host "Copy Path:"  $path 
 	AssertPath $path
+	Copy-Item $path $targetDir
+	Write-Host "To Path:"  $targetPath
+	AssertPath $targetPath
 }
 
 function CopyAssets {
 	$assetPath = '.\src\ConfigServer.Server\Assets'
+	$sourcePath = '.\src\ConfigServer.Gui\ClientApp\dist'
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\runtime.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\polyfills.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\main.js' $assetPath
-	CopyItemWithAssert '.\src\ConfigServer.Gui\ClientApp\dist\styles.css' $assetPath
+	CopyItemWithAssert $sourcePath $assetPath 'runtime.js' 
+	CopyItemWithAssert $sourcePath $assetPath 'polyfills.js'
+	CopyItemWithAssert $sourcePath $assetPath 'main.js'
+	CopyItemWithAssert $sourcePath $assetPath 'styles.css'
 
 }
 
