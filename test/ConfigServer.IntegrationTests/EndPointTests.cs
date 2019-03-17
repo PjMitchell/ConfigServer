@@ -23,7 +23,7 @@ namespace ConfigServer.IntegrationTests
         [Fact]
         public async Task CanGetClients()
         {
-            var response = await _client.GetAsync("/Clients");
+            var response = await _client.GetAsync("/Manager/Api/Clients");
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
             Assert.True(json.Length > 2, "Expecting content for clients");
