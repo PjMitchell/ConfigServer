@@ -1,0 +1,22 @@
+<table>
+    <tr>
+        <th>{{csDefinition.propertyDisplayName}}</th>
+        <th class="column-btn">
+            <app-icon-button color="accent" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></app-icon-button>
+        </th>
+    </tr>
+    <tr *ngFor="let item of collection;let i= index">
+        <td>
+            <mat-form-field class="full-width">
+                <input matInput  placeholder="" [formControl]="collectionForms.controls[i]" type= "number">
+                <mat-error *ngIf="collectionForms.controls[i].invalid">{{getErrorMessage(i)}}</mat-error>
+            </mat-form-field>
+        </td>
+        <td class="column-btn">
+            <app-icon-button color="warn" (click)="remove(i)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
+        </td>
+    </tr>
+</table>
+<div *ngIf="collectionForms" >
+    <p class="errorMessage"  *ngIf="!collectionForms.valid">{{getErrorMessage()}}</p>
+</div>

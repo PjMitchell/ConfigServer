@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <input matInput id="client-name-input" placeholder="Name" [(ngModel)]="csClient.name">
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <mat-select placeholder="Group" [(value)]="csClient.group">
+            <mat-option *ngFor="let group of csExistingGroups" [value]="group.groupId">
+                {{ group.name }}
+            </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <input matInput id="client-enviroment-input" placeholder="Enviroment" [(ngModel)]="csClient.enviroment" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let existingEnviroment of existingEnviroments" [value]="existingEnviroment">
+                {{existingEnviroment}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <input matInput id="client-description-input" placeholder="Description" [(ngModel)]="csClient.description">
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <input matInput id="client-readclaim-input" placeholder="Read claim" [(ngModel)]="csClient.readClaim">
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <input matInput id="client-configuratorclaim-input" placeholder="Configurator claim" [(ngModel)]="csClient.configuratorClaim">
+        </mat-form-field>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <mat-form-field class="full-width">
+            <mat-select placeholder="Tag" [(value)]="csClient.tags" multiple [compareWith]="compareTags">
+                <mat-option *ngFor="let tag of csAvailableTags" [value]="tag">
+                    {{ tag.value }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<hr/>
+<edit-clientsetting-input [(csIsValid)]="csIsValid" [csSettings]="csClient.settings"></edit-clientsetting-input>

@@ -1,0 +1,24 @@
+<div *ngIf="client && configModel">
+    <h2>{{client.name}}: {{configModel.name}}</h2>
+    <p>{{configModel.description}}</p>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <json-file-uploader [(csMessage)]="uploadMessage" (onUpload)="uploadConfig($event)"></json-file-uploader>
+    </div>
+</div>
+<div class="validationResult"></div>
+<div class="break"></div>
+<form #configForm="ngForm">
+    <div *ngIf="configModel && config">
+        <div [ngSwitch]="configurationModelType" >
+            <config-input *ngSwitchCase="'config'" [csModel]="configModel" [csConfig]="config" [parentForm]="form" ></config-input>
+            <config-option-input *ngSwitchCase="'option'" [csModel]="configModel" [csCollection]="config" [parentForm]="form" ></config-option-input>
+        </div>
+    </div>
+    <div class="break"></div>
+    <div >
+        <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+        <button *ngIf="configModel && config" [disabled]="form.invalid || isDisabled" type="button" mat-raised-button color="accent" (click)="save()">Save</button>
+    </div>
+</form>

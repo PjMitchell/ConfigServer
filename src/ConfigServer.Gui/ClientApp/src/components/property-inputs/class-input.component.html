@@ -1,0 +1,8 @@
+<div style="margin-left:-15px;">
+    <div style="margin-left:15px;">
+        <h3>{{csDefinition.propertyDisplayName}}</h3>
+        <p>{{csDefinition.propertyDescription}}</p>
+    </div>
+    <config-property class="configProperty" *ngFor="let item of csDefinition.childProperty | toIterator;let i= index" [csDefinition]="item" [(csConfig)]="classConfig" [(parentForm)]="classForm" (onIsValidChanged)="onValidChanged(i, $event)">
+    </config-property>
+</div>

@@ -39,7 +39,9 @@ namespace ConfigServer.Server
 
         public async Task<TConfig> GetConfigAsync<TConfig>(string clientId) where TConfig : class, new()
         {
-            var client = await configurationClientService.GetClientOrDefault(clientIdProvider.GetCurrentClientId());
+            var client = await configurationClientService.GetClientOrDefault(clientId);
+            if (client == null)
+                throw new ConfigurationClientNotFoundException(clientId);
             var config = await configProvider.GetAsync<TConfig>(new ConfigurationIdentity(client, registry.GetVersion())).ConfigureAwait(false);
             return config.Configuration;
         }

@@ -53,20 +53,14 @@ namespace ConfigServer.Server
                 <link href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" rel=""stylesheet"" />
                 <link href=""{GetThemeUrl(basePath, options)}"" rel=""stylesheet"" />
                 <link rel = ""stylesheet"" href=""{basePath}/Assets/styles.css"">
-                <!-- 1. Load libraries -->
-                <!-- Polyfill(s) for older browsers -->
-                <script src=""{basePath}/Assets/lib/shim.min.js""></script>
-                <script src = ""{basePath}/Assets/lib/zone.min.js"" ></script>
-                <script src=""{basePath}/Assets/lib/system.js""></script>
-                <!-- 2. Configure SystemJS -->
-                <script>
-                  System.import('{basePath}/Assets/app.js').catch(function(err) {{ console.error(err); }});
-                </script>
                 <base href=""{managerPath}"" />
             </head>
             <!-- 3. Display the application -->
             <body>
                 <config-server-shell>Loading...</config-server-shell>
+                <script type=""text/javascript"" src=""{basePath}/Assets/runtime.js""></script>
+                <script type = ""text/javascript"" src=""{basePath}/Assets/polyfills.js""></script>
+                <script type = ""text/javascript"" src=""{basePath}/Assets/main.js""></script>
             </body>
             </html>
             ";

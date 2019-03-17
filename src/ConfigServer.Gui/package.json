@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "name": "ConfigServer-Gui",
+    "name": "config-server-gui",
     "private": true,
     "devDependencies": {
         "gulp": "3.9.1",

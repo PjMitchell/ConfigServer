@@ -1,0 +1,4 @@
+<mat-form-field class="full-width snapshot-input-group">
+    <input matInput [(ngModel)]="snapshot" type="text" placeholder="Snapshot name">
+    <button type="button" matSuffix mat-raised-button color="primary" (click)="save()" [disabled]="!snapshot">Save Snapshot</button>
+</mat-form-field>

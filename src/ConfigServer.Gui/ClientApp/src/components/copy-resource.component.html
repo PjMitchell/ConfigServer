@@ -1,0 +1,42 @@
+<div class="row">
+    <h3>Copy Resources</h3>
+</div>
+<div class="row" *ngIf="isClientInfoReady">
+    <div *ngIf="sourceClient" class="col-sm-4 col-md-4">
+        <h4>Source</h4>
+        <h5 id="source-client-name">{{sourceClient.name}}</h5>
+        <p id="source-client-id">Id: {{sourceClient.clientId}}</p>
+        <p id="source-client-env">{{sourceClient.enviroment}}</p>
+        <p id="source-client-desc">{{sourceClient.description}}</p>
+    </div>
+    <div  *ngIf="clients.length > 0"   class="col-sm-4 col-md-4">
+        <mat-form-field class="full-width">
+            <mat-select [(value)]="targetClient">
+                <mat-option *ngFor="let client of clients" [value]="client">{{client.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div  *ngIf="clients.length === 0"   class="col-sm-4 col-md-4">
+        <p>No targets found</p>
+    </div>
+    <div *ngIf="targetClient" class="col-sm-4 col-md-4">
+        <h4>Target</h4>
+        <h5 id="target-client-name">{{targetClient.name}}</h5>
+        <p id="target-client-id">Id: {{targetClient.clientId}}</p>
+        <p id="target-client-env">{{targetClient.enviroment}}</p>
+        <p id="target-client-desc">{{targetClient.description}}</p>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div *ngFor="let resource of resources" class="col-sm-6 col-md-4 selectable-panel" [ngClass]="{'selectable-panel-selected': resource.isSelected}"
+(click)="select(resource)">
+        <p>{{resource.name}}</p>
+        <p>Created:{{resource.timeStamp | date:"MM/dd/yy" }}</p>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <button type="button" mat-raised-button color="primary" (click)="back()">Back</button>
+    <button type="button" mat-raised-button color="primary" [disabled]="isDisabled" (click)="copy()">Copy to target</button>
+</div>

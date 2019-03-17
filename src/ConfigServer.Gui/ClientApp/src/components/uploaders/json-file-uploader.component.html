@@ -1,0 +1,15 @@
+<div>
+    <form #form>
+        <mat-form-field class="full-width">
+            <div (click)="onFileNameClicked()"><input matInput [(ngModel)]="fileName" name="filename" type="text" disabled="true" ></div>
+            <div matPrefix class="fileUpload" style="margin-right:5px;">
+                <span class="glyphicon-btn glyphicon glyphicon-folder-open"></span>
+                <input type="file" #input name="upload" accept=".json" class="upload" (change)="fileChanged()">
+            </div>
+            <div type="button" matSuffix mat-raised-button color="primary" (click)="upload()" class="upload-btn"><span class="glyphicon-btn glyphicon glyphicon-cloud-upload"></span></div>
+            <mat-error *ngIf="message">
+                {{message}}
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>

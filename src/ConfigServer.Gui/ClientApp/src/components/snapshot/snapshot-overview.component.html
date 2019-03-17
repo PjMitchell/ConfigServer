@@ -1,0 +1,12 @@
+<h3>Snapshots</h3>
+<group-header [csGroup]="group"></group-header>
+<hr />
+<div class="row">
+    <div *ngFor="let snapshot of snapshots" class="col-sm-6 col-md-4" >
+        <p>{{snapshot.name}}</p>
+        <p>Created:{{snapshot.timeStamp | date:"MM/dd/yy" }}</p>
+        <app-icon-button color="primary" (click)="deleteSnapshot(snapshot.id)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
+    </div>
+</div>
+<hr />
+<button type="button" mat-raised-button color="primary" (click)="back()">Back</button>

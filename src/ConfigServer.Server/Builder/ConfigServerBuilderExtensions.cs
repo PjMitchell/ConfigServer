@@ -116,7 +116,7 @@ namespace ConfigServer.Server
                 FileProvider = provider
             });
             
-            app.MapEndpoint<ConfigManagerEndpoint>(HostPaths.Manager, options);
+            
             app.MapEndpoint<ConfigClientEndPoint>(HostPaths.Clients, options);
             app.MapEndpoint<ConfigurationSetEndpoint>(HostPaths.ConfigurationSet, options);
             app.MapEndpoint<ConfigurationEditorEndpoint>(HostPaths.ConfigurationEditor, options);
@@ -131,6 +131,7 @@ namespace ConfigServer.Server
             app.MapEndpoint<PermissionEndpoint>(HostPaths.UserPermissions, options);
             app.MapEndpoint<TagEndpoint>(HostPaths.Tags, options);
             app.MapEndpoint<SnapshotEndpoint>(HostPaths.Snapshot, options);
+            app.MapEndpoint<ConfigManagerEndpoint>(HostPaths.Manager, options);
             app.UseEndpoint<ConfigEndpoint>(options);
             
             return app;

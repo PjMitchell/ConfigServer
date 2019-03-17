@@ -1,0 +1,10 @@
+<h2>Create client group</h2>
+<h4 id="groupid">{{group.groupId}}</h4>
+<div>
+    <edit-clientgroup-input [(csClientGroup)]="group"></edit-clientgroup-input>
+    <hr />
+    <div>
+        <button type="button"  mat-raised-button color="primary"(click)="back()">Back</button>
+        <button id="save-btn" [disabled]="isDisabled" type="button" mat-raised-button color="accent" (click)="create()">Create</button>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+<table>
+    <tr>
+        <th *ngFor="let p of csModel.property | toIterator">{{p.propertyDisplayName}}</th>
+        <th class="column-btn">
+            <app-icon-button color="accent" (click)="add()"><span class="glyphicon-btn glyphicon glyphicon-plus"></span></app-icon-button>
+        </th>
+    </tr>
+    <tr *ngFor="let item of csCollection;let i= index">
+        <td *ngFor="let itemProperty of csModel.property | toIterator;let c= index">
+            <config-property-item [csDefinition]="itemProperty" [csConfig]="csCollection[i]" [parentForm]="collectionForms.controls[i]" [csHasInfo]="false"></config-property-item>
+        </td>
+        <td class="column-btn">
+            <app-icon-button color="warn" (click)="remove(item)"><span class="glyphicon-btn glyphicon glyphicon-trash"></span></app-icon-button>
+        </td>
+    </tr>
+</table>
+<div *ngIf="collectionForms" >
+    <p class="errorMessage"  *ngIf="!collectionForms.valid">{{getErrorMessage()}}</p>
+</div>

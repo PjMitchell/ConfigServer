@@ -1,0 +1,10 @@
+<h2>Create client</h2>
+<h4 id="client-id">{{client.clientId}}</h4>
+<div>
+    <edit-client-input [csAllClient]="clients" [(csClient)]="client" [csExistingGroups]="groups" [csAvailableTags]="tags" [(csIsValid)]="isValid"></edit-client-input>
+    <hr />
+    <div>
+            <button type="button"  mat-raised-button color="primary"(click)="back()">Back</button>
+            <button id="save-btn" [disabled]="isDisabled || !isValid" type="button" mat-raised-button color="accent" (click)="create()">Create</button>
+    </div>
+</div>

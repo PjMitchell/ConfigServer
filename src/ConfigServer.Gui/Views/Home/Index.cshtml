@@ -8,21 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Assets/lib/deeppurple-amber.css" rel="stylesheet" />
-    <link rel="stylesheet" href="Assets/styles.css">
-    <!-- 1. Load libraries -->
-    <!-- Polyfill(s) for older browsers -->
-    <script src="Assets/lib/shim.min.js"></script>
-    <script src="Assets/lib/zone.min.js"></script>
-    <script src="Assets/lib/system.js"></script>
-    <script src="~/Systemjs.config.js"></script>
-
-    <script>
-        System.import('./app').catch(function (err) { console.error(err); });
-    </script>
+    <link rel="stylesheet" href="Assets/styles.bundle.css">
     <base href="/" />
 </head>
 <!-- 3. Display the application -->
 <body>
     <config-server-shell>Loading...</config-server-shell>
+    <script type="text/javascript" src="inline.bundle.js"></script>
+    <script type="text/javascript" src="polyfills.bundle.js"></script>
+    <script type="text/javascript" src="main.bundle.js"></script>
 </body>
 </html>
