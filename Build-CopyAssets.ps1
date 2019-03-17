@@ -26,8 +26,9 @@ function CopyItemWithAssert {
 }
 
 function CopyAssets {
-	$assetPath = Convert-Path '.\src\ConfigServer.Server\Assets'
-	New-Item -ItemType Directory -Force -Path $assetPath
+	$target = '.\src\ConfigServer.Server\Assets'
+	New-Item -ItemType Directory -Force -Path $target
+	$assetPath = Convert-Path $target
 	$sourcePath = Convert-Path '.\src\ConfigServer.Gui\ClientApp\dist'
 	Write-Host "Copying Assets from ConfigServer.Gui to ConfigServer.Server"
 	CopyItemWithAssert $sourcePath $assetPath 'runtime.js' 
